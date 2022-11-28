@@ -1,0 +1,239 @@
+<template>
+  <div>
+    <CRow>
+      <CCol col="12" xl="12">
+        <CCard>
+          <CCardHeader>
+            <ButtonPermission :permission="'create'" @click="addNew()" />
+            <h5>Stock Transfer</h5>
+          </CCardHeader>
+          <CCardBody>
+            <!-- :filter="[
+              'All',
+              'Product',
+              'Warehouse',
+              'Supplier',
+              'Customer',
+              'User',
+              'Approval',
+              'Exp Date',
+              'Min Stock',
+              'Max Stock',
+              'Production',
+              'Distribution',
+              'Release',
+            ]" -->
+            <HeaderFilterTransaction
+              :filter="['All', 'ID', 'Product', 'source_wh', 'destination_wh']"
+              status_code="trx_transfer"
+              v-on:handleClickFilter="handleClickFilter($event)"
+              v-on:handleChangeSize="handleChangeSize($event)"
+            />
+            <!-- INI BATAS HEADER TABLE -->
+            <CDataTable
+              hover
+              striped
+              sorter
+              border
+              :items="renderList"
+              :fields="fields"
+              class="text-left"
+              style="font-size: 12px"
+            >
+              <template #action="{ item, index }">
+                <td>
+                  <ButtonPermission
+                    :permission="'read'"
+                    @click="rowClicked(item, index)"
+                  />
+                  <ButtonPermission
+                    v-if="item.status === 0"
+                    :permission="'delete'"
+                    :buttonProperty="btn_deleteProperty"
+                    @click="modalCancel(item, index)"
+                  />
+                </td>
+              </template>
+            </CDataTable>
+            <template>
+              <CPagination
+                :activePage.sync="filter.page"
+                :pages="filter.totalPages"
+                size="sm"
+                align="center"
+                @update:activePage="pageChange"
+              />
+            </template>
+            <ButtonPermission
+              exportType="excel"
+              :permission="'print'"
+              @click="handleClickExport('xls')"
+            />
+            <ButtonPermission
+              exportType="pdf"
+              :permission="'print'"
+              @click="handleClickExport('pdf')"
+            />
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
+
+    <!-- START REJECT MODAL -->
+    <CancelModal
+      type="cancel"
+      :property="cancelProperty"
+      v-on:handleSubmit="handleCancel()"
+    />
+    <!-- END REJECT MODAL -->
+  </div>
+</template>
+
+<script>
+import $axiosMertrack from "../../../apiMertrack";
+import { exportData, calculatePagination } from "../../../utils";
+import { dateFilter } from "../../../constants";
+export default {
+  name: "ListStockTransfer",
+  mounted() {
+    this.page = 1;
+    this.loadData();
+  },
+  data() {
+    return {
+      cancelProperty: {
+        title: "Stock Transfer",
+        modal: false,
+        id: null,
+        reason: "",
+      },
+      btn_deleteProperty: {
+        size: "sm",
+        class: "float-right",
+        color: "danger",
+        icon: "window-close",
+        text: "",
+        tooltip: "Cancel",
+      },
+      path: this.$route.path,
+      filter: {
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+        ApiName: "ListTransfer",
+        StartDate: dateFilter.last_3_month.start,
+        EndDate: dateFilter.last_3_month.end,
+      },
+      items: [],
+      tempItems: [],
+      fields: [
+        {
+          key: "id",
+          label: "ID",
+          _classes: "font-weight-bold",
+        },
+        { key: "created_date", label: "Trx Date" },
+        {
+          key: "product_name_batch",
+          label: "Product Name [Batch No]",
+        },
+        { key: "warehouse_name_from", label: "Source WH" },
+        { key: "warehouse_name_to", label: "Destination WH" },
+        { key: "status_desc", label: "Status", _classes: "font-weight-bold" },
+        {
+          key: "action",
+          label: "Action",
+          _style: "width:10%",
+        },
+      ],
+    };
+  },
+  methods: {
+    loadData() {
+      let param = `${new URLSearchParams(this.filter).toString()}`;
+      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+        this.items = res.data.data;
+        this.filter = calculatePagination({
+          filter: this.filter,
+          item: res,
+        });
+      });
+    },
+    handleClickFilter(val) {
+      this.filter = Object.assign(this.filter, val);
+      this.loadData();
+    },
+    handleClickExport(type) {
+      exportData({ param: this.filter, exportType: type });
+    },
+    pageChange(page) {
+      this.filter.page = page;
+      this.loadData();
+    },
+    handleChangeSize($event) {
+      this.filter.limit = $event;
+      this.filter.page = 1;
+      this.loadData();
+    },
+    addNew() {
+      this.$router.push({ path: `${this.path}/create` });
+    },
+    rowClicked(item) {
+      this.$router.push({ path: `${this.path}/read/${item.id}` });
+    },
+    modalCancel(item, index) {
+      this.cancelProperty.modal = true;
+      this.cancelProperty.id = item.id;
+    },
+    handleCancel() {
+      this.$isLoading(true);
+      let data = {
+        ApiName: "ApprovalTransfer",
+        Params: {
+          id: this.cancelProperty.id,
+          approved: false,
+          reason: this.cancelProperty.reason,
+        },
+      };
+
+      $axiosMertrack
+        .post("/general/mobile", data)
+        .then((result) => {
+          this.$isLoading(false);
+          this.loadData();
+          this.$toast.open({
+            message: result.data.error
+              ? `${result.data.message}`
+              : "Transaction has been canceled succesfully",
+            type: result.data.error ? "error" : "success",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+        })
+        .catch((err) => {
+          this.$isLoading(false);
+          this.$toast.open({
+            message: `Error : ${err}`,
+            type: "error",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+        });
+      this.cancelProperty.id = null;
+      this.cancelProperty.reason = "";
+      this.cancelProperty.modal = false;
+    },
+  },
+  computed: {
+    renderList() {
+      return this.items.map((item) => {
+        return {
+          ...item,
+        };
+      });
+    },
+  },
+};
+</script>
