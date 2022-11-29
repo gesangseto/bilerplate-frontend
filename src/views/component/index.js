@@ -5,6 +5,7 @@ import DetailStockSerial from "./DetailStockSerial";
 import DetailTransaction from "./DetailTransaction";
 import HeaderFilterDefault from "./HeaderFilterDefault";
 import HeaderFilterTransaction from "./HeaderFilterTransaction";
+import HeaderFilterTransactionV3 from "./HeaderFilterTransactionV3";
 import HeaderShowStatus from "./HeaderShowStatus";
 import MasterPid from "./MasterPid";
 import FormAddItem from "./FormAddItem";
@@ -18,6 +19,7 @@ export {
   ButtonPermission,
   Button,
   HeaderFilterTransaction,
+  HeaderFilterTransactionV3,
   DetailTransaction,
   DetailStockSerial,
   HeaderFilterDefault,

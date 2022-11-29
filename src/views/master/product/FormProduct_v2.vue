@@ -619,12 +619,22 @@ export default {
       });
     },
     loadData() {
-      let param = `ApiName=ProductList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack.get(`v3/master/product?${param}`).then((response) => {
         let data = response.data.data[0];
+        console.log(data);
         this.product = data;
         this.product.status = data.status == "Active" ? true : false;
         this.product.product_type = data.product_type.toString();
+        this.product.mst_pid = data._pid;
+        for (var i = 1; i <= 4; i++) {
+          this.product[`packagingl${i}_id`] = parseInt(
+            this.product[`packagingl${i}_id`]
+          );
+        }
+        this.product[`mst_product_category_id`] = parseInt(
+          this.product[`mst_product_category_id`]
+        );
         this.loadMasterPid();
         this.compressQuantity();
       });

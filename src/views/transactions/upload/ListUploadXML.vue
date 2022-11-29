@@ -161,7 +161,11 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import {
+  exportData,
+  calculatePagination,
+  calculatePaginationV3,
+} from "../../../utils";
 import { dateFilter } from "../../../constants";
 import Datepicker from "vuejs-datepicker";
 import moment from "moment";
@@ -182,7 +186,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ListUploadXml",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -236,12 +239,12 @@ export default {
           label: "File Name",
         },
         {
-          key: "type_desc",
+          key: "_source.name",
           label: "Source Type",
           _classes: "font-weight-bold",
         },
         {
-          key: "supplier_name",
+          key: "_supplier.name",
           label: "Supplier Name",
         },
         {
@@ -264,12 +267,13 @@ export default {
     },
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(`/v3/transaction/upload-xml?${param}`).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
+        console.log(this.filter);
       });
     },
     handleClickFilter(val) {

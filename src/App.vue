@@ -13,6 +13,7 @@ import {
   ButtonPermission,
   DetailTransaction,
   HeaderFilterTransaction,
+  HeaderFilterTransactionV3,
   DetailStockSerial,
   DetailShowStatus,
   HeaderFilterDefault,
@@ -31,6 +32,7 @@ Vue.component("MasterPid", MasterPid);
 Vue.component("Button", Button);
 Vue.component("ButtonPermission", ButtonPermission);
 Vue.component("HeaderFilterTransaction", HeaderFilterTransaction);
+Vue.component("HeaderFilterTransactionV3", HeaderFilterTransactionV3);
 Vue.component("DetailTransaction", DetailTransaction);
 Vue.component("DetailShowStatus", DetailShowStatus);
 Vue.component("HeaderShowStatus", HeaderShowStatus);

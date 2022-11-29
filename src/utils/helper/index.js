@@ -7,6 +7,15 @@ export function calculatePagination({ filter = Object, item = Object }) {
   }
   return filter;
 }
+export function calculatePaginationV3({ filter = Object, item = Object }) {
+  if (item.hasOwnProperty("status") && item.hasOwnProperty("headers")) {
+    item = item.data;
+  }
+  if (item.hasOwnProperty("total") && item.hasOwnProperty("grand_total")) {
+    filter.totalPages = Math.ceil(item.grand_total / filter.limit) ?? 0;
+  }
+  return filter;
+}
 export function getStringBetween({ string, field1 = "$SF$", field2 = "$EF$" }) {
   let new_str = "";
   if (string.indexOf(field1) > 0 && string.lastIndexOf(field2) > 0) {
