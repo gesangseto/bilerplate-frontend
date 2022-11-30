@@ -31,7 +31,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.full_name"
+                      v-model="upload['_created.full_name']"
                     />
                   </td>
                 </tr>
@@ -51,7 +51,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.type_desc"
+                      v-model="upload['_source.name']"
                     />
                   </td>
                 </tr>
@@ -61,7 +61,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.supplier_name"
+                      v-model="upload['_supplier.name']"
                     />
                   </td>
                 </tr>
@@ -166,20 +166,16 @@ export default {
   mounted() {
     if (this.$route.params.id != undefined) {
       this.$isLoading(true);
-      let param = `ApiName=ListUploadXml&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
+      let param = `id=${this.$route.params.id}`;
       $axiosMertrack
-        .get(`/general/web?${param}`)
+        .get(`/v3/transaction/upload-xml?${param}&raw=true`)
         .then((res) => {
           this.$isLoading(false);
           this.upload = res.data.data[0];
-          let i = 0;
           for (const it of res.data.data[0].items) {
-            this.total[`L_${it.packaging_level}`].name =
-              it[`name_packaging_l${it.packaging_level}`];
-            this.total[`L_${it.packaging_level}`].quantity += 1;
-            this.upload.items[i].packaging_name =
-              it[`name_packaging_l${it.packaging_level}`];
-            i += 1;
+            let lvl = it.packaging_level;
+            this.total[`L_${lvl}`].name = it[`_product._packagingl${lvl}.name`];
+            this.total[`L_${lvl}`].quantity += 1;
           }
 
           for (const it in this.total) {
@@ -227,11 +223,11 @@ export default {
       },
       fields: [
         {
-          key: "no",
+          key: "_product.no",
           label: "Item No",
         },
         {
-          key: "name",
+          key: "_product.name",
           label: "Product Name",
         },
         {
@@ -243,7 +239,7 @@ export default {
           label: "Exp Date",
         },
         {
-          key: "nie",
+          key: "_product.nie",
           label: "NIE",
         },
         {
@@ -284,9 +280,13 @@ export default {
   computed: {
     uploadItems() {
       return this.upload.items.map((item) => {
+        let lvl = item.packaging_level;
+        let packaging_name = item[`_product._packagingl${lvl}.name`] || "";
         return {
           ...item,
-          gtin_cp: item.epc_type == "sscc" ? item.comp_prefix : item.gtin_sscc,
+          packaging_name: packaging_name,
+          gtin_cp:
+            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

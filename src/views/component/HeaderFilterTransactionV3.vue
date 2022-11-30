@@ -157,19 +157,28 @@ export default {
   components: { ModelSelect, DateRangePicker },
   mounted() {
     this.getSatusCode();
+
+    console.log(this.listFilter);
+    console.log(this.filter);
     if (this.filter && this.filter.constructor === Array) {
       let new_list = [];
-      for (const fil of this.filter) {
-        for (const it of this.listFilter) {
-          if (it.code.toLowerCase() == fil.toLowerCase()) {
-            new_list.push(it);
-          }
-        }
+      for (const it of this.listFilter) {
+        let code = it.code.toLowerCase();
+        let idx = this.filter.findIndex((o) => o.toLowerCase() == code);
+        if (idx >= 0) new_list.push(it);
       }
+      // for (const fil of this.filter) {
+      //   for (const it of this.listFilter) {
+      //     if (it.code.toLowerCase() == fil.toLowerCase()) {
+      //       new_list.push(it);
+      //     }
+      //   }
+      // }
       this.listFilter = new_list;
     }
     if (this.costume_filter && this.costume_filter.constructor === Array) {
       for (const it of this.costume_filter) {
+        console.log(it);
         if (it.data && it.data.constructor === Array) {
           this.listFilter.push(it);
         }
@@ -186,12 +195,10 @@ export default {
     if (this.order && this.order.constructor === Array) {
       let temp_arr = this.listFilter;
       this.listFilter = [];
-      for (const ord of this.order) {
-        for (const it of temp_arr) {
-          if (it.code === ord) {
-            this.listFilter.push(it);
-          }
-        }
+      for (let ord of this.order) {
+        ord = ord.toLowerCase();
+        let idx = temp_arr.findIndex((it) => it.code.toLowerCase() == ord);
+        if (idx >= 0) this.listFilter.push(temp_arr[idx]);
       }
     }
   },
@@ -245,111 +252,147 @@ export default {
           code: "All",
           label: "All",
         },
+        // V3 MULAI
         {
-          value: "ID",
-          code: "ID",
+          value: "source_id",
+          code: "source_id",
+          label: "Source",
+        },
+        {
+          value: "id",
+          code: "id",
           label: "ID",
         },
         {
-          value: "Product",
-          code: "Product",
-          label: "Product",
-        },
-        {
-          value: "Supplier",
-          code: "Supplier",
+          value: "supplier_id",
+          code: "supplier_id",
           label: "Supplier",
         },
         {
-          value: "Supplier",
-          code: "Source Supplier",
-          label: "Source Supplier",
+          value: "product_id",
+          code: "product_id",
+          label: "Product",
         },
         {
-          value: "Customer",
-          code: "Customer",
-          label: "Customer",
+          value: "from_supplier",
+          code: "from_supplier",
+          label: "From Supplier",
         },
         {
-          value: "User",
-          code: "User",
-          label: "User",
+          value: "from_warehouse",
+          code: "from_warehouse",
+          label: "From Warehouse",
         },
         {
-          value: "Warehouse",
-          code: "Warehouse",
-          label: "Warehouse",
+          value: "from_customer",
+          code: "from_customer",
+          label: "From Customer",
         },
         {
-          value: "Warehouse",
-          code: "Destination Warehouse",
-          label: "Destination Warehouse",
+          value: "to_warehouse",
+          code: "to_warehouse",
+          label: "To Warehouse",
         },
-        {
-          value: "Approval",
-          code: "Approval",
-          label: "Approval",
-        },
-        {
-          value: "Mfg Date",
-          code: "Mfg Date",
-          label: "Mfg Date",
-        },
-        {
-          value: "Exp Date",
-          code: "Exp Date",
-          label: "Exp Date",
-        },
-        {
-          value: "Min Stock",
-          code: "Min Stock",
-          label: "Min Stock",
-        },
-        {
-          value: "Max Stock",
-          code: "Max Stock",
-          label: "Max Stock",
-        },
-        {
-          value: "Transaction",
-          code: "Transaction",
-          label: "Transaction Bpom",
-        },
-        {
-          value: "User",
-          code: "Requested By",
-          label: "Requested By",
-        },
-        {
-          value: "Next Approval",
-          code: "Next Approval",
-          label: "Next Approval",
-        },
-        {
-          value: "source_type",
-          code: "Source Type",
-          label: "Source Type",
-        },
-        {
-          value: "destination_wh",
-          code: "destination_wh",
-          label: "Destination Warehouse",
-        },
-        {
-          value: "source_wh",
-          code: "source_wh",
-          label: "Source Warehouse",
-        },
-        {
-          value: "Customer",
-          code: "source_customer",
-          label: "Source Customer",
-        },
-        {
-          value: "Customer",
-          code: "destination_customer",
-          label: "Destination Customer",
-        },
+        // {
+        //   value: "Product",
+        //   code: "Product",
+        //   label: "Product",
+        // },
+        // {
+        //   value: "Supplier",
+        //   code: "Supplier",
+        //   label: "Supplier",
+        // },
+        // {
+        //   value: "Supplier",
+        //   code: "Source Supplier",
+        //   label: "Source Supplier",
+        // },
+        // {
+        //   value: "Customer",
+        //   code: "Customer",
+        //   label: "Customer",
+        // },
+        // {
+        //   value: "User",
+        //   code: "User",
+        //   label: "User",
+        // },
+        // {
+        //   value: "Warehouse",
+        //   code: "Warehouse",
+        //   label: "Warehouse",
+        // },
+        // {
+        //   value: "Warehouse",
+        //   code: "Destination Warehouse",
+        //   label: "Destination Warehouse",
+        // },
+        // {
+        //   value: "Approval",
+        //   code: "Approval",
+        //   label: "Approval",
+        // },
+        // {
+        //   value: "Mfg Date",
+        //   code: "Mfg Date",
+        //   label: "Mfg Date",
+        // },
+        // {
+        //   value: "Exp Date",
+        //   code: "Exp Date",
+        //   label: "Exp Date",
+        // },
+        // {
+        //   value: "Min Stock",
+        //   code: "Min Stock",
+        //   label: "Min Stock",
+        // },
+        // {
+        //   value: "Max Stock",
+        //   code: "Max Stock",
+        //   label: "Max Stock",
+        // },
+        // {
+        //   value: "Transaction",
+        //   code: "Transaction",
+        //   label: "Transaction Bpom",
+        // },
+        // {
+        //   value: "User",
+        //   code: "Requested By",
+        //   label: "Requested By",
+        // },
+        // {
+        //   value: "Next Approval",
+        //   code: "Next Approval",
+        //   label: "Next Approval",
+        // },
+        // {
+        //   value: "source_type",
+        //   code: "Source Type",
+        //   label: "Source Type",
+        // },
+        // {
+        //   value: "destination_wh",
+        //   code: "destination_wh",
+        //   label: "Destination Warehouse",
+        // },
+        // {
+        //   value: "source_wh",
+        //   code: "source_wh",
+        //   label: "Source Warehouse",
+        // },
+        // {
+        //   value: "Customer",
+        //   code: "source_customer",
+        //   label: "Source Customer",
+        // },
+        // {
+        //   value: "Customer",
+        //   code: "destination_customer",
+        //   label: "Destination Customer",
+        // },
       ],
     };
   },
@@ -415,6 +458,7 @@ export default {
       this.result.SearchVal2Text = end_date;
     },
     handleChangeType() {
+      console.log("===============================", this.result.SearchType);
       this.result.SearchVal1 = "";
       this.result.SearchVal2 = "";
       if (this.result.SearchType) {
@@ -429,53 +473,78 @@ export default {
         } else if (this.result.SearchType.toLowerCase() == "id") {
           this.use_normal_form = true;
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "product") {
-          this.getProduct();
+        } else if (this.result.SearchType.toLowerCase() == "source_id") {
+          this.getSource();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "warehouse") {
-          this.getWarehouse();
-          this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "supplier") {
+        } else if (this.result.SearchType.toLowerCase() == "supplier_id") {
           this.getSupplier();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "customer") {
-          this.getCustomer();
+        } else if (this.result.SearchType.toLowerCase() == "product_id") {
+          this.getProduct();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "user") {
-          this.getUser();
+        } else if (this.result.SearchType.toLowerCase() == "from_supplier") {
+          this.getSupplier();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "approval") {
-          this.getUser();
-          this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "next approval") {
-          this.getUser();
-          this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "exp date") {
-          this.use_type_date = true;
-          this.extendFilter = false;
-          this.set_extend_date();
-        } else if (this.result.SearchType.toLowerCase() == "mfg date") {
-          this.use_type_date = true;
-          this.extendFilter = false;
-          this.set_extend_date();
-        } else if (this.result.SearchType.toLowerCase() == "source_type") {
-          this.getSourceType();
-          this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "source_wh") {
+        } else if (this.result.SearchType.toLowerCase() == "from_warehouse") {
           this.getWarehouse();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "destination_wh") {
+        } else if (this.result.SearchType.toLowerCase() == "from_customer") {
+          this.getCustomer();
+          this.extendFilter = true;
+        } else if (this.result.SearchType.toLowerCase() == "to_warehouse") {
           this.getWarehouse();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "source_customer") {
-          this.getCustomer();
-          this.extendFilter = true;
-        } else if (
-          this.result.SearchType.toLowerCase() == "destination_customer"
-        ) {
-          this.getCustomer();
-          this.extendFilter = true;
-        } else {
+        }
+        //  else if (this.result.SearchType.toLowerCase() == "product") {
+        //   this.getProduct();
+        //   this.extendFilter = true;
+        // }
+        //  else if (this.result.SearchType.toLowerCase() == "warehouse") {
+        //   this.getWarehouse();
+        //   this.extendFilter = true;
+        // } else if (this.result.SearchType.toLowerCase() == "supplier") {
+        //   this.getSupplier();
+        //   this.extendFilter = true;
+        // }
+        //  else if (this.result.SearchType.toLowerCase() == "customer") {
+        //   this.getCustomer();
+        //   this.extendFilter = true;
+        // } else if (this.result.SearchType.toLowerCase() == "user") {
+        //   this.getUser();
+        //   this.extendFilter = true;
+        // } else if (this.result.SearchType.toLowerCase() == "approval") {
+        //   this.getUser();
+        //   this.extendFilter = true;
+        // } else if (this.result.SearchType.toLowerCase() == "next approval") {
+        //   this.getUser();
+        //   this.extendFilter = true;
+        // } else if (this.result.SearchType.toLowerCase() == "exp date") {
+        //   this.use_type_date = true;
+        //   this.extendFilter = false;
+        //   this.set_extend_date();
+        // } else if (this.result.SearchType.toLowerCase() == "mfg date") {
+        //   this.use_type_date = true;
+        //   this.extendFilter = false;
+        //   this.set_extend_date();
+        // } else if (this.result.SearchType.toLowerCase() == "source_type") {
+        //   this.getSourceType();
+        //   this.extendFilter = true;
+        // } else if (this.result.SearchType.toLowerCase() == "source_wh") {
+        //   this.getWarehouse();
+        //   this.extendFilter = true;
+        // } else if (this.result.SearchType.toLowerCase() == "destination_wh") {
+        //   this.getWarehouse();
+        //   this.extendFilter = true;
+        // } else if (this.result.SearchType.toLowerCase() == "source_customer") {
+        //   this.getCustomer();
+        //   this.extendFilter = true;
+        // } else if (
+        //   this.result.SearchType.toLowerCase() == "destination_customer"
+        // ) {
+        //   this.getCustomer();
+        //   this.extendFilter = true;
+        // }
+        else {
           if (this.costume_filter) {
             for (const it of this.costume_filter) {
               if (
@@ -528,7 +597,7 @@ export default {
       this.$emit("handleClickFilter", this.result);
     },
     getProduct() {
-      let url = `/general/web?ApiName=ProductList&include_delete=1`;
+      let url = `/v3/master/product`;
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
@@ -541,8 +610,25 @@ export default {
         }
       });
     },
-    getWarehouse() {
-      let url = `/general/web?ApiName=WarehouseList&include_delete=1`;
+    getSource() {
+      let url = `/v3/master/source`;
+      $axiosMertrack.get(url).then((result) => {
+        let data = result.data.data;
+        for (const it of data) {
+          let tmp = it;
+          tmp.value = it.id;
+          tmp.label = `${it.name}`;
+          tmp.text = `${it.name}`;
+          this.listExtendFilter.push(tmp);
+        }
+      });
+    },
+    getWarehouse(type = null) {
+      let param = {};
+      if (type == "qa") param.category_id = 1;
+      if (type == "rts") param.category_id = 3;
+      param = new URLSearchParams(param).toString();
+      let url = `/v3/master/warehouse?${param}`;
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
@@ -556,7 +642,7 @@ export default {
       });
     },
     getSupplier() {
-      let url = `/general/web?ApiName=SupplierList&include_delete=1`;
+      let url = `/v3/master/supplier`;
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
@@ -570,7 +656,7 @@ export default {
       });
     },
     getCustomer() {
-      let url = `/general/web?ApiName=CustomerList&include_delete=1`;
+      let url = `/v3/master/customer`;
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {

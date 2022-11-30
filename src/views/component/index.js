@@ -3,6 +3,7 @@ import Button from "./Button";
 import DetailShowStatus from "./DetailShowStatus";
 import DetailStockSerial from "./DetailStockSerial";
 import DetailTransaction from "./DetailTransaction";
+import DetailTransactionV3 from "./DetailTransactionV3";
 import HeaderFilterDefault from "./HeaderFilterDefault";
 import HeaderFilterTransaction from "./HeaderFilterTransaction";
 import HeaderFilterTransactionV3 from "./HeaderFilterTransactionV3";
@@ -21,6 +22,7 @@ export {
   HeaderFilterTransaction,
   HeaderFilterTransactionV3,
   DetailTransaction,
+  DetailTransactionV3,
   DetailStockSerial,
   HeaderFilterDefault,
   MasterPid,

@@ -37,15 +37,15 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="inbound.full_name"
+                          v-model="inbound['_created.full_name']"
                         />
                       </td>
                     </tr>
                     <tr
                       style="height: 50px"
                       v-if="
-                        inbound.source != 'Return' &&
-                        inbound.source != 'Transfer'
+                        inbound.source.toLowerCase() != 'return' &&
+                        inbound.source.toLowerCase() != 'transfer'
                       "
                     >
                       <td>Remark</td>
@@ -72,7 +72,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="inbound.trx_id"
+                          v-model="inbound.trx_ref_id"
                         />
                       </td>
                     </tr>
@@ -141,8 +141,8 @@
       </CCard>
     </CCol>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -160,25 +160,25 @@ export default {
   name: "DetailInbound",
   mounted() {
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=InboundList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.inbound = data;
-        this.inbound.from = data.from_warehouse_name ?? data.supplier_name;
-        this.inbound.to = data.to_warehouse_name;
-        this.inbound.source = toTitleCase(data.source);
-        if (data.items.length > 0) {
-          this.items = data.items;
-        } else {
-          this.$toast.open({
-            message: `No data to be viewed`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-        }
-      });
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack
+        .get(`/v3/transaction/inbound?${param}`)
+        .then((response) => {
+          let data = response.data.data[0];
+          this.inbound = data;
+          this.inbound.source = toTitleCase(data.source);
+          if (data.items.length > 0) {
+            this.items = data.items;
+          } else {
+            this.$toast.open({
+              message: `No data to be viewed`,
+              type: "error",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+          }
+        });
     }
   },
   data() {
@@ -244,7 +244,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_id",
+          key: "serial",
           label: "SN",
         },
         {
@@ -313,10 +313,9 @@ export default {
   computed: {
     detailInbound() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
+        console.log(item);
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };

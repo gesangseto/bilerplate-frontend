@@ -8,16 +8,16 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
-                    value: 'Type',
-                    code: 'Type',
+                    value: 'source',
+                    code: 'source',
                     label: 'Type',
                     data: [
-                      { value: 'TRANSFER', label: 'Transfer ' },
-                      { value: 'RETURN', label: 'Return ' },
-                      { value: 'RETURN-EXTERNAL', label: 'Return-External' },
+                      { value: 'Transfer', label: 'Transfer ' },
+                      { value: 'Return-Internal', label: 'Return ' },
+                      { value: 'Return-EXTERNAL', label: 'Return-External' },
                       { value: 'Production', label: 'Production ' },
                       { value: 'Import', label: 'Import ' },
                       {
@@ -29,20 +29,22 @@
                 ]"
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Source Supplier',
-                  'source_wh',
-                  'destination_wh',
+                  'id',
+                  'product_id',
+                  'from_supplier',
+                  'from_warehouse',
+                  'from_customer',
+                  'to_warehouse',
                 ]"
                 :order="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Type',
-                  'Source Supplier',
-                  'source_wh',
-                  'destination_wh',
+                  'id',
+                  'product_id',
+                  'source',
+                  'from_supplier',
+                  'from_warehouse',
+                  'from_customer',
+                  'to_warehouse',
                 ]"
                 status_code="trx_inbound"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -97,7 +99,13 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, toTitleCase, calculatePagination } from "../../../utils";
+import {
+  exportData,
+  toTitleCase,
+  calculatePagination,
+  calculatePaginationV3,
+  humanize,
+} from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListInbound",
@@ -113,7 +121,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "InboundList",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -138,7 +145,7 @@ export default {
           _classes: "font-weight-bold",
         },
         {
-          key: "trx_id",
+          key: "trx_ref_id",
           label: "Trx Ref ID",
           _classes: "font-weight-bold",
         },
@@ -151,7 +158,7 @@ export default {
           label: "Destination",
         },
         {
-          key: "full_name",
+          key: "_created.full_name",
           label: "Created By",
         },
         {
@@ -166,13 +173,15 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePagination({
-          filter: this.filter,
-          item: res,
+      $axiosMertrack
+        .get(`/v3/transaction/inbound?${param}&raw=true`)
+        .then((res) => {
+          this.items = res.data.data;
+          this.filter = calculatePaginationV3({
+            filter: this.filter,
+            item: res,
+          });
         });
-      });
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -207,18 +216,13 @@ export default {
   computed: {
     inbound() {
       return this.items.map((item) => {
-        let from =
-          item.from_warehouse_name ?? item.supplier_name ?? item.customer_name;
-        let to = item.to_warehouse_name;
-        let source = item.source;
-        let trx_id = item.trx_id ?? item.trx_transfer_id ?? "-";
-
+        let created_by = item["_created.full_name"];
+        let source = toTitleCase(item.source);
         return {
           ...item,
-          trx_id: trx_id,
-          from: from,
-          to: to,
+          trx_ref_id: item.trx_ref_id || "-",
           source: source,
+          "_created.full_name": created_by || "-",
         };
       });
     },

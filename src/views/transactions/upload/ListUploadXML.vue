@@ -22,8 +22,8 @@
               'Distribution',
               'Release',
             ]" -->
-          <HeaderFilterTransaction
-            :filter="['All', 'ID', 'Source Type', 'Supplier']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'id', 'source_id', 'supplier_id']"
             status_code="upload_file_xml"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -267,14 +267,16 @@ export default {
     },
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/v3/transaction/upload-xml?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
+      $axiosMertrack
+        .get(`/v3/transaction/upload-xml?${param}&raw=true`)
+        .then((res) => {
+          this.items = res.data.data;
+          this.filter = calculatePaginationV3({
+            filter: this.filter,
+            item: res,
+          });
+          console.log(this.filter);
         });
-        console.log(this.filter);
-      });
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);

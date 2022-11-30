@@ -12,6 +12,7 @@ import {
   Button,
   ButtonPermission,
   DetailTransaction,
+  DetailTransactionV3,
   HeaderFilterTransaction,
   HeaderFilterTransactionV3,
   DetailStockSerial,
@@ -34,6 +35,7 @@ Vue.component("ButtonPermission", ButtonPermission);
 Vue.component("HeaderFilterTransaction", HeaderFilterTransaction);
 Vue.component("HeaderFilterTransactionV3", HeaderFilterTransactionV3);
 Vue.component("DetailTransaction", DetailTransaction);
+Vue.component("DetailTransactionV3", DetailTransactionV3);
 Vue.component("DetailShowStatus", DetailShowStatus);
 Vue.component("HeaderShowStatus", HeaderShowStatus);
 Vue.component("DetailStockSerial", DetailStockSerial);
