@@ -201,14 +201,22 @@ export default {
     getDetailItem(item, pack_level) {
       if (item && item.serial && item.id) {
         // for Loading button
-        // if (this.initial_load) {
-        //   this.loading[`level_${pack_level - 1}`] = true;
-        // } else {
-        //   this.loading[`level_${pack_level}`] = true;
-        // }
-        let param = { pss_id_parent: item.pss_id, item_id: item.id };
-        param = new URLSearchParams(param).toString();
+        if (this.initial_load) {
+          this.loading[`level_${pack_level - 1}`] = true;
+        } else {
+          this.loading[`level_${pack_level}`] = true;
+        }
+        let param = {};
         let url = `/v3/helper/detail-item/transaction?${param}`;
+        if (item.pss_id && item.id) {
+          param = { pss_id_parent: item.pss_id, item_id: item.id };
+          param = new URLSearchParams(param).toString();
+          url = `/v3/helper/detail-item/transaction?raw=true&${param}`;
+        } else {
+          param = { parent: item.id };
+          param = new URLSearchParams(param).toString();
+          url = `/v3/helper/detail-item/stock?raw=true&${param}`;
+        }
         $axiosMertrack.get(url).then((result) => {
           // for Loading button
           if (this.initial_load) {
@@ -218,6 +226,13 @@ export default {
             this.loading[`level_${pack_level}`] = false;
           }
           let data = result.data.data;
+          if (!this.detail_product.name && !this.detail_product.no) {
+            this.detail_product.no = data[0]["no"];
+            this.detail_product.name = data[0]["name"];
+            this.detail_product.nie = data[0]["nie"];
+            this.detail_product.expired_date = data[0]["expired_date"];
+            this.detail_product.mfg_date = data[0]["mfg_date"];
+          }
           let qty = 0;
           if (
             (data && data[0].serial == "0000000000") ||
@@ -229,7 +244,6 @@ export default {
           }
           this.list_data[`level_${pack_level - 1}`] = data;
           this.qty_data[`level_${pack_level - 1}`] = qty;
-          console.log(this.list_data);
         });
       }
     },

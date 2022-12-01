@@ -11,7 +11,7 @@
         <CCol md="6">
           <CInput
             horizontal
-            v-model="property.item.no"
+            v-model="property.item['_product.no']"
             label="Item No"
             readonly
           />
@@ -21,7 +21,12 @@
             label="Batch No"
             readonly
           />
-          <CInput horizontal v-model="property.item.nie" label="NIE" readonly />
+          <CInput
+            horizontal
+            v-model="property.item['_product.nie']"
+            label="NIE"
+            readonly
+          />
           <CInput
             horizontal
             v-model="property.item.gtin_cp"
@@ -32,19 +37,19 @@
         <CCol md="6">
           <CInput
             horizontal
-            v-model="property.item.name"
+            v-model="property.item['_product.name']"
             label="Product"
             readonly
           />
           <CInput
             horizontal
-            v-model="property.item.expired_date"
+            v-model="property.item['_batch.expired_date']"
             label="Exp Date"
             readonly
           />
           <CInput
             horizontal
-            v-model="property.item.mfg_date"
+            v-model="property.item['_batch.mfg_date']"
             label="Mfg Date"
             readonly
           />
@@ -56,8 +61,13 @@
           />
         </CCol>
       </CRow>
-        <hr/>
-      <CRow>
+      <hr />
+      <CAlert color="danger">
+        Status: {{ property.item["_status.name"] }} <br />
+        Desciption:
+        {{ property.item["_status.description"] }}
+      </CAlert>
+      <!-- <CRow>
         <CCol md="12">
           <CDataTable
             hover
@@ -70,7 +80,7 @@
             style="font-size: 12px"
           ></CDataTable>
         </CCol>
-      </CRow>
+      </CRow> -->
       <template #footer>
         <CButton @click="property.modal = false" color="danger">
           <CIcon name="cil-ban" /> Close</CButton
@@ -82,22 +92,24 @@
 
 <script>
 import { capitalizeFirstLetter, convertTableName } from "../../utils";
-import Table from '../base/Table.vue';
+import Table from "../base/Table.vue";
 export default {
   components: { Table },
   name: "ShowLockedStatus",
-  props: { property: Object},
+  props: { property: Object },
   watch: {
     property: {
       deep: true,
       handler(n, o) {
-        let datas=[];
-        for(const it of this.property.item.locked){
+        let datas = [];
+        console.log(n);
+        this.item = n;
+        for (const it of this.property.item.locked) {
           let data = it;
-          data.trx_type = convertTableName(data.trx_type)
-          datas.push(data)
+          data.trx_type = convertTableName(data.trx_type);
+          datas.push(data);
         }
-        this.locked_item = datas
+        this.locked_item = datas;
       },
     },
   },
@@ -105,12 +117,13 @@ export default {
   data() {
     return {
       result: this.resetForm(),
-      locked_item :[],
-      locked_field:[
-          { key: "id", label: "Trx ID" },
-          { key: "trx_type", label: "Locking Pending Transaction" },
-          { key: "quantity", label: "L1 Qty" },
-        ]
+      locked_item: [],
+      locked_field: [
+        { key: "id", label: "Trx ID" },
+        { key: "trx_type", label: "Locking Pending Transaction" },
+        { key: "quantity", label: "L1 Qty" },
+      ],
+      item: {},
     };
   },
   methods: {

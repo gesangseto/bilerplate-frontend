@@ -8,27 +8,24 @@
           </CCardHeader>
           <CCardBody>
             <CForm class="my-3">
-              <div class="form-group row">
-                <div class="col-sm-2 col-md-2 col-lg-2">
-                  <label>
-                    Warehouse <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7">
-                  <v-select
-                    :options="warehouseOptions"
-                    id="warehouse"
-                    v-model="stock.warehouse"
-                    :value.sync="stock.warehouse"
-                  >
-                  </v-select>
-                  <span
-                    id="error-warehouse"
-                    class="text-danger"
-                    style="font-size: 12px"
-                  ></span>
-                </div>
-              </div>
+              <CSelect
+                placeholder="-Select-"
+                :options="warehouseOptions"
+                horizontal
+                :value.sync="stock.warehouse_id"
+                :is-valid="
+                  initialLoad ? null : !stock.warehouse_id ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-2">
+                    Warehouse
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template>
+              </CSelect>
             </CForm>
             <div class="my-3 clearfix">
               <CButton
@@ -114,8 +111,8 @@
       </CCol>
     </CRow>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailStockSerial v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -158,6 +155,7 @@ export default {
         text: "",
         tooltip: "Show Locking Trx",
       },
+      initialLoad: true,
       detail_item: {},
       product_on_proccess: 0,
       datas: [],
@@ -187,9 +185,9 @@ export default {
       },
       warehouseOptions: [],
       productFields: [
-        { key: "no", label: "Item No" },
+        { key: "_product.no", label: "Item No" },
         {
-          key: "name",
+          key: "_product.name",
           label: "Product Name",
         },
         {
@@ -197,10 +195,10 @@ export default {
           label: "Batch No",
         },
         {
-          key: "expired_date",
+          key: "_batch.expired_date",
           label: "Exp Date",
         },
-        { key: "nie", label: "NIE" },
+        { key: "_product.nie", label: "NIE" },
         { key: "gtin_cp", label: "GTIN / CP" },
         {
           key: "serial",
@@ -223,7 +221,7 @@ export default {
       ],
       productOptions: [],
       stock: {
-        warehouse: null,
+        warehouse_id: null,
         type: null,
       },
     };
@@ -235,8 +233,8 @@ export default {
   },
   methods: {
     loadListWarehouse() {
-      let param = `ApiName=ListWarehouse&Params={"status":"Active"}&StatusCode=Active`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((result) => {
+      let _url = `/v3/master/warehouse?status=Active`;
+      $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.warehouseOptions.push({
@@ -254,21 +252,22 @@ export default {
     removeGenerateProduct() {
       this.view = false;
       this.items = [];
-      this.stock.warehouse = null;
+      this.stock.warehouse_id = null;
       this.stock.type = null;
     },
+    validation() {
+      if (!this.stock.warehouse_id) return false;
+      return true;
+    },
     generateProduct() {
-      // warehouse validasi
-      if (!this.stock.warehouse) {
-        $("#error-warehouse").text("Warehouse is required");
-        return false;
-      } else {
-        $("#error-warehouse").text("");
-      }
+      //
+      this.initialLoad = false;
+      if (!this.validation()) return;
       this.items = [];
       this.views = false;
-      let param = `ApiName=OpnameGenerate&Params={"warehouse_id":${this.stock.warehouse.value}}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let _url = `/v3/transaction/stock-opname/generate?raw=true&warehouse_id=${this.stock.warehouse_id}`;
+      $axiosMertrack.get(_url).then((res) => {
+        console.log(res);
         this.items = res.data.data;
         this.views = true;
       });
@@ -300,7 +299,7 @@ export default {
       this.viewModal = false;
     },
     save() {
-      if (!this.stock.warehouse) {
+      if (!this.stock.warehouse_id) {
         $("#error-warehouse").text("Warehouse is required");
         return false;
       } else {
@@ -369,7 +368,6 @@ export default {
           ...item,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
         };
       });
     },
