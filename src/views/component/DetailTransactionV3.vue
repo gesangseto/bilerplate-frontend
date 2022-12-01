@@ -107,7 +107,9 @@
                         : item.gtin_sscc
                     }}] {{ item.serial }}
                     {{
-                      total_child + 1 - idx != 1 ? ` - [${item.quantity}]` : ""
+                      total_child + 1 - idx != 1
+                        ? ` - [${item.quantity_child}]`
+                        : ""
                     }}
                   </option>
                 </select>
