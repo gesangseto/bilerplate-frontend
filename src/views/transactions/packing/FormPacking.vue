@@ -8,69 +8,63 @@
         <CCardBody>
           <CRow>
             <CCol sm="6" md="6" lg="6">
-              <div class="form-group row mb-2">
-                <label
-                  for="from-warehouse"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  Warehouse <strong class="text-danger">*</strong>
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  <v-select
-                    :options="warehouseOptions"
-                    v-model="data_header.warehouse"
-                    :value.sync="data_header.warehouse"
-                    @input="getBatch"
-                  >
-                  </v-select>
-                  <p style="color: red" v-if="required.warehouse.error">
-                    {{ required.warehouse.message }}
+              <CSelect
+                placeholder="-Select-"
+                :options="warehouseOptions"
+                horizontal
+                :value.sync="formData.warehouse_id"
+                :is-valid="
+                  initialLoad ? null : !formData.warehouse_id ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Warehouse
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
                   </p>
-                </div>
-              </div>
+                </template>
+              </CSelect>
 
-              <div class="form-group row mb-2">
-                <label
-                  for="product-name"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  Product Name <strong class="text-danger">*</strong>
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  <v-select
-                    :options="productOptions"
-                    v-model="data_header.product"
-                    :value.sync="data_header.product"
-                    @input="getBatch"
-                  >
-                  </v-select>
-                  <p style="color: red" v-if="required.product.error">
-                    {{ required.product.message }}
+              <CSelect
+                placeholder="-Select-"
+                :options="productOptions"
+                horizontal
+                :value.sync="formData.product_id"
+                :is-valid="
+                  initialLoad ? null : !formData.product_id ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Product Name
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
                   </p>
-                </div>
-              </div>
+                </template>
+              </CSelect>
 
-              <div class="form-group row mb-2">
-                <label
-                  for="batch-number"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  Batch No <strong class="text-danger">*</strong>
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  <v-select
-                    :options="batchNumberOptions"
-                    v-model="data_header.batch"
-                    :value.sync="data_header.batch"
-                    @input="getSerialNumber"
-                  >
-                  </v-select>
-                  <p style="color: red" v-if="required.batch.error">
-                    {{ required.batch.message }}
+              <CSelect
+                placeholder="-Select-"
+                :options="batchNumberOptions"
+                horizontal
+                :value.sync="formData.batch_no"
+                @change="getSerialNumber"
+                :is-valid="
+                  initialLoad ? null : !formData.batch_no ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Batch No
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
                   </p>
-                </div>
-              </div>
-
+                </template>
+              </CSelect>
               <div class="form-group row mb-2">
                 <label
                   for="batch-number"
@@ -82,7 +76,6 @@
                   {{ full_box }} {{ full_box && "Sack" }}
                 </div>
               </div>
-
               <div class="form-group row mb-2">
                 <label
                   for="batch-number"
@@ -91,12 +84,7 @@
                   Available L1 Qty
                 </label>
                 <div class="col-sm-8 col-md-8 col-lg-8">
-                  <input
-                    type="text"
-                    class="form-control"
-                    readonly
-                    v-model="last_stock"
-                  />
+                  {{ last_stock }}
                 </div>
               </div>
             </CCol>
@@ -198,6 +186,23 @@ import moment from "moment";
 export default {
   name: "FormPacking",
   watch: {
+    formData: {
+      deep: true,
+      handler(item, o) {
+        if (item.warehouse_id && item.product_id) {
+          this.getBatch();
+        }
+        if (item.batch_no) {
+          let idx = this.batchNumberOptions.findIndex(
+            (o) => o.value == item.batch_no
+          );
+          let batch = this.batchNumberOptions[idx];
+          this.formData.batch_detail = batch;
+          this.full_box = batch.qty_packagingl2;
+          this.last_stock = batch.quantity;
+        }
+      },
+    },
     data_header: {
       deep: true,
       handler(n, o) {
@@ -209,6 +214,15 @@ export default {
   },
   data() {
     return {
+      initialLoad: true,
+      formData: {
+        warehouse_id: null,
+        product_id: null,
+        batch_no: null,
+        remark: null,
+        batch_detail: {},
+        items: [],
+      },
       initial_load: true,
       today: moment().format("DD-MMM-YYYY"),
       data_header: {
@@ -270,7 +284,7 @@ export default {
           sorter: false,
         },
         {
-          key: "exp",
+          key: "expired_date",
           label: "Exp Date",
           sorter: false,
         },
@@ -356,6 +370,8 @@ export default {
   },
   methods: {
     getSerialNumber() {
+      console.log(this.formData);
+      return;
       this.item = [];
       // this.bacthNumber_=""
       let param = `ApiName=GetStock&Params={date_format:"web",serial:"0000000000",product_id:${this.data_header.product.value},batch_no:"${this.data_header.batch.value}",warehouse_id:${this.data_header.warehouse.value}}&Id= `;
@@ -386,29 +402,30 @@ export default {
     // checklist product before set data
     checkSerial(checked) {},
     getBatch() {
-      if (this.data_header.warehouse && this.data_header.product) {
+      let param = {
+        product_id: this.formData.product_id,
+        warehouse_id: this.formData.warehouse_id,
+        parent: null,
+        packaging_level: 1,
+      };
+      param = new URLSearchParams(param).toString();
+      let _url = `/v3/helper/detail-item/batch?${param}`;
+      $axiosMertrack.get(_url).then((result) => {
+        let _data = result.data.data;
         this.batchNumberOptions = [];
-        this.error.product = "";
-        this.data_header.batch = null;
-        let param_product = `ApiName=GetProductBatch&Params={product_id:${this.data_header.product.value},warehouse_id:${this.data_header.warehouse.value}}&Id= `;
-        $axiosMertrack
-          .get(`/general/mobile?${param_product}`)
-          .then((result) => {
-            if (result.data.data.length > 0) {
-              var temp = result.data.data;
-              for (const it of temp) {
-                this.batchNumberOptions.push({
-                  value: it.id,
-                  label: `${it.id} <=> ${it.expired_date}`,
-                });
-              }
-            } else {
-              this.last_stock = "0";
-              this.error.product =
-                "This product dont have any batch on that warehouse";
-            }
-          });
-      }
+        if (_data.length > 0) {
+          var temp = result.data.data;
+          for (const it of temp) {
+            this.batchNumberOptions.push({
+              ...it,
+              value: it.batch_no,
+              label: `${it.batch_no} <=> ${it.expired_date}`,
+            });
+          }
+        } else {
+          this.last_stock = "0";
+        }
+      });
     },
     deleteRow(item, index) {
       this.items.splice(index, 1);
@@ -424,33 +441,28 @@ export default {
       if (!this.checkValidation()) {
         return;
       }
-      let body = {
-        ApiName: "PackNS",
-        Params: {
-          remark: "",
-          items: this.items,
-        },
-      };
       // return;
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
+        this.formData.items = this.items;
         this.$isLoading(true);
-        $axiosMertrack.post(`/general/mobile`, body).then((result) => {
-          this.$toast.open({
-            message: result.data.error
-              ? result.data.message
-              : `Data has been saved succesfully `,
-            type: result.data.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
+        $axiosMertrack
+          .put(`/v3/transaction/packing`, this.formData)
+          .then((result) => {
+            this.$toast.open({
+              message: result.data.error
+                ? result.data.message
+                : `Data has been saved succesfully `,
+              type: result.data.error ? "error" : "success",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            this.$isLoading(false);
+            if (!result.data.error) {
+              this.$router.back();
+            }
           });
-          let res = result.data.data;
-          this.$isLoading(false);
-          if (!result.data.error) {
-            this.$router.back();
-          }
-        });
       }
       return;
     },
@@ -458,30 +470,7 @@ export default {
       if (!this.checkValidation()) {
         return;
       }
-      let isError = false;
-      if (!this.data_header.warehouse) {
-        this.error.from = "Warehouse field is required";
-        isError = true;
-      } else {
-        this.error.from = "";
-      }
-      if (!this.data_header.product) {
-        this.error.product = "Product field is required";
-        isError = true;
-      } else {
-        this.error.product = "";
-      }
-      if (!this.data_header.batch) {
-        this.error.batch = "Batch field is required";
-        isError = true;
-      } else {
-        this.error.batch = "";
-      }
-      if (isError) {
-        return false;
-      }
 
-      var res = this.data_header.batch.label.split(" <=> ");
       this.items = [];
       let temp_item = {};
       var total_stock = this.last_stock;
@@ -490,31 +479,32 @@ export default {
       var incomplete_box = total_stock % full_box;
       for (var i = 0; i < parseInt(total_full_box); i++) {
         temp_item.no = i + 1;
-        temp_item.warehouse = this.data_header.warehouse.value;
-        temp_item.exp = res[1];
+        temp_item.expired_date = this.formData.batch_detail["expired_date"];
         temp_item.serial = "0000000000";
-        temp_item.product_id = this.data_header.product.value;
-        temp_item.batch_no = this.data_header.batch.value;
+        temp_item.product_id = this.formData.product_id;
+        temp_item.batch_no = this.formData.batch_no;
+        temp_item.gtin_sscc = this.formData.batch_detail["gtin_sscc"];
         temp_item.quantity = full_box;
         temp_item.remark = "Generated on Web";
-        temp_item.product_no = this.data_header.product.no;
-        temp_item.product_name = this.data_header.product.name;
+        temp_item.product_no = this.formData.batch_detail["no"];
+        temp_item.product_name = this.formData.batch_detail["name"];
         temp_item.type = "Full";
         this.can_proccess = true;
         this.items.push(temp_item);
         temp_item = {};
       }
+
       if (incomplete_box != 0) {
         temp_item.no = i + 1;
-        temp_item.warehouse = this.data_header.warehouse.value;
-        temp_item.exp = res[1];
+        temp_item.expired_date = this.formData.batch_detail["expired_date"];
         temp_item.serial = "0000000000";
-        temp_item.product_id = this.data_header.product.value;
-        temp_item.batch_no = this.data_header.batch.value;
+        temp_item.product_id = this.formData.product_id;
+        temp_item.batch_no = this.formData.batch_no;
+        temp_item.gtin_sscc = this.formData.batch_detail["gtin_sscc"];
         temp_item.quantity = incomplete_box;
         temp_item.remark = "Generated on Web";
-        temp_item.product_no = this.data_header.product.no;
-        temp_item.product_name = this.data_header.product.name;
+        temp_item.product_no = this.formData.batch_detail["no"];
+        temp_item.product_name = this.formData.batch_detail["name"];
         temp_item.type = "Partial";
         this.items.push(temp_item);
         this.can_proccess = true;
@@ -526,22 +516,14 @@ export default {
       }
     },
     checkValidation() {
-      this.initial_load = false;
-      let have_error = false;
-      for (const rq in this.required) {
-        if (!this.data_header[rq]) {
-          this.required[rq].error = true;
-          have_error = true;
-        } else {
-          this.required[rq].error = false;
-        }
-      }
-      // If any error
-      if (have_error) {
+      this.initialLoad = false;
+      if (
+        !this.formData.warehouse_id ||
+        !this.formData.product_id ||
+        !this.formData.batch_no
+      )
         return false;
-      } else {
-        return true;
-      }
+      return true;
     },
     save() {
       // // cek semua input yang mandatory

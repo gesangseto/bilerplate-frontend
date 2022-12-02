@@ -94,7 +94,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "PackList",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -114,7 +113,7 @@ export default {
           label: "Product Name [Batch No]",
         },
         {
-          key: "warehouse_name",
+          key: "_warehouse.name",
           label: "Warehouse",
         },
         {
@@ -122,7 +121,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_no",
+          key: "serial",
           label: "Packing SN",
         },
         {
@@ -134,7 +133,7 @@ export default {
           label: "Pkg Name",
         },
         {
-          key: "full_name",
+          key: "_created.full_name",
           label: "Created By",
         },
         {
@@ -149,8 +148,8 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/packing?raw=true${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePagination({
           filter: this.filter,
@@ -187,17 +186,17 @@ export default {
       return this.items.map((item) => {
         // END OF EDITED BY GESANG
         let gtin_cp = "<view for detail>";
-        let serial_no = "<view for detail>";
+        let serial = "<view for detail>";
         if (item.child_count == 1) {
           gtin_cp =
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc;
-          serial_no = item.serial_no;
+          serial = item.serial;
         }
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
           gtin_cp: gtin_cp,
-          serial_no: serial_no,
+          serial: serial,
+          ["_created.full_name"]: item["_created.full_name"] || "-",
         };
       });
     },

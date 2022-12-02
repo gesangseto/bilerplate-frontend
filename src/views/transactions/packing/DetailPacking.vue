@@ -168,15 +168,16 @@ export default {
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=PackList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = { id: this.$route.params.id, raw: true };
+      let url = `/v3/transaction/packing?${new URLSearchParams(param)}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
-        //
         this.repack = data;
         if (data.items.length > 0) {
           this.items = data.items;
           for (const it of data.items) {
-            if (!it.trx_pack_stock_serial_id) {
+            console.log(it);
+            if (!it.trx_pack_gtin_sscc) {
               this.can_print_all = false;
             }
           }
@@ -290,7 +291,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "trx_pack_serial_no",
+          key: "trx_pack_serial",
           label: "Packing SN",
         },
         {
@@ -323,51 +324,13 @@ export default {
     cancel() {
       this.$router.back();
     },
-    // printNew(item) {
-    //   let items = [];
-    //   if (!item) {
-    //     for (const it of this.repack.items) {
-    //       items.push({
-    //         stock_serial_id: it.trx_pack_stock_serial_id,
-    //       });
-    //     }
-    //   } else {
-    //     items = [{ stock_serial_id: item.trx_pack_stock_serial_id }];
-    //   }
-    //   $axios2
-    //     .post("reprint/validate/v2", items)
-    //     .then((response) => {
-    //       this.$toast.open({
-    //         message: `${response.data.message}`,
-    //         type: response.data.status == 0 ? "error" : "success",
-    //         dissmissible: true,
-    //         position: "top-right",
-    //         duration: 3000,
-    //       });
-    //       if (response.data.status == 0) {
-    //         return;
-    //       }
-    //       let _data = response.data.data;
-    //       printLabel({ data: _data.items, link: _data.link });
-    //     })
-    //     .catch((error) => {
-    //       this.$toast.open({
-    //         message: `${error}`,
-    //         type: "error",
-    //         dissmissible: true,
-    //         position: "top-right",
-    //         duration: 3000,
-    //       });
-    //     });
-    //   return;
-    // },
     printAllV3(zpl_mode = false) {
       let _body = [];
       for (const it of this.items) {
         let itm = {
           id: it.trx_pack_stock_serial_id,
           serial: it.trx_pack_serial_no,
-          gtin_sscc: it.gtin_sscc_trx_pack,
+          gtin_sscc: it.trx_pack_gtin_sscc,
         };
         _body.push(itm);
       }
@@ -436,15 +399,12 @@ export default {
   computed: {
     detailRepack() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
-
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
-            item.epc_type_trx_pack == "sscc"
+            item.trx_pack_epc_type == "sscc"
               ? item.company_prefix
-              : item.gtin_sscc_trx_pack,
+              : item.trx_pack_gtin_sscc,
         };
       });
     },
