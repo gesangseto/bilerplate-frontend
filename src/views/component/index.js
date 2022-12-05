@@ -15,6 +15,7 @@ import ShowLockedStatus from "./ShowLockedStatus";
 import DetailBarcodeGenerator from "./DetailBarcodeGenerator";
 import HeaderManualBarcodeGenerator from "./HeaderManualBarcodeGenerator";
 import ModalPrintLabel from "./ModalPrintLabel";
+import ModalPrintLabelV3 from "./ModalPrintLabelV3";
 
 export {
   ButtonPermission,
@@ -34,4 +35,5 @@ export {
   DetailBarcodeGenerator,
   HeaderManualBarcodeGenerator,
   ModalPrintLabel,
+  ModalPrintLabelV3,
 };

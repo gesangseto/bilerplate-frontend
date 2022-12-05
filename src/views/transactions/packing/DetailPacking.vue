@@ -154,7 +154,10 @@
         </CCardFooter>
       </CCard>
     </CCol>
-    <ModalPrintLabel :item="selected_data" v-on:onClose="selected_data = {}" />
+    <ModalPrintLabelV3
+      :item="selected_data"
+      v-on:onClose="selected_data = {}"
+    />
   </CRow>
 </template>
 
@@ -328,8 +331,7 @@ export default {
       let _body = [];
       for (const it of this.items) {
         let itm = {
-          id: it.trx_pack_stock_serial_id,
-          serial: it.trx_pack_serial_no,
+          serial: it.trx_pack_serial,
           gtin_sscc: it.trx_pack_gtin_sscc,
         };
         _body.push(itm);

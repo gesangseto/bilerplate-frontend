@@ -24,8 +24,8 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
-                :filter="['All', 'ID', 'Product', 'Warehouse']"
+              <HeaderFilterTransactionV3
+                :filter="['All', 'id', 'product_id', 'warehouse_id']"
                 status_code="trx_pack"
                 v-on:handleClickFilter="handleClickFilter($event)"
                 v-on:handleChangeSize="handleChangeSize($event)"
