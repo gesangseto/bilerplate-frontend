@@ -84,7 +84,12 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination, printLabelV3 } from "../../../utils";
+import {
+  exportData,
+  calculatePagination,
+  printLabelV3,
+  calculatePaginationV3,
+} from "../../../utils";
 import { dateFilter } from "../../../constants";
 import $axiosSupport from "../../../apiSupport";
 export default {
@@ -170,7 +175,7 @@ export default {
       let url = `/v3/transaction/re-packing?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
