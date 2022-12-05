@@ -124,7 +124,7 @@
                   <td>
                     <ButtonPermission
                       :buttonProperty="btn_printProp"
-                      v-if="item.trx_pack_stock_serial_id"
+                      v-if="item.trx_pack_gtin_sscc"
                       :permission="'print'"
                       @click="printV3(item, index)"
                     />
@@ -361,9 +361,8 @@ export default {
     },
     printV3(item) {
       let _body = {
-        id: item.trx_pack_stock_serial_id,
-        serial: item.trx_pack_serial_no,
-        gtin_sscc: item.gtin_sscc_trx_pack,
+        serial: item.trx_pack_serial,
+        gtin_sscc: item.trx_pack_gtin_sscc,
         validate: true,
       };
       var _url = new URLSearchParams(_body).toString();

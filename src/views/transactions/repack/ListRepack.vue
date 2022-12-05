@@ -23,8 +23,8 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
-                :filter="['All', 'ID', 'Product', 'Warehouse']"
+              <HeaderFilterTransactionV3
+                :filter="['All', 'id', 'product_id', 'warehouse_id']"
                 status_code="trx_un_pack"
                 v-on:handleClickFilter="handleClickFilter($event)"
                 v-on:handleChangeSize="handleChangeSize($event)"
@@ -99,7 +99,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "UnPackList",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -127,7 +126,7 @@ export default {
           label: "Product Name",
         },
         {
-          key: "warehouse_name",
+          key: "_warehouse.name",
           label: "Warehouse",
         },
         {
@@ -140,7 +139,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_no",
+          key: "serial",
           label: "Re-Packing SN",
         },
         {
@@ -152,7 +151,7 @@ export default {
           label: "Pkg Name",
         },
         {
-          key: "full_name",
+          key: "_created.full_name",
           label: "Created By",
         },
         {
@@ -168,8 +167,8 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/re-packing?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePagination({
           filter: this.filter,
@@ -227,8 +226,7 @@ export default {
     // },
     printV3(item) {
       let _body = {
-        id: item.stock_serial_id,
-        serial: item.serial_no,
+        serial: item.serial,
         gtin_sscc: item.gtin_sscc,
         validate: true,
       };
@@ -270,7 +268,7 @@ export default {
         // END OF EDITED BY GESANG
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
+          ["_created.full_name"]: item["_created.full_name"] || "-",
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };

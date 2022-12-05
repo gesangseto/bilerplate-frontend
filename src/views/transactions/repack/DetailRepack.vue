@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack.full_name"
+                          v-model="unpack['_created.full_name']"
                         />
                       </td>
                     </tr>
@@ -57,7 +57,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack.warehouse_name"
+                          v-model="unpack['_warehouse.name']"
                         />
                       </td>
                     </tr>
@@ -91,7 +91,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack.serial_no"
+                          v-model="unpack.serial"
                         />
                       </td>
                     </tr>
@@ -111,9 +111,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="
-                            unpack[`name_packaging_l${unpack.packaging_level}`]
-                          "
+                          v-model="unpack.packaging_name"
                         />
                       </td>
                     </tr>
@@ -157,9 +155,10 @@ import $axiosMertrack from "../../../apiMertrack";
 export default {
   name: "DetailRepack",
   mounted() {
-    let param = `ApiName=UnPackList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-    $axiosMertrack.get(`general/web?${param}`).then((response) => {
+    let url = `/v3/transaction/re-packing?id=${this.$route.params.id}`;
+    $axiosMertrack.get(url).then((response) => {
       let data = response.data.data[0];
+      console.log(data);
       //
       this.unpack = data;
       this.unpack.packaging_level = 2;
@@ -217,7 +216,7 @@ export default {
           label: "NIE",
         },
         {
-          key: "gtin",
+          key: "gtin_sscc",
           label: "GTIN",
         },
         {
@@ -253,10 +252,8 @@ export default {
   computed: {
     unpackDetail() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
         };
       });
     },
