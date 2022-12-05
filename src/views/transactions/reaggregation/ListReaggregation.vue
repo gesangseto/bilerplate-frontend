@@ -23,8 +23,8 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
-                :filter="['All', 'ID', 'Product', 'Warehouse']"
+              <HeaderFilterTransactionV3
+                :filter="['All', 'id', 'product_id', 'warehouse_id']"
                 status_code="trx_aggregation"
                 v-on:handleClickFilter="handleClickFilter($event)"
                 v-on:handleChangeSize="handleChangeSize($event)"
@@ -86,13 +86,21 @@
         </CCardBody>
       </CCard>
     </CCol>
-    <ModalPrintLabel :item="selected_data" v-on:onClose="selected_data = {}" />
+    <ModalPrintLabelV3
+      :item="selected_data"
+      v-on:onClose="selected_data = {}"
+    />
   </CRow>
 </template>
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination, printLabelV3 } from "../../../utils";
+import {
+  exportData,
+  calculatePagination,
+  printLabelV3,
+  calculatePaginationV3,
+} from "../../../utils";
 import { dateFilter } from "../../../constants";
 import $axiosSupport from "../../../apiSupport";
 export default {
@@ -108,7 +116,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ReAggregationList",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -145,7 +152,7 @@ export default {
           label: "Product Name [Batch No]",
         },
         {
-          key: "warehouse_name",
+          key: "_warehouse.name",
           label: "Warehouse",
         },
         {
@@ -158,7 +165,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_no",
+          key: "serial",
           label: "Re-Aggregation SN",
         },
         {
@@ -170,7 +177,7 @@ export default {
           label: "Pkg Name",
         },
         {
-          key: "full_name",
+          key: "_created.full_name",
           label: "Created By",
         },
         {
@@ -184,10 +191,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/re-aggregation?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -250,8 +257,7 @@ export default {
 
     printV3(item) {
       let _body = {
-        id: item.stock_serial_id,
-        serial: item.serial_no,
+        serial: item.serial,
         gtin_sscc: item.gtin_sscc,
         validate: true,
       };
@@ -292,7 +298,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
+          ["_created.full_name"]: item["_created.full_name"] || "-",
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };

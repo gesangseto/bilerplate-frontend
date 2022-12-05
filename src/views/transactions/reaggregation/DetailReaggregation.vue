@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation.full_name"
+                          v-model="reaggregation['_created.full_name']"
                         />
                       </td>
                     </tr>
@@ -57,7 +57,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation.warehouse_name"
+                          v-model="reaggregation['_warehouse.name']"
                         />
                       </td>
                     </tr>
@@ -91,7 +91,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation.serial_no"
+                          v-model="reaggregation.serial"
                         />
                       </td>
                     </tr>
@@ -111,11 +111,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="
-                            reaggregation[
-                              `name_packaging_l${reaggregation.packaging_level}`
-                            ]
-                          "
+                          v-model="reaggregation.packaging_name"
                         />
                       </td>
                     </tr>
@@ -165,7 +161,7 @@
     </CCol>
     <!-- Modal Detail Barang Dipilih  -->
     <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -182,8 +178,9 @@ export default {
   name: "DetailReaggregation",
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
-    let param = `ApiName=ReAggregationList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-    $axiosMertrack.get(`general/web?${param}`).then((response) => {
+    let param = { id: this.$route.params.id, raw: true };
+    let url = `/v3/transaction/re-aggregation?${new URLSearchParams(param)}`;
+    $axiosMertrack.get(url).then((response) => {
       let data = response.data.data[0];
       //
       this.reaggregation = data;
@@ -262,7 +259,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_id",
+          key: "serial",
           label: "SN",
         },
         {
@@ -326,7 +323,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
