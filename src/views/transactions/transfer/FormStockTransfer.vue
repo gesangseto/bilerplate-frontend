@@ -137,8 +137,8 @@
       </template>
     </CModal>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="detailModal" size="lg">
-      <DetailStockSerial v-if="detailModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="detailModal" size="xl">
+      <DetailTransactionV3 v-if="detailModal == true" :item="detail_item" />
       <template #footer>
         <CButton
           size="sm"

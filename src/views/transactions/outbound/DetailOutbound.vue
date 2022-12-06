@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="outbound.full_name"
+                          v-model="outbound.created_full_name"
                         />
                       </td>
                     </tr>
@@ -56,7 +56,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="outbound.trx_id"
+                          v-model="outbound.trx_ref_id"
                         />
                       </td>
                     </tr>
@@ -125,8 +125,8 @@
       </CCard>
     </CCol>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -144,12 +144,10 @@ export default {
   name: "DetailOutbound",
   mounted() {
     if (this.$route.params.id != undefined) {
-      let param = `ApiName=OutboundList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `/v3/transaction/outbound?raw=true&id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.outbound = data;
-        this.outbound.from = data.from_warehouse_name;
-        this.outbound.to = data.to_warehouse_name ?? data.customer_to_name;
         this.outbound.type = toTitleCase(data.type);
         if (data.items.length > 0) {
           this.items = data.items;
@@ -228,7 +226,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_id",
+          key: "serial",
           label: "SN",
         },
         {
@@ -296,10 +294,8 @@ export default {
   computed: {
     dataOutbound() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };

@@ -298,6 +298,11 @@ export default {
           code: "to_warehouse",
           label: "To Warehouse",
         },
+        {
+          value: "to_customer",
+          code: "to_customer",
+          label: "To Customer",
+        },
         // {
         //   value: "Product",
         //   code: "Product",
@@ -501,6 +506,9 @@ export default {
           this.extendFilter = true;
         } else if (this.result.SearchType.toLowerCase() == "to_warehouse") {
           this.getWarehouse();
+          this.extendFilter = true;
+        } else if (this.result.SearchType.toLowerCase() == "to_customer") {
+          this.getCustomer();
           this.extendFilter = true;
         }
         //  else if (this.result.SearchType.toLowerCase() == "product") {

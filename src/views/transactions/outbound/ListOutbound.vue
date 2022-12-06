@@ -8,35 +8,35 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
                     value: 'Type',
                     code: 'Type',
                     label: 'Type',
                     data: [
-                      { value: 'TRANSFER', label: 'Transfer' },
-                      { value: 'PICKING', label: 'Picking' },
-                      { value: 'RETURN', label: 'Return' },
+                      { value: 'Transfer', label: 'Transfer' },
+                      { value: 'Picking', label: 'Picking' },
+                      { value: 'Return', label: 'Return' },
                     ],
                   },
                 ]"
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'source_wh',
-                  'destination_wh',
-                  'destination_customer',
+                  'id',
+                  'product_id',
+                  'from_warehouse',
+                  'to_warehouse',
+                  'to_customer',
                 ]"
                 :order="[
                   'All',
-                  'ID',
-                  'Product',
+                  'id',
+                  'product_id',
                   'Type',
-                  'source_wh',
-                  'destination_wh',
-                  'destination_customer',
+                  'from_warehouse',
+                  'to_warehouse',
+                  'to_customer',
                 ]"
                 status_code="trx_outbound"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -91,7 +91,12 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, toTitleCase, calculatePagination } from "../../../utils";
+import {
+  exportData,
+  toTitleCase,
+  calculatePagination,
+  calculatePaginationV3,
+} from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListOutbound",
@@ -105,7 +110,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "OutboundList",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -130,7 +134,7 @@ export default {
           _classes: "font-weight-bold",
         },
         {
-          key: "trx_id",
+          key: "trx_ref_id",
           label: "Trx Ref ID",
           _classes: "font-weight-bold",
         },
@@ -143,7 +147,7 @@ export default {
           label: "Destination",
         },
         {
-          key: "full_name",
+          key: "created_full_name",
           label: "Created By",
         },
         {
@@ -158,10 +162,13 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
+      let url = `/v3/transaction/outbound?raw=true&${param}`;
 
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(url).then((res) => {
+        let data = res.data.data;
+        console.log(data);
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -196,13 +203,10 @@ export default {
   computed: {
     dataOutbound() {
       return this.items.map((item) => {
-        let from = item.from_warehouse_name;
-        let to = item.to_warehouse_name ?? item.customer_to_name;
         let type = toTitleCase(item.type);
         return {
           ...item,
-          from: from,
-          to: to,
+          created_full_name: item.created_full_name || "-",
           type: type,
         };
       });

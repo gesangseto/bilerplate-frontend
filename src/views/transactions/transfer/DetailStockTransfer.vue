@@ -158,7 +158,7 @@
       </CCard>
     </div>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
       <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
