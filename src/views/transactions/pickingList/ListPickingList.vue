@@ -7,23 +7,8 @@
           <h5>Picking List</h5>
         </CCardHeader>
         <CCardBody>
-          <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-          <HeaderFilterTransaction
-            :filter="['All', 'ID', 'Warehouse', 'Customer']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'id', 'warehouse_id', 'customer_id']"
             status_code="trx_picking"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -129,7 +114,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ListPicking",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -188,7 +172,9 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/picking?raw=true&${param}`;
+
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePagination({
           filter: this.filter,

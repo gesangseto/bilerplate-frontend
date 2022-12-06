@@ -279,6 +279,11 @@ export default {
           label: "Warehouse",
         },
         {
+          value: "customer_id",
+          code: "customer_id",
+          label: "Customer",
+        },
+        {
           value: "from_supplier",
           code: "from_supplier",
           label: "From Supplier",
@@ -494,6 +499,9 @@ export default {
           this.extendFilter = true;
         } else if (this.result.SearchType.toLowerCase() == "warehouse_id") {
           this.getWarehouse();
+          this.extendFilter = true;
+        } else if (this.result.SearchType.toLowerCase() == "customer_id") {
+          this.getCustomer();
           this.extendFilter = true;
         } else if (this.result.SearchType.toLowerCase() == "from_supplier") {
           this.getSupplier();
