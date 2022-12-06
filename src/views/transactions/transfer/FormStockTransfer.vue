@@ -14,14 +14,10 @@
                   placeholder="--Select--"
                   horizontal
                   :options="listWarehouseFrom"
-                  @change="getFromWarehouse()"
-                  v-model="data_header.fromWarehouse"
-                  :disabled="disableWarehouse"
-                  :value.sync="data_header.fromWarehouse"
-                  :invalid-feedback="required.fromWarehouse.message"
-                  :add-input-classes="{
-                    'is-invalid': required.fromWarehouse.error,
-                  }"
+                  :value.sync="formData.from_warehouse"
+                  :is-valid="
+                    initialLoad ? null : !formData.from_warehouse ? false : true
+                  "
                 >
                   >
                   <template #label>
@@ -37,14 +33,10 @@
                   :options="listWarehouseTo"
                   horizontal
                   placeholder="--Select--"
-                  :disabled="disableWarehouse"
-                  :value.sync="data_header.toWarehouse"
-                  v-model="data_header.toWarehouse"
-                  @change="getToWarehouse()"
-                  :invalid-feedback="required.toWarehouse.message"
-                  :add-input-classes="{
-                    'is-invalid': required.toWarehouse.error,
-                  }"
+                  :value.sync="formData.to_warehouse"
+                  :is-valid="
+                    initialLoad ? null : !formData.to_warehouse ? false : true
+                  "
                 >
                   >
                   <template #label>
@@ -125,9 +117,9 @@
       :show.sync="modalAdd"
       size="xl"
     >
-      <FormAddItem
+      <FormAddItemV3
         :currentItem="items"
-        :filter="data_header"
+        :filter="formData"
         v-on:handleResult="handleResult($event)"
       />
       <template #footer>
@@ -173,7 +165,7 @@ import { parsingBarcode } from "../../../utils";
 export default {
   name: "FormStockTransfer",
   watch: {
-    data_header: {
+    formData: {
       deep: true,
       handler(n, o) {
         if (!this.initial_load) {
@@ -184,13 +176,13 @@ export default {
   },
   data() {
     return {
+      initialLoad: true,
       initial_load: true,
-      data_header: {
-        warehouse_id: null,
-        fromWarehouse: null,
-        toWarehouse: null,
-        product: null,
-        batch: null,
+      formData: {
+        from_warehouse: null,
+        to_warehouse: null,
+        remark: null,
+        items: [],
       },
       detail_item: {},
       disableWarehouse: false,
@@ -327,16 +319,6 @@ export default {
           sorter: false,
         },
       ],
-      required: {
-        fromWarehouse: {
-          error: false,
-          message: "Source warehouse is required",
-        },
-        toWarehouse: {
-          error: false,
-          message: "Destination warehouse is required",
-        },
-      },
     };
   },
   mounted() {
@@ -347,22 +329,14 @@ export default {
     this.action = this.$route.params.id === undefined ? "ADD" : "EDIT";
   },
   methods: {
-    getFromWarehouse() {
-      this.data_header.warehouse_id = this.data_header.fromWarehouse;
-    },
-    getToWarehouse() {},
     closeDetailModal() {
       this.datas = [];
       this.detailSerialOrAggregation = {};
     },
     Add() {
-      this.data_header.batch = null;
-      this.data_header.product = null;
-      //   pengecekan jika tidak pilih warehouse
       if (!this.checkValidation()) {
         return;
       }
-
       this.modalAdd = true;
     },
     detailRow(item) {
@@ -375,12 +349,11 @@ export default {
     removeDuplicateData(data) {
       data = data.filter(
         (value, index, self) =>
-          index === self.findIndex((t) => t.barcode_2d === value.barcode_2d)
+          index === self.findIndex((t) => t.barcode === value.barcode)
       );
       return data;
     },
     handleResult(data) {
-      // this.temp_items = this.temp_items.concat(data);
       this.temp_items = this.removeDuplicateData(data);
       return;
     },
@@ -406,8 +379,10 @@ export default {
       this.modalAdd = false;
     },
     loadListWarehouse() {
-      let from_warehouse = `ApiName=ListWarehouse&Params={"status":"Active","category_id":1}&StatusCode=Active`;
-      $axiosMertrack.get(`/general/mobile?${from_warehouse}`).then((result) => {
+      var param = { status: "Active", category_id: 1 };
+      param = new URLSearchParams(param).toString();
+      var _url = `/v3/master/warehouse?${param}`;
+      $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.listWarehouseFrom.push({
@@ -416,8 +391,10 @@ export default {
           });
         }
       });
-      let to_warehouse = `ApiName=ListWarehouse&Params={"status":"Active","category_id":3}&StatusCode=Active`;
-      $axiosMertrack.get(`/general/mobile?${to_warehouse}`).then((result) => {
+      var param = { status: "Active", category_id: 3 };
+      param = new URLSearchParams(param).toString();
+      var _url = `/v3/master/warehouse?${param}`;
+      $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.listWarehouseTo.push({
@@ -441,22 +418,18 @@ export default {
     },
 
     checkValidation() {
-      this.initial_load = false;
-      let have_error = false;
-      for (const rq in this.required) {
-        if (!this.data_header[rq]) {
-          this.required[rq].error = true;
-          have_error = true;
-        } else {
-          this.required[rq].error = false;
-        }
-      }
-      // If any error
-      if (have_error) {
+      this.initialLoad = false;
+      if (!this.formData.from_warehouse || !this.formData.to_warehouse) {
+        this.$toast.open({
+          message: "Please complete the form",
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
         return false;
-      } else {
-        return true;
       }
+      return true;
     },
     save() {
       if (!this.checkValidation()) {
@@ -476,33 +449,25 @@ export default {
       // Mapping data baru untuk di save
       let items = [];
       for (const it of this.items) {
-        if (it.barcode_2d && it.serial != "0000000000") {
-          items.push(parsingBarcode(it.barcode_2d));
-        } else {
-          items.push({
-            batch_no: it.batch_no,
-            exp: it.expired_date,
-            serial: it.serial,
-            quantity: it.quantity,
-            remark: "",
-            warehouse: this.data_header.warehouse_id,
-          });
+        let field = {
+          gtin_sscc: it.gtin_sscc,
+          serial: it.serial,
+        };
+        if (it.serial == "0000000000") {
+          field["product_id"] = it.product_id;
+          field["batch_no"] = it.batch_no;
+          field["expired_date"] = it.expired_date;
+          field["quantity"] = it.quantity;
         }
+        items.push(field);
       }
-      let fixDataTransfer = {
-        ApiName: "TransferInput",
-        Params: {
-          fromWarehouse: this.data_header.fromWarehouse,
-          toWarehouse: this.data_header.toWarehouse,
-          remark: "",
-          items: items,
-        },
-      };
+      let param = this.formData;
+      param.items = items;
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
         $axiosMertrack
-          .post("/general/web", fixDataTransfer)
+          .put("/v3/transaction/transfer", param)
           .then((result) => {
             this.$isLoading(false);
             let res = result.data;
@@ -517,7 +482,7 @@ export default {
             });
             if (!res.error) {
               this.items = [];
-              fixDataTransfer = [];
+              this.formData.items = [];
               this.$router.back();
             }
           })
@@ -543,7 +508,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
@@ -551,10 +515,8 @@ export default {
     },
     detailItems() {
       return this.item.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };

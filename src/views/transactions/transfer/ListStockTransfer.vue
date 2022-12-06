@@ -8,23 +8,14 @@
             <h5>Stock Transfer</h5>
           </CCardHeader>
           <CCardBody>
-            <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-            <HeaderFilterTransaction
-              :filter="['All', 'ID', 'Product', 'source_wh', 'destination_wh']"
+            <HeaderFilterTransactionV3
+              :filter="[
+                'All',
+                'id',
+                'product_id',
+                'from_warehouse',
+                'to_warehouse',
+              ]"
               status_code="trx_transfer"
               v-on:handleClickFilter="handleClickFilter($event)"
               v-on:handleChangeSize="handleChangeSize($event)"
@@ -120,7 +111,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ListTransfer",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -137,8 +127,8 @@ export default {
           key: "product_name_batch",
           label: "Product Name [Batch No]",
         },
-        { key: "warehouse_name_from", label: "Source WH" },
-        { key: "warehouse_name_to", label: "Destination WH" },
+        { key: "from_warehouse_name", label: "Source WH" },
+        { key: "to_warehouse_name", label: "Destination WH" },
         { key: "status_desc", label: "Status", _classes: "font-weight-bold" },
         {
           key: "action",
@@ -151,7 +141,8 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/transfer?raw=true${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePagination({
           filter: this.filter,
@@ -188,16 +179,14 @@ export default {
     handleCancel() {
       this.$isLoading(true);
       let data = {
-        ApiName: "ApprovalTransfer",
-        Params: {
-          id: this.cancelProperty.id,
-          approved: false,
-          reason: this.cancelProperty.reason,
-        },
+        id: this.cancelProperty.id,
+        approved: false,
+        reason: this.cancelProperty.reason,
       };
 
+      let url = `/v3/transaction/transfer`;
       $axiosMertrack
-        .post("/general/mobile", data)
+        .post(url, data)
         .then((result) => {
           this.$isLoading(false);
           this.loadData();

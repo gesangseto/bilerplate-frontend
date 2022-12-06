@@ -35,7 +35,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="transfer.full_name"
+                      v-model="transfer.created_full_name"
                     />
                   </td>
                 </tr>
@@ -45,7 +45,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="transfer.warehouse_name_from"
+                      v-model="transfer.from_warehouse_name"
                     />
                   </td>
                 </tr>
@@ -55,7 +55,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="transfer.warehouse_name_to"
+                      v-model="transfer.to_warehouse_name"
                     />
                   </td>
                 </tr>
@@ -79,7 +79,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="transfer.full_name_modified_by"
+                      v-model="transfer.modified_full_name"
                     />
                   </td>
                 </tr>
@@ -159,7 +159,7 @@
     </div>
     <!-- Modal Detail Barang Dipilih  -->
     <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -196,7 +196,7 @@ export default {
         { key: "nie", label: "NIE" },
         { key: "gtin_cp", label: "GTIN / CP" },
         {
-          key: "serial_id",
+          key: "serial",
           label: "SN",
         },
         {
@@ -215,8 +215,9 @@ export default {
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
     // get data detail stock transfer
-    let param = `ApiName=ListTransfer&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-    $axiosMertrack.get(`general/web?${param}`).then((response) => {
+
+    let url = `/v3/transaction/transfer?raw=true&id=${this.$route.params.id}`;
+    $axiosMertrack.get(url).then((response) => {
       let data = response.data.data[0];
       //
       this.transfer = data;
@@ -260,10 +261,8 @@ export default {
   computed: {
     detailItem() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };

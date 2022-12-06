@@ -16,6 +16,7 @@ import DetailBarcodeGenerator from "./DetailBarcodeGenerator";
 import HeaderManualBarcodeGenerator from "./HeaderManualBarcodeGenerator";
 import ModalPrintLabel from "./ModalPrintLabel";
 import ModalPrintLabelV3 from "./ModalPrintLabelV3";
+import FormAddItemV3 from "./FormAddItemV3";
 
 export {
   ButtonPermission,
@@ -36,4 +37,5 @@ export {
   HeaderManualBarcodeGenerator,
   ModalPrintLabel,
   ModalPrintLabelV3,
+  FormAddItemV3,
 };

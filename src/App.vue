@@ -26,6 +26,7 @@ import {
   DetailBarcodeGenerator,
   ModalPrintLabel,
   ModalPrintLabelV3,
+  FormAddItemV3,
 } from "./views/component";
 Vue.use(VueCustomTooltip);
 Vue.use(loading);
@@ -47,6 +48,7 @@ Vue.component("ShowLockedStatus", ShowLockedStatus);
 Vue.component("DetailBarcodeGenerator", DetailBarcodeGenerator);
 Vue.component("ModalPrintLabel", ModalPrintLabel);
 Vue.component("ModalPrintLabelV3", ModalPrintLabelV3);
+Vue.component("FormAddItemV3", FormAddItemV3);
 
 export default {
   name: "App",
