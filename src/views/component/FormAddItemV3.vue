@@ -94,11 +94,13 @@ export default {
     },
     filter: {
       handler(n, o) {
-        console.log(n);
-        if (n.hasOwnProperty("warehouse_id") && n.warehouse_id)
+        if (n.hasOwnProperty("warehouse_id") && n.warehouse_id) {
+          this.resetForm();
           this.getProduct();
-        else if (n.hasOwnProperty("from_warehouse") && n.from_warehouse)
+        } else if (n.hasOwnProperty("from_warehouse") && n.from_warehouse) {
           this.getProduct();
+          this.resetForm();
+        }
       },
       deep: true,
     },
@@ -184,7 +186,6 @@ export default {
       }
     },
     handleChangeBatch() {
-      console.log(this.formData, "[][][][][");
       if (this.useDeliveryDayLimit) {
         this.checkDeliveryLimit();
       }
@@ -266,7 +267,6 @@ export default {
       };
       param = new URLSearchParams(param).toString();
       let _url = `/v3/helper/detail-item/stock?${param}`;
-      this.formData.stock = [];
       $axiosMertrack.get(`${_url}`).then((result) => {
         let data = result.data.data;
         for (const it of data) {

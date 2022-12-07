@@ -82,7 +82,11 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import {
+  exportData,
+  calculatePagination,
+  calculatePaginationV3,
+} from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListPickingList",
@@ -135,6 +139,10 @@ export default {
           label: "Trx Date",
         },
         {
+          key: "product_name_batch",
+          label: "Product Name [Batch No]",
+        },
+        {
           key: "so_number",
           label: "SO No",
         },
@@ -176,7 +184,7 @@ export default {
 
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -213,17 +221,13 @@ export default {
     },
     handleCancel() {
       let data = {
-        ApiName: "PickingDecision",
-        Params: {
-          id: this.cancelProperty.id,
-          approved: false,
-          doNumber: "",
-          reason: this.cancelProperty.reason,
-        },
+        id: this.cancelProperty.id,
+        approved: false,
+        reason: this.cancelProperty.reason,
       };
       this.$isLoading(true);
       $axiosMertrack
-        .post("/general/web", data)
+        .post("/v3/transaction/picking", data)
         .then((result) => {
           this.$isLoading(false);
           this.loadData();

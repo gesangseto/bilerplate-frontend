@@ -31,7 +31,7 @@
                     <input
                       readonly
                       class="form-control"
-                      v-model="picking.full_name"
+                      v-model="picking.created_full_name"
                     />
                   </td>
                 </tr>
@@ -259,13 +259,13 @@
     </CModal>
     <!-- Modal View Barang -->
     <CModal
-      size="lg"
+      size="xl"
       centered="centered"
       :show.sync="viewModal"
       title="Detail"
       color="warning"
     >
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -342,7 +342,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_id",
+          key: "serial",
           label: "SN",
         },
         {
@@ -368,8 +368,8 @@ export default {
   },
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
-    let param = `ApiName=ListPicking&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-    $axiosMertrack.get(`general/web?${param}`).then((response) => {
+    var _url = `/v3/transaction/picking?id=${this.$route.params.id}`;
+    $axiosMertrack.get(_url).then((response) => {
       let data = response.data.data[0];
       this.picking = data;
       if (data.items.length > 0) {
@@ -418,20 +418,18 @@ export default {
       if (!this.doNumber) {
         return;
       }
-      let dataDo = {
-        ApiName: "PickingDecision",
-        Params: {
-          id: this.$route.params.id,
-          approved: true,
-          doNumber: this.doNumber,
-          reason: "",
-        },
-      };
       let message =
         "You are about to finalize this transaction. This operation cannot be undone. Would you like to continue?";
       if (confirm(message)) {
+        let param = {
+          id: this.$route.params.id,
+          approved: true,
+          do_number: this.doNumber,
+          reason: "",
+        };
+        var _url = `/v3/transaction/picking/finish`;
         $axiosMertrack
-          .post("/general/web", dataDo)
+          .post(_url, param)
           .then((result) => {
             this.$isLoading(false);
             this.$toast.open({
@@ -465,10 +463,8 @@ export default {
   computed: {
     renderDetailItem() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
