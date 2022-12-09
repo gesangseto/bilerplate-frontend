@@ -115,7 +115,11 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import {
+  exportData,
+  calculatePagination,
+  calculatePaginationV3,
+} from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListReturn",
@@ -166,7 +170,7 @@ export default {
           label: "Destination",
         },
         {
-          key: "full_name",
+          key: "created_full_name",
           label: "Requested By",
         },
         {
@@ -175,7 +179,7 @@ export default {
           _classes: "font-weight-bold",
         },
         {
-          key: "next_approval",
+          key: "approval_full_name",
           label: "Next Approval",
         },
         {
@@ -191,10 +195,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/return?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -231,13 +235,10 @@ export default {
   computed: {
     stockreturn() {
       return this.items.map((item) => {
-        let from = item.from_warehouse_name ?? item.from_customer_name;
-        let to = item.to_warehouse_name;
         return {
           ...item,
-          from: from,
-          to: to,
-          next_approval: item.status !== 0 ? "" : item.approval_full_name,
+          created_full_name: item.created_full_name || "-",
+          approval_full_name: item.approval_full_name || "-",
         };
       });
     },

@@ -128,7 +128,7 @@ export default {
         },
         {
           key: "product_name_batch",
-          label: "Product Name",
+          label: "Product Name [Batch No]",
         },
         {
           key: "_warehouse.name",

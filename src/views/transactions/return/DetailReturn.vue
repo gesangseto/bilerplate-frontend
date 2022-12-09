@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="returnDetail.full_name"
+                          v-model="returnDetail.created_full_name"
                         />
                       </td>
                     </tr>
@@ -101,7 +101,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="returnDetail.last_approval.full_name"
+                          v-model="returnDetail.last_approval_full_name"
                         />
                       </td>
                     </tr>
@@ -111,7 +111,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="returnDetail.last_approval.modified_date"
+                          v-model="returnDetail.last_approval_date"
                         />
                       </td>
                     </tr>
@@ -207,8 +207,8 @@
     <!-- END REJECT MODAL -->
 
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -242,15 +242,7 @@ export default {
       sn: false,
       test: null,
       status: "",
-      returnDetail: {
-        id: null,
-        wrk_id: null,
-        serial: "",
-        remark: "",
-        reason: "",
-        full_name: "",
-        last_approval: { full_name: "", modified_date: "" },
-      },
+      returnDetail: {},
       pages: null,
       page: null,
       totalPages: 0,
@@ -284,7 +276,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_id",
+          key: "serial",
           label: "SN",
         },
         {
@@ -321,23 +313,10 @@ export default {
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=ReturnWorkflowList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `/v3/transaction/return?id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.returnDetail = data;
-        this.returnDetail.from =
-          this.returnDetail.from_customer_name ??
-          this.returnDetail.from_warehouse_name;
-        this.returnDetail.to = this.returnDetail.to_warehouse_name;
-        // Last Approval
-        let lst_aprv = { full_name: "", modified_date: "" };
-        for (const it of data.workflows) {
-          if (it.modified_date) {
-            lst_aprv = it;
-          }
-        }
-        this.returnDetail.last_approval = lst_aprv;
-        // Last Approval
         if (data.items.length > 0) {
           this.items = data.items;
         } else {
@@ -356,20 +335,17 @@ export default {
     save() {
       let message = `You are about to approve this transaction (ID: ${this.returnDetail.id}). This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
-        let data = {
-          ApiName: "ReturnApproval",
-          Params: {
-            id: this.returnDetail.wrk_id,
-            approved: true,
-            reason: "",
-          },
-        };
         this.$isLoading(true);
+        let param = {
+          id: this.returnDetail.wrk_id,
+          approved: true,
+          reason: "",
+        };
+        let url = `/v3/transaction/approval/return`;
         $axiosMertrack
-          .post("/general/web", data)
+          .post(url, param)
           .then((result) => {
             this.$isLoading(false);
-            this.$router.back();
             this.$toast.open({
               message: result.data.error
                 ? `${result.data.message}`
@@ -379,6 +355,7 @@ export default {
               position: "top-right",
               duration: 5000,
             });
+            if (!result.data.error) this.$router.back();
           })
           .catch((err) => {
             this.$isLoading(false);
@@ -397,17 +374,15 @@ export default {
       this.rejectProperty.id = this.returnDetail.id;
     },
     handleSubmitReject() {
-      let data = {
-        ApiName: "ReturnApproval",
-        Params: {
-          id: this.returnDetail.wrk_id,
-          approved: false,
-          reason: this.rejectProperty.reason,
-        },
-      };
       this.$isLoading(true);
+      let param = {
+        id: this.returnDetail.wrk_id,
+        approved: false,
+        reason: this.rejectProperty.reason,
+      };
+      let url = `/v3/transaction/approval/return`;
       $axiosMertrack
-        .post("/general/web", data)
+        .post(url, param)
         .then((result) => {
           this.$isLoading(false);
           this.$router.back();
@@ -465,10 +440,8 @@ export default {
   computed: {
     detailReturn() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
