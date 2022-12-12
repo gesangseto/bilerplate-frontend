@@ -23,14 +23,14 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Warehouse',
-                  'Requested By',
-                  'Next Approval',
+                  'id',
+                  'product_id',
+                  'warehouse_id',
+                  'created_by',
+                  'approval_id',
                 ]"
                 status_code="trx_sampling"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -105,7 +105,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "SamplingWorkflowList",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -130,7 +129,7 @@ export default {
           label: "Warehouse",
         },
         {
-          key: "full_name",
+          key: "created_full_name",
           label: "Requested By",
         },
         {
@@ -155,8 +154,9 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
+      let url = `/v3/transaction/sampling?raw=true&${param}`;
 
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePagination({
           filter: this.filter,
@@ -192,6 +192,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          created_full_name: item.created_full_name || "-",
           next_approval: item.status !== 0 ? "" : item.approval_full_name,
         };
       });

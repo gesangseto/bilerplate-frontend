@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="sampling.full_name"
+                          v-model="sampling.created_full_name"
                         />
                       </td>
                     </tr>
@@ -81,7 +81,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="sampling.last_approval.full_name"
+                          v-model="sampling['last_approval_full_name']"
                         />
                       </td>
                     </tr>
@@ -91,7 +91,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="sampling.last_approval.modified_date"
+                          v-model="sampling['last_approval_date']"
                         />
                       </td>
                     </tr>
@@ -187,8 +187,8 @@
     <!-- END REJECT MODAL -->
 
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -206,19 +206,10 @@ export default {
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=SamplingWorkflowList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `/v3/transaction/sampling?id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.sampling = data;
-        // Last Approval
-        let lst_aprv = { full_name: "", modified_date: "" };
-        for (const it of data.workflows) {
-          if (it.modified_date) {
-            lst_aprv = it;
-          }
-        }
-        this.sampling.last_approval = lst_aprv;
-        // Last Approval
         if (data.items.length > 0) {
           this.items = data.items;
         } else {
@@ -300,7 +291,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_id",
+          key: "serial",
           label: "SN",
         },
         {
@@ -345,19 +336,17 @@ export default {
       let message = `You are about to approve this transaction (ID: ${this.sampling.id}). This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         let data = {
-          ApiName: "SamplingApproval",
-          Params: {
-            id: this.sampling.wrk_id,
-            approved: true,
-            reason: "",
-          },
+          id: this.sampling.wrk_id,
+          approved: true,
+          reason: "",
         };
         this.$isLoading(true);
+        let url = `/v3/transaction/approval/sampling`;
         $axiosMertrack
-          .post("/general/web", data)
+          .post(url, data)
           .then((result) => {
             this.$isLoading(false);
-            this.$router.back();
+            if (!result.data.error) this.$router.back();
             this.$toast.open({
               message: result.data.error
                 ? `${result.data.message}`
@@ -386,19 +375,17 @@ export default {
     },
     handleSubmitReject() {
       let data = {
-        ApiName: "SamplingApproval",
-        Params: {
-          id: this.sampling.wrk_id,
-          approved: false,
-          reason: this.rejectProperty.reason,
-        },
+        id: this.sampling.wrk_id,
+        approved: false,
+        reason: this.rejectProperty.reason,
       };
       this.$isLoading(false);
+      let url = `/v3/transaction/approval/sampling`;
       $axiosMertrack
-        .post("/general/web", data)
+        .post(url, data)
         .then((result) => {
           this.$isLoading(false);
-          this.$router.back();
+          if (!result.data.error) this.$router.back();
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
@@ -454,10 +441,8 @@ export default {
   computed: {
     detailSampling() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
