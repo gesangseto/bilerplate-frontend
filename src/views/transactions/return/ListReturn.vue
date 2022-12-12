@@ -23,11 +23,11 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
-                    value: 'Type',
-                    code: 'Type',
+                    value: 'type',
+                    code: 'type',
                     label: 'Type',
                     data: [
                       { value: 'External', label: 'External ' },
@@ -37,24 +37,24 @@
                 ]"
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'destination_wh',
-                  'Requested By',
-                  'source_customer',
-                  'source_wh',
-                  'Next Approval',
+                  'id',
+                  'product_id',
+                  'to_warehouse',
+                  'created_by',
+                  'from_customer',
+                  'from_warehouse',
+                  'approval_id',
                 ]"
                 :order="[
                   'All',
                   'ID',
-                  'Product',
+                  'product_id',
                   'type',
-                  'source_customer',
-                  'source_wh',
-                  'destination_wh',
-                  'Requested By',
-                  'Next Approval',
+                  'from_customer',
+                  'from_warehouse',
+                  'to_warehouse',
+                  'created_by',
+                  'approval_id',
                 ]"
                 status_code="trx_return"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -115,11 +115,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import {
-  exportData,
-  calculatePagination,
-  calculatePaginationV3,
-} from "../../../utils";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListReturn",

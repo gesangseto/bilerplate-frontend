@@ -157,9 +157,6 @@ export default {
   components: { ModelSelect, DateRangePicker },
   mounted() {
     this.getSatusCode();
-
-    console.log(this.listFilter);
-    console.log(this.filter);
     if (this.filter && this.filter.constructor === Array) {
       let new_list = [];
       for (const it of this.listFilter) {
@@ -307,6 +304,16 @@ export default {
           value: "to_customer",
           code: "to_customer",
           label: "To Customer",
+        },
+        {
+          value: "created_by",
+          code: "created_by",
+          label: "Created By",
+        },
+        {
+          value: "approval_id",
+          code: "approval_id",
+          label: "Next Approval",
         },
         // {
         //   value: "Product",
@@ -518,6 +525,12 @@ export default {
         } else if (this.result.SearchType.toLowerCase() == "to_customer") {
           this.getCustomer();
           this.extendFilter = true;
+        } else if (this.result.SearchType.toLowerCase() == "created_by") {
+          this.getUser();
+          this.extendFilter = true;
+        } else if (this.result.SearchType.toLowerCase() == "approval_id") {
+          this.getUser();
+          this.extendFilter = true;
         }
         //  else if (this.result.SearchType.toLowerCase() == "product") {
         //   this.getProduct();
@@ -694,15 +707,15 @@ export default {
       });
     },
     getUser() {
-      let url = `/general/web?ApiName=UserList&include_delete=1`;
+      let url = `/v3/master/user?raw=true`;
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let ext = it.delete_flag == 1 ? "(X)" : "";
           let tmp = it;
           tmp.value = it.id;
-          tmp.label = `${ext} ${it.full_name} (${it.mst_department_name} - ${it.mst_section_name})`;
-          tmp.text = `${ext} ${it.full_name} (${it.mst_department_name} - ${it.mst_section_name})`;
+          tmp.label = `${ext} ${it.full_name} (${it["_mst_department.name"]} - ${it["_mst_section.name"]})`;
+          tmp.text = `${ext} ${it.full_name} (${it["_mst_department.name"]} - ${it["_mst_section.name"]})`;
           this.listExtendFilter.push(tmp);
         }
       });

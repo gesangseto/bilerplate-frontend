@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="decomissioning.full_name"
+                          v-model="decomissioning.created_full_name"
                         />
                       </td>
                     </tr>
@@ -91,7 +91,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="decomissioning.last_approval.full_name"
+                          v-model="decomissioning['last_approval_full_name']"
                         />
                       </td>
                     </tr>
@@ -101,7 +101,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="decomissioning.last_approval.modified_date"
+                          v-model="decomissioning['last_approval_date']"
                         />
                       </td>
                     </tr>
@@ -197,8 +197,8 @@
     <!-- END REJECT MODAL -->
 
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -216,18 +216,10 @@ export default {
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=DecommissionWorkflowList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `/v3/transaction/comm-decomm?id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.decomissioning = data;
-        // Last Approval
-        let lst_aprv = { full_name: "", modified_date: "" };
-        for (const it of data.workflows) {
-          if (it.modified_date) {
-            lst_aprv = it;
-          }
-        }
-        this.decomissioning.last_approval = lst_aprv;
         // Last Approval
         if (data.items.length > 0) {
           this.items = data.items;
@@ -315,7 +307,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_id",
+          key: "serial",
           label: "SN",
         },
         {
@@ -354,19 +346,17 @@ export default {
       let message = `You are about to approve this transaction (ID: ${this.decomissioning.id}). This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         let data = {
-          ApiName: "DecommissionApproval",
-          Params: {
-            id: this.decomissioning.wrk_id,
-            approved: true,
-            reason: "",
-          },
+          id: this.decomissioning.wrk_id,
+          approved: true,
+          reason: "",
         };
+        let url = `/v3/transaction/approval/comm-decomm`;
         this.$isLoading(true);
         $axiosMertrack
-          .post("/general/web", data)
+          .post(url, data)
           .then((result) => {
             this.$isLoading(false);
-            this.$router.back();
+            if (!result.data.error) this.$router.back();
             this.$toast.open({
               message: result.data.error
                 ? `${result.data.message}`
@@ -395,16 +385,14 @@ export default {
     },
     handleSubmitReject() {
       let data = {
-        ApiName: "DecommissionApproval",
-        Params: {
-          id: this.decomissioning.wrk_id,
-          approved: false,
-          reason: this.rejectProperty.reason,
-        },
+        id: this.decomissioning.wrk_id,
+        approved: false,
+        reason: this.rejectProperty.reason,
       };
+      let url = `/v3/transaction/approval/comm-decomm`;
       this.$isLoading(true);
       $axiosMertrack
-        .post("/general/web", data)
+        .post(url, data)
         .then((result) => {
           this.$isLoading(false);
           this.$router.back();
@@ -456,10 +444,8 @@ export default {
   computed: {
     detailDecomissioning() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };

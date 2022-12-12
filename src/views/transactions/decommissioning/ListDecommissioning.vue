@@ -23,11 +23,11 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
-                    value: 'Operation',
-                    code: 'Operation',
+                    value: 'activate',
+                    code: 'activate',
                     label: 'Operation',
                     data: [
                       { value: '0', label: 'Decommission ' },
@@ -37,20 +37,20 @@
                 ]"
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Warehouse',
-                  'Requested By',
-                  'Next Approval',
+                  'id',
+                  'product_id',
+                  'warehouse_id',
+                  'created_by',
+                  'approval_id',
                 ]"
                 :order="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Warehouse',
-                  'Operation',
-                  'Requested By',
-                  'Next Approval',
+                  'id',
+                  'product_id',
+                  'warehouse_id',
+                  'activate',
+                  'created_by',
+                  'approval_id',
                 ]"
                 status_code="trx_decomissioning"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -111,7 +111,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "DetailDecommissioning",
@@ -155,7 +155,7 @@ export default {
           _classes: "font-weight-bold",
         },
         {
-          key: "full_name",
+          key: "created_full_name",
           label: "Requested By",
         },
         {
@@ -180,10 +180,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/comm-decomm?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -217,6 +217,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          created_full_name: item.created_full_name || "-",
           next_approval: item.status !== 0 ? "" : item.approval_full_name,
         };
       });
