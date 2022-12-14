@@ -23,14 +23,14 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Warehouse',
-                  'Requested By',
-                  'Next Approval',
+                  'id',
+                  'product_id',
+                  'warehouse_id',
+                  'created_by',
+                  'approval_id',
                 ]"
                 status_code="trx_disposal"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -90,7 +90,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListDisposal",
@@ -104,7 +104,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "DisposalWorkflowList",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -154,10 +153,11 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
+      let url = `/v3/transaction/disposal?raw=true&${param}`;
 
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
