@@ -53,7 +53,11 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import {
+  exportData,
+  calculatePagination,
+  calculatePaginationV3,
+} from "../../../utils";
 
 export default {
   name: "ListWorkflow",
@@ -68,21 +72,20 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "GetWorkflow",
         StartDate: "",
         EndDate: "",
       },
       items: [],
       fields: [
         {
-          key: "transaction_id_desc",
+          key: "_transaction.label",
           label: "Transaction",
           _classes: "font-weight-bold",
         },
-        { key: "approval_1_full_name", label: "Approval 1" },
-        { key: "approval_2_full_name", label: "Approval 2" },
-        { key: "approval_3_full_name", label: "Approval 3" },
-        { key: "approval_4_full_name", label: "Approval 4" },
+        { key: "_approval_1.full_name", label: "Approval 1" },
+        { key: "_approval_2.full_name", label: "Approval 2" },
+        { key: "_approval_3.full_name", label: "Approval 3" },
+        { key: "_approval_4.full_name", label: "Approval 4" },
         {
           key: "action",
           label: "Action",
@@ -98,9 +101,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/master/workflow?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -138,10 +142,10 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          approval_1_full_name: item.approval_1_full_name ?? "",
-          approval_2_full_name: item.approval_2_full_name ?? "",
-          approval_3_full_name: item.approval_3_full_name ?? "",
-          approval_4_full_name: item.approval_4_full_name ?? "",
+          ["_approval_1.full_name"]: item["_approval_1.full_name"] ?? "-",
+          ["_approval_2.full_name"]: item["_approval_2.full_name"] ?? "-",
+          ["_approval_3.full_name"]: item["_approval_3.full_name"] ?? "-",
+          ["_approval_4.full_name"]: item["_approval_4.full_name"] ?? "-",
           nomor: (no += 1),
         };
       });
