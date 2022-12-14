@@ -299,12 +299,14 @@ export default {
       this.viewModal = false;
     },
     save() {
-      if (!this.stock.warehouse_id) {
-        $("#error-warehouse").text("Warehouse is required");
-        return false;
-      } else {
-        $("#error-warehouse").text("");
-      }
+      if (!this.stock.warehouse_id)
+        return this.$toast.open({
+          message: `Warehouse is required.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
       for (const it of this.items) {
         if (it.status != 1) {
           this.$toast.open({
@@ -328,31 +330,30 @@ export default {
         });
         return false;
       }
-      let paramBody = {
-        ApiName: "OpnameInput",
-        Params: {
-          warehouse: this.stock.warehouse.value,
-        },
+      let param = {
+        warehouse: this.stock.warehouse_id,
       };
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post("/general/web", paramBody).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
+        $axiosMertrack
+          .put("/v3/transaction/stock-opname", param)
+          .then((result) => {
+            this.$isLoading(false);
+            let res = result.data;
+            this.$toast.open({
+              message: res.error
+                ? `${res.message}`
+                : "Data has been saved succesfully",
+              type: res.error ? "error" : "success",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            if (!res.error) {
+              this.$router.back();
+            }
           });
-          if (!res.error) {
-            this.$router.back();
-          }
-        });
       }
       return;
     },

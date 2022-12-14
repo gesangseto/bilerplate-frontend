@@ -228,16 +228,10 @@ export default {
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=OpnameList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `/v3/transaction/stock-opname?id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.stock = data;
-        this.stock.status_desc = "Pending";
-        if (this.stock.status == 1) {
-          this.stock.status_desc = "Done";
-        } else if (this.stock.status == 2) {
-          this.stock.status_desc = "Canceled";
-        }
         if (data.items.length > 0) {
           this.items = data.items;
         } else {
@@ -273,7 +267,7 @@ export default {
           label: "Item No",
         },
         {
-          key: "product_name",
+          key: "name",
           label: "Product Name",
         },
         {
@@ -293,7 +287,7 @@ export default {
           label: "GTIN / CP",
         },
         {
-          key: "serial_no",
+          key: "serial",
           label: "SN",
         },
         {
@@ -345,7 +339,6 @@ export default {
           ...item,
           is_same: operator,
           actual_quantity: item.actual_quantity ?? 0,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
@@ -355,64 +348,6 @@ export default {
   methods: {
     cancel() {
       this.$router.back();
-    },
-    rowClicked(item) {
-      if (item.packaging_level == 1) {
-        this.$toast.open({
-          message: `No detail SN data to be viewed, SN [${item.serial_no}] is Packaging L1`,
-          type: "error",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
-        return false;
-      }
-      let param = `ApiName=DetailItem&Params={serial_id:"${item.serial_no}"}&Id=${item.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`/general/web?${param}`).then((result) => {
-        let res = result.data;
-        if (res.error) {
-          this.$toast.open({
-            message: `${res.message}`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          return;
-        }
-        if (res.data.length == 0) {
-          this.$toast.open({
-            message: `No data to be viewed, Because ${item.serial_no} Is Nothing Have Child / Empty`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          return;
-        }
-        this.viewModal = true;
-        res = res.data;
-        this.view = {
-          productId: res[0].product_id,
-          gtin: res[0].gtin,
-          productName: res[0].name,
-          nie: res[0].nie,
-          batch: res[0].batch_no,
-          expiredDate: res[0].expired_date,
-        };
-        if (res.length > 0) {
-          for (const it of res) {
-            if (it.serial) {
-              this.datas.push(it.serial);
-            } else {
-              this.datas.push(it.serial_id);
-            }
-          }
-        } else {
-          this.datas.push(result.data.serial);
-        }
-      });
-      return;
     },
     closeModal() {
       this.datas = [];

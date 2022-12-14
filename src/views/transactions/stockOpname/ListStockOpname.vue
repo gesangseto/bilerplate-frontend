@@ -7,23 +7,8 @@
           <h5>Stock Opname</h5>
         </CCardHeader>
         <CCardBody>
-          <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-          <HeaderFilterTransaction
-            :filter="['All', 'ID', 'Warehouse']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'id', 'warehouse_id']"
             status_code="trx_stock_opname"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -88,7 +73,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 
 export default {
@@ -103,7 +88,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "OpnameList",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -140,14 +124,12 @@ export default {
     },
     handleCancel() {
       let body = {
-        ApiName: "OpnameCancel",
-        Params: {
-          id: this.cancelProperty.id,
-          reason: this.cancelProperty.reason,
-        },
+        id: this.cancelProperty.id,
+        reason: this.cancelProperty.reason,
+        approved: false,
       };
       $axiosMertrack
-        .post(`/general/web`, body)
+        .post(`/v3/transaction/stock-opname`, body)
         .then((result) => {
           this.loadData();
           this.$toast.open({
@@ -176,9 +158,10 @@ export default {
 
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/stock-opname?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
