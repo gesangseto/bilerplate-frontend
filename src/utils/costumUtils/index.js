@@ -180,6 +180,27 @@ export function exportData({ param = {}, exportType = "xls" }) {
   return true;
 }
 
+export function exportDataV3({ param = {}, exportType = "xls", url }) {
+  let endpoint = process.env.VUE_APP_URL_API_MERTRACK;
+  let new_param = param;
+  new_param.MertrackApiToken = localStorage.getItem("token");
+  if (!new_param.SearchVal1Text) {
+    new_param.SearchVal1Text = "All";
+  }
+  if (!new_param.StatusCodeText) {
+    new_param.StatusCodeText = "All";
+  }
+  delete new_param.limit;
+  delete new_param.page;
+  new_param.PrintTo = exportType;
+  let _url = `${endpoint}/api${url}?${new URLSearchParams(
+    new_param
+  ).toString()}`;
+  window.open(`${_url}`, "_blank");
+  delete new_param.PrintTo;
+  return true;
+}
+
 export function exportDataReport({ param = {}, exportType = "xls" }) {
   let new_param = param;
   new_param.MertrackApiToken = localStorage.getItem("token");

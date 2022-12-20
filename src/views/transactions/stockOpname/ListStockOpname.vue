@@ -73,7 +73,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePaginationV3 } from "../../../utils";
+import { calculatePaginationV3, exportDataV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 
 export default {
@@ -172,7 +172,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/transaction/stock-opname",
+      });
     },
     pageChange(page) {
       this.filter.page = page;

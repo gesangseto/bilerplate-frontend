@@ -86,6 +86,7 @@ import {
   exportData,
   calculatePagination,
   calculatePaginationV3,
+  exportDataV3,
 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
@@ -195,7 +196,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/transaction/picking",
+      });
     },
     pageChange(page) {
       this.filter.page = page;
