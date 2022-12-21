@@ -421,6 +421,7 @@ export default {
   methods: {
     initial_result() {
       let initial = {
+        page: 1,
         limit: 10,
         StatusCode: this.status_code_default ?? "",
         StatusCodeText: "All",

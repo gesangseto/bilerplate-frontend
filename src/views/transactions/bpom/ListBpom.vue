@@ -20,20 +20,20 @@
               'Min Stock',
               'Max Stock',
             ]" -->
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
-                    value: 'Transaction',
-                    code: 'Transaction',
+                    value: 'transaction',
+                    code: 'transaction',
                     label: 'Type',
                     data: [
-                      { value: 'Production', label: 'Production ' },
-                      { value: 'Release', label: 'Release ' },
-                      { value: 'Distribution', label: 'Distribution ' },
+                      { value: 'inbound', label: 'Production ' },
+                      { value: 'outbound', label: 'Release ' },
+                      { value: 'picking', label: 'Distribution ' },
                     ],
                   },
                 ]"
-                :filter="['All', 'ID']"
+                :filter="['All', 'id']"
                 status_code="generate_csv"
                 v-on:handleClickFilter="handleClickFilter($event)"
                 v-on:handleChangeSize="handleChangeSize($event)"
@@ -111,7 +111,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import { calculatePaginationV3, exportDataV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListBpom",
@@ -125,7 +125,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "GetWeb_GetBPOM",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -183,7 +182,6 @@ export default {
           key: "csv_name",
           label: "CSV Name",
         },
-
         {
           key: "status_desc",
           label: "Approval Status",
@@ -216,10 +214,12 @@ export default {
   },
   methods: {
     loadData() {
+      this.items = [];
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/bpom?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -230,7 +230,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/transaction/bpom",
+      });
     },
     pageChange(page) {
       this.filter.page = page;

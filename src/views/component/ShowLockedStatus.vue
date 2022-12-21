@@ -11,7 +11,7 @@
         <CCol md="6">
           <CInput
             horizontal
-            v-model="property.item['_product.no']"
+            v-model="property.item['product_no']"
             label="Item No"
             readonly
           />
@@ -23,7 +23,7 @@
           />
           <CInput
             horizontal
-            v-model="property.item['_product.nie']"
+            v-model="property.item['product_nie']"
             label="NIE"
             readonly
           />
@@ -37,19 +37,19 @@
         <CCol md="6">
           <CInput
             horizontal
-            v-model="property.item['_product.name']"
+            v-model="property.item['product_name']"
             label="Product"
             readonly
           />
           <CInput
             horizontal
-            v-model="property.item['_batch.expired_date']"
+            v-model="property.item['expired_date']"
             label="Exp Date"
             readonly
           />
           <CInput
             horizontal
-            v-model="property.item['_batch.mfg_date']"
+            v-model="property.item['mfg_date']"
             label="Mfg Date"
             readonly
           />
@@ -63,11 +63,9 @@
       </CRow>
       <hr />
       <CAlert color="danger">
-        Status: {{ property.item["_status.name"] }} <br />
-        Desciption:
-        {{ property.item["_status.description"] }}
+        Status {{ property.item["status_name"] }}
       </CAlert>
-      <!-- <CRow>
+      <CRow>
         <CCol md="12">
           <CDataTable
             hover
@@ -80,7 +78,7 @@
             style="font-size: 12px"
           ></CDataTable>
         </CCol>
-      </CRow> -->
+      </CRow>
       <template #footer>
         <CButton @click="property.modal = false" color="danger">
           <CIcon name="cil-ban" /> Close</CButton
@@ -91,7 +89,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter, convertTableName } from "../../utils";
+import { convertTableName } from "../../utils";
 import Table from "../base/Table.vue";
 export default {
   components: { Table },
@@ -101,15 +99,14 @@ export default {
     property: {
       deep: true,
       handler(n, o) {
-        let datas = [];
-        console.log(n);
+        this.locked_item = [];
         this.item = n;
-        for (const it of this.property.item.locked) {
-          let data = it;
-          data.trx_type = convertTableName(data.trx_type);
-          datas.push(data);
-        }
-        this.locked_item = datas;
+        this.locked_item.push({
+          lock_trx_id: n.item["lock_trx_id"],
+          lock_trx_name: n.item["lock_trx_name"],
+          quantity: n.item["quantity"],
+        });
+        console.log(n.item);
       },
     },
   },
@@ -119,8 +116,8 @@ export default {
       result: this.resetForm(),
       locked_item: [],
       locked_field: [
-        { key: "id", label: "Trx ID" },
-        { key: "trx_type", label: "Locking Pending Transaction" },
+        { key: "lock_trx_id", label: "Trx ID" },
+        { key: "lock_trx_name", label: "Locking Pending Transaction" },
         { key: "quantity", label: "L1 Qty" },
       ],
       item: {},

@@ -191,6 +191,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.items = [];
       let param = `${new URLSearchParams(this.filter).toString()}`;
       let url = `/v3/transaction/re-aggregation?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {

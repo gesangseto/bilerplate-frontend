@@ -129,8 +129,6 @@
 <script>
 import $axiosMertrack from "../../../apiMertrack";
 import "vue-select/dist/vue-select.css";
-import $ from "jquery";
-import { convertTableName } from "../../../utils";
 export default {
   name: "FormStockOpname",
   data() {
@@ -185,9 +183,9 @@ export default {
       },
       warehouseOptions: [],
       productFields: [
-        { key: "_product.no", label: "Item No" },
+        { key: "product_no", label: "Item No" },
         {
-          key: "_product.name",
+          key: "product_name",
           label: "Product Name",
         },
         {
@@ -195,10 +193,10 @@ export default {
           label: "Batch No",
         },
         {
-          key: "_batch.expired_date",
+          key: "expired_date",
           label: "Exp Date",
         },
-        { key: "_product.nie", label: "NIE" },
+        { key: "product_nie", label: "NIE" },
         { key: "gtin_cp", label: "GTIN / CP" },
         {
           key: "serial",
