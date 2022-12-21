@@ -96,9 +96,9 @@
 <script>
 import $axiosMertrack from "../../../apiMertrack";
 import {
-  exportData,
   printLabelV3,
   calculatePaginationV3,
+  exportDataV3,
 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 import $axiosSupport from "../../../apiSupport";
@@ -199,7 +199,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/transaction/aggregation",
+      });
     },
     pageChange(page) {
       this.filter.page = page;

@@ -90,7 +90,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePaginationV3 } from "../../../utils";
+import { calculatePaginationV3, exportDataV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListDisposal",
@@ -168,7 +168,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/transaction/disposal",
+      });
     },
     pageChange(page) {
       this.filter.page = page;
