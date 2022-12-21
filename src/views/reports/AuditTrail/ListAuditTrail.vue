@@ -6,8 +6,8 @@
           <h5>Audit Trail</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransaction
-            :filter="['All', 'User']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'created_by']"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
@@ -78,7 +78,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "GetWeb_AuditTrail",
         // StartDate: dateFilter.last_3_month.start,
         // EndDate: dateFilter.last_3_month.end,
       },
@@ -89,28 +88,28 @@ export default {
           label: "No",
         },
         {
-          key: "created_at",
+          key: "created_date",
           label: "Created",
           _classes: "font-weight-bold",
         },
         {
-          key: "full_name",
+          key: "created_full_name",
           label: "Access By",
           _classes: "font-weight-bold",
         },
         {
-          key: "module",
-          label: "Module",
+          key: "path",
+          label: "Path",
           _classes: "font-weight-bold",
         },
         {
-          key: "type",
-          label: "Type",
+          key: "ip_address",
+          label: "IP",
           _classes: "font-weight-bold",
         },
         {
-          key: "val2",
-          label: "API",
+          key: "user_agent",
+          label: "Agent",
           _classes: "font-weight-bold",
         },
         {
@@ -126,7 +125,8 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/system/audit-trail?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePagination({
           filter: this.filter,

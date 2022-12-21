@@ -21,28 +21,38 @@
                   <p class="col-form-label col-sm-3">ID</p>
                 </template>
               </CInput>
-              <CInput
-                :disabled="true"
-                horizontal
-                v-model="data.created_at_string"
-              >
+              <CInput :disabled="true" horizontal v-model="data.created_date">
                 <template #label>
                   <p class="col-form-label col-sm-3">Date</p>
                 </template>
               </CInput>
-              <CInput :disabled="true" horizontal v-model="data.full_name">
+              <CInput
+                :disabled="true"
+                horizontal
+                v-model="data.created_full_name"
+              >
                 <template #label>
                   <p class="col-form-label col-sm-3">Access By</p>
                 </template>
               </CInput>
-              <CInput :disabled="true" horizontal v-model="data.module">
+              <CInput :disabled="true" horizontal v-model="data.path">
                 <template #label>
-                  <p class="col-form-label col-sm-3">Module</p>
+                  <p class="col-form-label col-sm-3">Path</p>
                 </template>
               </CInput>
               <CInput :disabled="true" horizontal v-model="data.type">
                 <template #label>
                   <p class="col-form-label col-sm-3">Type</p>
+                </template>
+              </CInput>
+              <CInput :disabled="true" horizontal v-model="data.ip_address">
+                <template #label>
+                  <p class="col-form-label col-sm-3">IP Address</p>
+                </template>
+              </CInput>
+              <CInput :disabled="true" horizontal v-model="data.user_agent">
+                <template #label>
+                  <p class="col-form-label col-sm-3">User Agent</p>
                 </template>
               </CInput>
               <div v-if="Object.keys(dataBody).length > 0">
@@ -177,12 +187,12 @@ export default {
       // this.dataBody = this.data["val3"];
       // this.dataBody = JSON.parse(this.dataBody);
       // return;
-      let param = `ApiName=GetWeb_AuditTrail&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `/v3/system/audit-trail?id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.data = data;
-        this.dataBody = JSON.parse(this.data["val3"]);
-        this.detail = this.data["detail"];
+        this.dataBody = JSON.parse(this.data["data"]);
+        // this.detail = this.data["detail"];
       });
     },
     isJsonString(str) {

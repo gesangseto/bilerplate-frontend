@@ -6,8 +6,8 @@
           <h5>Audit Trail</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransaction
-            :filter="['All', 'User']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'created_by']"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
@@ -61,10 +61,9 @@ import $axiosMertrack from "../../apiMertrack";
 import {
   capitalizeFirstLetter,
   exportDataReport,
-  calculatePagination,
+  calculatePaginationV3,
 } from "../../utils";
 import { dateFilter } from "../../constants";
-import { get_log } from "../../dummy_data";
 
 export default {
   name: "ReportAuditTrail",
@@ -78,7 +77,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "Report_AuditTrail",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -120,13 +118,12 @@ export default {
   },
   methods: {
     loadData() {
-      let _data = get_log();
-      this.items = _data;
-      return;
+      this.items = [];
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/report?${param}`).then((res) => {
+      let url = `/v3/system/audit-trail?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });

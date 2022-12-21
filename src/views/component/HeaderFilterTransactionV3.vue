@@ -481,7 +481,6 @@ export default {
       this.result.SearchVal2Text = end_date;
     },
     handleChangeType() {
-      console.log("===============================", this.result.SearchType);
       this.result.SearchVal1 = "";
       this.result.SearchVal2 = "";
       if (this.result.SearchType) {
