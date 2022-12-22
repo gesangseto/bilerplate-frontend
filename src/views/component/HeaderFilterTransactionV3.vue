@@ -72,7 +72,8 @@
           @update="handleChangeDate()"
         >
           <template #input="picker" style="min-width: 350px">
-            {{ result.SearchType }}: {{ picker.startDate | date }} ~
+            {{ humanizeText(result.SearchType) }}:
+            {{ picker.startDate | date }} ~
             {{ picker.endDate | date }}
           </template>
           <div slot="header" class="slot">
@@ -134,9 +135,6 @@
 <script>
 import $axiosMertrack from "../../apiMertrack";
 import DateRangePicker from "vue2-daterange-picker";
-//you need to import the CSS manually
-// import DatePicker from "vue2-datepicker";
-// import "vue2-datepicker/index.css";
 import "vue2-daterange-picker/dist/vue2-daterange-picker.css";
 import "vue-search-select/dist/VueSearchSelect.css";
 import { ModelSelect } from "vue-search-select";
@@ -314,6 +312,26 @@ export default {
           value: "approval_id",
           code: "approval_id",
           label: "Next Approval",
+        },
+        {
+          value: "mfg_date",
+          code: "mfg_date",
+          label: "MFG Date",
+        },
+        {
+          value: "expired_date",
+          code: "expired_date",
+          label: "EXP Date",
+        },
+        {
+          value: "minimum",
+          code: "minimum",
+          label: "Minimum Stock",
+        },
+        {
+          value: "maximum",
+          code: "maximum",
+          label: "Maximum Stock",
         },
         // {
         //   value: "Product",
@@ -531,7 +549,16 @@ export default {
         } else if (this.result.SearchType.toLowerCase() == "approval_id") {
           this.getUser();
           this.extendFilter = true;
+        } else if (this.result.SearchType.toLowerCase() == "mfg_date") {
+          this.use_type_date = true;
+          this.extendFilter = false;
+          this.set_extend_date();
+        } else if (this.result.SearchType.toLowerCase() == "expired_date") {
+          this.use_type_date = true;
+          this.extendFilter = false;
+          this.set_extend_date();
         }
+
         //  else if (this.result.SearchType.toLowerCase() == "product") {
         //   this.getProduct();
         //   this.extendFilter = true;
@@ -555,10 +582,6 @@ export default {
         // } else if (this.result.SearchType.toLowerCase() == "next approval") {
         //   this.getUser();
         //   this.extendFilter = true;
-        // } else if (this.result.SearchType.toLowerCase() == "exp date") {
-        //   this.use_type_date = true;
-        //   this.extendFilter = false;
-        //   this.set_extend_date();
         // } else if (this.result.SearchType.toLowerCase() == "mfg date") {
         //   this.use_type_date = true;
         //   this.extendFilter = false;
@@ -756,6 +779,15 @@ export default {
           this.listFilterStatusCode.push(tmp);
         }
       });
+    },
+    humanizeText(str) {
+      var i;
+      if (!str) return;
+      var frags = str.split("_");
+      for (i = 0; i < frags.length; i++) {
+        frags[i] = frags[i].charAt(0).toUpperCase() + frags[i].slice(1);
+      }
+      return frags.join(" ");
     },
   },
   filters: {

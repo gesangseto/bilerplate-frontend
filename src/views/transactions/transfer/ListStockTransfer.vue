@@ -82,12 +82,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import {
-  exportData,
-  calculatePagination,
-  calculatePaginationV3,
-  exportDataV3,
-} from "../../../utils";
+import { calculatePaginationV3, exportDataV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListStockTransfer",
@@ -146,7 +141,7 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/transfer?raw=true${param}`;
+      let url = `/v3/transaction/transfer?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePaginationV3({

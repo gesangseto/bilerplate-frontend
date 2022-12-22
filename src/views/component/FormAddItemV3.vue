@@ -285,7 +285,6 @@ export default {
       return this.formData.stock.map((it) => {
         return {
           ...it,
-          packaging_name: it[`_packaging`]["name"],
           gtin_cp: it.epc_type == "sscc" ? it.company_prefix : it.gtin_sscc,
         };
       });

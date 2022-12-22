@@ -1,10 +1,10 @@
 <template>
   <div>
-    <CRow>
+    <CRow v-if="!disable_header">
       <CCol md="6">
         <CInput
           horizontal
-          v-model="detail_product.no"
+          v-model="detail_product.product_no"
           label="Item No"
           readonly
         />
@@ -14,7 +14,12 @@
           label="Batch No"
           readonly
         />
-        <CInput horizontal v-model="detail_product.nie" label="NIE" readonly />
+        <CInput
+          horizontal
+          v-model="detail_product.product_nie"
+          label="NIE"
+          readonly
+        />
         <CInput
           horizontal
           v-model="detail_product.gtin_cp"
@@ -25,7 +30,7 @@
       <CCol md="6">
         <CInput
           horizontal
-          v-model="detail_product.name"
+          v-model="detail_product.product_name"
           label="Product"
           readonly
         />
@@ -48,6 +53,9 @@
           readonly
         />
       </CCol>
+    </CRow>
+
+    <CRow>
       <CCol md="12">
         <CCardGroup style="border: 0">
           <CCard
@@ -132,7 +140,7 @@
 import $axiosMertrack from "../../apiMertrack";
 export default {
   name: "DetailTransactionV3",
-  props: { item: Object },
+  props: { item: Object, disable_header: Boolean },
   mounted() {
     if (this.item) {
       const _it = JSON.parse(JSON.stringify(this.item));

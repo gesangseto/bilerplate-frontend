@@ -135,6 +135,8 @@
               striped
               sorter
               border
+              :pagination="true"
+              :items-per-page="10"
               :items="uploadItems"
               :fields="fields"
               class="text-left"

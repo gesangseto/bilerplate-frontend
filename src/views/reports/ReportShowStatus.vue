@@ -6,7 +6,7 @@
           <h5>Show EPC Status</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderShowStatus
+          <header-show-status-v-3
             v-on:handleClickSearch="handleClickSearch($event)"
             v-on:handleReset="handleReset($event)"
           />
@@ -86,7 +86,9 @@
                 <tr>
                   <td>Mfg Date</td>
                   <td>:</td>
-                  <td>{{ detailData.mfg_date }} {{ detailData.postfix }}</td>
+                  <td>
+                    {{ detailData.mfg_date }} {{ detailData.mfg_postfix }}
+                  </td>
                 </tr>
                 <tr>
                   <td>EPC Type</td>
@@ -103,7 +105,7 @@
                 <tr>
                   <td>EPC HR</td>
                   <td>:</td>
-                  <td>{{ renderEpcHr(detailData.epc_hr) }}</td>
+                  <td>{{ detailData.epc_hr }}</td>
                 </tr>
                 <tr>
                   <td>L1 Qty</td>
@@ -127,19 +129,7 @@
                   <td>Status</td>
                   <td>:</td>
                   <td>
-                    {{
-                      detailData.status == 1 && detailData.warehouse_id
-                        ? "Active"
-                        : detailData.status == 1 && !detailData.warehouse_id
-                        ? "Sold"
-                        : detailData.status == 0
-                        ? "Inactive"
-                        : detailData.status == 10
-                        ? "Non sellable other"
-                        : detailData.status == 69
-                        ? "Pending process"
-                        : "Destroyed"
-                    }}
+                    {{ detailData.status_desc }}
                   </td>
                 </tr>
               </table>
@@ -180,7 +170,11 @@
               <CCard>
                 <CCardBody>
                   <h5>Child Details</h5>
-                  <DetailShowStatus v-if="showData" :item="detailData" />
+                  <detail-transaction-v-3
+                    v-if="showData"
+                    :item="detailData"
+                    :disable_header="true"
+                  />
                 </CCardBody>
               </CCard>
             </CCol>
@@ -195,8 +189,10 @@
 import $axiosMertrack from "../../apiMertrack";
 import jsPDF from "jspdf";
 import domtoimage from "dom-to-image";
+import HeaderShowStatusV3 from "../component/HeaderShowStatusV3.vue";
 
 export default {
+  components: { HeaderShowStatusV3 },
   name: "ReportShowStatus",
 
   mounted() {},
@@ -226,11 +222,12 @@ export default {
       this.initial_data();
     },
     getData() {
-      this.result.date_format = "web";
-      let param = `ApiName=GetStock&Params=${JSON.stringify(this.result)}`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((res) => {
+      let param = `${new URLSearchParams(this.result).toString()}`;
+      let url = `/v3/helper/detail-item/stock?advanced=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
-        if (data.length != 1 || (data[0] && data[0].stocks.length != 1)) {
+        console.log(data);
+        if (data.length != 1) {
           this.$toast.open({
             message: `Data cannot be found`,
             type: "error",
@@ -240,33 +237,28 @@ export default {
           });
           return;
         }
-        if (data[0] && data[0].stocks) {
-          this.showData = true;
-          this.detailData = data[0].stocks[0];
-          this.detailData.epc_type = this.detailData.epc_type.toUpperCase();
-          this.detailData.packaging_name =
-            data[0].stocks[0][
-              `name_packaging_l${this.detailData.packaging_level}`
-            ];
-          if (this.detailData.parent) {
-            this.getParent();
-          }
-        }
+        this.showData = true;
+        this.detailData = data[0];
+        this.getParent();
       });
     },
     getParent() {
-      let param = `ApiName=GetStock&Id=${this.detailData.parent}`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((res) => {
+      let url = `/v3/helper/detail-item/stock?id=${this.detailData["parent"]}`;
+      $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
-        if (data[0] && data[0].stocks) {
-          data = data[0].stocks;
-          this.parentData = data;
-          this.parentData[0].packaging_name =
-            data[0][`name_packaging_l${data[0].packaging_level}`];
-
-          this.parentData[0].epc_type = data[0].epc_type.toUpperCase();
-        }
+        console.log(data);
       });
+      // let param = `ApiName=GetStock&Id=${this.detailData.parent}`;
+      // $axiosMertrack.get(`/general/mobile?${param}`).then((res) => {
+      //   let data = res.data.data;
+      //   if (data[0] && data[0].stocks) {
+      //     data = data[0].stocks;
+      //     this.parentData = data;
+      //     this.parentData[0].packaging_name =
+      //       data[0][`name_packaging_l${data[0].packaging_level}`];
+      //     this.parentData[0].epc_type = data[0].epc_type.toUpperCase();
+      //   }
+      // });
     },
     testHandle() {},
     handleClickExport() {
@@ -301,6 +293,7 @@ export default {
         });
     },
     renderEpcHr(item) {
+      if (!item) return "";
       item = item.replace(/\(/g, " (");
       item = item.trim();
       return item;

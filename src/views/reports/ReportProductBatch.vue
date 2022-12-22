@@ -50,7 +50,11 @@
 
 <script>
 import $axiosMertrack from "../../apiMertrack";
-import { exportDataReport, calculatePagination } from "../../utils";
+import {
+  exportDataReport,
+  calculatePagination,
+  calculatePaginationV3,
+} from "../../utils";
 import { dateFilter } from "../../constants";
 
 export default {
@@ -65,7 +69,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "Report_ProductBatch",
         StartDate: dateFilter.last_3_month.start,
         EndDate: dateFilter.last_3_month.end,
       },
@@ -80,17 +83,17 @@ export default {
           label: "Inbound Date",
         },
         {
-          key: "no",
+          key: "product_no",
           label: "Item No",
           _classes: "font-weight-bold",
         },
         {
-          key: "name",
+          key: "product_name",
           label: "Product Name",
           _classes: "font-weight-bold",
         },
         {
-          key: "id",
+          key: "batch_no",
           label: "Batch No",
           _classes: "font-weight-bold",
         },
@@ -103,16 +106,16 @@ export default {
           label: "Mfg Date",
         },
         {
-          key: "nie",
+          key: "product_nie",
           label: "NIE",
         },
         {
-          key: "gtin",
+          key: "product_gtin",
           label: "L1 GTIN",
           // _classes: "font-weight-bold",
         },
         {
-          key: "quantity",
+          key: "quantity_l1",
           label: "L1 Qty",
         },
       ],
@@ -121,9 +124,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/report?${param}`).then((res) => {
+      let url = `/v3/report/batch?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });

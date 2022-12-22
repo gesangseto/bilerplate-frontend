@@ -111,6 +111,8 @@
                   striped
                   sorter
                   border
+                  :pagination="true"
+                  :items-per-page="10"
                   :items="detailStock"
                   :fields="fields"
                   class="text-left"
@@ -263,11 +265,11 @@ export default {
       items: [],
       fields: [
         {
-          key: "no",
+          key: "product_no",
           label: "Item No",
         },
         {
-          key: "name",
+          key: "product_name",
           label: "Product Name",
         },
         {
@@ -279,7 +281,7 @@ export default {
           label: "Exp Date",
         },
         {
-          key: "nie",
+          key: "product_nie",
           label: "NIE",
         },
         {

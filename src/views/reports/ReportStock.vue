@@ -6,15 +6,15 @@
           <h5>Product Stock</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransaction
+          <HeaderFilterTransactionV3
             :filter="[
               'All',
-              'Product',
-              'Warehouse',
-              'Mfg Date',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
+              'product_id',
+              'warehouse_id',
+              'mfg_date',
+              'expired_date',
+              'minimum',
+              'maximum',
             ]"
             status_code="report_stock"
             status_code_default="include_pending"
@@ -62,7 +62,11 @@
 
 <script>
 import $axiosMertrack from "../../apiMertrack";
-import { exportDataReport, calculatePagination } from "../../utils";
+import {
+  exportDataReport,
+  calculatePagination,
+  calculatePaginationV3,
+} from "../../utils";
 import { dateFilter } from "../../constants";
 
 export default {
@@ -77,7 +81,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "Report_ProductStock",
         StatusCode: "include_pending",
         StatusCodeText: "Include Pending",
         StartDate: "",
@@ -94,7 +97,7 @@ export default {
           label: "Warehouse",
         },
         {
-          key: "product_type_desc",
+          key: "sn_non_sn",
           label: "SN / NON-SN",
         },
         {
@@ -130,7 +133,7 @@ export default {
           // _classes: "font-weight-bold",
         },
         {
-          key: "quantity",
+          key: "quantity_l1",
           label: "L1 Qty",
         },
       ],
@@ -139,9 +142,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/report?${param}`).then((res) => {
+      let url = `/v3/report/stock?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });

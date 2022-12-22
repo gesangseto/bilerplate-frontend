@@ -148,7 +148,7 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/packing?raw=true${param}`;
+      let url = `/v3/transaction/packing?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePaginationV3({
