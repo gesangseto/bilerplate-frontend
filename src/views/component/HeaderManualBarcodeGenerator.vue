@@ -1,7 +1,7 @@
 <template>
   <div>
     <CRow style="margin-bottom: -10px">
-      <CCol md="6">
+      <CCol md="12">
         <table style="margin: 5px; width: 100%">
           <tr>
             <td style="width: 25%"><label>EPC Type *</label></td>
@@ -130,8 +130,8 @@
           </tr>
         </table>
       </CCol>
-      <CCol md="6">
-        <table style="margin: 5px; width: 100%">
+      <CCol md="12">
+        <!-- <table style="margin: 5px; width: 100%">
           <tr>
             <td style="width: 25%"><label>Batch No *</label></td>
             <td>
@@ -157,7 +157,7 @@
               </small>
             </td>
           </tr>
-        </table>
+        </table> -->
       </CCol>
     </CRow>
     <CRow>
@@ -429,14 +429,14 @@ export default {
       if (this.initial_load) {
         return true;
       }
-      if (!this.result.batch_no) {
-        this.required.batch_no.valid = false;
-        this.is_error = true;
-      }
-      if (!this.result.exp || this.result.exp === "Invalid date") {
-        this.required.exp.valid = false;
-        this.is_error = true;
-      }
+      // if (!this.result.batch_no) {
+      //   this.required.batch_no.valid = false;
+      //   this.is_error = true;
+      // }
+      // if (!this.result.exp || this.result.exp === "Invalid date") {
+      //   this.required.exp.valid = false;
+      //   this.is_error = true;
+      // }
       if (!this.result.epc_type) {
         this.required.epc_type.valid = false;
         this.is_error = true;
@@ -466,7 +466,7 @@ export default {
     },
     generateBarcode() {
       let obj_result = JSON.parse(JSON.stringify(this.result));
-      obj_result.exp = this.formatDate(obj_result.exp);
+      // obj_result.exp = this.formatDate(obj_result.exp);
 
       if (obj_result.input_type === "non_sscc") {
         let prefix = obj_result.serial.substring(0, 1);
@@ -477,11 +477,11 @@ export default {
         delete obj_result.serial;
         delete obj_result.company_prefix;
       }
-      if (obj_result.exp === "Invalid date") {
-        this.invalidBarcode();
-        this.barcode_property.data.barcode_hr = "Invalid Barcode";
-        return;
-      }
+      // if (obj_result.exp === "Invalid date") {
+      //   this.invalidBarcode();
+      //   this.barcode_property.data.barcode_hr = "Invalid Barcode";
+      //   return;
+      // }
       this.barcode_property.data.barcode = parsingDataToBarcode({
         data_object: obj_result,
       });

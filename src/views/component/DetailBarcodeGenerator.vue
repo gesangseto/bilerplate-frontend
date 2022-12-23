@@ -49,8 +49,8 @@
             <template #append-content>
               <CButton
                 style="font-size: 10pt; margin: -10pt"
-                :color="barcode === item.barcode_2d ? 'success' : 'info'"
-                :disabled="barcode === item.barcode_2d"
+                :color="barcode === item.barcode ? 'success' : 'info'"
+                :disabled="barcode === item.barcode"
                 @click="handleClickRow(item, -1)"
               >
                 <v-icon name="qrcode" /></CButton
@@ -108,8 +108,8 @@
                     size="sm"
                     class="float-left"
                     style="font-size: 1px; margin: -8px"
-                    :color="barcode === item.barcode_2d ? 'success' : 'info'"
-                    :disabled="barcode === item.barcode_2d"
+                    :color="barcode === item.barcode ? 'success' : 'info'"
+                    :disabled="barcode === item.barcode"
                     @click="handleClickRow(item, index)"
                   >
                     <v-icon style="margin-bottom: -1px" name="qrcode" />
@@ -158,16 +158,16 @@ export default {
         if (this.property.modal) {
           this.list_data = this.resetList();
           this.item = JSON.parse(JSON.stringify(this.property.item));
-          this.item.product_detail = `(${this.item.no}) ${this.item.product_name}`;
-          this.item.exp_mfg = `${this.item.expired_date} / ${this.item.mfg_date}`;
-          this.item.full_serial = `[${this.item.gtin_cp}] ${this.item.serial}`;
-          this.item.pkg_detail = `(${this.item.packaging_level}) ${this.item.name_packaging}`;
-          let last_location = !this.item.warehouse_name
-            ? this.item.customer_name
-            : this.item.warehouse_name;
-          this.item.status_last = `${this.item.status_desc} - ${last_location}`;
+          this.item.product_detail = `(${this.item["product_no"]}) ${this.item["product_name"]}`;
+          this.item.exp_mfg = `${this.item["expired_date"]} / ${this.item["mfg_date"]}`;
+          this.item.full_serial = `[${this.item["gtin_cp"]}] ${this.item["serial"]}`;
+          this.item.pkg_detail = `(${this.item["packaging_level"]}) ${this.item["packaging_name"]}`;
+          let last_location = !this.item["warehouse_name"]
+            ? this.item["customer_name"]
+            : this.item["warehouse_name"];
+          this.item.status_last = `${this.item["status_desc"]} - ${last_location}`;
           this.getDetailItem(this.property.item, true);
-          this.barcode = this.property.item.barcode_2d;
+          this.barcode = this.property.item.barcode;
         }
       },
     },
@@ -233,9 +233,7 @@ export default {
       let param = JSON.parse(JSON.stringify(item));
       param.packaging_level = item.packaging_level - 1;
       param.from_stock = 1;
-      let url = `/general/web?ApiName=DetailItem&Params=${JSON.stringify(
-        param
-      )}&Id=${id}`;
+      let url = `/v3/transaction/stock?show_barcode=true&parent=${id}`;
       $axiosMertrack.get(url).then((result) => {
         this.is_loading = false;
         let data = result.data.data;
@@ -252,7 +250,7 @@ export default {
       });
     },
     handleClickRow(item, index) {
-      this.barcode = item.barcode_2d;
+      this.barcode = item.barcode;
       this.getDetailItem(item);
     },
     generateBarcode() {

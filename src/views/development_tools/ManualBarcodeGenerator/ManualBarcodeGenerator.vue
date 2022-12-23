@@ -65,11 +65,11 @@ export default {
       this.initial_data();
     },
     getData() {
-      this.result.date_format = "web";
-      let param = `ApiName=GetStock&Params=${JSON.stringify(this.result)}`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((res) => {
+      let param = `${new URLSearchParams(this.result).toString()}`;
+      let url = `/v3/helper/detail-item/stock?advanced=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
-        if (data.length != 1 || (data[0] && data[0].stocks.length != 1)) {
+        if (data.length != 1) {
           this.$toast.open({
             message: `Data cannot be found`,
             type: "error",
@@ -79,23 +79,16 @@ export default {
           });
           return;
         }
-        if (data[0] && data[0].stocks) {
-          this.showData = true;
-          this.detailData = data[0].stocks[0];
-          this.detailData.epc_type = this.detailData.epc_type.toUpperCase();
-          this.detailData.packaging_name =
-            data[0].stocks[0][
-              `name_packaging_l${this.detailData.packaging_level}`
-            ];
-          if (this.detailData.parent) {
-            this.getParent();
-          }
+        this.showData = true;
+        this.detailData = data[0];
+        if (this.detailData.parent) {
+          this.getParent();
         }
       });
     },
     getParent() {
-      let param = `ApiName=GetStock&Id=${this.detailData.parent}`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((res) => {
+      let url = `/v3/helper/detail-item/stock?id=${this.detailData["parent"]}`;
+      $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
         if (data[0] && data[0].stocks) {
           data = data[0].stocks;

@@ -8,15 +8,21 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :filter="[
                   'All',
-                  'Product',
-                  'Supplier',
-                  'Warehouse',
-                  'Customer',
+                  'product_id',
+                  'supplier_id',
+                  'warehouse_id',
+                  'customer_id',
                 ]"
-                :order="['All', 'Product', 'Supplier', 'Warehouse', 'Customer']"
+                :order="[
+                  'All',
+                  'product_id',
+                  'supplier_id',
+                  'warehouse_id',
+                  'customer_id',
+                ]"
                 status_code="product_stock_serial"
                 :removeTrxDate="true"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -46,7 +52,7 @@
               <template>
                 <CPagination
                   :activePage.sync="filter.page"
-                  :pages="totalPages"
+                  :pages="filter.totalPages"
                   size="sm"
                   align="center"
                   @update:activePage="pageChange"
@@ -72,10 +78,8 @@
 </template>
 
 <script>
-import DetailBarcodeGenerator from "../../component";
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, toTitleCase } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import { calculatePaginationV3, exportData } from "../../../utils";
 export default {
   name: "ListBarcodeGenerator",
   mounted() {
@@ -89,16 +93,15 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        ApiName: "GetWeb_GenerateBarcodeTools",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalPages: 1,
+        StartDate: "",
+        EndDate: "",
       },
-      totalPages: 0,
       datas: [],
       selected_data: { modal: false, item: {} },
       fields: [
         {
-          key: "no",
+          key: "product_no",
           label: "Item No",
           _classes: "font-weight-bold",
         },
@@ -127,7 +130,7 @@ export default {
           label: "Pkg Level",
         },
         {
-          key: "name_packaging",
+          key: "packaging_name",
           label: "Pkg Name",
         },
         {
@@ -172,10 +175,16 @@ export default {
     loadData() {
       delete this.filter["StartDate"];
       delete this.filter["EndDate"];
+      this.filter["parent"] = null;
+      this.filter["advanced"] = true;
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/stock?show_barcode=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.datas = res.data.data;
-        this.totalPages = Math.ceil(res.data.total / this.filter.limit) ?? 0;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
+        });
       });
     },
     handleClickFilter(val) {
@@ -223,7 +232,6 @@ export default {
           supplier_name: item.supplier_name ?? "",
           warehouse_name: item.warehouse_name ?? "",
           customer_name: item.customer_name ?? "",
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
           gtin_cp:
             item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };

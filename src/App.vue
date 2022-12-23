@@ -12,9 +12,7 @@ import {
   Button,
   ButtonPermission,
   DetailTransaction,
-  DetailTransactionV3,
   HeaderFilterTransaction,
-  HeaderFilterTransactionV3,
   DetailStockSerial,
   DetailShowStatus,
   HeaderFilterDefault,
@@ -27,6 +25,9 @@ import {
   ModalPrintLabel,
   ModalPrintLabelV3,
   FormAddItemV3,
+  DetailTransactionV3,
+  HeaderFilterTransactionV3,
+  HeaderShowStatusV3,
 } from "./views/component";
 Vue.use(VueCustomTooltip);
 Vue.use(loading);
@@ -35,9 +36,7 @@ Vue.component("MasterPid", MasterPid);
 Vue.component("Button", Button);
 Vue.component("ButtonPermission", ButtonPermission);
 Vue.component("HeaderFilterTransaction", HeaderFilterTransaction);
-Vue.component("HeaderFilterTransactionV3", HeaderFilterTransactionV3);
 Vue.component("DetailTransaction", DetailTransaction);
-Vue.component("DetailTransactionV3", DetailTransactionV3);
 Vue.component("DetailShowStatus", DetailShowStatus);
 Vue.component("HeaderShowStatus", HeaderShowStatus);
 Vue.component("DetailStockSerial", DetailStockSerial);
@@ -49,6 +48,9 @@ Vue.component("DetailBarcodeGenerator", DetailBarcodeGenerator);
 Vue.component("ModalPrintLabel", ModalPrintLabel);
 Vue.component("ModalPrintLabelV3", ModalPrintLabelV3);
 Vue.component("FormAddItemV3", FormAddItemV3);
+Vue.component("HeaderFilterTransactionV3", HeaderFilterTransactionV3);
+Vue.component("DetailTransactionV3", DetailTransactionV3);
+Vue.component("HeaderShowStatusV3", HeaderShowStatusV3);
 
 export default {
   name: "App",
