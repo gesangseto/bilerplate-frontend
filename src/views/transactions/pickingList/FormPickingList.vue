@@ -451,7 +451,13 @@ export default {
     removeDuplicateData(data) {
       data = data.filter(
         (value, index, self) =>
-          index === self.findIndex((t) => t.barcode === value.barcode)
+          index ===
+          self.findIndex(
+            (t) =>
+              t.gtin_sscc === value.gtin_sscc &&
+              t.serial === value.serial &&
+              t.batch_id === value.batch_id
+          )
       );
       return data;
     },
@@ -459,6 +465,7 @@ export default {
     handleResult(data) {
       // this.temp_items = this.temp_items.concat(data);
       this.temp_items = this.removeDuplicateData(data);
+      return;
     },
     setData() {
       if (this.temp_items.length == 0) {

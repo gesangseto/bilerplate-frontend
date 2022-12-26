@@ -360,7 +360,6 @@ export default {
       return data;
     },
     handleResult(data) {
-      console.log("data", data);
       this.temp_items = this.removeDuplicateData(data);
       return;
     },

@@ -251,12 +251,12 @@ export default {
           let tmp = it;
           tmp.value = it.batch_no;
           tmp.label = `${it.batch_no} <=> ${it.expired_date}`;
-          console.log(tmp);
           this.listBatchNo.push(tmp);
         }
       });
     },
     getProductStockSerial() {
+      this.formData.stock = [];
       let param = {
         warehouse_id:
           this.filter.warehouse_id || this.filter.from_warehouse || null,

@@ -60,6 +60,25 @@
                   <td>{{ detailData.type == 1 ? "Non-Serial" : "Serial" }}</td>
                 </tr>
               </table>
+
+              <CCard>
+                <timeline>
+                  <timeline-title
+                    >History: {{ detailData.gtin_sscc }} [{{
+                      detailData.serial
+                    }}]</timeline-title
+                  >
+                  <div v-for="item in detailData.history" :key="item">
+                    <timeline-item
+                      :bg-color="item['confirmed'] ? '#42f56c' : '#f54e42'"
+                    >
+                      {{ item["transaction"] }} (<small
+                        >{{ formatDate(item["created_date"]) }})
+                      </small>
+                    </timeline-item>
+                  </div>
+                </timeline>
+              </CCard>
             </CCol>
             <CCol md="6">
               <h5>Item</h5>
@@ -190,10 +209,18 @@ import $axiosMertrack from "../../apiMertrack";
 import jsPDF from "jspdf";
 import domtoimage from "dom-to-image";
 import HeaderShowStatusV3 from "../component/HeaderShowStatusV3.vue";
+import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
+import "vue-cute-timeline/dist/index.css";
+import moment from "moment";
 
 export default {
   components: { HeaderShowStatusV3 },
   name: "ReportShowStatus",
+  components: {
+    timeline: Timeline,
+    "timeline-item": TimelineItem,
+    "timeline-title": TimelineTitle,
+  },
 
   mounted() {},
   data() {
@@ -221,9 +248,12 @@ export default {
     handleReset() {
       this.initial_data();
     },
+    formatDate(item) {
+      return moment.utc(item).format("YYYY-MM-DD HH:mm:ss");
+    },
     getData() {
       let param = `${new URLSearchParams(this.result).toString()}`;
-      let url = `/v3/helper/detail-item/stock?advanced=true&${param}`;
+      let url = `/v3/helper/detail-item/stock?show_barcode=true&show_history=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
         console.log(data);

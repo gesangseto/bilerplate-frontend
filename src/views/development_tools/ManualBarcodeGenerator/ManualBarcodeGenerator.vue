@@ -66,7 +66,7 @@ export default {
     },
     getData() {
       let param = `${new URLSearchParams(this.result).toString()}`;
-      let url = `/v3/helper/detail-item/stock?advanced=true&${param}`;
+      let url = `/v3/helper/detail-item/stock?show_barcode=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
         if (data.length != 1) {
