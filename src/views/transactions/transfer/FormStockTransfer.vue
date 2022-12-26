@@ -349,11 +349,18 @@ export default {
     removeDuplicateData(data) {
       data = data.filter(
         (value, index, self) =>
-          index === self.findIndex((t) => t.barcode === value.barcode)
+          index ===
+          self.findIndex(
+            (t) =>
+              t.gtin_sscc === value.gtin_sscc &&
+              t.serial === value.serial &&
+              t.batch_id === value.batch_id
+          )
       );
       return data;
     },
     handleResult(data) {
+      console.log("data", data);
       this.temp_items = this.removeDuplicateData(data);
       return;
     },

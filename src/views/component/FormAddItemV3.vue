@@ -209,6 +209,7 @@ export default {
       this.returnResult();
     },
     returnResult() {
+      console.log(this.formData.stock);
       let result = this.formData.stock.filter((e) => e.is_checked);
       this.$emit("handleResult", result);
     },
@@ -270,7 +271,12 @@ export default {
       $axiosMertrack.get(`${_url}`).then((result) => {
         let data = result.data.data;
         for (const it of data) {
-          let idx = this.currentItem.findIndex((e) => e.barcode == it.barcode);
+          let idx = this.currentItem.findIndex(
+            (e) =>
+              e.gtin_sscc === it.gtin_sscc &&
+              e.serial === it.serial &&
+              e.batch_id === it.batch_id
+          );
           if (idx >= 0) {
             it.is_checked = true;
             it.is_disabled = true;
@@ -283,6 +289,7 @@ export default {
   computed: {
     detailItems() {
       return this.formData.stock.map((it) => {
+        console.log(it);
         return {
           ...it,
           gtin_cp: it.epc_type == "sscc" ? it.company_prefix : it.gtin_sscc,
