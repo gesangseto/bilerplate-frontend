@@ -239,12 +239,12 @@ export default {
           label: "File Name",
         },
         {
-          key: "_source.name",
+          key: "source_name",
           label: "Source Type",
           _classes: "font-weight-bold",
         },
         {
-          key: "_supplier.name",
+          key: "supplier_name",
           label: "Supplier Name",
         },
         {

@@ -31,7 +31,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload['_created.full_name']"
+                      v-model="upload['created_full_name']"
                     />
                   </td>
                 </tr>
@@ -51,7 +51,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload['_source.name']"
+                      v-model="upload['source_name']"
                     />
                   </td>
                 </tr>
@@ -61,7 +61,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload['_supplier.name']"
+                      v-model="upload['supplier_name']"
                     />
                   </td>
                 </tr>
@@ -85,7 +85,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.modified_by_full_name"
+                      v-model="upload.modified_full_name"
                     />
                   </td>
                 </tr>
@@ -225,11 +225,11 @@ export default {
       },
       fields: [
         {
-          key: "_product.no",
+          key: "product_no",
           label: "Item No",
         },
         {
-          key: "_product.name",
+          key: "product_name",
           label: "Product Name",
         },
         {
@@ -241,7 +241,7 @@ export default {
           label: "Exp Date",
         },
         {
-          key: "_product.nie",
+          key: "product_nie",
           label: "NIE",
         },
         {
@@ -282,13 +282,10 @@ export default {
   computed: {
     uploadItems() {
       return this.upload.items.map((item) => {
-        let lvl = item.packaging_level;
-        let packaging_name = item[`_product._packagingl${lvl}.name`] || "";
+        let type = item.epc_type ? item.epc_type.toLowerCase() : null;
         return {
           ...item,
-          packaging_name: packaging_name,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
+          gtin_cp: type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
