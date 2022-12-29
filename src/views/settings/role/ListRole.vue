@@ -54,7 +54,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 
 export default {
   name: "ListRole",
@@ -69,7 +69,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "RoleList",
         StartDate: "",
         EndDate: "",
       },
@@ -92,9 +91,9 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(`/v3/master/section-role?${param}`).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
