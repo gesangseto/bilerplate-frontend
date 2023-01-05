@@ -803,8 +803,8 @@ export default {
   },
   methods: {
     loadData() {
-      let param = `ApiName=ProductList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack.get(`v3/master/product?${param}`).then((response) => {
         let data = response.data.data[0];
         this.product = data;
         this.product.prefix_packagingl3 = "-";

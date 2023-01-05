@@ -329,8 +329,8 @@ export default {
       onlyNumber({ event, data, max });
     },
     loadData() {
-      let param = `ApiName=CustomerList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack.get(`v3/master/customer?${param}`).then((response) => {
         let data = response.data.data[0];
         this.customer = data;
         let tlp = "";

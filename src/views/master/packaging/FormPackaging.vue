@@ -121,8 +121,8 @@ export default {
     this.route_action =
       this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=PackagingList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack.get(`v3/master/packaging?${param}`).then((response) => {
         let data = response.data.data[0];
         this.packaging = data;
       });

@@ -301,8 +301,8 @@ export default {
       });
     },
     loadData() {
-      let param = `ApiName=WarehouseList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack.get(`v3/master/warehouse?${param}`).then((response) => {
         let data = response.data.data[0];
         this.warehouse = data;
       });

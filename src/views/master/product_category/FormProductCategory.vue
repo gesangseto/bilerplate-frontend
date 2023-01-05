@@ -129,6 +129,8 @@ export default {
   },
   methods: {
     loadData() {
+      // let param = `id=${this.$route.params.id}`;
+      // $axiosMertrack.get(`v3/master/product-category?${param}`).then((response) => {
       let param = `ApiName=ProductCategoryList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
       $axiosMertrack.get(`general/web?${param}`).then((response) => {
         let data = response.data.data[0];
