@@ -228,6 +228,7 @@ export default {
           new Date(dateFilter.this_year.start),
           new Date(dateFilter.this_year.end),
         ],
+        All: ["", ""],
       },
       useTransactionDate: true,
       result: this.initial_result(),
@@ -444,8 +445,8 @@ export default {
         StatusCode: this.status_code_default ?? "",
         StatusCodeText: "All",
         SearchType: "All",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
         searchText: "",
         SearchVal1: "",
         SearchVal2: "",
@@ -456,8 +457,8 @@ export default {
     },
     initial_date() {
       let initial = (this.default_date = {
-        startDate: dateFilter.last_3_month.start,
-        endDate: dateFilter.last_3_month.end,
+        startDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        endDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       });
       return initial;
     },
@@ -474,12 +475,17 @@ export default {
       this.handleClickFilter();
     },
     handleChangeDate() {
-      this.result.StartDate = moment(this.default_date.startDate).format(
-        "YYYY-MM-DD"
-      );
-      this.result.EndDate = moment(this.default_date.endDate).format(
-        "YYYY-MM-DD"
-      );
+      this.result.StartDate = "";
+      this.result.EndDate = "";
+      if (this.default_date.startDate && this.default_date.endDate) {
+        this.result.StartDate = moment(this.default_date.startDate).format(
+          "YYYY-MM-DD"
+        );
+        this.result.EndDate = moment(this.default_date.endDate).format(
+          "YYYY-MM-DD"
+        );
+      }
+
       if (this.use_type_date) {
         this.set_extend_date();
       }
@@ -487,12 +493,19 @@ export default {
       this.handleChangeFilter();
     },
     set_extend_date() {
-      let start_date = moment(this.extend_default_date.startDate).format(
-        "YYYY-MM-DD"
-      );
-      let end_date = moment(this.extend_default_date.endDate).format(
-        "YYYY-MM-DD"
-      );
+      let start_date = "";
+      let end_date = "";
+      if (
+        this.extend_default_date.startDate &&
+        this.extend_default_date.endDate
+      ) {
+        start_date = moment(this.extend_default_date.startDate).format(
+          "YYYY-MM-DD"
+        );
+        end_date = moment(this.extend_default_date.endDate).format(
+          "YYYY-MM-DD"
+        );
+      }
       this.result.SearchVal1 = start_date;
       this.result.SearchVal2 = end_date;
       this.result.SearchVal1Text = start_date;

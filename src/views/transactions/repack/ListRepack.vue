@@ -103,8 +103,8 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_printProp: {
         size: "sm",

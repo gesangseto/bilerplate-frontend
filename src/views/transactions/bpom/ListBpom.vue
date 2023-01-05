@@ -125,8 +125,8 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_downloadProp: {
         size: "sm",
@@ -246,12 +246,14 @@ export default {
       this.loadData();
     },
     handleDownloadClick(item) {
-      let body = JSON.parse(JSON.stringify(this.filter));
-      body.Id = item.id;
+      console.log(item);
+      let body = {};
+      body.id = item.id;
       body.PrintTo = "csv";
       body.MertrackApiToken = localStorage.getItem("token");
       let url = `${new URLSearchParams(body).toString()}`;
-      url = `${process.env.VUE_APP_URL_API_MERTRACK}/api/general/web?${url}`;
+      url = `${process.env.VUE_APP_URL_API_SUPPORT}/api/v3/transaction/bpom?raw=true&${url}`;
+      console.log(url);
       window.open(url, "_blank").focus();
     },
     rowUpdateClicked(item) {
