@@ -51,7 +51,7 @@
               @update:activePage="pageChange"
             />
           </template>
-          <ButtonPermission
+          <!-- <ButtonPermission
             exportType="excel"
             :permission="'print'"
             @click="handleClickExport('xls')"
@@ -60,7 +60,7 @@
             exportType="pdf"
             :permission="'print'"
             @click="handleClickExport('pdf')"
-          />
+          /> -->
         </CCardBody>
       </CCard>
     </CCol>

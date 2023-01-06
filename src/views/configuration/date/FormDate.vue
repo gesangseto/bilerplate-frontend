@@ -72,6 +72,7 @@
                   </CButton>
                   <div class="text-center">
                     <CButton
+                      :disabled="action == 'Read'"
                       style="margin-bottom: 15px; width: 50%"
                       color="danger"
                       @click="handleClickClear(index)"
@@ -82,6 +83,7 @@
                 </CCardBody>
                 <CCardFooter>
                   <CSelect
+                    :disabled="action == 'Read'"
                     :label="'Format Field ' + index"
                     placeholder="Please select"
                     @change="handleChangeFormat(index)"
@@ -106,6 +108,7 @@
                   />
 
                   <CSelect
+                    :disabled="action == 'Read'"
                     v-if="data[`field${index}_type`] == 'day'"
                     :label="'Override Option '"
                     placeholder="Please select"
@@ -142,6 +145,7 @@
         </CCardHeader>
         <CCardBody>
           <CSelect
+            :disabled="action == 'Read'"
             :options="delimeter_list"
             placeholder="Please select"
             :value.sync="data.delimeter"
@@ -150,6 +154,7 @@
             <template #prepend-content>Delimeter</template>
           </CSelect>
           <CSelect
+            :disabled="action == 'Read'"
             :options="around_list"
             placeholder="Please select"
             :value.sync="data.around"
@@ -261,7 +266,7 @@ export default {
       format_month: [
         { value: "M", label: "M" },
         { value: "MM", label: "MM" },
-        { value: "MMM", label: "MM" },
+        { value: "MMM", label: "MMM" },
         { value: "MMMM", label: "MMMM" },
       ],
       format_date: [
