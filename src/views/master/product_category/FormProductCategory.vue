@@ -97,7 +97,7 @@
 
 <script>
 import { required } from "vuelidate/lib/validators";
-import { capitalizeFirstLetter } from "../../../utils";
+import { calculatePaginationV3, capitalizeFirstLetter } from "../../../utils";
 import $axiosMertrack from "../../../apiMertrack";
 
 export default {
@@ -129,12 +129,15 @@ export default {
   },
   methods: {
     loadData() {
-      // let param = `id=${this.$route.params.id}`;
-      // $axiosMertrack.get(`v3/master/product-category?${param}`).then((response) => {
-      let param = `ApiName=ProductCategoryList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `${new URLSearchParams(this.filter).toString()}`;
+      let url = `/v3/master/product-category?${param}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.productCategory = data;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
+        });
       });
     },
 

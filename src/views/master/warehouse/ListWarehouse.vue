@@ -71,7 +71,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData } from "../../../utils";
+import { calculatePaginationV3, exportData } from "../../../utils";
 import { calculatePagination } from "../../../utils";
 
 export default {
@@ -110,11 +110,11 @@ export default {
           key: "address",
         },
         {
-          key: "mst_province_name",
+          key: "province_name",
           label: "Province",
         },
         {
-          key: "mst_warehouse_entity_name",
+          key: "entity_name",
           label: "Entity",
         },
         {
@@ -134,8 +134,7 @@ export default {
   },
   methods: {
     protectCreateWarehouse() {
-      let param = `ApiName=GetConfig`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(`/v3/configuration/application?`).then((res) => {
         if (res.data.data && res.data.data[0]) {
           if (res.data.data[0].total_wh > this.items.length) {
             this.can_add_warehouse = true;
@@ -145,11 +144,12 @@ export default {
     },
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/master/warehouse?${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         if (res.data.total != 0) {
           this.protectCreateWarehouse();
-          this.filter = calculatePagination({
+          this.filter = calculatePaginationV3({
             filter: this.filter,
             item: res,
           });
@@ -192,13 +192,12 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let param = {
-          ApiName: "DeleteWarehouse",
-          Params: {
+          data: {
             id: item.id,
           },
         };
         $axiosMertrack
-          .post("/general/web", param)
+          .delete("/v3/master/warehouse", param)
           .then((result) => {
             this.$isLoading(false);
             this.loadData();

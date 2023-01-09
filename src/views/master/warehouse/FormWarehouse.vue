@@ -273,8 +273,8 @@ export default {
     } else {
       this.protectCreateWarehouse();
     }
-    this.loadActiveProvince();
-    this.loadActiveEntity();
+    this.loadProvince();
+    this.loadEntity();
   },
   validations: {
     warehouse: {
@@ -305,9 +305,14 @@ export default {
       $axiosMertrack.get(`v3/master/warehouse?${param}`).then((response) => {
         let data = response.data.data[0];
         this.warehouse = data;
+        this.warehouse.category_id = parseInt(data.category_id);
+        this.warehouse.mst_province_id = parseInt(data.mst_province_id);
+        this.warehouse.mst_warehouse_entity_id = parseInt(
+          data.mst_warehouse_entity_id
+        );
       });
     },
-    loadActiveProvince() {
+    loadProvince() {
       let param = `ApiName=ProvinceList`;
       $axiosMertrack.get(`general/web?${param}`).then((response) => {
         let data = response.data.data;
@@ -320,7 +325,7 @@ export default {
         return;
       });
     },
-    loadActiveEntity() {
+    loadEntity() {
       let param = `ApiName=WarehouseEntityList`;
       $axiosMertrack.get(`general/web?${param}`).then((response) => {
         let data = response.data.data;
@@ -338,16 +343,13 @@ export default {
       if (this.$v.$invalid) {
         return;
       }
-      let dataPost = {
-        ApiName: this.$route.params.id ? "UpdateWarehouse" : "InsertWarehouse",
-        Params: this.warehouse,
-      };
+      let dataPost = this.warehouse;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
+        $axiosMertrack.post(`/v3/master/warehouse`, dataPost).then((result) => {
           this.$isLoading(false);
           let res = result.data;
           this.$toast.open({
