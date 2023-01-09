@@ -8,567 +8,266 @@
           </CCardHeader>
           <CCardBody>
             <CForm>
-              <div class="form-group row"></div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="identity">
-                    Entity Name <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.identity_name"
-                    id="identity"
-                    class="form-control"
-                    placeholder="Enter Your Identity Name"
-                    autocomplete="off"
-                  />
-                  <label
-                    id="error-identity"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorIdentity }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="identity">
-                    Entity Address <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <textarea
-                    v-model="configuration.entity_address"
-                    id="identity"
-                    class="form-control"
-                    placeholder="Enter Your Identity Address"
-                    autocomplete="off"
-                  />
-                  <label
-                    id="error-identity"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorIdentity }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="identity">
-                    GS1 Company Prefix <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.identity_number"
-                    id="identity"
-                    class="form-control"
-                    placeholder="Enter Your Identity Name"
-                    autocomplete="off"
-                  />
-                  <label
-                    id="error-identity"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorIdentity }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="identity">
-                    Latitude <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.latitude"
-                    id="identity"
-                    class="form-control"
-                    placeholder="Enter Your Latitude"
-                    autocomplete="off"
-                  />
-                  <label
-                    id="error-identity"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorLatitude }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="identity">
-                    Longitude <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.longitude"
-                    id="identity"
-                    class="form-control"
-                    placeholder="Enter Your Longitude"
-                    autocomplete="off"
-                  />
-                  <label
-                    id="error-identity"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorLongitude }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="logo-identity">
-                    Identity Logo <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
-                  <div class="custom-file mb-3">
-                    <input
-                      type="file"
-                      class="custom-file-input"
-                      id="logo"
-                      required
-                      @change="uploadLogo"
-                    />
-                    <label
-                      id="label-name-file"
-                      class="custom-file-label"
-                      for="logo"
-                      >{{ labelLogo }}</label
-                    >
-                    <label
-                      id="error-logo"
-                      class="text-danger"
-                      style="font-size: 12px; font-weight: bolder"
-                    >
-                      {{ message.errorLogo }}
-                    </label>
-                  </div>
-                </div>
-              </div>
+              <CCol sm="10">
+                <CInput
+                  label="Entity Name"
+                  horizontal
+                  v-model="data.identity_name"
+                  :is-valid="
+                    initialLoad ? null : !data.identity_name ? false : true
+                  "
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Entity Name
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+              <CCol sm="10">
+                <CTextarea
+                  label="Entity Address"
+                  horizontal
+                  v-model="data.entity_address"
+                  :is-valid="
+                    initialLoad ? null : !data.entity_address ? false : true
+                  "
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Entity Address
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CTextarea>
+              </CCol>
+              <CCol sm="10">
+                <CInput
+                  label="GS1 Company Prefix"
+                  horizontal
+                  type="number"
+                  v-model="data.identity_number"
+                  :is-valid="
+                    initialLoad ? null : !data.identity_number ? false : true
+                  "
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      GS1 Company Prefix
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+              <CCol sm="10">
+                <CInput
+                  label="Latitude"
+                  horizontal
+                  v-model="data.latitude"
+                  :is-valid="initialLoad ? null : !data.latitude ? false : true"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Latitude
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+              <CCol sm="10">
+                <CInput
+                  label="Longitude"
+                  horizontal
+                  v-model="data.longitude"
+                  :is-valid="
+                    initialLoad ? null : !data.longitude ? false : true
+                  "
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Longitude
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+              <CCol sm="10" lg="10">
+                <CInputFile
+                  :placeholder="labelLogo"
+                  horizontal
+                  custom
+                  class="input-form-upload"
+                  @change="uploadLogo"
+                  :is-valid="
+                    initialLoad ? null : !data.identity_logo_path ? false : true
+                  "
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Identity Logo
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInputFile>
+              </CCol>
               <div class="form-group row mb-5">
                 <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
                   <label for="logo-identity"> </label>
                 </div>
                 <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
                   <div class="custom-file mb-3">
-                    <CImg
-                      width="100"
-                      v-bind:src="configuration.identity_logo_path"
-                    />
+                    <CImg width="100" v-bind:src="data.identity_logo_path" />
                   </div>
                 </div>
               </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="total-warehouse">
-                    Maximum Warehouse <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="number"
-                    min="0"
-                    max="50"
-                    v-model="configuration.total_wh"
-                    id="total-warehouse"
-                    class="form-control"
-                  />
-                  <label
-                    id="error-total-warehouse"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
+
+              <CCol sm="10">
+                <CInput
+                  label="Maximum Warehouse"
+                  horizontal
+                  type="number"
+                  v-model="data.total_wh"
+                />
+              </CCol>
+              <CCol sm="10">
+                <CInput
+                  label="Maximum Android Device"
+                  horizontal
+                  type="number"
+                  v-model="data.total_device"
+                />
+              </CCol>
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  List Android ID
+                </CCardHeader>
+                <CCardBody>
+                  <div
+                    v-for="(item, index) in parseInt(data.total_device)"
+                    :key="item"
+                    class="form-group row"
                   >
-                    {{ message.errorTotalWarehouse }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="total-device">
-                    Maximum Android Device
-                    <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    v-model="configuration.total_device"
-                    id="total-device"
-                    class="form-control"
-                    @change="updatetotal_devices"
-                  />
-                  <label
-                    id="error-total-device"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errortotal_device }}
-                  </label>
-                </div>
-              </div>
-              <div
-                v-for="device in devicesLooping"
-                :key="device"
-                class="form-group row"
-              >
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="total-device">
-                    Android ID {{ device
-                    }}<strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <!-- <textarea class="form-control" placeholder="Enter IMEI Device" v-model="configuration.imei" autocomplete="off" rows="4" ></textarea> -->
-                  <input
-                    type="text"
-                    min="0"
-                    max="100"
-                    placeholder="Enter Android ID"
-                    v-model="AndroidId[device - 1]"
-                    autocomplete="off"
-                    class="form-control"
-                  />
-                  <label
-                    id="error-total-device"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorImeiDevice }}
-                  </label>
-                </div>
-              </div>
-              <!-- <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-password">
-                    Database SA Password <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="password"
-                    v-model="configuration.DbPwd"
-                    id="database-password"
-                    class="form-control"
-                    placeholder="Enter Your Database Password"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorDatabasePassword }}
-                  </label>
-                </div>
-              </div> -->
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    Periodic Backups <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <CSelect
-                    :options="periodicBackupOptions"
-                    :value.sync="configuration.backup_frequent"
-                    placeholder="--SELECT--"
-                  >
-                  </CSelect>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    SFTP Folder 1 <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.sftp_folder_1"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your SFTP Folder 1"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorSftp1 }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    SFTP Folder 2 <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.sftp_folder_2"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your SFTP Folder 2"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorSftp2 }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    SFTP Folder 3 <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.sftp_folder_3"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your SFTP Folder 3"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorSftp3 }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    Archive Folder 1 <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.achived_folder_1"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your Archive Folder 1"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorAchived1 }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    Archive Folder 2 <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.achived_folder_2"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your Archive Folder 2"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorAchived2 }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    Archive Folder 3 <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.achived_folder_3"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your Archive Folder 3"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorAchived3 }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="">
-                    GTIN Indicator - L2 - Box
-                    <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.level_indicator_box_gtin"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your GTIN Level Indicator Box"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.errorlevel_indicator_box_gtin }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    SSCC Ext - L2 - Box (Serial)
-                    <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.sscc_no_box_sn"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your SSCC No Box Serial"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.sscc_no_box_sn }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    SSCC Ext - L2 - Box (Non-Serial)
-                    <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.sscc_no_box_non_sn"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your SSCC No Box Non-Serial"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.sscc_no_box_non_sn }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    SSCC Ext - L3 - Pallet (Serial)
-                    <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.sscc_no_pallet_sn"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your SSCC No Pallet Serial"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.sscc_no_pallet_sn }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    SSCC Ext - L3 - Pallet (Non-Serial)
-                    <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7 col-xl-7">
-                  <input
-                    type="text"
-                    v-model="configuration.sscc_no_pallet_non_sn"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Your SSCC No Pallet NS"
-                  />
-                  <label
-                    id="error-datebase-password"
-                    class="text-danger"
-                    style="font-size: 12px; font-weight: bolder"
-                  >
-                    {{ message.sscc_no_pallet_non_sn }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="database-backup">
-                    Delivery Limit Before Expiry Date
-                    <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <input
-                    type="number"
-                    v-model="configuration.delivery_day_limit"
-                    class="form-control"
-                    autocomplete="off"
-                    placeholder="Enter Delivery Limit"
-                  />
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                  <label style="padding-top: 5px">day(s) </label>
-                </div>
-              </div>
+                    <CCol sm="10">
+                      <CInput
+                        :label="'Android ID ' + (index + 1)"
+                        horizontal
+                        v-model="data.list_device[index]"
+                        :is-valid="
+                          initialLoad
+                            ? null
+                            : !data.list_device[index]
+                            ? false
+                            : true
+                        "
+                      />
+                    </CCol>
+                  </div>
+                </CCardBody>
+              </CCard>
+
+              <CCard>
+                <CCardHeader style="font-weight: bold">SFTP Folder</CCardHeader>
+                <CCardBody>
+                  <CCol sm="10">
+                    <CInput
+                      label="SFTP Folder 1"
+                      horizontal
+                      v-model="data.sftp_folder_1"
+                    />
+                  </CCol>
+                  <CCol sm="10">
+                    <CInput
+                      label="SFTP Folder 2"
+                      horizontal
+                      v-model="data.sftp_folder_2"
+                    />
+                  </CCol>
+                  <CCol sm="10">
+                    <CInput
+                      label="SFTP Folder 3"
+                      horizontal
+                      v-model="data.sftp_folder_3"
+                    />
+                  </CCol>
+                </CCardBody>
+              </CCard>
+
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  Archive Folder
+                </CCardHeader>
+                <CCardBody>
+                  <CCol sm="10">
+                    <CInput
+                      label="Archive Folder 1"
+                      horizontal
+                      v-model="data.achived_folder_1"
+                    />
+                  </CCol>
+                  <CCol sm="10">
+                    <CInput
+                      label="Archive Folder 2"
+                      horizontal
+                      v-model="data.achived_folder_2"
+                    />
+                  </CCol>
+                  <CCol sm="10">
+                    <CInput
+                      label="Archive Folder 3"
+                      horizontal
+                      v-model="data.achived_folder_3"
+                    />
+                  </CCol>
+                </CCardBody>
+              </CCard>
+              <CCol sm="10">
+                <CSelect
+                  :options="periodicBackupOptions"
+                  :value.sync="data.backup_frequent"
+                  placeholder="--SELECT--"
+                  label="Periodic Backups"
+                  horizontal
+                >
+                </CSelect>
+              </CCol>
+              <CCol sm="10">
+                <CInput
+                  label=" Delivery Limit Before Expiry Date"
+                  placeholder="Enter minimum L1 stock threshold"
+                  type="number"
+                  horizontal
+                  v-model="data.delivery_day_limit"
+                >
+                  <template #append-content>Day's</template>
+                </CInput>
+              </CCol>
+              <CCol sm="10">
+                <CRow form class="form-group">
+                  <CCol tag="label" sm="3" class="col-form-label">
+                    Allow Return Aggregation
+                  </CCol>
+                  <CCol sm="9">
+                    <CSwitch
+                      class="mr-1"
+                      color="success"
+                      :checked.sync="data.return_ext_aggregation"
+                    />
+                  </CCol>
+                </CRow>
+              </CCol>
             </CForm>
           </CCardBody>
           <CCardFooter>
@@ -603,9 +302,10 @@ export default {
   components: {},
   data() {
     return {
+      initialLoad: true,
       action: "Edit",
       labelLogo: "Choose file...",
-      configuration: {
+      data: {
         Username: "",
         UserPassword: "",
         IdentityName: "",
@@ -630,10 +330,9 @@ export default {
         level_indicator_box_gtin: "",
         Latitude: "",
         Longitude: "",
-        AndroidDevices: [],
+        list_device: [],
       },
       devicesLooping: 0,
-      AndroidId: [],
       periodicBackupOptions: [
         { value: 1, label: "1 Day" },
         { value: 7, label: "7 Day" },
@@ -669,14 +368,11 @@ export default {
   },
   methods: {
     loadConfig() {
-      let param = `ApiName=GetConfig&Params={}&Id=&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `v3/configuration/application`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
-        this.configuration = data;
+        this.data = data;
         this.devicesLooping = data.total_device;
-        for (const it of data.devices) {
-          this.AndroidId.push(it.android_id);
-        }
       });
       return;
     },
@@ -684,9 +380,9 @@ export default {
       return moment(date).format("yyyy/MM/DD");
     },
     uploadLogo(event) {
-      let file = event.target.files[0];
+      let file = event[0];
       if (file != undefined) {
-        // this.configuration.logo.fileName = file.name;
+        // this.data.logo.fileName = file.name;
         this.labelLogo = file.name;
         this.convertToBase64(file);
         this.message.errorLogo = "";
@@ -697,25 +393,42 @@ export default {
     },
     convertToBase64(file) {
       reader.onload = (e) => {
-        this.configuration.identity_logo_path = e.target.result;
+        this.data.identity_logo_path = e.target.result;
       };
       reader.readAsDataURL(file);
     },
     validator(val) {
       return val ? val.length >= 4 : false;
     },
-    updatetotal_devices() {
-      this.devicesLooping = parseInt(this.configuration.total_device);
+    formValidation() {
+      let required = [
+        "identity_name",
+        "identity_number",
+        "identity_logo_path",
+        "entity_address",
+      ];
+      for (const it of required) {
+        if (!this.data[it]) {
+          this.$toast.open({
+            message: "Please complete all required data",
+            type: "error",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+          return false;
+        }
+      }
+      return true;
     },
     save() {
-      if (!this.configuration.level_indicator_box_gtin) {
-        return (this.message.errorlevel_indicator_box_gtin =
-          "This must have value");
+      this.initialLoad = false;
+      if (!this.formValidation()) {
+        return;
       }
       this.message.errorlevel_indicator_box_gtin = "";
-      this.configuration.AndroidDevices = [];
-      for (var i = 0; i < this.devicesLooping; i++) {
-        if (!this.AndroidId[i]) {
+      for (var i = 0; i < this.data.total_device; i++) {
+        if (!this.data.list_device[i]) {
           this.$toast.open({
             message: `Please input Android ID  ${i + 1}`,
             type: "error",
@@ -725,36 +438,26 @@ export default {
           });
           return;
         }
-        this.configuration.AndroidDevices.push({
-          AndroidId: this.AndroidId[i],
-        });
       }
-      let devices = [];
-      for (const it of this.AndroidId) {
-        devices.push({ android_id: it });
-      }
-      this.configuration.devices = devices;
-      let dataPost = {
-        ApiName: "UpdateConfig",
-        Params: this.configuration,
-      };
-      $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-        let res = result.data;
-        this.$toast.open({
-          message: res.error
-            ? `${res.message}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
+      let total = this.data.total_device;
+      this.data.list_device = this.data.list_device.slice(0, total);
+      $axiosMertrack
+        .post(`v3/configuration/application`, this.data)
+        .then((result) => {
+          let res = result.data;
+          this.$toast.open({
+            message: res.error
+              ? `${res.message}`
+              : "Data has been saved succesfully ",
+            type: res.error ? "error" : "success",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+          if (!res.error) {
+            this.$router.back();
+          }
         });
-        if (!res.error) {
-          this.items = [];
-          dataPost = [];
-          this.$router.back();
-        }
-      });
       return;
     },
     cancel() {

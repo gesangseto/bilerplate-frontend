@@ -139,13 +139,8 @@ export default {
       }
       if (confirm(message)) {
         this.$isLoading(true);
-        let dataPost = {
-          ApiName: this.$route.params.id
-            ? "UpdatePackaging"
-            : "InsertPackaging",
-          Params: this.packaging,
-        };
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
+        let dataPost = this.packaging;
+        $axiosMertrack.post(`v3/master/packaging`, dataPost).then((result) => {
           this.$isLoading(false);
           let res = result.data;
           this.$toast.open({

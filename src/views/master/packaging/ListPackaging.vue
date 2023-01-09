@@ -67,8 +67,11 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData } from "../../../utils";
-import { calculatePagination } from "../../../utils";
+import {
+  calculatePaginationV3,
+  exportData,
+  exportDataV3,
+} from "../../../utils";
 
 export default {
   name: "ListPackaging",
@@ -115,9 +118,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/master/packaging?${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -128,7 +132,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/master/packaging",
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -156,14 +164,12 @@ export default {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         let param = {
-          ApiName: "DeletePackaging",
-          Params: {
-            id: item.id,
-          },
+          id: item.id,
         };
         this.$isLoading(true);
+        let url = `/v3/master/packaging`;
         $axiosMertrack
-          .post("/general/web", param)
+          .delete(url, { data: param })
           .then((result) => {
             this.$isLoading(false);
             this.loadData();
@@ -176,6 +182,7 @@ export default {
               position: "top-right",
               duration: 5000,
             });
+            this.loadData();
           })
           .catch((err) => {
             this.$toast.open({
