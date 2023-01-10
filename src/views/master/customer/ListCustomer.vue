@@ -45,8 +45,8 @@
           </div>
           <template>
             <CPagination
-              :activePage.sync="page"
-              :pages="totalPages"
+              :activePage.sync="filter.page"
+              :pages="filter.totalPages"
               size="sm"
               align="center"
               @update:activePage="pageChange"
@@ -70,7 +70,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData } from "../../../utils";
+import { calculatePaginationV3, exportDataV3 } from "../../../utils";
 
 export default {
   name: "ListCustomer",
@@ -83,7 +83,7 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        ApiName: "CustomerList",
+        totalPages: 1,
         StartDate: "",
         EndDate: "",
       },
@@ -128,9 +128,13 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/master/customer?${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.totalPages = Math.ceil(res.data.total / this.filter.limit) ?? 0;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
+        });
       });
     },
     handleClickFilter(val) {
@@ -138,7 +142,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/master/customer",
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -173,14 +181,9 @@ export default {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = {
-          ApiName: "DeleteCustomer",
-          Params: {
-            id: item.id,
-          },
-        };
+        let param = { data: { id: item.id } };
         $axiosMertrack
-          .post("/general/web", param)
+          .delete("/v3/master/customer", param)
           .then((result) => {
             this.$isLoading(false);
             this.loadData();
@@ -209,10 +212,13 @@ export default {
   computed: {
     customers() {
       return this.items.map((item) => {
+        let addr = "";
+        if (item.address) addr = `${item.address.substring(0, 30)}`;
         return {
           ...item,
           tlp: item.tlp ?? "",
           tlp_alt: item.tlp_alt ?? "",
+          address: addr,
         };
       });
     },

@@ -167,9 +167,7 @@
                       :checked.sync="product.product_type"
                     />
                     <p class="col-form-label col-sm-3" v-if="action == 'Read'">
-                      {{
-                        product.product_type == "0" ? "Serial" : "Non-Serial"
-                      }}
+                      {{ product.product_type ? "Non-Serial" : "Serial" }}
                     </p>
                   </CCol>
                 </CRow>
@@ -583,8 +581,8 @@ export default {
         { value: false, label: "Inactive" },
       ],
       productTypeOption: [
-        { value: "0", label: "Serial" },
-        { value: "1", label: "Non-Serial" },
+        { value: 0, label: "Serial" },
+        { value: 1, label: "Non-Serial" },
       ],
     };
   },
@@ -608,16 +606,6 @@ export default {
       };
       return tmp;
     },
-    loadMasterPid() {
-      let param = `ApiName=GetWeb_GetPid&Params={"product_id":${this.product.id}}&Id=&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (let it of data) {
-          it.product_id = this.$route.params.id;
-          this.ResultPid[`level_${it.packaging_level}`].push(it);
-        }
-      });
-    },
     loadData() {
       let param = `id=${this.$route.params.id}`;
       $axiosMertrack.get(`v3/master/product?${param}`).then((response) => {
@@ -625,17 +613,11 @@ export default {
         console.log(data);
         this.product = data;
         this.product.status = data.status == "Active" ? true : false;
-        this.product.product_type = data.product_type.toString();
-        this.product.mst_pid = data._pid;
-        for (var i = 1; i <= 4; i++) {
-          this.product[`packagingl${i}_id`] = parseInt(
-            this.product[`packagingl${i}_id`]
-          );
+
+        for (let it of data.mst_pid) {
+          this.ResultPid[`level_${it.packaging_level}`].push(it);
         }
-        this.product[`mst_product_category_id`] = parseInt(
-          this.product[`mst_product_category_id`]
-        );
-        this.loadMasterPid();
+        // this.loadMasterPid();
         this.compressQuantity();
       });
     },
@@ -767,25 +749,26 @@ export default {
       }
     },
     loadProductCategory() {
-      let param = `ApiName=ProductCategoryList&Params={}&StatusCode=Active`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.listCategory.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
-      });
+      $axiosMertrack
+        .get(`/v3/master/product-category?status=Active`)
+        .then((response) => {
+          let data = response.data.data;
+          for (const it of data) {
+            this.listCategory.push({
+              label: it.name,
+              value: `${it.id}`,
+            });
+          }
+          return;
+        });
     },
     loadPackaging() {
-      let param = `ApiName=PackagingList&Params={}&StatusCode=Active`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `status=Active`;
+      $axiosMertrack.get(`/v3/master/packaging?${param}`).then((response) => {
         let data = response.data.data;
         for (const it of data) {
           this.listPackaging.push({
-            value: parseInt(it.id),
+            value: `${it.id}`,
             label: it.name,
           });
         }
@@ -875,14 +858,9 @@ export default {
         });
         return;
       }
-      let body = {
-        ApiName: this.$route.params.id
-          ? "PostWeb_UpdateProductPid"
-          : "PostWeb_InsertProductPid",
-        Params: JSON.parse(JSON.stringify(this.product)),
-      };
-      let is_serial = body.Params.product_type == "1" ? 0 : 1;
-      body.Params.status = body.Params.status ? "Active" : "Inactive";
+      let body = JSON.parse(JSON.stringify(this.product));
+      let is_serial = body.product_type == "1" ? 0 : 1;
+      body.status = body.status ? "Active" : "Inactive";
       let master_pid = [];
       for (const key in this.ResultPid) {
         if (key == "level_4" && !this.product.packagingl4_id) {
@@ -894,29 +872,50 @@ export default {
           master_pid.push(it);
         }
       }
-      body.Params.mst_pid = master_pid;
+      body.mst_pid = master_pid;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, body).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
+
+        if (body.id) {
+          $axiosMertrack.post(`/v3/master/product`, body).then((result) => {
+            this.$isLoading(false);
+            let res = result.data;
+            this.$toast.open({
+              message: res.error
+                ? `${res.message}`
+                : "Data has been saved succesfully ",
+              type: res.error ? "error" : "success",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            if (!res.error) {
+              this.items = [];
+              this.$router.back();
+            }
           });
-          if (!res.error) {
-            this.items = [];
-            this.$router.back();
-          }
-        });
+        } else {
+          $axiosMertrack.put(`/v3/master/product`, body).then((result) => {
+            this.$isLoading(false);
+            let res = result.data;
+            this.$toast.open({
+              message: res.error
+                ? `${res.message}`
+                : "Data has been saved succesfully ",
+              type: res.error ? "error" : "success",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            if (!res.error) {
+              this.items = [];
+              this.$router.back();
+            }
+          });
+        }
       }
       return;
     },

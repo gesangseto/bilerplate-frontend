@@ -330,7 +330,7 @@ export default {
     },
     loadData() {
       let param = `id=${this.$route.params.id}`;
-      $axiosMertrack.get(`v3/master/customer?${param}`).then((response) => {
+      $axiosMertrack.get(`/v3/master/customer?${param}`).then((response) => {
         let data = response.data.data[0];
         this.customer = data;
         let tlp = "";
@@ -404,23 +404,20 @@ export default {
       }
 
       let _form_data = JSON.parse(JSON.stringify(this.customer));
-      let dataPost = {
-        ApiName: this.$route.params.id ? "UpdateCustomer" : "InsertCustomer",
-        Params: _form_data,
-      };
+      let dataPost = JSON.parse(JSON.stringify(this.customer));
 
       if (_form_data.tlp && _form_data.tlp_code) {
-        dataPost.Params.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
+        dataPost.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
       }
       if (_form_data.tlp_alt && _form_data.tlp_alt_code) {
-        dataPost.Params.tlp_alt = `${_form_data.tlp_alt_code}-${_form_data.tlp_alt}`;
+        dataPost.tlp_alt = `${_form_data.tlp_alt_code}-${_form_data.tlp_alt}`;
       }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
+        $axiosMertrack.post(`/v3/master/customer`, dataPost).then((result) => {
           this.$isLoading(false);
           let res = result.data;
           this.$toast.open({

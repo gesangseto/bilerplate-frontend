@@ -121,7 +121,7 @@
               <CSelect
                 :disabled="action == 'Read' ? true : false"
                 label="Warehouse Category *"
-                :options="listCategoryWarehouse"
+                :options="listWhCategory"
                 horizontal
                 placeholder="--Select--"
                 v-model="warehouse.category_id"
@@ -225,18 +225,7 @@ export default {
   data() {
     return {
       route_action: "",
-      // category: '',
       action: "Edit",
-      listCategoryWarehouse: [
-        {
-          value: 1,
-          label: "Quarantine",
-        },
-        {
-          value: 3,
-          label: "Ready To Sell",
-        },
-      ],
       warehouse: {
         status: "Active",
         entity: {
@@ -262,6 +251,7 @@ export default {
       statusOptions: ["Active", "Inactive"],
       listProvince: [],
       listEntity: [],
+      listWhCategory: [],
     };
   },
   mounted() {
@@ -270,9 +260,8 @@ export default {
       this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
     if (this.$route.params.id !== undefined) {
       this.loadData();
-    } else {
-      this.protectCreateWarehouse();
     }
+    this.loadWhCategory();
     this.loadProvince();
     this.loadEntity();
   },
@@ -287,56 +276,54 @@ export default {
     },
   },
   methods: {
-    protectCreateWarehouse() {
-      $axiosMertrack.get(`/general/web?ApiName=WarehouseList`).then((res) => {
-        let total_wh = res.data.total || 0;
-        $axiosMertrack.get(`/general/web?ApiName=GetConfig`).then((res) => {
-          if (res.data.data && res.data.data[0]) {
-            if (res.data.data[0].total_wh <= total_wh) {
-              this.$router.push({ path: `/oops` });
-              return;
-            }
-          }
-        });
-      });
-    },
     loadData() {
       let param = `id=${this.$route.params.id}`;
       $axiosMertrack.get(`v3/master/warehouse?${param}`).then((response) => {
         let data = response.data.data[0];
         this.warehouse = data;
-        this.warehouse.category_id = parseInt(data.category_id);
-        this.warehouse.mst_province_id = parseInt(data.mst_province_id);
-        this.warehouse.mst_warehouse_entity_id = parseInt(
-          data.mst_warehouse_entity_id
-        );
-      });
-    },
-    loadProvince() {
-      let param = `ApiName=ProvinceList`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.listProvince.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
       });
     },
     loadEntity() {
-      let param = `ApiName=WarehouseEntityList`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.listEntity.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
-      });
+      $axiosMertrack
+        .get(`/v3/master/warehouse-entity?status=Active`)
+        .then((response) => {
+          let data = response.data.data;
+          for (const it of data) {
+            this.listEntity.push({
+              label: it.name,
+              value: `${it.id}`,
+            });
+          }
+          return;
+        });
+    },
+    loadWhCategory() {
+      $axiosMertrack
+        .get(`/v3/master/warehouse-category?status=Active`)
+        .then((response) => {
+          let data = response.data.data;
+          for (const it of data) {
+            this.listWhCategory.push({
+              label: it.name,
+              value: it.id,
+            });
+          }
+          return;
+        });
+    },
+    loadProvince() {
+      $axiosMertrack
+        .get(`/v3/master/province?status=Active`)
+        .then((response) => {
+          let data = response.data.data;
+          for (const it of data) {
+            this.listProvince.push({
+              label: it.name,
+              value: `${it.id}`,
+            });
+          }
+          return;
+        });
     },
     save() {
       this.$v.$touch();

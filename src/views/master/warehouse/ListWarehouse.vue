@@ -71,8 +71,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportData } from "../../../utils";
-import { calculatePagination } from "../../../utils";
+import { calculatePaginationV3, exportDataV3 } from "../../../utils";
 
 export default {
   name: "ListWarehouse",
@@ -161,7 +160,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/master/warehouse",
+      });
     },
     pageChange(page) {
       this.filter.page = page;
