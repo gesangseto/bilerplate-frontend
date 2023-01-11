@@ -219,6 +219,14 @@
 import { capitalizeFirstLetter } from "../../../utils";
 import $axiosMertrack from "../../../apiMertrack";
 import { required } from "vuelidate/lib/validators";
+import {
+  getMstWarehouse,
+  getMstWarehouseCategory,
+  getMstWarehouseEntity,
+  insertMstWarehouse,
+  updateMstWarehouse,
+} from "../../../resource/MstWarehouse";
+import { getMstProvince } from "../../../resource/MstProvince";
 
 export default {
   name: "FormWarehouse",
@@ -276,84 +284,65 @@ export default {
     },
   },
   methods: {
-    loadData() {
-      let param = `id=${this.$route.params.id}`;
-      $axiosMertrack.get(`v3/master/warehouse?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.warehouse = data;
-      });
+    async loadData() {
+      let _res = await getMstWarehouse({ id: this.$route.params.id });
+      this.warehouse = _res.data[0];
     },
-    loadEntity() {
-      $axiosMertrack
-        .get(`/v3/master/warehouse-entity?status=Active`)
-        .then((response) => {
-          let data = response.data.data;
-          for (const it of data) {
-            this.listEntity.push({
-              label: it.name,
-              value: `${it.id}`,
-            });
-          }
-          return;
+    async loadEntity() {
+      let _res = await getMstWarehouseEntity({ status: "Active" });
+      for (const it of _res.data) {
+        this.listEntity.push({
+          label: it.name,
+          value: `${it.id}`,
         });
+      }
     },
-    loadWhCategory() {
-      $axiosMertrack
-        .get(`/v3/master/warehouse-category?status=Active`)
-        .then((response) => {
-          let data = response.data.data;
-          for (const it of data) {
-            this.listWhCategory.push({
-              label: it.name,
-              value: it.id,
-            });
-          }
-          return;
+    async loadWhCategory() {
+      let _res = await getMstWarehouseCategory({ status: "Active" });
+      for (const it of _res.data) {
+        this.listWhCategory.push({
+          label: it.name,
+          value: `${it.id}`,
         });
+      }
     },
-    loadProvince() {
-      $axiosMertrack
-        .get(`/v3/master/province?status=Active`)
-        .then((response) => {
-          let data = response.data.data;
-          for (const it of data) {
-            this.listProvince.push({
-              label: it.name,
-              value: `${it.id}`,
-            });
-          }
-          return;
+    async loadProvince() {
+      let _res = await getMstProvince({ status: "Active" });
+      for (const it of _res.data) {
+        this.listProvince.push({
+          label: it.name,
+          value: `${it.id}`,
         });
+      }
     },
-    save() {
+    async save() {
       this.$v.$touch();
       if (this.$v.$invalid) {
         return;
       }
-      let dataPost = this.warehouse;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`/v3/master/warehouse`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let dataPost = this.warehouse;
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstWarehouse(dataPost);
+        } else {
+          res = await insertMstWarehouse(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },

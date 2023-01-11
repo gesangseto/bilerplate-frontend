@@ -190,8 +190,8 @@ export function exportDataV3({ param = {}, exportType = "xls", url }) {
   if (!new_param.StatusCodeText) {
     new_param.StatusCodeText = "All";
   }
-  delete new_param.limit;
-  delete new_param.page;
+  // delete new_param.limit;
+  // delete new_param.page;
   new_param.PrintTo = exportType;
   let _url = `${endpoint}/api${url}?${new URLSearchParams(
     new_param

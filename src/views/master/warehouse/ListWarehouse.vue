@@ -70,8 +70,12 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
 import { calculatePaginationV3, exportDataV3 } from "../../../utils";
+import { getSysConfig } from "../../../resource/SysConfig";
+import {
+  deleteMstWarehouse,
+  getMstWarehouse,
+} from "../../../resource/MstWarehouse";
 
 export default {
   name: "ListWarehouse",
@@ -132,28 +136,25 @@ export default {
     };
   },
   methods: {
-    protectCreateWarehouse() {
-      $axiosMertrack.get(`/v3/configuration/application?`).then((res) => {
-        if (res.data.data && res.data.data[0]) {
-          if (res.data.data[0].total_wh > this.items.length) {
-            this.can_add_warehouse = true;
-          }
+    async protectCreateWarehouse() {
+      let _res = await getSysConfig();
+      let conf = _res.data[0];
+      if (conf) {
+        if (conf.total_wh > this.items.length) {
+          this.can_add_warehouse = true;
         }
-      });
+      }
     },
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/master/warehouse?${param}`;
-      $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        if (res.data.total != 0) {
-          this.protectCreateWarehouse();
-          this.filter = calculatePaginationV3({
-            filter: this.filter,
-            item: res,
-          });
-        }
-      });
+    async loadData() {
+      let res = await getMstWarehouse(this.filter);
+      if (!res.error) {
+        this.items = res.data;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
+        });
+      }
+      this.protectCreateWarehouse();
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -190,39 +191,23 @@ export default {
         path: `warehouse/create`,
       });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = {
-          data: {
-            id: item.id,
-          },
-        };
-        $axiosMertrack
-          .delete("/v3/master/warehouse", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteMstWarehouse(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : "Data has been deleted succesfully",
+          type: _res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },

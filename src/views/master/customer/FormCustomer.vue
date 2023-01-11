@@ -255,6 +255,12 @@ import {
 import { notEmail } from "../../../validator";
 import { required } from "vuelidate/lib/validators";
 import $axiosMertrack from "../../../apiMertrack";
+import {
+  getMstSupplier,
+  insertMstSupplier,
+  updateMstSupplier,
+} from "../../../resource/MstSupplier";
+import { getMstCustomer } from "../../../resource/MstCustomer";
 
 export default {
   name: "Forms",
@@ -328,25 +334,22 @@ export default {
     limitPhone({ event, data, max }) {
       onlyNumber({ event, data, max });
     },
-    loadData() {
-      let param = `id=${this.$route.params.id}`;
-      $axiosMertrack.get(`/v3/master/customer?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.customer = data;
-        let tlp = "";
-        if (data.tlp) {
-          tlp = data.tlp.split("-");
-          this.temp_data.tlp_code = tlp[0];
-          this.customer.tlp_code = tlp[0];
-          this.customer.tlp = tlp[1];
-        }
-        if (data.tlp_alt) {
-          tlp = data.tlp_alt.split("-");
-          this.temp_data.tlp_alt_code = tlp[0];
-          this.customer.tlp_alt_code = tlp[0];
-          this.customer.tlp_alt = tlp[1];
-        }
-      });
+    async loadData() {
+      let _res = await getMstCustomer({ id: this.$route.params.id });
+      let data = _res.data[0];
+      this.customer = data;
+      if (data.tlp) {
+        tlp = data.tlp.split("-");
+        this.temp_data.tlp_code = tlp[0];
+        this.customer.tlp_code = tlp[0];
+        this.customer.tlp = tlp[1];
+      }
+      if (data.tlp_alt) {
+        tlp = data.tlp_alt.split("-");
+        this.temp_data.tlp_alt_code = tlp[0];
+        this.customer.tlp_alt_code = tlp[0];
+        this.customer.tlp_alt = tlp[1];
+      }
     },
 
     reformatCountryCode() {
@@ -396,7 +399,7 @@ export default {
       return;
     },
     handleChangePhone() {},
-    save() {
+    async save() {
       this.initial_load = false;
       this.checkValidation();
       if (this.customer.have_error) {
@@ -417,24 +420,23 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`/v3/master/customer`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstSupplier(dataPost);
+        } else {
+          res = await insertMstSupplier(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },

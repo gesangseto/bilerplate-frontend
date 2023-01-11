@@ -81,9 +81,11 @@ import $axiosMertrack from "../../apiMertrack";
 import "vue2-daterange-picker/dist/vue2-daterange-picker.css";
 import "vue-search-select/dist/VueSearchSelect.css";
 import { ModelSelect } from "vue-search-select";
+import { getMstProductCategory } from "../../resource/MstProductCategory";
+import { getStatusDesc } from "../../resource/StatusDesc";
 
 export default {
-  name: "HeaderFilterTransaction",
+  name: "HeaderFilterDefault",
   props: ["status_code", "costume_filter", "filter"],
   components: { ModelSelect },
   mounted() {
@@ -113,6 +115,7 @@ export default {
   data() {
     return {
       result: {
+        page: 1,
         limit: 10,
         StatusCode: "",
         StatusCodeText: "All",
@@ -143,6 +146,7 @@ export default {
   methods: {
     handleResetFilter() {
       this.result = {
+        page: 1,
         limit: 10,
         StatusCode: "",
         SearchType: "All",
@@ -204,34 +208,30 @@ export default {
           this.result.StatusCodeText = it.label;
       }
     },
-    getSatusCode() {
+    async getSatusCode() {
       this.listFilterStatusCode = [{ value: "", label: "All" }];
-      let url = `/general/web?ApiName=GetWeb_GetStatus&Params={"table_name":"${this.status_code}"}`;
-      $axiosMertrack.get(url).then((result) => {
-        let data = result.data.data;
-        for (const it of data) {
-          let tmp = it;
-          tmp.value = it.status_code;
-          tmp.label = it.status_desc;
-          tmp.text = it.status_desc;
-          this.listFilterStatusCode.push(tmp);
-        }
-      });
+      let _res = await getStatusDesc({ table_name: this.status_code });
+      let data = _res.data || [];
+      for (const it of data) {
+        let tmp = it;
+        tmp.value = it.status_code;
+        tmp.label = it.status_desc;
+        tmp.text = it.status_desc;
+        this.listFilterStatusCode.push(tmp);
+      }
     },
-    getProductCategory() {
+    async getProductCategory() {
       this.listExtendFilter = [];
-      let url = `/v3/master/product-category?include_delete=1`;
-      $axiosMertrack.get(url).then((result) => {
-        let data = result.data.data;
-        for (const it of data) {
-          let ext = it.delete_flag == 1 ? "(X)" : "";
-          let tmp = it;
-          tmp.value = it.id;
-          tmp.label = `${ext} ${it.name}`;
-          tmp.text = `${ext} ${it.name}`;
-          this.listExtendFilter.push(tmp);
-        }
-      });
+      let _res = await getMstProductCategory({ include_delete: 1 });
+      let data = _res.data || [];
+      for (const it of data) {
+        let ext = it.delete_flag == 1 ? "(X)" : "";
+        let tmp = it;
+        tmp.value = it.id;
+        tmp.label = `${ext} ${it.name}`;
+        tmp.text = `${ext} ${it.name}`;
+        this.listExtendFilter.push(tmp);
+      }
     },
     getCostumeFilter(item) {
       for (const it of item.data) {

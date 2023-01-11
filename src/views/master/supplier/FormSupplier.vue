@@ -256,6 +256,10 @@ import {
   onlyNumber,
   isEmail,
 } from "../../../utils";
+import {
+  insertMstSupplier,
+  updateMstSupplier,
+} from "../../../resource/MstSupplier";
 // import { CheckPhone, SetPhone } from "../../../CustomJs";
 
 export default {
@@ -400,7 +404,7 @@ export default {
       }
       return;
     },
-    save() {
+    async save() {
       this.initial_load = false;
       this.checkValidation();
       if (this.supplier.have_error) {
@@ -421,24 +425,23 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`/v3/master/supplier`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstSupplier(dataPost);
+        } else {
+          res = await insertMstSupplier(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },

@@ -453,7 +453,13 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import { getMstPackaging } from "../../../resource/MstPackaging";
+import {
+  getMstProduct,
+  insertMstProduct,
+  updateMstProduct,
+} from "../../../resource/MstProduct";
+import { getMstProductCategory } from "../../../resource/MstProductCategory";
 import { capitalizeFirstLetter, onlyNumber } from "../../../utils";
 
 export default {
@@ -606,20 +612,15 @@ export default {
       };
       return tmp;
     },
-    loadData() {
-      let param = `id=${this.$route.params.id}`;
-      $axiosMertrack.get(`v3/master/product?${param}`).then((response) => {
-        let data = response.data.data[0];
-        console.log(data);
-        this.product = data;
-        this.product.status = data.status == "Active" ? true : false;
-
-        for (let it of data.mst_pid) {
-          this.ResultPid[`level_${it.packaging_level}`].push(it);
-        }
-        // this.loadMasterPid();
-        this.compressQuantity();
-      });
+    async loadData() {
+      let _res = await getMstProduct({ id: this.$route.params.id });
+      let data = _res.data[0];
+      this.product = data;
+      this.product.status = data.status == "Active" ? true : false;
+      for (let it of data.mst_pid) {
+        this.ResultPid[`level_${it.packaging_level}`].push(it);
+      }
+      this.compressQuantity();
     },
     compressQuantity() {
       for (var i = 1; i <= 3; i++) {
@@ -748,31 +749,23 @@ export default {
         return false;
       }
     },
-    loadProductCategory() {
-      $axiosMertrack
-        .get(`/v3/master/product-category?status=Active`)
-        .then((response) => {
-          let data = response.data.data;
-          for (const it of data) {
-            this.listCategory.push({
-              label: it.name,
-              value: `${it.id}`,
-            });
-          }
-          return;
+    async loadProductCategory() {
+      let _res = await getMstProductCategory({ status: "Active" });
+      for (const it of _res["data"]) {
+        this.listCategory.push({
+          label: it.name,
+          value: `${it.id}`,
         });
+      }
     },
-    loadPackaging() {
-      let param = `status=Active`;
-      $axiosMertrack.get(`/v3/master/packaging?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.listPackaging.push({
-            value: `${it.id}`,
-            label: it.name,
-          });
-        }
-      });
+    async loadPackaging() {
+      let _res = await getMstPackaging({ status: "Active" });
+      for (const it of _res["data"]) {
+        this.listPackaging.push({
+          label: it.name,
+          value: `${it.id}`,
+        });
+      }
     },
     validationData() {
       if (this.initial_load) {
@@ -846,7 +839,7 @@ export default {
       }
       return true;
     },
-    save() {
+    async save() {
       this.initial_load = false;
       if (!this.validationData()) {
         this.$toast.open({
@@ -878,44 +871,24 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-
-        if (body.id) {
-          $axiosMertrack.post(`/v3/master/product`, body).then((result) => {
-            this.$isLoading(false);
-            let res = result.data;
-            this.$toast.open({
-              message: res.error
-                ? `${res.message}`
-                : "Data has been saved succesfully ",
-              type: res.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-            if (!res.error) {
-              this.items = [];
-              this.$router.back();
-            }
-          });
+        let dataPost = body;
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstProduct(dataPost);
         } else {
-          $axiosMertrack.put(`/v3/master/product`, body).then((result) => {
-            this.$isLoading(false);
-            let res = result.data;
-            this.$toast.open({
-              message: res.error
-                ? `${res.message}`
-                : "Data has been saved succesfully ",
-              type: res.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-            if (!res.error) {
-              this.items = [];
-              this.$router.back();
-            }
-          });
+          res = await insertMstProduct(dataPost);
         }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },
