@@ -96,13 +96,11 @@
 <script>
 import { required } from "vuelidate/lib/validators";
 import {
-  deleteMstPackaging,
   getMstPackaging,
   insertMstPackaging,
   updateMstPackaging,
 } from "../../../resource/MstPackaging";
 import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
 export default {
   name: "PackageForm",
   data() {
@@ -145,7 +143,6 @@ export default {
         this.$isLoading(true);
         let dataPost = this.packaging;
         let res = {};
-
         if (dataPost.id) {
           res = await updateMstPackaging(dataPost);
         } else {
@@ -161,9 +158,7 @@ export default {
           position: "top-right",
           duration: 5000,
         });
-        if (!res["error"]) {
-          this.$router.back();
-        }
+        if (!res["error"]) this.$router.back();
       }
       return;
     },

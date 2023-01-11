@@ -82,7 +82,10 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import {
+  getMstProductCategory,
+  deleteMstProductCategory,
+} from "../../../resource/MstProductCategory";
 import { calculatePaginationV3, exportDataV3 } from "../../../utils";
 
 export default {
@@ -127,16 +130,16 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/master/product-category?${param}`;
-      $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
+    async loadData() {
+      let res = await getMstProductCategory(this.filter);
+
+      if (!res.error) {
+        this.items = res.data;
         this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
-      });
+      }
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -171,36 +174,23 @@ export default {
     addNew() {
       this.$router.push({ path: `product_category/create` });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = { data: { id: item.id } };
-        $axiosMertrack
-          .delete("/v3/master/product-category", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-            this.loadData();
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteMstProductCategory(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : "Data has been deleted succesfully",
+          type: _res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },
