@@ -134,7 +134,7 @@ export default {
           label: "All",
         },
         {
-          value: "ProductCategory",
+          value: "mst_product_category_id",
           label: "Product Category",
         },
       ],
@@ -163,7 +163,9 @@ export default {
           this.extendFilter = false;
           this.result.SearchVal1 = "";
           this.result.SearchVal1Text = "All";
-        } else if (this.result.SearchType.toLowerCase() == "productcategory") {
+        } else if (
+          this.result.SearchType.toLowerCase() == "mst_product_category_id"
+        ) {
           this.extendFilter = true;
           this.result.SearchVal1 = "";
           this.result.SearchVal1Text = "";
@@ -218,7 +220,7 @@ export default {
     },
     getProductCategory() {
       this.listExtendFilter = [];
-      let url = `/general/web?ApiName=ProductCategoryList&include_delete=1`;
+      let url = `/v3/master/product-category?include_delete=1`;
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {

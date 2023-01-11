@@ -95,6 +95,12 @@
 
 <script>
 import { required } from "vuelidate/lib/validators";
+import {
+  deleteMstPackaging,
+  getMstPackaging,
+  insertMstPackaging,
+  updateMstPackaging,
+} from "../../../resource/MstPackaging";
 import { capitalizeFirstLetter } from "../../../utils";
 import $axiosMertrack from "../../../apiMertrack";
 export default {
@@ -116,20 +122,18 @@ export default {
       description: { required },
     },
   },
-  mounted() {
+  async mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
     if (this.$route.params.id !== undefined) {
       let param = `id=${this.$route.params.id}`;
-      $axiosMertrack.get(`v3/master/packaging?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.packaging = data;
-      });
+      let _res = await getMstPackaging(param);
+      this.packaging = _res.data[0];
     }
   },
   methods: {
-    save() {
+    async save() {
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
@@ -140,24 +144,26 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let dataPost = this.packaging;
-        $axiosMertrack.post(`v3/master/packaging`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+
+        if (dataPost.id) {
+          res = await updateMstPackaging(dataPost);
+        } else {
+          res = await insertMstPackaging(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) {
+          this.$router.back();
+        }
       }
       return;
     },
