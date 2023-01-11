@@ -57,8 +57,8 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import { deleteMstUser, getMstUser } from "../../../resource/MstUser";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 
 export default {
   name: "ListUser",
@@ -83,8 +83,8 @@ export default {
         { key: "full_name", label: "Full Name" },
         { key: "email", label: "Email" },
         { key: "tlp", label: "Phone Number" },
-        { key: "mst_department_name", label: "Department" },
-        { key: "mst_section_name", label: "Section" },
+        { key: "department_name", label: "Department" },
+        { key: "section_name", label: "Section" },
         // { key: "mst_position_name", label: "Level" },
         { key: "status", label: "Status", _classes: "font-weight-bold" },
         {
@@ -99,15 +99,15 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePagination({
+    async loadData() {
+      let _res = await getMstUser(this.filter);
+      if (_res) {
+        this.items = _res.data;
+        this.filter = calculatePaginationV3({
           filter: this.filter,
-          item: res,
+          item: _res,
         });
-      });
+      }
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -138,40 +138,23 @@ export default {
     addNew() {
       this.$router.push({ path: `user/create` });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data (Name: ${item.full_name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
-        let param = {
-          ApiName: "DeleteUser",
-          Params: {
-            id: item.id,
-          },
-        };
         this.$isLoading(true);
-        $axiosMertrack
-          .post("/general/web", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteMstUser(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : "Data has been deleted succesfully",
+          type: _res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },

@@ -46,7 +46,7 @@
               :pages="filter.totalPages"
               size="sm"
               align="center"
-              @update:activePage="pageChange()"
+              @update:activePage="pageChange"
             />
           </template>
         </CCardBody>
@@ -56,8 +56,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import {
+  deleteMstDepartment,
+  getMstDepartment,
+} from "../../../resource/MstDepartment";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 
 export default {
   name: "ListDepartment",
@@ -72,7 +75,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "DepartmentList",
         StartDate: "",
         EndDate: "",
       },
@@ -90,15 +92,15 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePagination({
+    async loadData() {
+      let _res = await getMstDepartment(this.filter);
+      if (_res) {
+        this.items = _res.data;
+        this.filter = calculatePaginationV3({
           filter: this.filter,
-          item: res,
+          item: _res,
         });
-      });
+      }
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -129,40 +131,23 @@ export default {
     addNew() {
       this.$router.push({ path: `department/create` });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = {
-          ApiName: "DeleteDepartment",
-          Params: {
-            id: item.id,
-          },
-        };
-        $axiosMertrack
-          .post("/general/web", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteMstDepartment(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : "Data has been deleted succesfully",
+          type: _res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },

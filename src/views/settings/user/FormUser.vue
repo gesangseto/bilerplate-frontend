@@ -439,9 +439,14 @@ import {
   coutryCode,
   isEmail,
 } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
+import {
+  getMstUser,
+  insertMstUser,
+  updateMstUser,
+} from "../../../resource/MstUser";
 import { required } from "vuelidate/lib/validators";
-// import { CheckPhone, SetPhone } from "../../../CustomJs";
+import { getMstDepartment } from "../../../resource/MstDepartment";
+import { getMstSection } from "../../../resource/MstSection";
 
 export default {
   name: "FormUser",
@@ -530,18 +535,14 @@ export default {
       this.temp_data.tlp_code = $value;
       this.user.tlp_code = $value;
     },
-    loadDepartment() {
-      let param = `ApiName=DepartmentList&Params={}&StatusCode=Active`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.departmentOptions.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
-      });
+    async loadDepartment() {
+      let _res = await getMstDepartment({ status: "Active" });
+      for (const it of _res.data) {
+        this.departmentOptions.push({
+          label: it.name,
+          value: `${it.id}`,
+        });
+      }
     },
     reformatCountryCode() {
       let list = this.CountryCode;
@@ -560,13 +561,16 @@ export default {
         }
       }
     },
-    loadData() {
-      let param = `ApiName=UserList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
+    async loadData() {
+      let _res = await getMstUser({ id: this.$route.params.id });
+      if (_res) {
+        let data = _res.data[0];
         this.user = data;
+        this.user.mst_department_id =
+          this.user.mst_department_id || this.user.department_id;
+        this.user.mst_section_id =
+          this.user.mst_section_id || this.user.mst_section_id;
         this.user.mst_avatar_id = "" + data.mst_avatar_id;
-
         if (this.$route.params.id !== undefined) {
           delete this.user.pwd;
         }
@@ -578,21 +582,18 @@ export default {
           this.user.tlp = tlp[1];
         }
         this.onDepartmentChange();
-      });
+      }
     },
-    onDepartmentChange() {
-      this.optionSections = [];
-      let param = `ApiName=SectionList&Params={"mst_department_id":${this.user.mst_department_id}}&StatusCode=Active`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.optionSections.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
+    async onDepartmentChange() {
+      let _res = await getMstSection({
+        mst_department_id: this.user.mst_department_id,
       });
+      for (const it of _res.data) {
+        this.optionSections.push({
+          label: it.name,
+          value: `${it.id}`,
+        });
+      }
     },
     checkValidation() {
       let have_error = false;
@@ -626,7 +627,7 @@ export default {
       return;
     },
 
-    save() {
+    async save() {
       this.user.mst_position_id = 1;
       this.initial_load = false;
       this.checkValidation();
@@ -636,36 +637,32 @@ export default {
 
       let _form_data = JSON.parse(JSON.stringify(this.user));
 
-      let dataPost = {
-        ApiName: this.$route.params.id ? "UpdateUser" : "InsertUser",
-        Params: _form_data,
-      };
+      let dataPost = _form_data;
       if (_form_data.tlp && _form_data.tlp_code) {
-        dataPost.Params.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
+        dataPost.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
       }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstUser(dataPost);
+        } else {
+          res = await insertMstUser(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },

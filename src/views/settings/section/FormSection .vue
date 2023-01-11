@@ -127,6 +127,12 @@
 import { capitalizeFirstLetter } from "../../../utils";
 import $axiosMertrack from "../../../apiMertrack";
 import { required } from "vuelidate/lib/validators";
+import {
+  getMstSection,
+  insertMstSection,
+  updateMstSection,
+} from "../../../resource/MstSection";
+import { getMstDepartment } from "../../../resource/MstDepartment";
 
 export default {
   name: "WareHouseForm",
@@ -169,58 +175,51 @@ export default {
     },
   },
   methods: {
-    loadData() {
-      let param = `ApiName=SectionList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.section = data;
-      });
+    async loadData() {
+      let _res = await getMstSection({ id: this.$route.params.id });
+      if (_res) {
+        this.section = _res.data[0];
+      }
     },
-    loadDepartment() {
-      let param = `ApiName=DepartmentList`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
+    async loadDepartment() {
+      let _res = await getMstDepartment();
+      if (_res) {
+        for (const it of _res.data) {
           this.departmentOptions.push({
             label: it.name,
-            value: it.id,
+            value: `${it.id}`,
           });
         }
-        return;
-      });
+      }
     },
-    save() {
+    async save() {
       this.$v.$touch();
       if (this.$v.$invalid) {
         return;
       }
-      let dataPost = {
-        ApiName: this.$route.params.id ? "UpdateSection" : "InsertSection",
-        Params: this.section,
-      };
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let dataPost = this.section;
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstSection(dataPost);
+        } else {
+          res = await insertMstSection(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },
