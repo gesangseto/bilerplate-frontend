@@ -209,6 +209,7 @@
 
 <script>
 import $axiosMertrack from "../../apiMertrack";
+import { getConfLayout } from "../../resource/ConfLayout";
 export default {
   name: "MasterPid",
   props: {
@@ -323,15 +324,16 @@ export default {
   },
   computed: {},
   methods: {
-    loadLayout() {
-      $axiosMertrack.get(`/general/web?ApiName=GetWeb_Layout`).then((res) => {
+    async loadLayout() {
+      let _res = await getConfLayout();
+      if (_res) {
         this.list_layout = [];
-        for (const it of res.data.data) {
+        for (const it of _res.data) {
           it.value = it.layout_id;
           it.label = it.layout_name;
           this.list_layout.push(it);
         }
-      });
+      }
     },
     initial_max(num) {
       let it = {

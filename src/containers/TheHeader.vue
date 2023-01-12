@@ -102,7 +102,10 @@
 
 <script>
 import TheHeaderDropdownAccnt from "./TheHeaderDropdownAccnt";
-import $axiosMertrack from "../apiMertrack";
+import {
+  getMstNotification,
+  updateMstNotification,
+} from "../resource/MstNotification";
 import moment from "moment";
 export default {
   name: "TheHeader",
@@ -227,37 +230,28 @@ export default {
         this.$router.push({ path: `/oops` });
       }
     },
-    readNotif(item) {
-      let body = {
-        ApiName: "UpdateNotification",
-        Params: {
-          ids: [item.id],
-        },
-      };
-      $axiosMertrack.post(`/general/web`, body).then((res) => {
-        this.$toast.open({
-          message: res.data.error
-            ? res.data.message
-            : "Data has been saved succesfully ",
-          type: res.data.error ? "error" : "success",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
-        this.getNotif();
+    async readNotif(item) {
+      let _res = await updateMstNotification({ id: [item.id] });
+      this.$toast.open({
+        message: _res.error ? _res.message : "Data has been saved succesfully ",
+        type: _res.error ? "error" : "success",
+        dissmissible: true,
+        position: "top-right",
+        duration: 5000,
       });
-      return;
+      this.getNotif();
     },
-    getNotif() {
-      let param = `ApiName=GetNotification&Params={}&Id=&page=&limit=&searchText=`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        if (res.data.StatusCode && res.data.StatusCode == "401") {
+    async getNotif() {
+      let _res = await getMstNotification();
+      if (_res) {
+        console.log(_res);
+        if (_res.status_code && _res.status_code == "401") {
           this.sessionExpired();
           return;
         }
-        this.notif = res.data.data;
-        this.notifLength = res.data.data.length;
-      });
+        this.notif = _res.data;
+        this.notifLength = _res.data.length;
+      }
       return;
     },
     sessionExpired() {

@@ -11,14 +11,10 @@ import VueCustomTooltip from "@adamdehaven/vue-custom-tooltip";
 import {
   Button,
   ButtonPermission,
-  DetailTransaction,
   HeaderFilterTransaction,
-  DetailStockSerial,
-  DetailShowStatus,
   HeaderFilterDefault,
   MasterPid,
   HeaderShowStatus,
-  FormAddItem,
   CancelModal,
   ShowLockedStatus,
   DetailBarcodeGenerator,
@@ -36,12 +32,8 @@ Vue.component("MasterPid", MasterPid);
 Vue.component("Button", Button);
 Vue.component("ButtonPermission", ButtonPermission);
 Vue.component("HeaderFilterTransaction", HeaderFilterTransaction);
-Vue.component("DetailTransaction", DetailTransaction);
-Vue.component("DetailShowStatus", DetailShowStatus);
 Vue.component("HeaderShowStatus", HeaderShowStatus);
-Vue.component("DetailStockSerial", DetailStockSerial);
 Vue.component("HeaderFilterDefault", HeaderFilterDefault);
-Vue.component("FormAddItem", FormAddItem);
 Vue.component("CancelModal", CancelModal);
 Vue.component("ShowLockedStatus", ShowLockedStatus);
 Vue.component("DetailBarcodeGenerator", DetailBarcodeGenerator);

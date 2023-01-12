@@ -140,6 +140,7 @@ import "vue-search-select/dist/VueSearchSelect.css";
 import { ModelSelect } from "vue-search-select";
 import moment from "moment";
 import { dateFilter } from "../../constants";
+import { getStatusDesc } from "../../resource/StatusDesc";
 
 export default {
   name: "HeaderFilterTransaction",
@@ -773,25 +774,22 @@ export default {
       ];
       this.listExtendFilter = source;
     },
-    getSatusCode() {
+    async getSatusCode() {
       this.listFilterStatusCode = [];
       if (!this.remove_all_status_code) {
         this.listFilterStatusCode = [{ value: "", label: "All" }];
       }
-      let url = `/general/web?ApiName=GetWeb_GetStatus&Params={"table_name":"${this.status_code}"}`;
-      $axiosMertrack.get(url).then((result) => {
-        let data = result.data.data;
-        for (const it of data) {
-          let tmp = it;
-          if (this.status_code_default == it.status_code) {
-            this.result.StatusCodeText = it.status_desc;
-          }
-          tmp.value = it.status_code;
-          tmp.label = it.status_desc;
-          tmp.text = it.status_desc;
-          this.listFilterStatusCode.push(tmp);
+      let _res = await getStatusDesc({ table_name: this.status_code });
+      for (const it of _res.data) {
+        let tmp = it;
+        if (this.status_code_default == it.status_code) {
+          this.result.StatusCodeText = it.status_desc;
         }
-      });
+        tmp.value = it.status_code;
+        tmp.label = it.status_desc;
+        tmp.text = it.status_desc;
+        this.listFilterStatusCode.push(tmp);
+      }
     },
     humanizeText(str) {
       var i;

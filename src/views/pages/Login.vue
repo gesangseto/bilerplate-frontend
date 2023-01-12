@@ -106,7 +106,7 @@ import {
   setAsSuperAdmin,
 } from "../../utils";
 import { logoMertrack } from "../../constants";
-// import simpleStorage from "simplestorage.js";
+import { getSysConfig } from "../../resource/SysConfig";
 export default {
   name: "Login",
 
@@ -126,13 +126,7 @@ export default {
       this.message = localStorage.getItem("message");
       localStorage.removeItem("message");
     }
-    $axiosMertrack.get(`general/web?ApiName=GetConfig`).then((result) => {
-      localStorage.setItem(
-        "configuration",
-        JSON.stringify(result.data.data[0])
-      );
-      this.entityLogo = result.data.data[0].identity_logo_path;
-    });
+    this.loadConfig();
   },
   beforeCreate() {
     if (localStorage.getItem("is_login") == "true") {
@@ -144,13 +138,20 @@ export default {
     }
   },
   methods: {
+    async loadConfig() {
+      let _res = await getSysConfig();
+      if (_res) {
+        localStorage.setItem("configuration", JSON.stringify(_res.data[0]));
+        this.entityLogo = _res.data[0].identity_logo_path;
+      }
+    },
     loginEnter(event) {
       if (event.keyCode === 13) {
         this.login();
       }
     },
 
-    login() {
+    async login() {
       let param = {
         email: this.email,
         password: this.password,

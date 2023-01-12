@@ -35,6 +35,7 @@
 
 <script>
 import $axiosMertrack from "../apiMertrack";
+import { authLogout } from "../resource/SysAuth";
 
 export default {
   name: "TheHeaderDropdownAccnt",
@@ -55,23 +56,23 @@ export default {
       : localStorage.getItem("app_image");
   },
   methods: {
-    logOut() {
-      $axiosMertrack.get(`general/web?ApiName=UserLogout`).then((res) => {
+    async logOut() {
+      let _res = await authLogout();
+      if (_res) {
         this.$toast.open({
-          message: res.data.error
-            ? res.data.message
+          message: _res.error
+            ? _res.message
             : "You have been logged out successfully",
-          type: res.data.error ? "error" : "success",
+          type: _res.error ? "error" : "success",
           dissmissible: true,
           position: "top-right",
           duration: 5000,
         });
-        if (!res.data.error) {
+        if (!_res.error) {
           localStorage.clear();
           this.$router.push({ path: "/login" });
-          // window.location.reload();
         }
-      });
+      }
     },
     // toProfile() {
     //   this.$router.push({ path: "/setting/user-profile" });
