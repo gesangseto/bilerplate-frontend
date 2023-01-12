@@ -68,9 +68,8 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePagination, exportData } from "../../../utils";
-import { get_date, get_layout } from "../../../dummy_data";
+import { calculatePaginationV3, exportData } from "../../../utils";
+import { deleteConfDate, getConfDate } from "../../../resource/ConfDate";
 import moment from "moment";
 
 export default {
@@ -84,14 +83,11 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "GetWeb_DateFormat",
-        // StartDate: dateFilter.last_3_month.start,
-        // EndDate: dateFilter.last_3_month.end,
       },
       items: [],
       fields: [
         {
-          key: "df_id",
+          key: "id",
           label: "ID",
           _classes: "font-weight-bold",
         },
@@ -119,17 +115,15 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      // let data = get_date();
-      // this.items = data;
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePagination({
+    async loadData() {
+      let _res = await getConfDate(this.filter);
+      if (_res) {
+        this.items = _res.data;
+        this.filter = calculatePaginationV3({
           filter: this.filter,
-          item: res,
+          item: _res,
         });
-      });
+      }
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -153,14 +147,13 @@ export default {
       this.loadData();
     },
     rowUpdate(item) {
-      let id = item.df_id;
       this.$router.push({
-        path: `date/update/${id}`,
+        path: `date/update/${item.id}`,
       });
     },
     rowRead(item) {
       this.$router.push({
-        path: `date/read/${item.df_id}`,
+        path: `date/read/${item.id}`,
       });
     },
     addNew() {
@@ -168,40 +161,23 @@ export default {
         path: `date/create`,
       });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data.\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
-        let param = {
-          ApiName: "PostWeb_DeleteDateFormat",
-          Params: {
-            df_id: item.df_id,
-          },
-        };
         this.$isLoading(true);
-        $axiosMertrack
-          .post("/general/web", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteConfDate(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : "Data has been deleted succesfully",
+          type: _res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },

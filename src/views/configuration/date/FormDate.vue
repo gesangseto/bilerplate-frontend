@@ -193,10 +193,13 @@ td {
 }
 </style>
 <script>
-import $axiosMertrack from "../../../apiMertrack";
 import { exportData, capitalizeFirstLetter } from "../../../utils";
-import { get_date } from "../../../dummy_data";
 import moment from "moment";
+import {
+  getConfDate,
+  insertConfDate,
+  updateConfDate,
+} from "../../../resource/ConfDate";
 
 export default {
   name: "Customer",
@@ -293,10 +296,10 @@ export default {
       ],
       around_list: [
         { value: "", label: "Nothing" },
-        { value: "()", label: "Parentheses ()" },
-        { value: "[]", label: "Brackets []" },
-        { value: "{}", label: "Braces {}" },
-        { value: "--", label: "Double dash --" },
+        { value: "( )", label: "Parentheses ()" },
+        { value: "[ ]", label: "Brackets []" },
+        { value: "{ }", label: "Braces {}" },
+        { value: "-- --", label: "Double dash --" },
       ],
     };
   },
@@ -311,10 +314,11 @@ export default {
     },
   },
   methods: {
-    loadData() {
-      let param = `ApiName=GetWeb_DateFormat&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
+    async loadData() {
+      let _res = await getConfDate({ id: this.$route.params.id });
+      if (_res) {
+        console.log(_res);
+        let data = _res.data[0];
         let _data = data;
         // let _data = get_date();
         // _data = _data[0];
@@ -329,7 +333,7 @@ export default {
         this.data.field3_type = this.typeFormat(_data.df_field3) ?? "";
         this.checkDisabled();
         this.reFormatDate();
-      });
+      }
     },
     typeFormat(str) {
       let string = str;
@@ -372,7 +376,7 @@ export default {
       return;
     },
     reFormatDate() {
-      let around = this.data.around;
+      let around = this.data.around.split(" ");
       let del = this.data.delimeter;
       let data = this.data;
       // let format = `${data.field1_format}${del}${data.field2_format}${del}${data.field3_format}`;
@@ -389,11 +393,12 @@ export default {
       } else if (data.override === "first_day_of_month") {
         dt = moment().startOf("month").format(format.toUpperCase());
       }
+
       if (format) {
-        this.data.example_format = `${around[0] ?? ""}${dt}${
-          around[1] ?? ""
-        }`.toUpperCase();
-        this.data.format = `${around[0] ?? ""}${format}${around[1] ?? ""}`;
+        let left = around[0] ?? "";
+        let right = around[1] ?? "";
+        this.data.example_format = `${left}${dt}${right}`.toUpperCase();
+        this.data.format = `${left}${format}${right}`;
       } else {
         this.data.example_format = `${around[0]} ${around[1]}`.toUpperCase();
       }
@@ -510,12 +515,13 @@ export default {
       }
       return true;
     },
-    save() {
+    async save() {
       if (!this.validation()) {
         return;
       }
       let body = {
-        df_id: this.$route.params.id,
+        id: this.$route.params.id,
+        df_id: this.data.df_id,
         df_name: this.data.format,
         df_delimeter: this.data.delimeter,
         df_around: this.data.around,
@@ -524,36 +530,29 @@ export default {
         df_field3: this.data.field3_format,
         df_override: this.data.override,
       };
-
-      let dataPost = {
-        ApiName: this.$route.params.id
-          ? "PostWeb_UpdateDateFormat"
-          : "PostWeb_InsertDateFormat",
-        Params: body,
-      };
+      let dataPost = body;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateConfDate(dataPost);
+        } else {
+          res = await insertConfDate(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },
