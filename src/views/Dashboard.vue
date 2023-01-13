@@ -394,6 +394,7 @@ import Warehouse from "vue-material-design-icons/Warehouse.vue";
 import TrayFull from "vue-material-design-icons/TrayFull.vue";
 import PackageVariantClosed from "vue-material-design-icons/PackageVariantClosed.vue";
 import TagTextOutline from "vue-material-design-icons/TagTextOutline.vue";
+import { getDashboard } from "../resource/Helper";
 // import MainChartExample from "./charts/MainChartExample";
 // import WidgetsDropdown from "./widgets/WidgetsDropdown";
 // import WidgetsBrand from "./widgets/WidgetsBrand";
@@ -460,29 +461,39 @@ export default {
       },
     };
   },
-  mounted() {
-    let param = `ApiName=MertrackDashboard&Params={"date_from":"${this.conf_date.start}","date_to":"${this.conf_date.end}"}`;
-    $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-      this.dataDefault = res.data.data[0];
+  async mounted() {
+    let _res = await getDashboard({
+      date_from: this.conf_date.start,
+      date_to: this.conf_date.end,
+    });
+    if (_res) {
+      this.dataDefault = _res.data[0];
       this.generateAllMonth();
       this.getDataBarChart();
       this.getDataPieChart1();
       this.getDataPieChart2();
-    });
+    }
+    // $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+    //   this.dataDefault = res.data.data[0];
+    //   this.generateAllMonth();
+    //   this.getDataBarChart();
+    //   this.getDataPieChart1();
+    //   this.getDataPieChart2();
+    // });
   },
   methods: {
     getDataPieChart1() {
-      let pie_data = this.dataDefault.pie[0];
-      let ns_data = pie_data.quantity_ns;
-      let s_data = pie_data.quantity_s;
+      let serial = this.dataDefault.pie[0];
+      let nonserial = this.dataDefault.pie[1];
+      let label = this.dataDefault.pie.map((it) => it.type);
       this.chartPieData1 = {
-        labels: ["Serial", "Non Serial"],
+        labels: label,
         datasets: [
           {
             yAxisID: "yAxis",
             xAxisID: "xAxis",
             label: "My First Dataset",
-            data: [s_data, ns_data],
+            data: [serial["stock_l1"], nonserial["stock_l1"]],
             backgroundColor: ["#0018AB", "#F7AF30"],
             hoverOffset: 4,
           },
@@ -490,15 +501,17 @@ export default {
       };
     },
     getDataPieChart2() {
-      let pie_data = this.dataDefault.pie[0];
-      let ns_data = pie_data.quantity_ns_batch;
-      let s_data = pie_data.quantity_s_batch;
+      let serial = this.dataDefault.pie[0];
+      let nonserial = this.dataDefault.pie[1];
+      let label = this.dataDefault.pie.map((it) => it.type);
       this.chartPieData2 = {
-        labels: ["Serial", "Non Serial"],
+        labels: label,
         datasets: [
           {
+            yAxisID: "yAxis",
+            xAxisID: "xAxis",
             label: "My First Dataset",
-            data: [s_data, ns_data],
+            data: [serial["stock_batch"], nonserial["stock_batch"]],
             backgroundColor: ["#0018AB", "#F7AF30"],
             hoverOffset: 4,
           },
@@ -506,48 +519,19 @@ export default {
       };
     },
     getDataBarChart() {
-      let dt_1 = [];
-      let dt_2 = [];
-      for (var i = interval_date; i >= 0; i--) {
-        let have_data = false;
-        for (const it of this.dataDefault.bar) {
-          let month = moment()
-            .subtract(i, "months")
-            .endOf("month")
-            .format("MM");
-          let year = moment()
-            .subtract(i, "months")
-            .endOf("month")
-            .format("YYYY");
-          if (it.bulan == month && it.tahun == year) {
-            if (it.tipe == "IN") {
-              have_data = true;
-              dt_1.push(it.jml);
-            } else if (it.tipe == "OUT") {
-              have_data = true;
-              dt_2.push(it.jml);
-            }
-          }
-          // if()
-        }
-        if (!have_data) {
-          dt_1.push(0);
-          dt_2.push(0);
-        }
-      }
       this.chartLineData = {
         labels: this.conf_date.all,
         datasets: [
           {
             label: "Incoming Batch",
             backgroundColor: "#0018AB",
-            data: dt_1,
+            data: this.dataDefault["bar_incoming"].map((it) => it.batch),
             // borderColor: 'red'
           },
           {
             label: "Outgoing Batch",
             backgroundColor: "#F7AF30",
-            data: dt_2,
+            data: this.dataDefault["bar_outgoing"].map((it) => it.batch),
             // borderColor: 'green'
           },
         ],
