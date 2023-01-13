@@ -254,7 +254,14 @@ td {
 }
 </style>
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import { getConfDate } from "../../../resource/ConfDate";
+import {
+  getConfLayout,
+  getLayoutIdentifier,
+  getLayoutType,
+  insertConfLayout,
+  updateConfLayout,
+} from "../../../resource/ConfLayout";
 const reader = new FileReader();
 import {
   capitalizeFirstLetter,
@@ -569,86 +576,78 @@ export default {
     START
     Connect API
     */
-    getIdentifier(generate_type_id) {
+    async getIdentifier(generate_type_id) {
       this.identifier = [];
-      let param = `ApiName=GetWeb_GroupIdentifier&Params={"generate_type_id":"${generate_type_id}"}`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let _data = response.data.data;
-        for (const it of _data) {
-          this.identifier.push(it);
-        }
+      let _res = await getLayoutIdentifier({
+        generate_type_id: generate_type_id,
       });
+      if (_res) {
+        this.identifier = _res.data;
+      }
     },
-    getGenerateType() {
-      let data = [];
-      $axiosMertrack
-        .get(`general/web?ApiName=GetWeb_GenerateType`)
-        .then((response) => {
-          let _data = response.data.data;
-          for (const it of _data) {
-            data.push({
-              value: it.generate_type_id,
-              label: it.generate_type_name,
-            });
-          }
-          this.listType = data;
-        });
+    async getGenerateType() {
+      this.listType = [];
+      let _res = await getLayoutType();
+      if (_res) {
+        for (const it of _res.data) {
+          this.listType.push({
+            value: `${it.generate_type_id}`,
+            label: it.generate_type_name,
+          });
+        }
+      }
     },
-    getDateFromat() {
-      let data = [];
-      $axiosMertrack
-        .get(`general/web?ApiName=GetWeb_DateFormat`)
-        .then((response) => {
-          let _data = response.data.data;
-          // data.push({ value: null, label: "--Select--" });
-          for (const it of _data) {
-            data.push({ value: it.df_id, label: it.df_name });
-          }
-          this.listFormatDate = data;
-        });
+    async getDateFromat() {
+      this.listFormatDate = [];
+      let _res = await getConfDate();
+      if (_res) {
+        for (const it of _res.data) {
+          this.listFormatDate.push({
+            value: `${it.df_id}`,
+            label: it.df_name,
+          });
+        }
+      }
     },
-    loadData() {
-      let param = `ApiName=GetWeb_Layout&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let _data = response.data.data;
+    async loadData() {
+      this.listFormatDate = [];
+      let _res = await getConfLayout({ id: this.$route.params.id });
+      if (_res) {
+        let _data = _res.data;
         this.formData = _data[0];
         this.formData.layout_status = _data[0].layout_status ? true : false;
-      });
+      }
     },
     /*
     END
     */
 
-    save() {
+    async save() {
       let param = JSON.parse(JSON.stringify(this.formData));
       param.layout_status = param.layout_status ? 1 : 0;
-      let _body = {
-        ApiName: this.$route.params.id
-          ? "PostWeb_LayoutUpdate"
-          : "PostWeb_LayoutInsert",
-        Params: param,
-      };
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
+        let dataPost = param;
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, _body).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateConfLayout(dataPost);
+        } else {
+          res = await insertConfLayout(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },
