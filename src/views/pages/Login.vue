@@ -104,9 +104,12 @@ import {
   reformatMenu,
   isThatYou,
   setAsSuperAdmin,
+  converMenuV3,
+  flatten,
 } from "../../utils";
 import { logoMertrack } from "../../constants";
 import { getSysConfig } from "../../resource/SysConfig";
+import { authLogin } from "../../resource/SysAuth";
 export default {
   name: "Login",
 
@@ -171,66 +174,47 @@ export default {
         return;
       }
       this.$isLoading(true);
-      let dataPost = {
-        ApiName: "userLogin",
-        Params: {
-          email: this.email,
-          password: this.password,
-        },
-      };
-      $axiosMertrack
-        .post(`general/mobile`, dataPost)
-        .then((result) => {
-          let res = result.data;
-          this.$toast.open({
-            message: `${res.message}`,
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          this.$isLoading(false);
-          if (!res.error) {
-            if (res.data[0].id == 0) {
-              setAsSuperAdmin();
-              window.location.reload();
-              return;
-            }
-            let menu = [
-              {
-                _name: "CSidebarNav",
-                _children: reformatMenu(res.data[0].menu),
-              },
-            ];
-            let role = reformatRole(res.data[0].role);
-            let time_out = res.data[0].idletimeout ?? 0;
-            localStorage.setItem("menu", JSON.stringify(menu));
-            localStorage.setItem("role", JSON.stringify(role));
-            localStorage.setItem("profile", JSON.stringify(res.data[0]));
-            localStorage.setItem("user_id", res.data[0].id);
-            localStorage.setItem("token", res.data[0].token);
-            localStorage.setItem("is_login", true);
-            localStorage.setItem("app_image", this.entityLogo);
-            localStorage.setItem(
-              "time_out",
-              `${moment()
-                .add(time_out, "minutes")
-                .format("DD/MM/YYYY HH:mm:ss:SSS")}`
-            );
-            window.location.reload();
-          }
-        })
-        .catch((err) => {
-          this.$isLoading(false);
-          this.$toast.open({
-            message: `Error : ${err}`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
+      let res = await authLogin(param);
+      this.$isLoading(false);
+      if (res) {
+        this.$toast.open({
+          message: `${res.message}`,
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
-      return;
+        let _data = res.data[0];
+        if (_data.id == 0) {
+          setAsSuperAdmin();
+          window.location.reload();
+          return;
+        } else {
+          let menu = [
+            {
+              _name: "CSidebarNav",
+              _children: converMenuV3(_data.role_menu),
+            },
+          ];
+          let role = reformatRole(flatten(_data.role_menu, "items"));
+          let time_out = _data.idletimeout ?? 0;
+          localStorage.setItem("menu", JSON.stringify(menu));
+          localStorage.setItem("role", JSON.stringify(role));
+          localStorage.setItem("profile", JSON.stringify(_data));
+          localStorage.setItem("user_id", _data.id);
+          localStorage.setItem("token", _data.token);
+          localStorage.setItem("is_login", true);
+          localStorage.setItem("app_image", this.entityLogo);
+          localStorage.setItem(
+            "time_out",
+            `${moment()
+              .add(time_out, "minutes")
+              .format("DD/MM/YYYY HH:mm:ss:SSS")}`
+          );
+
+          window.location.reload();
+        }
+      }
     },
   },
 };

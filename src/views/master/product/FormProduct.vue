@@ -651,10 +651,12 @@ import $axiosMertrack from "../../../apiMertrack";
 import { capitalizeFirstLetter } from "../../../utils";
 import $ from "jquery";
 import { required } from "vuelidate/lib/validators";
+import { getMstPackaging } from "../../../resource/MstPackaging";
+import { getMstProductCategory } from "../../../resource/MstProductCategory";
 export default {
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
-
+    // return;
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
@@ -809,6 +811,7 @@ export default {
         this.product = data;
         this.product.prefix_packagingl3 = "-";
       });
+      return;
     },
     showStatusChange() {},
     packagingL2Change() {
@@ -968,38 +971,37 @@ export default {
       } else {
       }
     },
-    loadProductCategory() {
-      let param = `ApiName=ProductCategoryList&Params={}&StatusCode=Active`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
+    async loadProductCategory() {
+      let res = await getMstProductCategory({ status: "Active" });
+      if (res) {
+        let data = res.data;
         for (const it of data) {
           this.listCategory.push({
+            value: `${it.id}`,
             label: it.name,
-            value: it.id,
           });
         }
-        return;
-      });
+      }
     },
-    loadPackaging() {
-      let param = `ApiName=PackagingList&Params={}&StatusCode=Active`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
+    async loadPackaging() {
+      let res = await getMstPackaging({ status: "Active" });
+      if (res) {
+        let data = res.data;
         this.listPackagingL4.push({
           value: null,
           label: "--Select--",
         });
         for (const it of data) {
           this.listPackaging.push({
-            value: parseInt(it.id),
+            value: `${it.id}`,
             label: it.name,
           });
           this.listPackagingL4.push({
-            value: parseInt(it.id),
+            value: `${it.id}`,
             label: it.name,
           });
         }
-      });
+      }
     },
 
     save() {

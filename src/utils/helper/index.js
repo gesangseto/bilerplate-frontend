@@ -58,3 +58,46 @@ export function humanize(str) {
   }
   return frags.join(" ");
 }
+export function flatten(list = Array, childrenAttr = "children") {
+  let result = [];
+  for (let it of list) {
+    if (it[`${childrenAttr}`])
+      result = [...result, ...flatten(it[`${childrenAttr}`], childrenAttr)];
+    delete it[`${childrenAttr}`];
+    result.push(it);
+  }
+  return result;
+}
+
+export function converMenuV3(menu = Array) {
+  let reformatChild = (child) => {
+    let _menu = [];
+    for (const it of child) {
+      let field = {};
+      if (it.items.length > 0) {
+        field = {
+          _name: "CSidebarNavDropdown",
+          name: it.name,
+          route: it.link,
+          link: "",
+          icon: it.icon,
+          items: reformatChild(it.items),
+        };
+      } else {
+        field = {
+          _name: "CSidebarNavItem",
+          name: it.name,
+          to: it.link,
+          link: it.link,
+          icon: it.icon,
+        };
+      }
+      if (it.type_desc == "Website") _menu.push(field);
+    }
+    return _menu;
+  };
+  return reformatChild(menu);
+  // for (const it of menu) {
+  //   console.log(it);
+  // }
+}
