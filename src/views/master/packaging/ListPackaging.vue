@@ -85,7 +85,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "PackagingList",
         StartDate: "",
         EndDate: "",
       },

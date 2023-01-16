@@ -183,6 +183,8 @@ let dataPost = [];
 import $axiosMertrack from "../../../apiMertrack";
 import "vue-select/dist/vue-select.css";
 import moment from "moment";
+import { getMstProduct } from "../../../resource/MstProduct";
+import { getMstWarehouse } from "../../../resource/MstWarehouse";
 export default {
   name: "FormPacking",
   watch: {
@@ -340,25 +342,23 @@ export default {
       },
     };
   },
-  mounted() {
+  async mounted() {
     // cek parameter url
     this.action = this.$route.params.type == "read" ? "VIEW" : "ADD";
     // get from warehouse
-    let param_warehouse = `ApiName=ListWarehouse&Params={"status":"Active"}&StatusCode=Active`;
-    $axiosMertrack.get(`/general/mobile?${param_warehouse}`).then((result) => {
-      let data = result.data.data;
-      for (const it of data) {
+    let _wh = await getMstWarehouse({ status: "Active" });
+    if (_wh) {
+      for (const it of _wh.data) {
         this.warehouseOptions.push({
-          value: it.id,
+          value: `${it.id}`,
           label: it.name,
         });
       }
-    });
+    }
     // get product
-    let param_product = `ApiName=ListProduct&Params={product_type:1}&StatusCode=Active`;
-    $axiosMertrack.get(`/general/mobile?${param_product}`).then((result) => {
-      var temp = result.data.data;
-      for (const it of temp) {
+    let _product = await getMstProduct({ product_type: 1, status: "Active" });
+    if (_product) {
+      for (const it of _product.data) {
         this.productOptions.push({
           value: it.id,
           name: it.name,
@@ -366,41 +366,13 @@ export default {
           no: it.no,
         });
       }
-    });
+    }
   },
   methods: {
     getSerialNumber() {
       console.log(this.formData);
       return;
-      this.item = [];
-      // this.bacthNumber_=""
-      let param = `ApiName=GetStock&Params={date_format:"web",serial:"0000000000",product_id:${this.data_header.product.value},batch_no:"${this.data_header.batch.value}",warehouse_id:${this.data_header.warehouse.value}}&Id= `;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((result) => {
-        this.error.batch = "";
-        var temp = result.data.data[0];
-        this.detail = temp;
-        if (result.data.data.length > 0) {
-          if (temp.stocks.length != 1) {
-            this.$toast.open({
-              message: `Product Batch cannot be found`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-            return;
-          }
-          this.full_box = temp.qty_packagingl2;
-          this.last_stock = temp.stocks[0].quantity;
-        } else {
-          this.last_stock = "0";
-          this.error.batch =
-            "This batch dont have any stocks on that warehouse";
-        }
-      });
     },
-    // checklist product before set data
-    checkSerial(checked) {},
     getBatch() {
       let param = {
         product_id: this.formData.product_id,

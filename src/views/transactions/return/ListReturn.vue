@@ -115,11 +115,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import {
-  exportData,
-  calculatePaginationV3,
-  exportDataV3,
-} from "../../../utils";
+import { calculatePaginationV3, exportDataV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListReturn",
@@ -133,7 +129,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ReturnWorkflowList",
         StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },

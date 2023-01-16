@@ -278,17 +278,6 @@ export default {
         let data = res.data.data;
         console.log(data);
       });
-      // let param = `ApiName=GetStock&Id=${this.detailData.parent}`;
-      // $axiosMertrack.get(`/general/mobile?${param}`).then((res) => {
-      //   let data = res.data.data;
-      //   if (data[0] && data[0].stocks) {
-      //     data = data[0].stocks;
-      //     this.parentData = data;
-      //     this.parentData[0].packaging_name =
-      //       data[0][`name_packaging_l${data[0].packaging_level}`];
-      //     this.parentData[0].epc_type = data[0].epc_type.toUpperCase();
-      //   }
-      // });
     },
     testHandle() {},
     handleClickExport() {

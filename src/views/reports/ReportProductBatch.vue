@@ -6,7 +6,7 @@
           <h5>Product Batch Report</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransaction
+          <HeaderFilterTransactionV3
             :filter="['All', 'Product', 'Exp Date', 'Mfg Date']"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"

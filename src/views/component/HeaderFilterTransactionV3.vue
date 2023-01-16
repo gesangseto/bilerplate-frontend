@@ -143,7 +143,7 @@ import { dateFilter } from "../../constants";
 import { getStatusDesc } from "../../resource/StatusDesc";
 
 export default {
-  name: "HeaderFilterTransaction",
+  name: "HeaderFilterTransactionV3",
   props: [
     "filter",
     "status_code",

@@ -95,6 +95,7 @@ const reader = new FileReader();
 import $axiosMertrack from "../../../apiMertrack";
 import "vue-select/dist/vue-select.css";
 import $ from "jquery";
+import { getMstSupplier } from "../../../resource/MstSupplier";
 export default {
   name: "FormUploadXML",
   watch: {
@@ -127,18 +128,14 @@ export default {
       ],
     };
   },
-  mounted() {
-    //   get nama supplier
-    $axiosMertrack
-      .get(
-        `/general/mobile?ApiName=ListSupplier&Params{"status":"Active"}&StatusCode=Active`
-      )
-      .then((result) => {
-        let data = result.data.data;
-        for (const it of data) {
-          this.supplierOptions.push({ value: it.id, label: it.name });
-        }
-      });
+  async mounted() {
+    let _res = await getMstSupplier({ status: "Active" });
+    if (_res) {
+      let data = _res.data;
+      for (const it of data) {
+        this.supplierOptions.push({ value: `${it.id}`, label: it.name });
+      }
+    }
   },
   methods: {
     uploadFile(event) {

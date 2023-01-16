@@ -108,6 +108,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
+import { authChangePwd } from "../../../resource/SysAuth";
 export default {
   name: "UserSetting",
   components: {},
@@ -162,7 +163,7 @@ export default {
       }
       return;
     },
-    changePassword() {
+    async changePassword() {
       this.initial_load = false;
       this.checkValidation();
       if (this.form_data.have_error) {
@@ -171,29 +172,24 @@ export default {
       if (this.form_data.newPassword !== this.form_data.confirmPassword) {
         return;
       }
+      this.$isLoading(true);
       var body = {
-        ApiName: "ChangePwd",
-        Params: {
-          old_pwd: this.form_data.oldPassword,
-          new_pwd: this.form_data.newPassword,
-        },
+        old_password: this.form_data.oldPassword,
+        new_password: this.form_data.newPassword,
       };
-      $axiosMertrack.post(`/general/web`, body).then((res) => {
-        this.$toast.open({
-          message: res.data.error
-            ? res.data.message
-            : "Password has been changed successfully ",
-          type: res.data.error ? "error" : "success",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
-        if (!res.data.error) {
-          this.$router.push({
-            path: `/dashboard`,
-          });
-        }
+      let res = await authChangePwd(body);
+
+      this.$isLoading(false);
+      this.$toast.open({
+        message: res["error"]
+          ? `${res["message"]}`
+          : "Data has been saved succesfully ",
+        type: res.error ? "error" : "success",
+        dissmissible: true,
+        position: "top-right",
+        duration: 5000,
       });
+      if (!res["error"]) this.$router.back();
     },
   },
 };

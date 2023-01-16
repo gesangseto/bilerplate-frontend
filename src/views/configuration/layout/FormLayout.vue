@@ -284,7 +284,6 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        ApiName: "",
         StartDate: "",
         EndDate: "",
       },

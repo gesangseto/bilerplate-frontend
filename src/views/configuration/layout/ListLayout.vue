@@ -82,7 +82,6 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        ApiName: "GetWeb_Layout",
         StartDate: "",
         EndDate: "",
         totalPages: 1,
