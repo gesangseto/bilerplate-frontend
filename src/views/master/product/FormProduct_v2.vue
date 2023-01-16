@@ -81,9 +81,6 @@
                   label="NIE *"
                   placeholder="Enter product NIE"
                   @keyup="validationData()"
-                  @keypress="
-                    limitNumber({ event: $event, data: product.nie, max: 15 })
-                  "
                   horizontal
                   v-model="product.nie"
                   :add-input-classes="{

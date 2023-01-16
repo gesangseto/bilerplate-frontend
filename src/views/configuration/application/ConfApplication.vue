@@ -233,6 +233,99 @@
                   </CCol>
                 </CCardBody>
               </CCard>
+
+              <CCard>
+                <CCardHeader style="font-weight: bold"
+                  >Serial Config (Deprecated)</CCardHeader
+                >
+                <CCardBody>
+                  <CCol sm="12">
+                    <CInput
+                      label=""
+                      horizontal
+                      type="number"
+                      v-model="data.level_indicator_box_gtin"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">
+                          GTIN Indicator - L2 - Box
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </p>
+                      </template></CInput
+                    >
+                  </CCol>
+                  <CCol sm="12">
+                    <CInput
+                      label=""
+                      horizontal
+                      type="number"
+                      v-model="data.sscc_no_box_sn"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">
+                          SSCC Ext - L2 - Box (Serial)
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </p>
+                      </template></CInput
+                    >
+                  </CCol>
+                  <CCol sm="12">
+                    <CInput
+                      label=""
+                      horizontal
+                      type="number"
+                      v-model="data.sscc_no_box_non_sn"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">
+                          SSCC Ext - L2 - Box (Non-Serial)
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </p>
+                      </template></CInput
+                    >
+                  </CCol>
+                  <CCol sm="12">
+                    <CInput
+                      label=""
+                      horizontal
+                      type="number"
+                      v-model="data.sscc_no_pallet_sn"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">
+                          SSCC Ext - L3 - Pallet (Serial)
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </p>
+                      </template></CInput
+                    >
+                  </CCol>
+                  <CCol sm="12">
+                    <CInput
+                      label=""
+                      horizontal
+                      type="number"
+                      v-model="data.sscc_no_pallet_non_sn"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">
+                          SSCC Ext - L3 - Box (Non-Serial)
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </p>
+                      </template></CInput
+                    >
+                  </CCol>
+                </CCardBody>
+              </CCard>
               <CCol sm="10">
                 <CSelect
                   :options="periodicBackupOptions"
