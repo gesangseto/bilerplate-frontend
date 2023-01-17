@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import $axiosMertrack from "../apiMertrack";
 import { authLogout } from "../resource/SysAuth";
 
 export default {

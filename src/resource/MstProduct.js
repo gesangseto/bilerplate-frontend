@@ -73,3 +73,41 @@ export const deleteMstProduct = async (param = Object) => {
       });
   });
 };
+
+export const insertMstProductV1 = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  let _url = "v3/master/product/v1";
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .put(_url, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log("ERROR => ", e);
+        return resolve(false);
+      });
+  });
+};
+
+export const updateMstProductV1 = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  let _url = "v3/master/product/v1";
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(_url, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log("ERROR => ", e);
+        return resolve(false);
+      });
+  });
+};

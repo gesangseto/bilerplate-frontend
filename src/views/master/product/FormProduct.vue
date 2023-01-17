@@ -653,6 +653,10 @@ import $ from "jquery";
 import { required } from "vuelidate/lib/validators";
 import { getMstPackaging } from "../../../resource/MstPackaging";
 import { getMstProductCategory } from "../../../resource/MstProductCategory";
+import {
+  insertMstProductV1,
+  updateMstProductV1,
+} from "../../../resource/MstProduct";
 export default {
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
@@ -1004,7 +1008,7 @@ export default {
       }
     },
 
-    save() {
+    async save() {
       this.$v.$touch();
       if (this.$v.$invalid) {
         return true;
@@ -1035,36 +1039,28 @@ export default {
       if (!dataPost.packagingl4_id) {
         dataPost.packagingl4_id = null;
       }
-
-      let body = {
-        ApiName: this.$route.params.id
-          ? "PostWeb_UpdateProductEisai"
-          : "PostWeb_InsertProductEisai",
-        Params: this.product,
-      };
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, body).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstProductV1(dataPost);
+        } else {
+          res = await insertMstProductV1(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },
