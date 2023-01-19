@@ -313,7 +313,6 @@ export default {
   computed: {
     detailInbound() {
       return this.items.map((item) => {
-        console.log(item);
         return {
           ...item,
           gtin_cp:

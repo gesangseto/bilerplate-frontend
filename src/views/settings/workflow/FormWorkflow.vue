@@ -230,7 +230,6 @@ export default {
         this.err_workflow.approval_3 = false;
         can_process = false;
       }
-      console.log("Wadida", !this.checkDuplicateApproval());
       if (!this.checkDuplicateApproval() || !can_process) {
         return;
       }

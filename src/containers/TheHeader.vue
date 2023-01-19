@@ -244,7 +244,6 @@ export default {
     async getNotif() {
       let _res = await getMstNotification();
       if (_res) {
-        console.log(_res);
         if (_res.status_code && _res.status_code == "401") {
           this.sessionExpired();
           return;

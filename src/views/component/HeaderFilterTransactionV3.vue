@@ -174,7 +174,6 @@ export default {
     }
     if (this.costume_filter && this.costume_filter.constructor === Array) {
       for (const it of this.costume_filter) {
-        console.log(it);
         if (it.data && it.data.constructor === Array) {
           this.listFilter.push(it);
         }

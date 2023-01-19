@@ -256,7 +256,6 @@ export default {
       let url = `/v3/helper/detail-item/stock?show_barcode=true&show_history=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
-        console.log(data);
         if (data.length != 1) {
           this.$toast.open({
             message: `Data cannot be found`,
@@ -276,7 +275,6 @@ export default {
       let url = `/v3/helper/detail-item/stock?id=${this.detailData["parent"]}`;
       $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
-        console.log(data);
       });
     },
     testHandle() {},

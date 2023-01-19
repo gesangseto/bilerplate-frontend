@@ -165,7 +165,6 @@ export default {
 
       $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
-        console.log(data);
         this.items = res.data.data;
         this.filter = calculatePaginationV3({
           filter: this.filter,

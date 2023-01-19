@@ -390,6 +390,7 @@ const reader = new FileReader();
 import "vue2-datepicker/index.css";
 import $axiosMertrack from "../../../apiMertrack";
 import moment from "moment";
+import { getSysConfig } from "../../../resource/SysConfig";
 export default {
   name: "PackageForm",
   components: {},
@@ -460,13 +461,13 @@ export default {
     this.loadConfig();
   },
   methods: {
-    loadConfig() {
-      let url = `v3/configuration/application`;
-      $axiosMertrack.get(url).then((response) => {
-        let data = response.data.data[0];
+    async loadConfig() {
+      let _res = await getSysConfig();
+      if (_res) {
+        let data = _res.data[0];
         this.data = data;
         this.devicesLooping = data.total_device;
-      });
+      }
       return;
     },
     formatDate(date) {

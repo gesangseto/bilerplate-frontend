@@ -246,14 +246,12 @@ export default {
       this.loadData();
     },
     handleDownloadClick(item) {
-      console.log(item);
       let body = {};
       body.id = item.id;
       body.PrintTo = "csv";
       body.MertrackApiToken = localStorage.getItem("token");
       let url = `${new URLSearchParams(body).toString()}`;
       url = `${process.env.VUE_APP_URL_API_SUPPORT}/api/v3/transaction/bpom?raw=true&${url}`;
-      console.log(url);
       window.open(url, "_blank").focus();
     },
     rowUpdateClicked(item) {

@@ -370,7 +370,6 @@ export default {
   },
   methods: {
     getSerialNumber() {
-      console.log(this.formData);
       return;
     },
     getBatch() {

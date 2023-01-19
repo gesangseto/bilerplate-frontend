@@ -492,7 +492,7 @@ export default {
       let text = "";
       if (this.formData.items[i].field_associated.length > 0) {
         for (const it of this.formData.items[i].field_associated) {
-          // console.log(it);
+          //
           if (it.identifier_AI) {
             text += "-" + it.identifier_AI;
           } else {

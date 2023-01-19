@@ -275,7 +275,6 @@ export default {
             filter: this.filter,
             item: res,
           });
-          console.log(this.filter);
         });
     },
     handleClickFilter(val) {

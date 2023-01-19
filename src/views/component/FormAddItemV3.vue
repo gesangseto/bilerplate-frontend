@@ -209,7 +209,6 @@ export default {
       this.returnResult();
     },
     returnResult() {
-      console.log(this.formData.stock);
       let result = this.formData.stock.filter((e) => e.is_checked);
       this.$emit("handleResult", result);
     },
@@ -224,7 +223,7 @@ export default {
       this.listProduct = [];
       $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
-        console.log(data);
+
         for (const it of data) {
           let tmp = it;
           tmp.value = it.id;
@@ -289,7 +288,6 @@ export default {
   computed: {
     detailItems() {
       return this.formData.stock.map((it) => {
-        console.log(it);
         return {
           ...it,
           gtin_cp: it.epc_type == "sscc" ? it.company_prefix : it.gtin_sscc,

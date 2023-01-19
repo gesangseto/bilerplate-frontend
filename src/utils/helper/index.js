@@ -98,6 +98,5 @@ export function converMenuV3(menu = Array) {
   };
   return reformatChild(menu);
   // for (const it of menu) {
-  //   console.log(it);
   // }
 }

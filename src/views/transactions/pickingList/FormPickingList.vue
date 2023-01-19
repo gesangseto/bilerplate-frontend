@@ -548,7 +548,7 @@ export default {
     checkValidation() {
       this.initial_load = false;
       let data = this.formData;
-      console.log(data);
+
       if (
         !data.warehouse_id ||
         !data.customer_id ||

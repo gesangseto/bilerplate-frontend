@@ -316,7 +316,6 @@ export default {
     async loadData() {
       let _res = await getConfDate({ id: this.$route.params.id });
       if (_res) {
-        console.log(_res);
         let data = _res.data[0];
         let _data = data;
         // let _data = get_date();

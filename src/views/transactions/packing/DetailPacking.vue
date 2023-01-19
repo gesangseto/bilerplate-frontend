@@ -179,7 +179,6 @@ export default {
         if (data.items.length > 0) {
           this.items = data.items;
           for (const it of data.items) {
-            console.log(it);
             if (!it.trx_pack_gtin_sscc) {
               this.can_print_all = false;
             }

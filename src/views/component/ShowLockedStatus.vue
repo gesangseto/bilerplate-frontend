@@ -106,7 +106,6 @@ export default {
           lock_trx_name: n.item["lock_trx_name"],
           quantity: n.item["quantity"],
         });
-        console.log(n.item);
       },
     },
   },

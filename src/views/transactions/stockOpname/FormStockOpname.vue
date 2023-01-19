@@ -265,7 +265,6 @@ export default {
       this.views = false;
       let _url = `/v3/transaction/stock-opname/generate?raw=true&warehouse_id=${this.stock.warehouse_id}`;
       $axiosMertrack.get(_url).then((res) => {
-        console.log(res);
         this.items = res.data.data;
         this.views = true;
       });

@@ -158,7 +158,7 @@ export default {
     let url = `/v3/transaction/re-packing?id=${this.$route.params.id}`;
     $axiosMertrack.get(url).then((response) => {
       let data = response.data.data[0];
-      console.log(data);
+
       //
       this.unpack = data;
       this.unpack.packaging_level = 2;
