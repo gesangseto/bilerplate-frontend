@@ -35,17 +35,12 @@
               <tr>
                 <td>Core</td>
                 <td>:</td>
-                <td>2.0.1</td>
+                <td>3.0.0</td>
               </tr>
               <tr>
                 <td>DB</td>
                 <td>:</td>
-                <td>2.0.1</td>
-              </tr>
-              <tr>
-                <td>Report</td>
-                <td>:</td>
-                <td>2.0.1</td>
+                <td>3.0.0</td>
               </tr>
             </table>
           </CCol>
@@ -57,17 +52,17 @@
               <tr>
                 <td>BPOM Report</td>
                 <td>:</td>
-                <td>2.0</td>
+                <td>3.0</td>
               </tr>
               <tr>
                 <td>Web</td>
                 <td>:</td>
-                <td>2.0.1</td>
+                <td>3.0.0</td>
               </tr>
               <tr>
                 <td>Mobile</td>
                 <td>:</td>
-                <td>2.0.1</td>
+                <td>3.0.0</td>
               </tr>
             </table>
           </CCol>
