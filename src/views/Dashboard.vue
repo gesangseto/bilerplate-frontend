@@ -102,25 +102,12 @@
           <CCardBody style="padding: 0px">
             <table class="tb-table">
               <tr class="icon-table">
-                <td><PackageVariantClosed fillColor="#F7AF30" :size="30" /></td>
-                <td><TrayFull fillColor="#F7AF30" :size="30" /></td>
+                <td></td>
                 <td><TagTextOutline fillColor="#F7AF30" :size="30" /></td>
+                <td></td>
               </tr>
               <tr class="content-table">
-                <td>
-                  {{
-                    dataDefault.stock_below_max
-                      ? dataDefault.stock_below_max
-                      : 0
-                  }}
-                </td>
-                <td>
-                  {{
-                    dataDefault.batch_below_max
-                      ? dataDefault.batch_below_max
-                      : 0
-                  }}
-                </td>
+                <td></td>
                 <td>
                   {{
                     dataDefault.product_below_max
@@ -128,11 +115,12 @@
                       : 0
                   }}
                 </td>
+                <td></td>
               </tr>
               <tr class="title-table">
-                <th width="33%">L1 Qty</th>
-                <th width="33%">Batch</th>
+                <th width="33%"></th>
                 <th width="33%">Product</th>
+                <th width="33%"></th>
               </tr>
             </table>
           </CCardBody>
@@ -151,25 +139,12 @@
           <CCardBody style="padding: 0px">
             <table class="tb-table">
               <tr class="icon-table">
-                <td><PackageVariantClosed fillColor="#42B886" :size="30" /></td>
-                <td><TrayFull fillColor="#42B886" :size="30" /></td>
-                <td><TagTextOutline fillColor="#42B886" :size="30" /></td>
+                <td></td>
+                <td><TagTextOutline fillColor="#F7AF30" :size="30" /></td>
+                <td></td>
               </tr>
               <tr class="content-table">
-                <td>
-                  {{
-                    dataDefault.stock_exceed_max
-                      ? dataDefault.stock_exceed_max
-                      : 0
-                  }}
-                </td>
-                <td>
-                  {{
-                    dataDefault.batch_exceed_max
-                      ? dataDefault.batch_exceed_max
-                      : 0
-                  }}
-                </td>
+                <td></td>
                 <td>
                   {{
                     dataDefault.product_exceed_max
@@ -177,11 +152,12 @@
                       : 0
                   }}
                 </td>
+                <td></td>
               </tr>
               <tr class="title-table">
-                <th width="33%">L1 Qty</th>
-                <th width="33%">Batch</th>
+                <th width="33%"></th>
                 <th width="33%">Product</th>
+                <th width="33%"></th>
               </tr>
             </table>
           </CCardBody>
