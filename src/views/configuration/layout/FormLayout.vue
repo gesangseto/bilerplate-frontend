@@ -56,14 +56,15 @@
               >
                 <tr
                   v-bind:style="
-                    selectedLayout == index ? 'background-color: #6ba1e3' : ''
+                    selectedIndex == index ? 'background-color: #6ba1e3' : ''
                   "
+                  @click="handleClickRow(index)"
                 >
                   <td style="align: center">
                     <CInput
                       readonly
                       :value.sync="item.itf_var_name"
-                      @click="selectedLayout = index"
+                      @click="selectedIndex = index"
                     />
                   </td>
                   <td>
@@ -74,7 +75,7 @@
                       :value.sync="item.generate_type_id"
                       inline
                       @change="handleChangeType(index)"
-                      @click="editAssociatedField((selectedLayout = index))"
+                      @click="editAssociatedField((selectedIndex = index))"
                     />
                   </td>
                   <td>
@@ -83,14 +84,14 @@
                         <CInput
                           readonly
                           :value.sync="item.associated_field"
-                          @click="editAssociatedField((selectedLayout = index))"
+                          @click="editAssociatedField((selectedIndex = index))"
                         >
                           <template #append>
                             <CButton
                               type="submit"
                               color="primary"
                               @click="
-                                editAssociatedField((selectedLayout = index))
+                                editAssociatedField((selectedIndex = index))
                               "
                               ><v-icon name="pen" />
                             </CButton>
@@ -325,7 +326,7 @@ export default {
         table_name: null,
         column_name: null,
         order_number: null,
-        identifier_ai: null,
+        identifier_AI: null,
         identifier_name: "",
       },
       // DONE
@@ -335,7 +336,7 @@ export default {
           label: " ",
         },
         {
-          key: "identifier_ai",
+          key: "identifier_AI",
           label: "AI",
         },
         {
@@ -351,7 +352,7 @@ export default {
           label: " ",
         },
         {
-          key: "identifier_ai",
+          key: "identifier_AI",
           label: "AI",
         },
         {
@@ -359,7 +360,7 @@ export default {
           label: "Name",
         },
       ],
-      selectedLayout: null,
+      selectedIndex: null,
       selectedIdentifier: null,
       selectedAssociated: { flag_system: 1 },
     };
@@ -379,6 +380,16 @@ export default {
           if (it.identifier_id === n) {
             this.selectedAssociated = it;
           }
+        }
+      },
+      deep: true,
+    },
+    selectedIndex: {
+      async handler(n, o) {
+        if (n != o) {
+          let row_selected = this.formData.items[n];
+          let type_id = row_selected.generate_type_id;
+          await this.getIdentifier(type_id);
         }
       },
       deep: true,
@@ -452,7 +463,7 @@ export default {
     INI UNTUK SAAT PILIH IDENTIFIER
     */
     handleSelectIdentifier(item, index) {
-      let i = this.selectedLayout;
+      let i = this.selectedIndex;
       let check_ai = this.identifier[index];
       check_ai.is_selected = !check_ai.selected;
       if (!check_ai.flag_system && check_ai.data_type == "Date") {
@@ -477,19 +488,21 @@ export default {
       this.rewriteIdentifierText();
     },
 
-    rewriteIdentifierText(i = this.selectedLayout) {
+    rewriteIdentifierText(i = this.selectedIndex) {
       let text = "";
       if (this.formData.items[i].field_associated.length > 0) {
         for (const it of this.formData.items[i].field_associated) {
-          if (it.identifier_ai) {
-            text += "-" + it.identifier_ai;
+          // console.log(it);
+          if (it.identifier_AI) {
+            text += "-" + it.identifier_AI;
           } else {
-            text += " " + it.identifier_name;
+            text += "-" + it.identifier_name;
           }
         }
       } else {
         text = "Automatic";
       }
+      text = text.trim();
       this.formData.items[i].associated_field = text.replace("-", "");
     },
     /*
@@ -510,7 +523,7 @@ export default {
       this.associated_content = layout_selected.field_associated ?? [];
     },
     handleSwipe(swipe) {
-      let N = this.selectedLayout;
+      let N = this.selectedIndex;
       if (this.selectedAssociated) {
         this.associated_content = [];
         let layout = this.formData.items[N].field_associated;
@@ -544,7 +557,7 @@ export default {
       }
     },
     handleSetDateFormat() {
-      let i = this.selectedLayout;
+      let i = this.selectedIndex;
       let associated = this.selectedAssociated;
       associated.format_ref = this.selectedDate;
       associated.format_ref_data = this.matchDate(this.selectedDate);
@@ -595,6 +608,9 @@ export default {
           });
         }
       }
+    },
+    handleClickRow(index) {
+      this.selectedIndex = index;
     },
     async getDateFromat() {
       this.listFormatDate = [];
@@ -658,7 +674,7 @@ export default {
     identifier_list() {
       return this.identifier.map((item) => {
         let is_selected = false;
-        let idn = this.formData.items[this.selectedLayout].field_associated;
+        let idn = this.formData.items[this.selectedIndex].field_associated;
         for (const it of idn) {
           if (item.identifier_id == it.identifier_id) {
             is_selected = true;
@@ -666,7 +682,7 @@ export default {
         }
         return {
           ...item,
-          identifier_ai: item.identifier_ai || "",
+          identifier_AI: item.identifier_AI || "",
           is_selected: is_selected,
         };
       });
@@ -676,7 +692,7 @@ export default {
         let title = `${item.identifier_name} ` + (item.format_ref_data || "");
         return {
           ...item,
-          identifier_ai: item.identifier_ai || "",
+          identifier_AI: item.identifier_AI || "",
           identifier_name: title,
         };
       });
