@@ -170,19 +170,19 @@ export default {
     checkDeliveryLimit() {
       this.alertExpired = false;
       for (const it of this.listBatchNo) {
-        if (this.formData.batch_no == it.id) {
-          let day_limit = JSON.parse(localStorage.getItem("configuration"));
-          day_limit = day_limit.delivery_day_limit ?? 0;
-          let diff_day = this.getDifferentDays(it.expired_date);
-          if (diff_day < day_limit) {
-            let msg = `Cannot add item that will expire in less than ${day_limit} days. This item will expire in ${diff_day} days.`;
+        // if (this.formData.batch_no == it.batch_no) {
+        let day_limit = JSON.parse(localStorage.getItem("configuration"));
+        day_limit = day_limit.delivery_day_limit ?? 0;
+        let diff_day = this.getDifferentDays(it.expired_date);
+        if (diff_day < day_limit) {
+          let msg = `Cannot add item that will expire in less than ${day_limit} days. This item will expire in ${diff_day} days.`;
 
-            if (diff_day < 0) {
-              msg = `Cannot to add expired items.`;
-            }
-            this.alertExpired = msg;
+          if (diff_day < 0) {
+            msg = `Cannot to add expired items.`;
           }
+          this.alertExpired = msg;
         }
+        // }
       }
     },
     handleChangeBatch() {
