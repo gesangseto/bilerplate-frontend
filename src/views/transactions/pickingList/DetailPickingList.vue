@@ -125,7 +125,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="picking.full_name_modified_by"
+                      v-model="picking.modified_full_name"
                     />
                   </td>
                 </tr>

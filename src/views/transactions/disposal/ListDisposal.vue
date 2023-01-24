@@ -128,7 +128,7 @@ export default {
           label: "Warehouse",
         },
         {
-          key: "full_name",
+          key: "created_full_name",
           label: "Requested By",
         },
         {

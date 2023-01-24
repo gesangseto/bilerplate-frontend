@@ -31,7 +31,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="stock.full_name"
+                      v-model="stock.created_full_name"
                     />
                   </td>
                 </tr>
@@ -65,7 +65,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="stock.full_name_modified_by"
+                      v-model="stock.modified_full_name"
                     />
                   </td>
                 </tr>

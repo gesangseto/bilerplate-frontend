@@ -182,15 +182,15 @@
 </template>
 
 <style>
-.table {
+.tableBig {
   height: 30vh;
   overflow-y: scroll;
   overflow-x: scroll;
 }
-th,
-td {
+/* th, */
+/* td {
   padding-top: 15px;
-}
+} */
 </style>
 <script>
 import { exportData, capitalizeFirstLetter } from "../../../utils";

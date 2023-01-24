@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="repack.full_name"
+                          v-model="repack.created_full_name"
                         />
                       </td>
                     </tr>
