@@ -95,7 +95,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.update_date"
+                      v-model="upload.modified_date"
                     />
                   </td>
                 </tr>
@@ -176,7 +176,7 @@ export default {
           this.upload = res.data.data[0];
           for (const it of res.data.data[0].items) {
             let lvl = it.packaging_level;
-            this.total[`L_${lvl}`].name = it[`_product._packagingl${lvl}.name`];
+            this.total[`L_${lvl}`].name = it[`packaging_name`];
             this.total[`L_${lvl}`].quantity += 1;
           }
 

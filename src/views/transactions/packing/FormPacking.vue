@@ -448,6 +448,7 @@ export default {
       var full_box = this.full_box;
       var total_full_box = total_stock / full_box;
       var incomplete_box = total_stock % full_box;
+      console.log(this.formData);
       for (var i = 0; i < parseInt(total_full_box); i++) {
         temp_item.no = i + 1;
         temp_item.expired_date = this.formData.batch_detail["expired_date"];
@@ -457,8 +458,8 @@ export default {
         temp_item.gtin_sscc = this.formData.batch_detail["gtin_sscc"];
         temp_item.quantity = full_box;
         temp_item.remark = "Generated on Web";
-        temp_item.product_no = this.formData.batch_detail["no"];
-        temp_item.product_name = this.formData.batch_detail["name"];
+        temp_item.product_no = this.formData.batch_detail["product_no"];
+        temp_item.product_name = this.formData.batch_detail["product_name"];
         temp_item.type = "Full";
         this.can_proccess = true;
         this.items.push(temp_item);
