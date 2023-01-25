@@ -778,6 +778,9 @@ export default {
       if (!this.remove_all_status_code) {
         this.listFilterStatusCode = [{ value: "", label: "All" }];
       }
+      if (!this.status_code) {
+        return;
+      }
       let _res = await getStatusDesc({ table_name: this.status_code });
       for (const it of _res.data) {
         let tmp = it;

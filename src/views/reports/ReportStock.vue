@@ -66,6 +66,7 @@ import {
   exportDataReport,
   calculatePagination,
   calculatePaginationV3,
+  exportDataV3,
 } from "../../utils";
 import { dateFilter } from "../../constants";
 
@@ -158,7 +159,11 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportDataReport({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: "/v3/report/stock",
+      });
     },
     pageChange(page) {
       this.filter.page = page;

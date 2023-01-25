@@ -1,6 +1,6 @@
 import $axiosMertrack from "../apiMertrack";
 
-let url = `/v3/transaction/status-desc`;
+let url = `/v3/helper/status-desc`;
 
 export const getStatusDesc = async (param = Object) => {
   var query_string = "";
