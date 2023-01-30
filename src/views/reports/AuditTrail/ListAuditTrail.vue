@@ -40,7 +40,7 @@
               @update:activePage="pageChange"
             />
           </template>
-          <ButtonPermission
+          <!-- <ButtonPermission
             exportType="excel"
             :permission="'print'"
             @click="handleClickExport('xls')"
@@ -49,7 +49,7 @@
             exportType="pdf"
             :permission="'print'"
             @click="handleClickExport('pdf')"
-          />
+          /> -->
         </CCardBody>
       </CCard>
     </CCol>
@@ -95,6 +95,11 @@ export default {
         {
           key: "created_full_name",
           label: "Access By",
+          _classes: "font-weight-bold",
+        },
+        {
+          key: "_action",
+          label: "Method",
           _classes: "font-weight-bold",
         },
         {
@@ -163,6 +168,7 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
+          _action: item.action,
           no: this.getNumber(index + 1),
           type: capitalizeFirstLetter(item.type),
           dep_sec: item.department_name + " - " + item.section_name,

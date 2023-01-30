@@ -94,9 +94,17 @@
                       </p>
                     </template>
                   </CTextarea>
-                  <p v-if="Array.isArray(value) && value.length > 0">Items</p>
+                  <p
+                    v-if="
+                      Array.isArray(re_renderItems) && re_renderItems.length > 0
+                    "
+                  >
+                    Items
+                  </p>
                   <CDataTable
-                    v-if="Array.isArray(value) && value.length > 0"
+                    v-if="
+                      Array.isArray(re_renderItems) && re_renderItems.length > 0
+                    "
                     hover
                     striped
                     sorter
@@ -106,27 +114,6 @@
                     style="font-size: 12px"
                   />
                 </div>
-              </div>
-              <div v-if="Object.keys(detail).length > 0">
-                <hr />
-                <hr />
-                <h5>Updating details</h5>
-                <table width="100%" class="table table-hover">
-                  <thead style="font-weight: bold">
-                    <tr>
-                      <td>Name</td>
-                      <td>Before</td>
-                      <td>After</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(itm, name, index) in detail" :key="index">
-                      <td>{{ name }}</td>
-                      <td>{{ itm.old_value }}</td>
-                      <td>{{ itm.new_value }}</td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
             </CForm>
           </CCardBody>
@@ -144,7 +131,6 @@
 <script>
 import { capitalizeFirstLetter } from "../../../utils";
 import $axiosMertrack from "../../../apiMertrack";
-import { get_log } from "../../../dummy_data";
 import jsPDF from "jspdf";
 import domtoimage from "dom-to-image";
 
@@ -169,7 +155,7 @@ export default {
 
       data: {},
       detail: {},
-      dataBody: {},
+      dataBody: { items: [] },
     };
   },
   mounted() {
@@ -192,7 +178,7 @@ export default {
         let data = response.data.data[0];
         this.data = data;
         this.dataBody = JSON.parse(this.data["data"]);
-        // this.detail = this.data["detail"];
+        if (!this.dataBody.items) this.dataBody.items = [];
       });
     },
     isJsonString(str) {
