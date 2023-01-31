@@ -40,9 +40,9 @@
                   <p class="col-form-label col-sm-3">Path</p>
                 </template>
               </CInput>
-              <CInput :disabled="true" horizontal v-model="data.type">
+              <CInput :disabled="true" horizontal v-model="data.action">
                 <template #label>
-                  <p class="col-form-label col-sm-3">Type</p>
+                  <p class="col-form-label col-sm-3">Method</p>
                 </template>
               </CInput>
               <CInput :disabled="true" horizontal v-model="data.ip_address">
@@ -94,23 +94,17 @@
                       </p>
                     </template>
                   </CTextarea>
-                  <p
-                    v-if="
-                      Array.isArray(re_renderItems) && re_renderItems.length > 0
-                    "
-                  >
-                    Items
-                  </p>
+
+                  <!-- JIKA VIEW BERUPA ARRAY -->
+                  <p v-if="Array.isArray(value) && value.length > 0">Items</p>
                   <CDataTable
-                    v-if="
-                      Array.isArray(re_renderItems) && re_renderItems.length > 0
-                    "
+                    v-if="Array.isArray(value) && value.length > 0"
                     hover
                     striped
                     sorter
                     border
-                    :items="re_renderItems"
-                    class="text-left"
+                    :items="value"
+                    class="data-table"
                     style="font-size: 12px"
                   />
                 </div>
@@ -133,8 +127,10 @@ import { capitalizeFirstLetter } from "../../../utils";
 import $axiosMertrack from "../../../apiMertrack";
 import jsPDF from "jspdf";
 import domtoimage from "dom-to-image";
+import Table from "../../base/Table.vue";
 
 export default {
+  components: { Table },
   name: "DetailAuditTrail",
   watch: {
     customer: {
@@ -155,7 +151,7 @@ export default {
 
       data: {},
       detail: {},
-      dataBody: { items: [] },
+      dataBody: {},
     };
   },
   mounted() {
@@ -178,7 +174,7 @@ export default {
         let data = response.data.data[0];
         this.data = data;
         this.dataBody = JSON.parse(this.data["data"]);
-        if (!this.dataBody.items) this.dataBody.items = [];
+        console.log(this.dataBody);
       });
     },
     isJsonString(str) {
