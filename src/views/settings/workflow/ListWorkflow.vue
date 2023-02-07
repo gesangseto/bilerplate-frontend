@@ -78,14 +78,14 @@ export default {
       items: [],
       fields: [
         {
-          key: "_transaction.label",
+          key: "transaction_label",
           label: "Transaction",
           _classes: "font-weight-bold",
         },
-        { key: "_approval_1.full_name", label: "Approval 1" },
-        { key: "_approval_2.full_name", label: "Approval 2" },
-        { key: "_approval_3.full_name", label: "Approval 3" },
-        { key: "_approval_4.full_name", label: "Approval 4" },
+        { key: "approval_1_full_name", label: "Approval 1" },
+        { key: "approval_2_full_name", label: "Approval 2" },
+        { key: "approval_3_full_name", label: "Approval 3" },
+        { key: "approval_4_full_name", label: "Approval 4" },
         {
           key: "action",
           label: "Action",
@@ -142,10 +142,10 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          ["_approval_1.full_name"]: item["_approval_1.full_name"] ?? "-",
-          ["_approval_2.full_name"]: item["_approval_2.full_name"] ?? "-",
-          ["_approval_3.full_name"]: item["_approval_3.full_name"] ?? "-",
-          ["_approval_4.full_name"]: item["_approval_4.full_name"] ?? "-",
+          ["approval_1_full_name"]: item["approval_1_full_name"] ?? "-",
+          ["approval_2_full_name"]: item["approval_2_full_name"] ?? "-",
+          ["approval_3_full_name"]: item["approval_3_full_name"] ?? "-",
+          ["approval_4_full_name"]: item["approval_4_full_name"] ?? "-",
           nomor: (no += 1),
         };
       });

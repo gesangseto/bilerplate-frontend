@@ -28,7 +28,7 @@
                 readonly
                 placeholder="--Select--"
                 horizontal
-                :value.sync="workflow['_transaction.label']"
+                :value.sync="workflow['transaction_label']"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
