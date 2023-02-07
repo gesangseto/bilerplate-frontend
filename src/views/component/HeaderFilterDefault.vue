@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
 import "vue2-daterange-picker/dist/vue2-daterange-picker.css";
 import "vue-search-select/dist/VueSearchSelect.css";
 import { ModelSelect } from "vue-search-select";
@@ -210,14 +209,16 @@ export default {
     },
     async getSatusCode() {
       this.listFilterStatusCode = [{ value: "", label: "All" }];
-      let _res = await getStatusDesc({ table_name: this.status_code });
-      let data = _res.data || [];
-      for (const it of data) {
-        let tmp = it;
-        tmp.value = it.status_code;
-        tmp.label = it.status_desc;
-        tmp.text = it.status_desc;
-        this.listFilterStatusCode.push(tmp);
+      if (this.status_code) {
+        let _res = await getStatusDesc({ table_name: this.status_code });
+        let data = _res.data || [];
+        for (const it of data) {
+          let tmp = it;
+          tmp.value = it.status_code;
+          tmp.label = it.status_desc;
+          tmp.text = it.status_desc;
+          this.listFilterStatusCode.push(tmp);
+        }
       }
     },
     async getProductCategory() {
