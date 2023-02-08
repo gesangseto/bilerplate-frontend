@@ -1,12 +1,13 @@
 import axios from "axios";
 import moment from "moment";
-import { getBrowserType } from "./utils/helper";
+import { getBrowserType, getOsType } from "./utils/helper";
 
 const $axiosMertrack = axios.create();
 $axiosMertrack.interceptors.request.use(
   function (config) {
     let token = "c71d88f3-e144-49c9-91df-d9a6bd0e3414";
     let profile = JSON.parse(localStorage.getItem("profile"));
+    let deviceProfile = `Website App: ${getOsType()}, ${getBrowserType()}`;
     let time_out = "-1";
     if (profile) {
       token = profile.token;
@@ -23,7 +24,7 @@ $axiosMertrack.interceptors.request.use(
       "Content-Type": "application/json",
       "MertrackApi-Token": `${token}`,
       "Access-Control-Allow-Origin": "*",
-      "User-Type": getBrowserType(),
+      "User-Type": deviceProfile,
     };
     return config;
   },

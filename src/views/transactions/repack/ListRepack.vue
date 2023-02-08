@@ -254,7 +254,7 @@ export default {
           let _data = [_body];
           printLabelV3({
             data: _data,
-            link: `${process.env.VUE_APP_URL_API_SUPPORT}/api/v3/helper/print-layout/pdf`,
+            link: `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/helper/print-layout/pdf`,
           });
         })
         .catch((error) => {

@@ -251,7 +251,7 @@ export default {
       body.PrintTo = "csv";
       body.MertrackApiToken = localStorage.getItem("token");
       let url = `${new URLSearchParams(body).toString()}`;
-      url = `${process.env.VUE_APP_URL_API_SUPPORT}/api/v3/transaction/bpom?raw=true&${url}`;
+      url = `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/transaction/bpom?raw=true&${url}`;
       window.open(url, "_blank").focus();
     },
     rowUpdateClicked(item) {

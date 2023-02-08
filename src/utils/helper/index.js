@@ -86,6 +86,19 @@ export function getBrowserType() {
   }
   return result;
 }
+export function getOsType() {
+  let result = "";
+  var userAgent = navigator.userAgent;
+  if (userAgent.indexOf("Windows NT 10.0") !== -1) result = "Windows 10";
+  else if (userAgent.indexOf("Windows NT 6.2") !== -1) result = "Windows 8";
+  else if (userAgent.indexOf("Windows NT 6.1") !== -1) result = "Windows 7";
+  else if (userAgent.indexOf("Mac") !== -1) result = "macOS";
+  else if (userAgent.indexOf("X11") !== -1) result = "UNIX";
+  else if (userAgent.indexOf("Linux") !== -1) result = "Linux";
+  else result = "OS tidak dikenal";
+  return result;
+}
+
 export function converMenuV3(menu = Array) {
   let reformatChild = (child) => {
     let _menu = [];
