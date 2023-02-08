@@ -1,5 +1,6 @@
 import axios from "axios";
 import moment from "moment";
+import { getBrowserType } from "./utils/helper";
 
 const $axiosMertrack = axios.create();
 $axiosMertrack.interceptors.request.use(
@@ -22,6 +23,7 @@ $axiosMertrack.interceptors.request.use(
       "Content-Type": "application/json",
       "MertrackApi-Token": `${token}`,
       "Access-Control-Allow-Origin": "*",
+      "User-Type": getBrowserType(),
     };
     return config;
   },

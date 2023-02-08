@@ -96,14 +96,11 @@
 <script>
 import $axiosMertrack from "../../../apiMertrack";
 import {
-  exportData,
-  calculatePagination,
   printLabelV3,
   calculatePaginationV3,
   exportDataV3,
 } from "../../../utils";
 import { dateFilter } from "../../../constants";
-import $axiosSupport from "../../../apiSupport";
 export default {
   name: "ListReaggregation",
   mounted() {
@@ -268,8 +265,8 @@ export default {
         validate: true,
       };
       var _url = new URLSearchParams(_body).toString();
-      $axiosSupport
-        .get(`helper/print-layout/pdf?${_url}`)
+      $axiosMertrack
+        .get(`/v3/helper/print-layout/pdf?${_url}`)
         .then((response) => {
           this.$toast.open({
             message: `${response.data.message ?? "Success validate"}`,

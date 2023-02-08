@@ -68,7 +68,24 @@ export function flatten(list = Array, childrenAttr = "children") {
   }
   return result;
 }
-
+export function getBrowserType() {
+  let result = "";
+  if (navigator.userAgent.indexOf("Chrome") != -1) {
+    result = "Google Chrome";
+  } else if (navigator.userAgent.indexOf("Firefox") != -1) {
+    result = "Mozilla Firefox";
+  } else if (navigator.userAgent.indexOf("Safari") != -1) {
+    result = "Apple Safari";
+  } else if (
+    navigator.userAgent.indexOf("MSIE") != -1 ||
+    navigator.userAgent.indexOf("Trident") != -1
+  ) {
+    result = "Internet Explorer";
+  } else {
+    result = "Another browser";
+  }
+  return result;
+}
 export function converMenuV3(menu = Array) {
   let reformatChild = (child) => {
     let _menu = [];

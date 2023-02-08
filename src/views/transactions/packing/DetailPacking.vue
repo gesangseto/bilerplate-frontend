@@ -163,7 +163,6 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import $axiosSupport from "../../../apiSupport";
 import { printLabelV3 } from "../../../utils";
 
 export default {
@@ -339,8 +338,8 @@ export default {
         this.selected_data = { items: _body };
         return;
       }
-      $axiosSupport
-        .post(`helper/print-layout/pdf`, { validate: true, items: _body })
+      $axiosMertrack
+        .post(`/v3/helper/print-layout/pdf`, { validate: true, items: _body })
         .then((response) => {
           if (response.data.error) {
             this.$toast.open({
@@ -365,8 +364,8 @@ export default {
         validate: true,
       };
       var _url = new URLSearchParams(_body).toString();
-      $axiosSupport
-        .get(`helper/print-layout/pdf?${_url}`)
+      $axiosMertrack
+        .get(`/v3/helper/print-layout/pdf?${_url}`)
         .then((response) => {
           this.$toast.open({
             message: `${response.data.message ?? "Success validate"}`,

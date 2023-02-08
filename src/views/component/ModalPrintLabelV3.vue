@@ -42,9 +42,7 @@
 
 <script>
 import $axiosMertrack from "../../apiMertrack";
-// import Printers from "./Printer.vue";
 import * as JSPM from "jsprintmanager";
-import $axiosSupport from "../../apiSupport";
 export default {
   name: "ModalPrintLabelV3",
   props: ["item"],
@@ -106,7 +104,7 @@ export default {
         for (const it of itm.items) {
           _body.items.push(it);
         }
-        $axiosSupport.post(`/helper/print-layout`, _body).then((result) => {
+        $axiosMertrack.post(`/v3/helper/print-layout`, _body).then((result) => {
           let _data = result.data;
           if (_data.error) {
             this.isOpenModal = false;
@@ -132,7 +130,7 @@ export default {
           gtin_sscc: gtin_sscc,
         };
         var _url = new URLSearchParams(_body).toString();
-        $axiosSupport.get(`/helper/print-layout?${_url}`).then((result) => {
+        $axiosMertrack.get(`/v3/helper/print-layout?${_url}`).then((result) => {
           let _data = result.data;
           if (_data.error) {
             this.isOpenModal = false;

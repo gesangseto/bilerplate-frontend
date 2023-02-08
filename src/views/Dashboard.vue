@@ -449,13 +449,6 @@ export default {
       this.getDataPieChart1();
       this.getDataPieChart2();
     }
-    // $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-    //   this.dataDefault = res.data.data[0];
-    //   this.generateAllMonth();
-    //   this.getDataBarChart();
-    //   this.getDataPieChart1();
-    //   this.getDataPieChart2();
-    // });
   },
   methods: {
     getDataPieChart1() {
