@@ -13,7 +13,12 @@
             <th style="text-align: center; width: 5%">SN Length (dynamic)</th>
             <th style="text-align: center; width: 13%">Generate Type</th>
             <th style="text-align: center; width: 15%">Charset</th>
-            <th style="text-align: center; width: 8%">Layout</th>
+            <th
+              v-if="packaging_level != 1"
+              style="text-align: center; width: 8%"
+            >
+              Layout
+            </th>
           </thead>
           <tbody :v-if="total_pid > 0" v-for="index in total_pid" :key="index">
             <tr>
@@ -188,7 +193,7 @@
                   :is-valid="!error[index - 1].sn_charset"
                 />
               </td>
-              <td>
+              <td v-if="packaging_level != 1">
                 <br />
                 <CSelect
                   size="sm"
@@ -208,7 +213,6 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
 import { getConfLayout } from "../../resource/ConfLayout";
 export default {
   name: "MasterPid",
@@ -426,7 +430,7 @@ export default {
       if (!sn_generate_type) {
         this.error[num].sn_generate_type = true;
       }
-      if (!layout_id) {
+      if (!layout_id && this.packaging_level != 1) {
         this.error[num].layout_id = true;
       }
       // Check epc type
