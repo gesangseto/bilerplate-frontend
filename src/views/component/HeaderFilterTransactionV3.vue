@@ -750,8 +750,8 @@ export default {
           let ext = it.delete_flag == 1 ? "(X)" : "";
           let tmp = it;
           tmp.value = it.id;
-          tmp.label = `${ext} ${it.full_name} (${it["_mst_department.name"]} - ${it["_mst_section.name"]})`;
-          tmp.text = `${ext} ${it.full_name} (${it["_mst_department.name"]} - ${it["_mst_section.name"]})`;
+          tmp.label = `${ext} ${it.full_name} (${it["department_name"]} - ${it["section_name"]})`;
+          tmp.text = `${ext} ${it.full_name} (${it["department_name"]} - ${it["section_name"]})`;
           this.listExtendFilter.push(tmp);
         }
       });
