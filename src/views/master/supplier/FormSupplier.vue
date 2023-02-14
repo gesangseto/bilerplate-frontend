@@ -257,6 +257,7 @@ import {
   isEmail,
 } from "../../../utils";
 import {
+  getMstSupplier,
   insertMstSupplier,
   updateMstSupplier,
 } from "../../../resource/MstSupplier";
@@ -338,10 +339,11 @@ export default {
         this.supplier.tlp_code = $value;
       }
     },
-    loadData() {
+    async loadData() {
       let param = `id=${this.$route.params.id}`;
-      $axiosMertrack.get(`/v3/master/supplier?${param}`).then((response) => {
-        let data = response.data.data[0];
+      let res = await getMstSupplier({ id: this.$route.params.id });
+      if (res) {
+        let data = res.data[0];
         this.supplier = data;
         let tlp = "";
         if (data.tlp) {
@@ -356,7 +358,7 @@ export default {
           this.supplier.tlp_alt_code = tlp[0];
           this.supplier.tlp_alt = tlp[1];
         }
-      });
+      }
     },
     reformatCountryCode() {
       let list = this.CountryCode;

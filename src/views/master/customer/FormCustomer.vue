@@ -255,11 +255,10 @@ import {
 import { notEmail } from "../../../validator";
 import { required } from "vuelidate/lib/validators";
 import {
-  getMstSupplier,
-  insertMstSupplier,
-  updateMstSupplier,
-} from "../../../resource/MstSupplier";
-import { getMstCustomer } from "../../../resource/MstCustomer";
+  getMstCustomer,
+  insertMstCustomer,
+  updateMstCustomer,
+} from "../../../resource/MstCustomer";
 
 export default {
   name: "Forms",
@@ -335,19 +334,21 @@ export default {
     },
     async loadData() {
       let _res = await getMstCustomer({ id: this.$route.params.id });
-      let data = _res.data[0];
-      this.customer = data;
-      if (data.tlp) {
-        tlp = data.tlp.split("-");
-        this.temp_data.tlp_code = tlp[0];
-        this.customer.tlp_code = tlp[0];
-        this.customer.tlp = tlp[1];
-      }
-      if (data.tlp_alt) {
-        tlp = data.tlp_alt.split("-");
-        this.temp_data.tlp_alt_code = tlp[0];
-        this.customer.tlp_alt_code = tlp[0];
-        this.customer.tlp_alt = tlp[1];
+      if (_res) {
+        let data = _res.data[0];
+        this.customer = data;
+        if (data.tlp) {
+          let tlp = data.tlp.split("-");
+          this.temp_data.tlp_code = tlp[0];
+          this.customer.tlp_code = tlp[0];
+          this.customer.tlp = tlp[1];
+        }
+        if (data.tlp_alt) {
+          let tlp = data.tlp_alt.split("-");
+          this.temp_data.tlp_alt_code = tlp[0];
+          this.customer.tlp_alt_code = tlp[0];
+          this.customer.tlp_alt = tlp[1];
+        }
       }
     },
 
@@ -421,9 +422,9 @@ export default {
         this.$isLoading(true);
         let res = {};
         if (dataPost.id) {
-          res = await updateMstSupplier(dataPost);
+          res = await updateMstCustomer(dataPost);
         } else {
-          res = await insertMstSupplier(dataPost);
+          res = await insertMstCustomer(dataPost);
         }
         this.$isLoading(false);
         this.$toast.open({
