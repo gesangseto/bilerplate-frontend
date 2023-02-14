@@ -316,7 +316,7 @@
                     >
                       <template #label>
                         <p class="col-form-label col-sm-3">
-                          SSCC Ext - L3 - Box (Non-Serial)
+                          SSCC Ext - L3 - Pallet (Non-Serial)
                           <span class="text-danger">
                             <strong>*</strong>
                           </span>
