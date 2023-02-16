@@ -287,6 +287,7 @@ export default {
     async loadData() {
       let _res = await getMstWarehouse({ id: this.$route.params.id });
       this.warehouse = _res.data[0];
+      this.warehouse["category_id"] = this.warehouse["category_id"].toString();
     },
     async loadEntity() {
       let _res = await getMstWarehouseEntity({ status: "Active" });
