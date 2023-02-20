@@ -445,6 +445,7 @@ export default {
         StatusCode: this.status_code_default ?? "",
         StatusCodeText: "All",
         SearchType: "All",
+        SearchTypeText: "All",
         StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
         searchText: "",
@@ -514,6 +515,11 @@ export default {
     handleChangeType() {
       this.result.SearchVal1 = "";
       this.result.SearchVal2 = "";
+      let idx = this.listFilter.findIndex(
+        (i) => i.value === this.result.SearchType.toLowerCase()
+      );
+      if (~idx) this.result.SearchTypeText = this.listFilter[idx].label;
+      else this.result.SearchTypeText = "All";
       if (this.result.SearchType) {
         this.use_type_date = false;
         this.use_normal_form = false;
@@ -659,7 +665,7 @@ export default {
     handleClickFilter() {
       if (this.extendFilter && !this.result.SearchVal1) {
         this.$toast.open({
-          message: `Please input ${this.result.SearchType} to filter the data`,
+          message: `Please input ${this.result.SearchTypeText} to filter the data`,
           type: "info",
           dissmissible: true,
           position: "top-right",

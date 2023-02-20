@@ -149,6 +149,7 @@ export default {
         limit: 10,
         StatusCode: "",
         SearchType: "All",
+        SearchTypeText: "All",
         StartDate: "",
         EndDate: "",
         searchText: "",
@@ -161,6 +162,11 @@ export default {
       this.extendFilter = true;
       this.result.SearchVal1 = "";
       this.result.SearchVal1Text = "";
+      let idx = this.listFilter.findIndex(
+        (i) => i.value === this.result.SearchType.toLowerCase()
+      );
+      if (~idx) this.result.SearchTypeText = this.listFilter[idx].label;
+      else this.result.SearchTypeText = "All";
       if (this.result.SearchType) {
         if (this.result.SearchType.toLowerCase() == "all") {
           this.extendFilter = false;

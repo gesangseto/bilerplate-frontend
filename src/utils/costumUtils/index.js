@@ -182,7 +182,9 @@ export function exportData({ param = {}, exportType = "xls" }) {
 
 export function exportDataV3({ param = {}, exportType = "xls", url }) {
   let endpoint = process.env.VUE_APP_URL_API_MERTRACK;
-  let new_param = param;
+  let new_param = { ...param };
+  delete new_param.limit;
+  delete new_param.page;
   new_param.MertrackApiToken = localStorage.getItem("token");
   if (!new_param.SearchVal1Text) {
     new_param.SearchVal1Text = "All";
