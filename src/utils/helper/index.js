@@ -13,6 +13,7 @@ export function calculatePaginationV3({ filter = Object, item = Object }) {
   }
   if (item.hasOwnProperty("total") && item.hasOwnProperty("grand_total")) {
     filter.totalPages = Math.ceil(item.grand_total / filter.limit) ?? 0;
+    filter.totalData = item.grand_total || 0;
   }
   return filter;
 }

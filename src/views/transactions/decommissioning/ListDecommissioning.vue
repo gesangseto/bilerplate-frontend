@@ -125,6 +125,7 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
+        totalData: 0,
         StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
@@ -194,6 +195,7 @@ export default {
     },
     handleClickExport(type) {
       exportDataV3({
+        alert: true,
         param: this.filter,
         exportType: type,
         url: "/v3/transaction/comm-decomm",

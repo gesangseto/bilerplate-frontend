@@ -82,6 +82,7 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
+        totalData: 0,
         StatusCode: "include_pending",
         StatusCodeText: "Include Pending",
         StartDate: "",
@@ -160,6 +161,7 @@ export default {
     },
     handleClickExport(type) {
       exportDataV3({
+        alert: true,
         param: this.filter,
         exportType: type,
         url: "/v3/report/stock",

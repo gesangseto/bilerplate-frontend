@@ -180,7 +180,12 @@ export function exportData({ param = {}, exportType = "xls" }) {
   return true;
 }
 
-export function exportDataV3({ param = {}, exportType = "xls", url }) {
+export function exportDataV3({
+  param = {},
+  exportType = "xls",
+  url,
+  alert = false,
+}) {
   let endpoint = process.env.VUE_APP_URL_API_MERTRACK;
   let new_param = { ...param };
   delete new_param.limit;
@@ -198,6 +203,14 @@ export function exportDataV3({ param = {}, exportType = "xls", url }) {
   let _url = `${endpoint}/api${url}?${new URLSearchParams(
     new_param
   ).toString()}`;
+  let next = true;
+  if (new_param.totalData && alert) {
+    let message = `You are about to generate report in PDF/XLSX file format that contains detail data of ${new_param.totalData} records.\nThis process may take few minutes to complete.\nDo you want to continue?`;
+    if (!confirm(message)) {
+      next = false;
+    }
+  }
+  if (!next) return;
   window.open(`${_url}`, "_blank");
   delete new_param.PrintTo;
   return true;
