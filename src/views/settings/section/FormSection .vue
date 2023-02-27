@@ -182,7 +182,7 @@ export default {
       }
     },
     async loadDepartment() {
-      let _res = await getMstDepartment();
+      let _res = await getMstDepartment({ status: "Active" });
       if (_res) {
         for (const it of _res.data) {
           this.departmentOptions.push({

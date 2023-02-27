@@ -495,6 +495,9 @@ export default {
         tlp: "",
         have_error: false,
         mst_avatar_id: "1",
+        pwd: "",
+        re_pwd: "",
+        email: "",
       },
       temp_data: { tlp_code: "", tlp_code: "" },
       statusOptions: [
@@ -587,6 +590,7 @@ export default {
     async onDepartmentChange() {
       let _res = await getMstSection({
         mst_department_id: this.user.mst_department_id,
+        status: "Active",
       });
       for (const it of _res.data) {
         this.optionSections.push({
@@ -617,6 +621,15 @@ export default {
       if (!isEmail(this.user.email)) {
         have_error = true;
         this.required.email.error = true;
+      }
+      // Check Password
+      if (!this.user.id) {
+        if (!this.user.pwd && !this.user.re_pwd) {
+          have_error = true;
+          this.required[pwd].error = true;
+        } else if (this.user.pwd !== this.user.re_pwd) {
+          have_error = true;
+        }
       }
       // If any error
       if (have_error) {

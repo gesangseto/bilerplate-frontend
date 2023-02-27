@@ -79,7 +79,11 @@ export default {
           key: "department_name",
           label: "Department",
         },
-        { key: "status", _classes: "font-weight-bold" },
+        {
+          key: "status",
+          label: "Section Status",
+          _classes: "font-weight-bold",
+        },
         {
           key: "action",
           label: "Action",
