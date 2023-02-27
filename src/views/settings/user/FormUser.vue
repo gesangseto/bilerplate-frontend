@@ -539,6 +539,7 @@ export default {
       this.user.tlp_code = $value;
     },
     async loadDepartment() {
+      this.departmentOptions = [];
       let _res = await getMstDepartment({ status: "Active" });
       for (const it of _res.data) {
         this.departmentOptions.push({
@@ -592,6 +593,7 @@ export default {
         mst_department_id: this.user.mst_department_id,
         status: "Active",
       });
+      this.optionSections = [];
       for (const it of _res.data) {
         this.optionSections.push({
           label: it.name,
