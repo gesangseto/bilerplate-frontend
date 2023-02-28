@@ -7,7 +7,7 @@
         </CCardHeader>
         <CCardBody>
           <HeaderFilterTransactionV3
-            :filter="['All', 'Product', 'Exp Date', 'Mfg Date']"
+            :filter="['All', 'product_id', 'expired_date', 'mfg_date']"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
