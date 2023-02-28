@@ -37,21 +37,11 @@
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
-                placeholder="Enter folder sftp"
+                placeholder="Enter folder path"
                 v-model="form.folder_sftp"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">Folder SFTP</p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter folder backup"
-                v-model="form.folder_backup"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Folder Backup</p>
+                  <p class="col-form-label col-sm-3">Folder Path</p>
                 </template>
               </CInput>
               <CInput
@@ -81,6 +71,20 @@
                   </p>
                 </template>
               </CSelect>
+              <CRow form class="form-group">
+                <CCol sm="3">
+                  Status
+                  <span class="text-danger">*</span>
+                </CCol>
+                {{ action == "Read" ? form.status : null }}
+                <CInputRadioGroup
+                  v-if="action == 'Read' ? false : true"
+                  class="col-sm-9"
+                  :options="statusOptions"
+                  :inline="true"
+                  :checked.sync="form.status"
+                ></CInputRadioGroup>
+              </CRow>
               <CCard>
                 <CCardHeader>Config Default data</CCardHeader>
                 <CCardBody
@@ -110,10 +114,7 @@
                         </td>
                         <td style="text-align: center">
                           <CInput
-                            v-if="
-                              temp_selected_row !== index ||
-                              item.source === 'string'
-                            "
+                            v-if="item.source !== 'database'"
                             :readonly="
                               item.source !== 'database' &&
                               item.source !== 'string'
@@ -121,14 +122,10 @@
                             :value.sync="item.variable_value"
                           />
                           <CSelect
-                            v-if="
-                              temp_selected_row === index &&
-                              item.source !== 'string'
-                            "
-                            :readonly="item.source !== 'database'"
+                            v-if="item.source == 'database'"
                             :value.sync="item.variable_value"
                             placeholder="-Select-"
-                            :options="listConnectorProperty"
+                            :options="databaseList[index]"
                             horizontal
                           />
                         </td>
@@ -210,7 +207,12 @@ export default {
       detailConnector: { params: [] },
       listConnector: [],
       listConnectorProperty: [],
+      databaseList: [[], [], [], [], [], [], [], [], [], []],
       temp_selected_row: null,
+      statusOptions: [
+        { value: "Active", label: "Active" },
+        { value: "Inactive", label: "Inactive" },
+      ],
     };
   },
   mounted() {
@@ -231,6 +233,16 @@ export default {
           this.form = data;
           this.detailConnector = data._connector;
           this.detailConnector.params = data.params;
+          let idx = 0;
+          for (const it of data.params) {
+            if (it.source === "database") {
+              this.databaseList[idx].push({
+                label: it.variable_value_name,
+                value: it.variable_value,
+              });
+            }
+            idx += 1;
+          }
         });
     },
     loadConnector() {
@@ -248,26 +260,43 @@ export default {
           let data = response.data.data[0];
           this.detailConnector = data;
           this.form.params = data.params;
+          this.form.key = data.key;
         });
     },
     handleClickRow(index) {
       if (index === this.temp_selected_row) {
         return;
       }
-      this.listConnectorProperty = [];
-      this.temp_selected_row = index;
       let prop = this.detailConnector.params[index];
-      prop = `${new URLSearchParams(prop.properties).toString()}`;
+      let idx = this.databaseList[index].findIndex(
+        (i) => i.value == prop.variable_value
+      );
+      if (~idx && this.databaseList[index].length > 1) {
+        return;
+      }
+      this.temp_selected_row = index;
+      let param = `${new URLSearchParams(prop.properties).toString()}`;
       $axiosMertrack
-        .get(`/v3/connector/connector-properties?${prop}`)
+        .get(`/v3/connector/connector-properties?${param}`)
         .then((response) => {
           let data = response.data.data;
-          for (const it of data)
-            this.listConnectorProperty.push({
+          for (const it of data) {
+            let list = {
               label: it.column_name,
               value: it.column_value,
-            });
+            };
+            this.databaseList[index].push(list);
+          }
+          this.databaseList[index] = this.uniqueArr(this.databaseList[index]);
         });
+    },
+    uniqueArr(arr) {
+      return arr.filter((obj, index, self) => {
+        return (
+          index ===
+          self.findIndex((t) => t.label === obj.label && t.value === obj.value)
+        );
+      });
     },
     handleChangeConnector() {
       this.getDetailConnector();

@@ -117,6 +117,11 @@ export default {
           label: "Schedule",
         },
         {
+          key: "status",
+          label: "Status",
+          _classes: "font-weight-bold",
+        },
+        {
           key: "action",
           label: "Action",
           _style: "width:15%",
