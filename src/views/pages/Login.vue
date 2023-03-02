@@ -104,7 +104,7 @@ import {
   reformatMenu,
   isThatYou,
   setAsSuperAdmin,
-  converMenuV3,
+  convertMenuV3,
   flatten,
 } from "../../utils";
 import { logoMertrack } from "../../constants";
@@ -186,34 +186,31 @@ export default {
         });
         let _data = res.data[0];
         if (_data.id == 0) {
-          setAsSuperAdmin();
-          window.location.reload();
-          return;
-        } else {
-          let menu = [
-            {
-              _name: "CSidebarNav",
-              _children: converMenuV3(_data.role_menu),
-            },
-          ];
-          let role = reformatRole(flatten(_data.role_menu, "items"));
-          let time_out = _data.idletimeout ?? 0;
-          localStorage.setItem("menu", JSON.stringify(menu));
-          localStorage.setItem("role", JSON.stringify(role));
-          localStorage.setItem("profile", JSON.stringify(_data));
-          localStorage.setItem("user_id", _data.id);
-          localStorage.setItem("token", _data.token);
-          localStorage.setItem("is_login", true);
-          localStorage.setItem("app_image", this.entityLogo);
-          localStorage.setItem(
-            "time_out",
-            `${moment()
-              .add(time_out, "minutes")
-              .format("DD/MM/YYYY HH:mm:ss:SSS")}`
-          );
-
-          window.location.reload();
+          _data = setAsSuperAdmin(_data);
         }
+        let menu = [
+          {
+            _name: "CSidebarNav",
+            _children: convertMenuV3(_data.role_menu),
+          },
+        ];
+        let role = reformatRole(flatten(_data.role_menu, "items"));
+        let time_out = _data.idletimeout ?? 0;
+        localStorage.setItem("menu", JSON.stringify(menu));
+        localStorage.setItem("role", JSON.stringify(role));
+        localStorage.setItem("profile", JSON.stringify(_data));
+        localStorage.setItem("user_id", _data.id);
+        localStorage.setItem("token", _data.token);
+        localStorage.setItem("is_login", true);
+        localStorage.setItem("app_image", this.entityLogo);
+        localStorage.setItem(
+          "time_out",
+          `${moment()
+            .add(time_out, "minutes")
+            .format("DD/MM/YYYY HH:mm:ss:SSS")}`
+        );
+        window.location.reload();
+        return;
       }
     },
   },

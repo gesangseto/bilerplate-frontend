@@ -1,4 +1,5 @@
 import { tableAliasName } from "../../constants";
+import { strToBool } from "../helper";
 
 export function isNumeric(num) {
   return !isNaN(num);
@@ -56,12 +57,12 @@ export function reformatMenu(menu = []) {
       let temp = {};
       if (it.link) {
         if (
-          it.can_view == "true" ||
-          it.can_add == "true" ||
-          it.can_edit == "true" ||
-          it.can_delete == "true" ||
-          it.can_print == "true" ||
-          it.can_approve == "true"
+          strToBool(it.can_view) ||
+          strToBool(it.can_add) ||
+          strToBool(it.can_edit) ||
+          strToBool(it.can_delete) ||
+          strToBool(it.can_print) ||
+          strToBool(it.can_approve)
         ) {
           // have_access = true;
           temp = {
@@ -109,23 +110,23 @@ export function reformatRole(menu = []) {
       let temp = {};
       if (it.link) {
         if (
-          it.can_view == "true" ||
-          it.can_add == "true" ||
-          it.can_edit == "true" ||
-          it.can_delete == "true" ||
-          it.can_print == "true" ||
-          it.can_approve == "true"
+          strToBool(it.can_view) ||
+          strToBool(it.can_add) ||
+          strToBool(it.can_edit) ||
+          strToBool(it.can_delete) ||
+          strToBool(it.can_print) ||
+          strToBool(it.can_approve)
         ) {
           // have_access = true;
           temp = {
             name: it.label,
             link: it.link,
-            can_create: it.show_create ? it.can_add : false,
-            can_read: it.show_read ? it.can_view : false,
-            can_update: it.show_update ? it.can_edit : false,
-            can_delete: it.show_delete ? it.can_delete : false,
-            can_print: it.show_print ? it.can_print : false,
-            can_approve: it.show_approve ? it.can_approve : false,
+            can_create: it.show_create ? strToBool(it.can_add) : false,
+            can_read: it.show_read ? strToBool(it.can_view) : false,
+            can_update: it.show_update ? strToBool(it.can_edit) : false,
+            can_delete: it.show_delete ? strToBool(it.can_delete) : false,
+            can_print: it.show_print ? strToBool(it.can_print) : false,
+            can_approve: it.show_approve ? strToBool(it.can_approve) : false,
           };
         }
       }
@@ -149,12 +150,12 @@ export function buttonPermission({ path }) {
   let role = JSON.parse(localStorage.getItem("role"));
   for (const it of role) {
     if (path.includes(it.link)) {
-      action.can_create = it.can_create == "true" ? true : false;
-      action.can_read = it.can_read == "true" ? true : false;
-      action.can_update = it.can_update == "true" ? true : false;
-      action.can_delete = it.can_delete == "true" ? true : false;
-      action.can_print = it.can_print == "true" ? true : false;
-      action.can_approve = it.can_approve == "true" ? true : false;
+      action.can_create = strToBool(it.can_create) ? true : false;
+      action.can_read = strToBool(it.can_read) ? true : false;
+      action.can_update = strToBool(it.can_update) ? true : false;
+      action.can_delete = strToBool(it.can_delete) ? true : false;
+      action.can_print = strToBool(it.can_print) ? true : false;
+      action.can_approve = strToBool(it.can_approve) ? true : false;
     }
   }
   return action;

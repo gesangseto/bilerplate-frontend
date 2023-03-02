@@ -62,6 +62,7 @@ import {
   capitalizeFirstLetter,
   exportDataReport,
   calculatePagination,
+  calculatePaginationV3,
 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 import { get_log } from "../../../dummy_data";
@@ -133,7 +134,7 @@ export default {
       let url = `/v3/system/audit-trail?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });

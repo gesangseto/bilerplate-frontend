@@ -100,12 +100,12 @@ export function getOsType() {
   return result;
 }
 
-export function converMenuV3(menu = Array) {
+export function convertMenuV3(menu = Array) {
   let reformatChild = (child) => {
     let _menu = [];
     for (const it of child) {
       let field = {};
-      if (it.items.length > 0) {
+      if (Array.isArray(it.items) && it.items.length > 0) {
         field = {
           _name: "CSidebarNavDropdown",
           name: it.name,
@@ -130,4 +130,13 @@ export function converMenuV3(menu = Array) {
   return reformatChild(menu);
   // for (const it of menu) {
   // }
+}
+export function strToBool(str) {
+  if (str == undefined && str == null) return false;
+  str = str.toString().toLowerCase();
+  if (str === "true") {
+    return true;
+  } else {
+    return false;
+  }
 }

@@ -14,26 +14,147 @@ export function isThatYou({ param = {} }) {
   }
 }
 
-export function setAsSuperAdmin() {
-  let profile = get_profile();
-  let menu = [
-    {
-      _name: "CSidebarNav",
-      _children: reformatMenu(profile.menu),
-    },
-  ];
-  let role = reformatRole(profile.role);
-  let time_out = profile.idletimeout;
-  localStorage.setItem("menu", JSON.stringify(menu));
-  localStorage.setItem("role", JSON.stringify(role));
-  localStorage.setItem("profile", JSON.stringify(profile));
-  localStorage.setItem("user_id", profile.id);
-  localStorage.setItem("token", "c71d88f3-e144-49c9-91df-d9a6bd0e3414");
-  localStorage.setItem("is_login", true);
-  localStorage.setItem("app_image", logoMertrack);
-  localStorage.setItem(
-    "time_out",
-    `${moment().add(time_out, "minutes").format("DD/MM/YYYY HH:mm:ss:SSS")}`
-  );
-  return;
+export function setAsSuperAdmin(prop) {
+  let newProp = { ...prop };
+  let newMenu = [];
+  for (let it of newProp.role_menu) {
+    if (it.id == 100) {
+      let items = it.items || [];
+      items.push({ ...configApplicationMenu() });
+      it.items = items;
+    }
+    newMenu.push(it);
+  }
+  newProp.role_menu = newMenu;
+  newProp.role_menu.push({ ...developmentToolsMenu() });
+  return newProp;
 }
+
+let configApplicationMenu = () => {
+  let menu = {
+    child_menu_id: 199,
+    menu_id: 199,
+    parent_menu_id: 100,
+    id: 199,
+    mst_menu_id: 100,
+    icon: "",
+    label: "Config Application",
+    link: "/configuration/application",
+    _name: "CSidebarNavItem",
+    can_view: "true",
+    can_add: "true",
+    can_edit: "true",
+    can_delete: "true",
+    can_print: "true",
+    can_approve: "true",
+    name: "Config Application",
+    route: null,
+    to: "/configuration/application",
+    type: 0,
+    path: "/configuration/application",
+    show_create: 1,
+    show_read: 1,
+    show_update: 1,
+    show_delete: 1,
+    show_approve: 1,
+    show_print: 1,
+    sa: 1,
+    type_desc: "Website",
+    items: [],
+  };
+  return menu;
+};
+let developmentToolsMenu = () => {
+  let menu = {
+    child_menu_id: 200,
+    menu_id: 200,
+    parent_menu_id: null,
+    id: 200,
+    mst_menu_id: null,
+    icon: "cilStar",
+    label: "Development Tools",
+    link: "",
+    _name: "CSidebarNavDropdown",
+    can_view: "true",
+    can_add: "true",
+    can_edit: "true",
+    can_delete: "true",
+    can_print: "true",
+    can_approve: "true",
+    name: "Development Tools",
+    route: "/development_tools",
+    to: null,
+    type: 0,
+    path: "/development_tools",
+    show_create: 1,
+    show_read: 1,
+    show_update: 1,
+    show_delete: 1,
+    show_approve: 0,
+    show_print: 1,
+    type_desc: "Website",
+    items: [
+      {
+        child_menu_id: 201,
+        menu_id: 201,
+        parent_menu_id: 200,
+        id: 201,
+        mst_menu_id: 200,
+        icon: "",
+        label: "Barcode Generator",
+        link: "/development_tools/barcode_generator",
+        _name: "CSidebarNavItem",
+        can_view: "true",
+        can_add: "true",
+        can_edit: "true",
+        can_delete: "true",
+        can_print: "true",
+        can_approve: "true",
+        name: "Application",
+        route: null,
+        to: "/development_tools/barcode_generator",
+        type: 0,
+        path: "/development_tools/barcode_generator",
+        show_create: 1,
+        show_read: 1,
+        show_update: 1,
+        show_delete: 1,
+        show_approve: 1,
+        show_print: 1,
+        type_desc: "Website",
+        items: [],
+      },
+      {
+        child_menu_id: 202,
+        menu_id: 202,
+        parent_menu_id: 200,
+        id: 202,
+        mst_menu_id: 200,
+        icon: "",
+        label: "Manual Barcode Generator",
+        link: "/development_tools/manual_barcode_generator",
+        _name: "CSidebarNavItem",
+        can_view: "true",
+        can_add: "true",
+        can_edit: "true",
+        can_delete: "true",
+        can_print: "true",
+        can_approve: "true",
+        name: "Application",
+        route: null,
+        to: "/development_tools/manual_barcode_generator",
+        type: 0,
+        path: "/development_tools/manual_barcode_generator",
+        show_create: 1,
+        show_read: 1,
+        show_update: 1,
+        show_delete: 1,
+        show_approve: 1,
+        show_print: 1,
+        type_desc: "Website",
+        items: [],
+      },
+    ],
+  };
+  return menu;
+};
