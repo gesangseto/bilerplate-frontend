@@ -1,6 +1,11 @@
 <template>
   <CRow>
-    <CSwitch class="mr-1" color="success" :checked.sync="status" />
+    <CSwitch
+      class="mr-1"
+      color="success"
+      :checked.sync="status"
+      :disabled="disabled"
+    />
     &nbsp;&nbsp;{{ show_label ? status_text : "" }}
   </CRow>
 </template>
@@ -8,7 +13,7 @@
 <script>
 export default {
   name: "SwithStatusMaster",
-  props: ["show_label", "default_value"],
+  props: ["show_label", "default_value", "disabled"],
   mounted() {},
   data() {
     return {

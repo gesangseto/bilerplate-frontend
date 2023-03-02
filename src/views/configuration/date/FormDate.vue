@@ -138,6 +138,7 @@
           <CRow form class="form-group">
             <CCol tag="label" sm="3" class="col-form-label"> Status </CCol>
             <SwithStatusMaster
+              :disabled="action == 'Read'"
               :show_label="true"
               :default_value="data.status"
               v-on:onChange="data.status = $event"
