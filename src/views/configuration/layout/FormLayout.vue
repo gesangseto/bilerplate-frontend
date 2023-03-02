@@ -3,7 +3,15 @@
     <CCol col="8" xl="8">
       <CCard>
         <CCardHeader>
-          <strong>Layout [{{ action }}]</strong>
+          <h5>
+            Label Layout [{{
+              this.action == "Create"
+                ? "ADD"
+                : this.action == "Read"
+                ? "VIEW"
+                : "EDIT"
+            }}]
+          </h5>
         </CCardHeader>
         <CCardBody>
           <CRow>

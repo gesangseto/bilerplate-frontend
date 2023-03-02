@@ -14,6 +14,7 @@
                 placeholder="Enter connector name"
                 autocomplete="name"
                 v-model="form.name"
+                :is-valid="initialLoad ? null : !form.name ? false : true"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -63,6 +64,9 @@
                 horizontal
                 :value.sync="form.connector_id"
                 @change="handleChangeConnector()"
+                :is-valid="
+                  initialLoad ? null : !form.connector_id ? false : true
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -74,18 +78,13 @@
                 </template>
               </CSelect>
               <CRow form class="form-group">
-                <CCol sm="3">
-                  Status
-                  <span class="text-danger">*</span>
-                </CCol>
-                {{ action == "Read" ? form.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :inline="true"
-                  :checked.sync="form.status"
-                ></CInputRadioGroup>
+                <CCol sm="3"> Status </CCol>
+                <SwithStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="form.status"
+                  v-on:onChange="form.status = $event"
+                />
               </CRow>
               <CCard>
                 <CCardHeader>Connector Parameter</CCardHeader>
@@ -202,10 +201,17 @@ export default {
   name: "Connector",
   data() {
     return {
+      initialLoad: true,
       route_action: "",
       // category: '',
       action: "Edit",
-      form: { params: [], key: null, value: null, connector_id: null },
+      form: {
+        params: [],
+        key: null,
+        value: null,
+        connector_id: null,
+        name: "",
+      },
       detailConnector: { params: [] },
       listConnector: [],
       listConnectorProperty: [],
@@ -303,7 +309,28 @@ export default {
     handleChangeConnector() {
       this.getDetailConnector();
     },
+    validation() {
+      let required = ["name", "connector_id"];
+      let next = true;
+      for (const key in this.form) {
+        if (required.includes(key) && !this.form[key]) next = false;
+      }
+      console.log(this.form);
+      return next;
+    },
     save() {
+      this.initialLoad = false;
+      if (!this.validation()) {
+        this.$toast.open({
+          message: "Please input all the required data.",
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        return;
+      }
+      console.log(this.validation());
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;

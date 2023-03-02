@@ -3,8 +3,8 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <strong>List Connector Action</strong>
           <ButtonPermission :permission="'create'" @click="addNew()" />
+          <h5>Connector Action</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
@@ -217,6 +217,9 @@ export default {
         return {
           ...item,
           _connector_name: item._connector.name,
+          description: item.description || "",
+          folder_sftp: item.folder_sftp || "",
+          folder_backup: item.folder_backup || "",
         };
       });
     },

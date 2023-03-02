@@ -1,13 +1,10 @@
 <template>
-  <CRow>
-    <CSwitch
-      class="mr-1"
-      color="success"
-      :checked.sync="status"
-      :disabled="disabled"
-    />
-    &nbsp;&nbsp;{{ show_label ? status_text : "" }}
-  </CRow>
+  <div style="justify-content: center; align-items: center">
+    <CSwitch color="success" :checked.sync="status" :disabled="disabled" />
+    <p style="margin-top: -5px; font-size: 12px; text-align: center">
+      {{ show_label ? status_text : "" }}
+    </p>
+  </div>
 </template>
 
 <script>

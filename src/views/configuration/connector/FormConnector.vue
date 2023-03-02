@@ -61,12 +61,7 @@
                 v-model="connector.connector_path"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Path
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
+                  <p class="col-form-label col-sm-3">Path</p>
                 </template>
               </CInput>
               <CInput
@@ -76,12 +71,7 @@
                 v-model="connector.connector_port"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Port
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
+                  <p class="col-form-label col-sm-3">Port</p>
                 </template>
               </CInput>
               <template>
@@ -144,15 +134,6 @@
             </CForm>
           </CCardBody>
           <CCardFooter>
-            <CButton
-              v-if="action == 'Read' ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
             <CButton
               type="reset"
               size="sm"

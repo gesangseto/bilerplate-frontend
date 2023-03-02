@@ -3,8 +3,8 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <strong>List Connector</strong>
           <ButtonPermission :permission="'create'" @click="addNew()" />
+          <h5>Connector</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
