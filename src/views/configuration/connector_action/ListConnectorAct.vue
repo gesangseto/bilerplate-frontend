@@ -114,7 +114,7 @@ export default {
         },
         {
           key: "schedule",
-          label: "Schedule",
+          label: "Time Interval (in minute)",
         },
         {
           key: "status",

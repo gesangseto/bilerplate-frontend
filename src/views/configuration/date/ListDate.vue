@@ -3,8 +3,8 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <strong>List Date</strong>
           <ButtonPermission :permission="'create'" @click="addNew()" />
+          <h5>Date Format</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
@@ -97,12 +97,21 @@ export default {
           _classes: "font-weight-bold",
         },
         {
-          key: "created_date",
-          label: "Created Date",
+          key: "df_overwrite",
+          label: "Overwrite",
         },
         {
-          key: "df_override",
-          label: "Override",
+          key: "result_date",
+          label: "Result",
+        },
+        {
+          key: "used_in_layout",
+          label: "Used In Layout",
+        },
+        {
+          key: "status",
+          label: "Status",
+          _classes: "font-weight-bold",
         },
         {
           key: "action",
@@ -184,10 +193,18 @@ export default {
   computed: {
     list_item() {
       return this.items.map((item) => {
-        let ex = moment().format(`${item.format}`);
+        let result = "";
+        if (item.df_overwrite === "last_day_of_month") {
+          result = moment().endOf("month").format(item.df_name);
+        } else if (item.df_overwrite === "first_day_of_month") {
+          result = moment().startOf("month").format(item.df_name);
+        } else {
+          result = moment().format(item.df_name);
+        }
         return {
           ...item,
-          example: ex,
+          result_date: result,
+          used_in_layout: item.used_in_layout || "",
         };
       });
     },

@@ -3,7 +3,15 @@
     <CCol col="8" xl="8">
       <CCard>
         <CCardHeader>
-          <strong>Manage Date Format</strong>
+          <h5>
+            Date Format [{{
+              this.action == "Create"
+                ? "ADD"
+                : this.action == "Read"
+                ? "VIEW"
+                : "EDIT"
+            }}]
+          </h5>
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -72,7 +80,7 @@
                   </CButton>
                   <div class="text-center">
                     <CButton
-                      :disabled="action == 'Read'"
+                      :disabled="action == 'Read' || data.used_in_layout"
                       style="margin-bottom: 15px; width: 50%"
                       color="danger"
                       @click="handleClickClear(index)"
@@ -83,8 +91,7 @@
                 </CCardBody>
                 <CCardFooter>
                   <CSelect
-                    :disabled="action == 'Read'"
-                    :label="'Format Field ' + index"
+                    :disabled="action == 'Read' || data.used_in_layout"
                     placeholder="Please select"
                     @change="handleChangeFormat(index)"
                     :value.sync="data[`field${index}_format`]"
@@ -105,12 +112,19 @@
                           : false
                         : true
                     "
-                  />
+                  >
+                    <template #label>
+                      Format Field {{ index }}
+                      <span class="text-danger" v-if="index == 1">
+                        <strong>*</strong>
+                      </span>
+                    </template></CSelect
+                  >
 
                   <CSelect
-                    :disabled="action == 'Read'"
+                    :disabled="action == 'Read' || data.used_in_layout"
                     v-if="data[`field${index}_type`] == 'day'"
-                    :label="'Override Option '"
+                    :label="'Overwrite Option '"
                     placeholder="Please select"
                     @change="handleChangeFormat(index)"
                     :value.sync="data['override']"
@@ -120,6 +134,14 @@
                 </CCardFooter>
               </CCard>
             </CCol>
+          </CRow>
+          <CRow form class="form-group">
+            <CCol tag="label" sm="3" class="col-form-label"> Status </CCol>
+            <SwithStatusMaster
+              :show_label="true"
+              :default_value="data.status"
+              v-on:onChange="data.status = $event"
+            />
           </CRow>
         </CCardBody>
         <CCardFooter>
@@ -145,16 +167,16 @@
         </CCardHeader>
         <CCardBody>
           <CSelect
-            :disabled="action == 'Read'"
-            :options="delimeter_list"
+            :disabled="action == 'Read' || data.used_in_layout"
+            :options="delimiter_list"
             placeholder="Please select"
-            :value.sync="data.delimeter"
+            :value.sync="data.delimiter"
             @change="handleChangeFormat()"
           >
-            <template #prepend-content>Delimeter</template>
+            <template #prepend-content>Delimiter</template>
           </CSelect>
           <CSelect
-            :disabled="action == 'Read'"
+            :disabled="action == 'Read' || data.used_in_layout"
             :options="around_list"
             placeholder="Please select"
             :value.sync="data.around"
@@ -230,7 +252,7 @@ export default {
       data: {
         format: "",
         example_format: "",
-        delimeter: "",
+        delimiter: "",
         override: "",
         around: "",
         field1_type: "",
@@ -282,7 +304,7 @@ export default {
         { value: "last_day_of_month", label: "Last Day of Month" },
         { value: "first_day_of_month", label: "First Day of Month" },
       ],
-      delimeter_list: [
+      delimiter_list: [
         { value: "", label: "Nothing" },
         { value: ";", label: "SemiColon ( ; )" },
         { value: " ", label: "Space" },
@@ -320,9 +342,10 @@ export default {
         let _data = data;
         // let _data = get_date();
         // _data = _data[0];
-        this.data.delimeter = _data.df_delimeter ?? "";
+        this.data = _data;
+        this.data.delimiter = _data.df_delimiter ?? "";
         this.data.around = _data.df_around ?? "";
-        this.data.override = _data.df_override ?? "";
+        this.data.override = _data.df_overwrite ?? "";
         this.data.field1_format = _data.df_field1 ?? "";
         this.data.field1_type = this.typeFormat(_data.df_field1) ?? "";
         this.data.field2_format = _data.df_field2 ?? "";
@@ -375,7 +398,7 @@ export default {
     },
     reFormatDate() {
       let around = this.data.around.split(" ");
-      let del = this.data.delimeter;
+      let del = this.data.delimiter;
       let data = this.data;
       // let format = `${data.field1_format}${del}${data.field2_format}${del}${data.field3_format}`;
       let format = ``;
@@ -477,7 +500,7 @@ export default {
       });
     },
     validation() {
-      let message = "Please input all the required data";
+      let message = "Please complete required data field.";
       let error = false;
       for (var i = 1; i <= 3; i++) {
         switch (this.data[`field${i}_type`]) {
@@ -521,12 +544,13 @@ export default {
         id: this.$route.params.id,
         df_id: this.data.df_id,
         df_name: this.data.format,
-        df_delimeter: this.data.delimeter,
+        df_delimiter: this.data.delimiter,
         df_around: this.data.around,
         df_field1: this.data.field1_format,
         df_field2: this.data.field2_format,
         df_field3: this.data.field3_format,
-        df_override: this.data.override,
+        df_overwrite: this.data.override,
+        status: this.data.status,
       };
       let dataPost = body;
       var message = this.$route.params.id

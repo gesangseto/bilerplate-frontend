@@ -22,6 +22,7 @@ import {
   DetailTransactionV3,
   HeaderFilterTransactionV3,
   HeaderShowStatusV3,
+  SwithStatusMaster,
 } from "./views/component";
 Vue.use(VueCustomTooltip);
 Vue.use(loading);
@@ -39,6 +40,7 @@ Vue.component("FormAddItemV3", FormAddItemV3);
 Vue.component("HeaderFilterTransactionV3", HeaderFilterTransactionV3);
 Vue.component("DetailTransactionV3", DetailTransactionV3);
 Vue.component("HeaderShowStatusV3", HeaderShowStatusV3);
+Vue.component("SwithStatusMaster", SwithStatusMaster);
 
 export default {
   name: "App",

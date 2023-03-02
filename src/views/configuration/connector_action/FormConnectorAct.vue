@@ -47,12 +47,14 @@
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
-                placeholder="Enter shcedule periode on minute"
+                placeholder="Enter time interval (in minute). Leave blank or set value to 0 to disable."
                 v-model="form.schedule"
                 type="number"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">Schedule Periode</p>
+                  <p class="col-form-label col-sm-3">
+                    Auto Execution Time Interval
+                  </p>
                 </template>
               </CInput>
               <CSelect
@@ -86,16 +88,16 @@
                 ></CInputRadioGroup>
               </CRow>
               <CCard>
-                <CCardHeader>Config Default data</CCardHeader>
+                <CCardHeader>Connector Parameter</CCardHeader>
                 <CCardBody
                   ><table style="width: 100%">
                     <thead>
-                      <th style="text-align: center; width: 5%">Source</th>
+                      <th style="text-align: center; width: 5%">Source Type</th>
                       <th style="text-align: center; width: 5%">
-                        Name Parameter
+                        Parameter Name
                       </th>
                       <th style="text-align: center; width: 5%">
-                        Variable Parameter
+                        Parameter Value
                       </th>
                       <th style="text-align: center; width: 5%">Required</th>
                       <th style="text-align: center; width: 5%">Key</th>

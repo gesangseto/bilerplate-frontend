@@ -12,6 +12,7 @@ import FormAddItemV3 from "./FormAddItemV3";
 import HeaderShowStatusV3 from "./HeaderShowStatusV3";
 import DetailTransactionV3 from "./DetailTransactionV3";
 import HeaderFilterTransactionV3 from "./HeaderFilterTransactionV3";
+import SwithStatusMaster from "./SwithStatusMaster";
 
 export {
   ButtonPermission,
@@ -28,4 +29,5 @@ export {
   HeaderShowStatusV3,
   DetailTransactionV3,
   HeaderFilterTransactionV3,
+  SwithStatusMaster,
 };
