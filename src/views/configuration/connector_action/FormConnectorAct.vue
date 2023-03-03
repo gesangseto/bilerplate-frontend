@@ -79,7 +79,7 @@
               </CSelect>
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
-                <SwithStatusMaster
+                <SwitchStatusMaster
                   :disabled="action == 'Read'"
                   :show_label="true"
                   :default_value="form.status"

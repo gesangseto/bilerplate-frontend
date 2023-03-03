@@ -8,17 +8,41 @@
             <th style="text-align: center; width: 5%">ID 1</th>
             <th style="text-align: center; width: 13%">ID 2</th>
             <th style="text-align: center; width: 10%">ID 3</th>
-            <th style="text-align:centerwidth:5%">ID 4</th>
-            <th style="text-align: center; width: 8%">SN Prefix (static)</th>
-            <th style="text-align: center; width: 5%">SN Length (dynamic)</th>
-            <th style="text-align: center; width: 13%">Generate Type</th>
-            <th style="text-align: center; width: 15%">Charset</th>
+            <th style="text-align: center; width: 5%">ID 4</th>
+            <th
+              style="text-align: center; width: 8%"
+              v-if="packaging_level != 1"
+            >
+              SN Prefix (static)
+            </th>
+            <th
+              style="text-align: center; width: 5%"
+              v-if="packaging_level != 1"
+            >
+              SN Length (dynamic)
+            </th>
+            <th
+              style="text-align: center; width: 13%"
+              v-if="packaging_level != 1"
+            >
+              Generate Type
+            </th>
+            <th
+              style="text-align: center; width: 15%"
+              v-if="packaging_level != 1"
+            >
+              Charset
+            </th>
             <th
               v-if="packaging_level != 1"
               style="text-align: center; width: 8%"
             >
               Layout
             </th>
+            <th
+              style="text-align:centerwidth:30%"
+              v-if="packaging_level == 1"
+            ></th>
           </thead>
           <tbody :v-if="total_pid > 0" v-for="index in total_pid" :key="index">
             <tr>
@@ -127,7 +151,7 @@
                   :is-valid="result[index - 1].id4 && !error[index - 1].id4"
                 />
               </td>
-              <td>
+              <td v-if="packaging_level != 1">
                 <br />
                 <CInput
                   size="sm"
@@ -149,7 +173,7 @@
                   :is-valid="!error[index - 1].sn_prefix"
                 />
               </td>
-              <td>
+              <td v-if="packaging_level != 1">
                 <br />
                 <CInput
                   size="sm"
@@ -169,7 +193,7 @@
                   :is-valid="!error[index - 1].generated_sn_len"
                 />
               </td>
-              <td>
+              <td v-if="packaging_level != 1">
                 <br />
                 <CSelect
                   size="sm"
@@ -181,7 +205,7 @@
                   :is-valid="!error[index - 1].sn_generate_type"
                 />
               </td>
-              <td>
+              <td v-if="packaging_level != 1">
                 <br />
                 <CSelect
                   size="sm"
@@ -427,7 +451,7 @@ export default {
       if (id2.length < 6 || id2.length > 9) {
         this.error[num].id2 = true;
       }
-      if (!sn_generate_type) {
+      if (!sn_generate_type && this.packaging_level != 1) {
         this.error[num].sn_generate_type = true;
       }
       if (!layout_id && this.packaging_level != 1) {

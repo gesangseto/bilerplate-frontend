@@ -214,17 +214,13 @@
               </CCol>
               <CCol sm="12">
                 <CRow form class="form-group">
-                  <CCol sm="3">
-                    Status <span class="text-danger"><strong>*</strong></span>
-                  </CCol>
-                  {{ action == "Read" ? user.status : null }}
-                  <CInputRadioGroup
-                    v-if="action == 'Read' ? false : true"
-                    :options="statusOptions"
-                    :inline="true"
-                    :checked.sync="user.status"
-                  >
-                  </CInputRadioGroup>
+                  <CCol sm="3"> Status </CCol>
+                  <SwitchStatusMaster
+                    :disabled="action == 'Read'"
+                    :show_label="true"
+                    :default_value="user.status"
+                    v-on:onChange="user.status = $event"
+                  />
                 </CRow>
               </CCol>
 

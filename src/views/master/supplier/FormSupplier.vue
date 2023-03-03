@@ -209,17 +209,12 @@
               </CInput>
 
               <CRow form class="form-group">
-                <CCol sm="3">
-                  Status
-                  <span class="text-danger">*</span>
-                </CCol>
-                {{ action == "Read" ? supplier.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :inline="true"
-                  :checked.sync="supplier.status"
+                <CCol sm="3"> Status </CCol>
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="supplier.status"
+                  v-on:onChange="supplier.status = $event"
                 />
               </CRow>
             </CForm>

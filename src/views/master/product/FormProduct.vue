@@ -586,26 +586,6 @@
             <CRow>
               <CCol sm="11" md="11" lg="11" xl="11">
                 <CRow form class="form-group">
-                  <CCol sm="3"> Status </CCol>
-                  <CInputRadioGroup
-                    v-if="action != 'Read'"
-                    class="col-sm-9"
-                    :options="statusOptions"
-                    :inline="true"
-                    :checked.sync="product.status"
-                    :add-input-classes="{
-                      'is-invalid': $v.product.status.$error,
-                    }"
-                  />
-                  <p class="col-form-label col-sm-3" v-if="action == 'Read'">
-                    {{ product.status }}
-                  </p>
-                </CRow>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol sm="11" md="11" lg="11" xl="11">
-                <CRow form class="form-group">
                   <CCol sm="3"> Show </CCol>
                   <CInputCheckbox
                     v-if="action != 'Read'"
@@ -616,6 +596,19 @@
                   <p class="col-form-label col-sm-3" v-if="action == 'Read'">
                     {{ product.show_status == 1 ? "Yes" : "No" }}
                   </p>
+                </CRow>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CRow form class="form-group">
+                  <CCol sm="3"> Status </CCol>
+                  <SwitchStatusMaster
+                    :disabled="action == 'Read'"
+                    :show_label="true"
+                    :default_value="product.status"
+                    v-on:onChange="product.status = $event"
+                  />
                 </CRow>
               </CCol>
             </CRow>

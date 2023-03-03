@@ -48,22 +48,13 @@
                 </template>
               </CInput>
               <CRow form class="form-group">
-                <CCol sm="3"> Status <span class="text-danger">*</span> </CCol>
-                {{ action == "Read" ? department.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :inline="true"
-                  :checked.sync="department.status"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Department
-                      <span class="text-danger"><strong>*</strong></span>
-                    </p>
-                  </template>
-                </CInputRadioGroup>
+                <CCol sm="3"> Status </CCol>
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="department.status"
+                  v-on:onChange="department.status = $event"
+                />
               </CRow>
             </CForm>
           </CCardBody>

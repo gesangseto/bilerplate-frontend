@@ -56,13 +56,11 @@
               </CTextarea>
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
-                {{ action == "Read" ? productCategory.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :inline="true"
-                  :checked.sync="productCategory.status"
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="productCategory.status"
+                  v-on:onChange="productCategory.status = $event"
                 />
               </CRow>
             </CForm>

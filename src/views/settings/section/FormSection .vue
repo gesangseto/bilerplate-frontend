@@ -82,17 +82,12 @@
                 </template>
               </CTextarea>
               <CRow form class="form-group">
-                <CCol sm="3">
-                  Status
-                  <span class="text-danger">*</span>
-                </CCol>
-                {{ action == "Read" ? section.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :checked.sync="section.status"
-                  :inline="true"
+                <CCol sm="3"> Status </CCol>
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="section.status"
+                  v-on:onChange="section.status = $event"
                 />
               </CRow>
             </CForm>

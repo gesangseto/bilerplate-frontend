@@ -52,18 +52,13 @@
                 </template>
               </CTextarea>
               <CRow form class="form-group">
-                <CCol sm="3">
-                  Status
-                  <span class="text-danger">*</span>
-                </CCol>
-                {{ action == "Read" ? packaging.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :inline="true"
-                  :checked.sync="packaging.status"
-                ></CInputRadioGroup>
+                <CCol sm="3"> Status </CCol>
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="packaging.status"
+                  v-on:onChange="packaging.status = $event"
+                />
               </CRow>
             </CForm>
           </CCardBody>

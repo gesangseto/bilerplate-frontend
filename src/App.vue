@@ -22,8 +22,9 @@ import {
   DetailTransactionV3,
   HeaderFilterTransactionV3,
   HeaderShowStatusV3,
-  SwithStatusMaster,
-  SwithStatusTrx,
+  SwitchStatusMaster,
+  SwitchStatusTrx,
+  SwitchDefault,
 } from "./views/component";
 Vue.use(VueCustomTooltip);
 Vue.use(loading);
@@ -41,8 +42,9 @@ Vue.component("FormAddItemV3", FormAddItemV3);
 Vue.component("HeaderFilterTransactionV3", HeaderFilterTransactionV3);
 Vue.component("DetailTransactionV3", DetailTransactionV3);
 Vue.component("HeaderShowStatusV3", HeaderShowStatusV3);
-Vue.component("SwithStatusMaster", SwithStatusMaster);
-Vue.component("SwithStatusTrx", SwithStatusTrx);
+Vue.component("SwitchStatusMaster", SwitchStatusMaster);
+Vue.component("SwitchStatusTrx", SwitchStatusTrx);
+Vue.component("SwitchDefault", SwitchDefault);
 
 export default {
   name: "App",

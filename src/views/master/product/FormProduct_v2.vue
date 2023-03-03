@@ -171,36 +171,24 @@
               </CCol>
               <CCol sm="12">
                 <CRow form class="form-group">
-                  <CCol tag="label" sm="3" class="col-form-label">
-                    Status
-                  </CCol>
-                  <CCol sm="9">
-                    <CSwitch
-                      v-if="action != 'Read'"
-                      class="mr-1"
-                      color="success"
-                      :checked.sync="product.status"
-                    />
-                    <p class="col-form-label col-sm-3" v-if="action == 'Read'">
-                      {{ product.status == true ? "Active" : "Inactive" }}
-                    </p>
-                  </CCol>
+                  <CCol sm="3"> Show </CCol>
+                  <SwitchDefault
+                    :disabled="action == 'Read'"
+                    :show_label="true"
+                    :default_value="product.show_status"
+                    v-on:onChange="product.show_status = $event"
+                  />
                 </CRow>
               </CCol>
               <CCol sm="12">
                 <CRow form class="form-group">
-                  <CCol tag="label" sm="3" class="col-form-label"> Show </CCol>
-                  <CCol sm="9">
-                    <CSwitch
-                      v-if="action != 'Read'"
-                      class="mr-1"
-                      color="success"
-                      :checked.sync="product.show_status"
-                    />
-                    <p class="col-form-label col-sm-3" v-if="action == 'Read'">
-                      {{ product.show_status == true ? "True" : "False" }}
-                    </p>
-                  </CCol>
+                  <CCol sm="3"> Status </CCol>
+                  <SwitchStatusMaster
+                    :disabled="action == 'Read'"
+                    :show_label="true"
+                    :default_value="product.status"
+                    v-on:onChange="product.status = $event"
+                  />
                 </CRow>
               </CCol>
             </CRow>
