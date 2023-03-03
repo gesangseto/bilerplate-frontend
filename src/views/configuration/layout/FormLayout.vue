@@ -20,6 +20,7 @@
                 :placeholder="
                   formData.layout_name ? formData.itf_name : 'Choose file...'
                 "
+                :disabled="action === 'Read'"
                 horizontal
                 custom
                 accept=".itf"
@@ -52,6 +53,7 @@
           <CRow>
             <CCol md="12"
               ><CInput
+                :disabled="action == 'Read'"
                 v-model="formData.layout_name"
                 horizontal
                 :is-valid="
@@ -71,17 +73,12 @@
           </CRow>
           <CRow form class="form-group">
             <CCol tag="label" sm="3" class="col-form-label"> Status </CCol>
-            <CCol sm="9">
-              <CSwitch
-                v-if="action != 'Read'"
-                class="mr-1"
-                color="success"
-                :checked.sync="formData.layout_status"
-              />
-              <p class="col-form-label col-sm-3" v-if="action == 'Read'">
-                {{ formData.layout_status ? "Active" : "Inactive" }}
-              </p>
-            </CCol>
+            <SwithStatusMaster
+              :disabled="action == 'Read'"
+              :show_label="true"
+              :default_value="formData.status"
+              v-on:onChange="formData.status = $event"
+            />
           </CRow>
           <template>
             <table style="width: 100%">
@@ -111,6 +108,7 @@
                   </td>
                   <td>
                     <CSelect
+                      :disabled="action == 'Read'"
                       placeholder="-Select-"
                       :options="listType"
                       horizontal
@@ -128,6 +126,7 @@
                     />
                   </td>
                   <td>
+                    <!-- Associated Field -->
                     <CRow>
                       <CCol md="12">
                         <CInput
@@ -187,9 +186,10 @@
               <strong>Identifier</strong>
             </CCardHeader>
             <CCardBody>
-              <div class="table-scroll">
+              <div>
                 <CDataTable
                   striped
+                  class="table-scroll-auto"
                   hover
                   :items="identifier_list"
                   :fields="identifier_field"
@@ -213,9 +213,10 @@
               <strong>Associated Content</strong>
             </CCardHeader>
             <CCardBody>
-              <div class="table-scroll">
+              <div>
                 <CDataTable
                   striped
+                  class="table-scroll-auto"
                   hover
                   :items="associated_list"
                   :fields="associated_field"
@@ -260,13 +261,13 @@
       size="lg"
     >
       <template #header>
-        <h5><strong>About Mertrack&reg; Warehouse</strong></h5>
+        <h5><strong>Select Date Format</strong></h5>
       </template>
       <CCardBody>
         <CRow>
           <CCol class="md-4">
             <CSelect
-              label="Filter By"
+              label="Date Format"
               :value.sync="selectedDate"
               horizontal
               :options="listFormatDate"
@@ -286,10 +287,11 @@
 </template>
 
 <style>
-.table-scroll {
+.table-scroll-auto {
   height: 30vh;
   overflow-y: scroll;
-  overflow-x: scroll;
+  /* overflow-x: scroll; */
+  white-space: nowrap; /* mencegah pemisahan kata pada teks */
 }
 th,
 td {
@@ -419,20 +421,25 @@ export default {
     },
     selectedIdentifier: {
       handler(n, o) {
-        for (const it of this.associated_content) {
-          if (it.identifier_id === n) {
-            this.selectedAssociated = it;
-          }
-        }
+        let idx = this.associated_content.findIndex(
+          (it) => it.identifier_id === n
+        );
+        if (~idx) this.selectedAssociated = this.associated_content[idx];
       },
       deep: true,
     },
     selectedIndex: {
       async handler(n, o) {
-        if (n != o) {
+        if (this.action === "Read") {
+          return;
+        } else if (n != o) {
           let row_selected = this.formData.items[n];
-          let type_id = row_selected.generate_type_id;
-          await this.getIdentifier(type_id);
+          if (row_selected.generate_type_id) {
+            let type_id = row_selected.generate_type_id;
+            await this.getIdentifier(type_id);
+          } else {
+            this.identifier = [];
+          }
         }
       },
       deep: true,
@@ -514,7 +521,12 @@ export default {
         check_ai.format_ref_data = this.listFormatDate[0].label;
       }
       let lineParameter = this.formData.items[i];
-      if (item.is_selected) {
+      if (
+        check_ai.generate_type === "single" &&
+        lineParameter.field_associated.length > 0
+      ) {
+        lineParameter.field_associated = [check_ai];
+      } else if (item.is_selected) {
         check_ai.order_number = lineParameter.field_associated.length;
         lineParameter.field_associated.push(check_ai);
       } else {
@@ -545,6 +557,9 @@ export default {
       } else {
         text = "Automatic";
       }
+      let content = [...this.associated_content];
+      this.associated_content = [];
+      this.associated_content = content;
       text = text.trim();
       this.formData.items[i].associated_field = text.replace("-", "");
     },
@@ -561,6 +576,7 @@ export default {
       this.selectedAssociated = { flag_system: 1 };
     },
     editAssociatedField(index) {
+      if (this.action === "Read") return;
       this.resetData();
       let layout_selected = this.formData.items[index];
       this.associated_content = layout_selected.field_associated ?? [];
@@ -604,23 +620,24 @@ export default {
       let associated = this.selectedAssociated;
       associated.format_ref = this.selectedDate;
       associated.format_ref_data = this.matchDate(this.selectedDate);
-      let n = 0;
-      for (const it of this.formData.items[i].field_associated) {
-        if (it.identifier_id === associated.identifier_id) {
-          this.formData.items[i].field_associated[n] = associated;
-        }
-        n += 1;
-      }
+      let idx = this.formData.items[i].field_associated.findIndex(
+        (it) => it.identifier_id == associated.identifier_id
+      );
+      if (~idx) this.formData.items[i].field_associated[idx] = associated;
+      // for (const it of this.formData.items[i].field_associated) {
+      //   if (it.identifier_id === associated.identifier_id) {
+      //     this.formData.items[i].field_associated[n] = associated;
+      //   }
+      //   n += 1;
+      // }
       this.modalRefDate = false;
+      this.rewriteIdentifierText();
       this.rewriteIdentifierText();
     },
     matchDate(id) {
       let data = "";
-      for (const it of this.listFormatDate) {
-        if (it.value == id) {
-          data = it.label;
-        }
-      }
+      let idx = this.listFormatDate.findIndex((it) => it.value == id);
+      if (~idx) return this.listFormatDate[idx].label;
       return data;
     },
     /*
@@ -662,7 +679,7 @@ export default {
         for (const it of _res.data) {
           this.listFormatDate.push({
             value: `${it.df_id}`,
-            label: it.df_name,
+            label: it.df_name_overwrite,
           });
         }
       }
@@ -686,7 +703,6 @@ export default {
       for (const key in this.formData) {
         if (required.includes(key) && !this.formData[key]) next = false;
       }
-      console.log(this.formData.items);
       let required_item = ["generate_type_id", "associated_field"];
       if (this.formData.items.length == 0) next = false;
       for (const it of this.formData.items) {

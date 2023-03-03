@@ -13,6 +13,7 @@ import HeaderShowStatusV3 from "./HeaderShowStatusV3";
 import DetailTransactionV3 from "./DetailTransactionV3";
 import HeaderFilterTransactionV3 from "./HeaderFilterTransactionV3";
 import SwithStatusMaster from "./SwithStatusMaster";
+import SwithStatusTrx from "./SwithStatusTrx";
 
 export {
   ButtonPermission,
@@ -30,4 +31,5 @@ export {
   DetailTransactionV3,
   HeaderFilterTransactionV3,
   SwithStatusMaster,
+  SwithStatusTrx,
 };

@@ -14,8 +14,8 @@ export default {
   mounted() {},
   data() {
     return {
-      status_text: "Inactive",
-      status: false,
+      status_text: "Active",
+      status: true,
     };
   },
   watch: {

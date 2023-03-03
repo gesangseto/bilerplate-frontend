@@ -19,7 +19,7 @@
               hover
               striped
               sorter
-              :items="customers"
+              :items="renderList"
               :fields="fields"
               class="data-table"
               style="font-size: 12px"
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import { deleteConfLayout, getConfLayout } from "../../../resource/ConfLayout";
 import { calculatePaginationV3, exportData } from "../../../utils";
 
@@ -199,12 +200,11 @@ export default {
     },
   },
   computed: {
-    customers() {
+    renderList() {
       return this.items.map((item) => {
         return {
           ...item,
-          tlp: item.tlp ?? "",
-          tlp_alt: item.tlp_alt ?? "",
+          created_date: moment(item.created_date).format("YYYY-MM-DD HH:mm"),
         };
       });
     },

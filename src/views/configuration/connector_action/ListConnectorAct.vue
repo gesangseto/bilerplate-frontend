@@ -191,24 +191,28 @@ export default {
         path: `connector_action/create`,
       });
     },
-    deleteRow(item) {
-      let _param = { id: item.id };
-      $axiosMertrack
-        .delete(`v3/connector/connector-action`, { data: _param })
-        .then((result) => {
-          this.$isLoading(false);
-          this.loadData();
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
+    async deleteRow(item) {
+      let message = `You are about to delete to this data.\nThis operation cannot be undone. Would you like to continue?`;
+      if (confirm(message)) {
+        this.$isLoading(true);
+        let _param = { id: item.id };
+        $axiosMertrack
+          .delete(`v3/connector/connector-action`, { data: _param })
+          .then((result) => {
+            this.$isLoading(false);
+            this.loadData();
+            let res = result.data;
+            this.$toast.open({
+              message: res.error
+                ? `${res.message}`
+                : "Data has been saved succesfully ",
+              type: res.error ? "error" : "success",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
           });
-        });
+      }
     },
   },
   computed: {
