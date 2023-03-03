@@ -329,7 +329,6 @@ export default {
         });
         return;
       }
-      console.log(this.validation());
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;

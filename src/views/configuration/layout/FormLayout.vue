@@ -15,39 +15,73 @@
         </CCardHeader>
         <CCardBody>
           <CRow>
-            <CCol md="2">
-              <label> ITF File <strong class="text-danger">*</strong> </label>
-            </CCol>
-            <CCol md="10">
-              <div class="custom-file mb-3">
-                <input
-                  type="file"
-                  class="custom-file-input"
-                  id="upload"
-                  required
-                  @change="handleUploadFile"
-                />
-                <label
-                  id="label-name-file"
-                  class="custom-file-label"
-                  for="upload"
-                  >{{
-                    formData.layout_name ? formData.itf_name : "Choose file..."
-                  }}</label
-                >
-                <span
-                  id="error-upload"
-                  class="text-danger"
-                  style="font-size: 12px"
-                ></span>
-              </div>
+            <CCol md="12">
+              <CInputFile
+                :placeholder="
+                  formData.layout_name ? formData.itf_name : 'Choose file...'
+                "
+                horizontal
+                custom
+                accept=".itf"
+                class="input-form-upload"
+                @change="handleUploadFile"
+                :is-valid="
+                  initialLoad
+                    ? null
+                    : !formData.itf_name || formData.items.length == 0
+                    ? false
+                    : true
+                "
+                :invalid-feedback="
+                  formData.itf_name && formData.items.length == 0
+                    ? 'Invalid ITF file selected.'
+                    : ''
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    ITF File
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template>
+              </CInputFile>
             </CCol>
           </CRow>
           <CRow>
-            <CCol md="2">
-              <label> Name <strong class="text-danger">*</strong> </label>
+            <CCol md="12"
+              ><CInput
+                v-model="formData.layout_name"
+                horizontal
+                :is-valid="
+                  initialLoad ? null : !formData.layout_name ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Name
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template></CInput
+              >
             </CCol>
-            <CCol md="10"><CInput v-model="formData.layout_name" /> </CCol>
+          </CRow>
+          <CRow form class="form-group">
+            <CCol tag="label" sm="3" class="col-form-label"> Status </CCol>
+            <CCol sm="9">
+              <CSwitch
+                v-if="action != 'Read'"
+                class="mr-1"
+                color="success"
+                :checked.sync="formData.layout_status"
+              />
+              <p class="col-form-label col-sm-3" v-if="action == 'Read'">
+                {{ formData.layout_status ? "Active" : "Inactive" }}
+              </p>
+            </CCol>
           </CRow>
           <template>
             <table style="width: 100%">
@@ -84,6 +118,13 @@
                       inline
                       @change="handleChangeType(index)"
                       @click="editAssociatedField((selectedIndex = index))"
+                      :is-valid="
+                        initialLoad
+                          ? null
+                          : !item.generate_type_id
+                          ? false
+                          : true
+                      "
                     />
                   </td>
                   <td>
@@ -93,6 +134,13 @@
                           readonly
                           :value.sync="item.associated_field"
                           @click="editAssociatedField((selectedIndex = index))"
+                          :is-valid="
+                            initialLoad
+                              ? null
+                              : !item.associated_field
+                              ? false
+                              : true
+                          "
                         >
                           <template #append>
                             <CButton
@@ -114,20 +162,6 @@
           </template>
 
           <br />
-          <CRow form class="form-group">
-            <CCol tag="label" sm="3" class="col-form-label"> Status </CCol>
-            <CCol sm="9">
-              <CSwitch
-                v-if="action != 'Read'"
-                class="mr-1"
-                color="success"
-                :checked.sync="formData.layout_status"
-              />
-              <p class="col-form-label col-sm-3" v-if="action == 'Read'">
-                {{ formData.layout_status ? "Active" : "Inactive" }}
-              </p>
-            </CCol>
-          </CRow>
         </CCardBody>
         <CCardFooter>
           <CButton
@@ -289,6 +323,7 @@ export default {
   },
   data() {
     return {
+      initialLoad: true,
       action: "",
       filter: {
         page: 1,
@@ -409,7 +444,7 @@ export default {
     INI UNTUK SAAT UPLOAD IFT FILE
     */
     handleUploadFile(event) {
-      let isiFile = event.target.files[0];
+      let isiFile = event[0];
       if (isiFile != undefined) {
         let fileName = isiFile.name;
         $("#error-upload").text("");
@@ -421,7 +456,7 @@ export default {
         } else {
           $("#error-upload").text("");
           reader.onload = (e) => {
-            this.formData.layout_name = fileName;
+            this.formData.layout_name = fileName.replace(".itf", "");
             this.formData.itf_name = fileName;
             this.formData.itf_content = e.target.result;
             this.generateField(e.target.result);
@@ -645,7 +680,34 @@ export default {
     END
     */
 
+    validation() {
+      let required = ["layout_name", "itf_name"];
+      let next = true;
+      for (const key in this.formData) {
+        if (required.includes(key) && !this.formData[key]) next = false;
+      }
+      console.log(this.formData.items);
+      let required_item = ["generate_type_id", "associated_field"];
+      if (this.formData.items.length == 0) next = false;
+      for (const it of this.formData.items) {
+        for (const req of required_item) {
+          if (!it[req]) next = false;
+        }
+      }
+      return next;
+    },
     async save() {
+      this.initialLoad = false;
+      if (!this.validation()) {
+        this.$toast.open({
+          message: "Please input all the required data.",
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        return;
+      }
       let param = JSON.parse(JSON.stringify(this.formData));
       param.layout_status = param.layout_status ? 1 : 0;
       var message = this.$route.params.id

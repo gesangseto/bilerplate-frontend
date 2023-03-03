@@ -108,7 +108,7 @@ export default {
           label: "Created Date",
         },
         {
-          key: "status_desc",
+          key: "status",
           label: "Status",
         },
         {
