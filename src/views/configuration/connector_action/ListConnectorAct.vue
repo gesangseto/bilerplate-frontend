@@ -101,7 +101,7 @@ export default {
           label: "Desc",
         },
         {
-          key: "_connector_name",
+          key: "connector_name",
           label: "Connector",
         },
         {
@@ -216,7 +216,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          _connector_name: item._connector.name,
           description: item.description || "",
           folder_sftp: item.folder_sftp || "",
           folder_backup: item.folder_backup || "",

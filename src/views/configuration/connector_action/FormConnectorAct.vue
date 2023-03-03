@@ -239,7 +239,6 @@ export default {
         .then((response) => {
           let data = response.data.data[0];
           this.form = data;
-          this.detailConnector = data._connector;
           this.detailConnector.params = data.params;
           let idx = 0;
           for (const it of data.params) {

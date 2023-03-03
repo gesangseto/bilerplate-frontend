@@ -19,7 +19,7 @@
               hover
               striped
               sorter
-              :items="items"
+              :items="renderList"
               :fields="fields"
               class="data-table"
               style="font-size: 12px"
@@ -185,15 +185,14 @@ export default {
     deleteRow(item) {},
   },
   computed: {
-    // customers() {
-    //   return this.items.map((item) => {
-    //     return {
-    //       ...item,
-    //       tlp: item.tlp ?? "",
-    //       tlp_alt: item.tlp_alt ?? "",
-    //     };
-    //   });
-    // },
+    renderList() {
+      return this.items.map((item) => {
+        return {
+          ...item,
+          connector_path: item.connector_path || "",
+        };
+      });
+    },
   },
 };
 </script>
