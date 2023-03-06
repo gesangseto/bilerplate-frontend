@@ -342,6 +342,7 @@ export default {
         let data = _res.data[0];
         let _data = data;
         this.data.df_id = _data.df_id ?? "";
+        this.data.used_in_layout = _data.used_in_layout ?? "";
         this.data.delimiter = _data.df_delimiter ?? "";
         this.data.around = _data.df_around ?? "";
         this.data.override = _data.df_overwrite ?? "";
