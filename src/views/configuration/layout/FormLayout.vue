@@ -272,20 +272,24 @@
       title="Warning Session Timeout"
       color="info"
       :show.sync="modalRefDate"
-      size="lg"
+      size="sm"
     >
       <template #header>
         <h5><strong>Select Date Format</strong></h5>
       </template>
       <CCardBody>
         <CRow>
-          <CCol class="md-4">
-            <CSelect
-              label="Date Format"
-              :value.sync="selectedDate"
-              horizontal
+          <CCol class="md-2">
+            <label>Date Format</label>
+          </CCol>
+          <CCol class="md-12">
+            <v-select
+              placeholder="--Select--"
               :options="listFormatDate"
-            />
+              :reduce="(opt) => opt.value"
+              v-model="selectedDate"
+            >
+            </v-select>
           </CCol>
         </CRow>
       </CCardBody>
@@ -327,6 +331,7 @@ td {
 }
 </style>
 <script>
+import moment from "moment";
 import { getConfDate } from "../../../resource/ConfDate";
 import {
   getConfLayout,
@@ -705,9 +710,18 @@ export default {
       let _res = await getConfDate({ status: "Active" });
       if (_res) {
         for (const it of _res.data) {
+          let dt = "";
+          if (it.df_overwrite === "last_day_of_month") {
+            dt = moment().endOf("month").format(it.df_name);
+          } else if (it.df_overwrite === "first_day_of_month") {
+            dt = moment().startOf("month").format(it.df_name);
+          } else {
+            dt = moment().format(it.df_name);
+          }
+          dt = dt.toUpperCase();
           this.listFormatDate.push({
             value: `${it.df_id}`,
-            label: it.df_name_overwrite,
+            label: `${it.df_name_overwrite} - ${dt}`,
           });
         }
       }

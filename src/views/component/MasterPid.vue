@@ -4,13 +4,14 @@
       <template>
         <table style="width: 100%">
           <thead>
-            <th style="text-align: center; width: 17%">Type</th>
-            <th style="text-align: center; width: 5%">ID 1</th>
-            <th style="text-align: center; width: 13%">ID 2</th>
-            <th style="text-align: center; width: 10%">ID 3</th>
-            <th style="text-align: center; width: 5%">ID 4</th>
+            <th style="text-align: center; width: 5%"></th>
+            <th style="text-align: center; width: 11%">Type</th>
+            <th style="text-align: center; width: 6%">ID 1</th>
+            <th style="text-align: center; width: 11%">ID 2</th>
+            <th style="text-align: center; width: 8%">ID 3</th>
+            <th style="text-align: center; width: 6%">ID 4</th>
             <th
-              style="text-align: center; width: 8%"
+              style="text-align: center; width: 6%"
               v-if="packaging_level != 1"
             >
               SN Prefix (static)
@@ -22,36 +23,38 @@
               SN Length (dynamic)
             </th>
             <th
-              style="text-align: center; width: 13%"
+              style="text-align: center; width: 12%"
               v-if="packaging_level != 1"
             >
               Generate Type
             </th>
             <th
-              style="text-align: center; width: 15%"
+              style="text-align: center; width: 12%"
               v-if="packaging_level != 1"
             >
               Charset
             </th>
             <th
               v-if="packaging_level != 1"
-              style="text-align: center; width: 8%"
+              style="text-align: center; width: 18%"
             >
               Layout
             </th>
             <th
-              style="text-align:centerwidth:30%"
+              style="text-align: center; width: 53%"
               v-if="packaging_level == 1"
             ></th>
           </thead>
           <tbody :v-if="total_pid > 0" v-for="index in total_pid" :key="index">
             <tr>
               <td>
+                {{ title[index - 1] }}
+              </td>
+              <td>
                 <br />
                 <CSelect
+                  block
                   size="sm"
-                  :label="title[index - 1]"
-                  horizontal
                   :disabled="readonly"
                   :options="index % 2 == 0 ? only_sscc : list_epc_type"
                   @change="handleChangePid(index - 1)"
@@ -299,7 +302,15 @@ export default {
           }
           this.handleChangePid(index);
           for (var key in this.error[index]) {
-            if (this.error[index][key]) {
+            if (
+              this.packaging_level === 1 &&
+              (key === "generated_sn_len" ||
+                key === "sn_charset" ||
+                key === "sn_generate_type" ||
+                key === "layout_id")
+            ) {
+              have_error = false;
+            } else if (this.error[index][key]) {
               have_error = true;
             }
           }
@@ -443,6 +454,8 @@ export default {
       let id2 = this.result[num].id2 ?? "";
       let epc = this.result[num].epc_type;
       let sn_generate_type = this.result[num].sn_generate_type;
+      let generated_sn_len = this.result[num].generated_sn_len;
+      let sn_charset = this.result[num].sn_charset;
       let layout_id = this.result[num].layout_id;
       // Check id1 and id2 and generate type
       if (!id1) {
@@ -453,6 +466,12 @@ export default {
       }
       if (!sn_generate_type && this.packaging_level != 1) {
         this.error[num].sn_generate_type = true;
+      }
+      if (!generated_sn_len && this.packaging_level != 1) {
+        this.error[num].generated_sn_len = true;
+      }
+      if (!sn_charset && this.packaging_level != 1) {
+        this.error[num].sn_charset = true;
       }
       if (!layout_id && this.packaging_level != 1) {
         this.error[num].layout_id = true;
@@ -549,3 +568,9 @@ export default {
   },
 };
 </script>
+<style>
+.is-valid .custom-select-icon,
+.is-invalid .custom-select-icon {
+  width: 1px;
+}
+</style>
