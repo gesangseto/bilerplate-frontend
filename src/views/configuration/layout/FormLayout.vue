@@ -191,6 +191,7 @@
                   striped
                   class="table-scroll-auto"
                   hover
+                  :table-row-height="5"
                   :items="identifier_list"
                   :fields="identifier_field"
                 >
@@ -199,7 +200,6 @@
                       <CInputCheckbox
                         :checked.sync="item.is_selected"
                         size="sm"
-                        style="margin-bottom: 30px; margin-top: 5px"
                         @change="handleSelectIdentifier(item, index)"
                       />
                     </td>
@@ -213,25 +213,23 @@
               <strong>Associated Content</strong>
             </CCardHeader>
             <CCardBody>
-              <div>
-                <CDataTable
-                  striped
-                  class="table-scroll-auto"
-                  hover
-                  :items="associated_list"
-                  :fields="associated_field"
-                >
-                  <template #action="{ item }">
-                    <td>
-                      <input
-                        type="radio"
-                        :value="item.identifier_id"
-                        v-model="selectedIdentifier"
-                      />
-                    </td>
-                  </template>
-                </CDataTable>
-              </div>
+              <CDataTable
+                striped
+                class="table-associated-content"
+                hover
+                :items="associated_list"
+                :fields="associated_field"
+              >
+                <template #action="{ item }">
+                  <td>
+                    <input
+                      type="radio"
+                      :value="item.identifier_id"
+                      v-model="selectedIdentifier"
+                    />
+                  </td>
+                </template>
+              </CDataTable>
               <br />
               <CButton
                 :disabled="action == 'Read'"
@@ -308,6 +306,20 @@
   overflow-y: scroll;
   /* overflow-x: scroll; */
   white-space: nowrap; /* mencegah pemisahan kata pada teks */
+}
+.table-scroll-auto td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.table-associated-content {
+  height: 30vh;
+  overflow-y: scroll;
+  /* overflow-x: scroll; */
+  white-space: nowrap; /* mencegah pemisahan kata pada teks */
+}
+.table-associated-content td {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 th,
 td {
@@ -690,7 +702,7 @@ export default {
     },
     async getDateFromat() {
       this.listFormatDate = [];
-      let _res = await getConfDate();
+      let _res = await getConfDate({ status: "Active" });
       if (_res) {
         for (const it of _res.data) {
           this.listFormatDate.push({

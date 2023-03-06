@@ -201,6 +201,7 @@ export default {
         } else {
           result = moment().format(item.df_name);
         }
+        result = result.toString().toUpperCase();
         return {
           ...item,
           result_date: result,
