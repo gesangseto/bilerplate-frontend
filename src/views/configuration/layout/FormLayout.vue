@@ -18,7 +18,7 @@
             <CCol md="12">
               <CInputFile
                 :placeholder="
-                  formData.layout_name ? formData.itf_name : 'Choose file...'
+                  formData.itf_name ? formData.itf_name : 'Choose file...'
                 "
                 :disabled="action === 'Read'"
                 horizontal
@@ -91,7 +91,7 @@
               <tbody
                 v-for="(item, index) in formData.items"
                 :key="index"
-                style="padding-bottom: 100px"
+                style="padding: 1px"
               >
                 <tr
                   v-bind:style="
@@ -99,7 +99,7 @@
                   "
                   @click="handleClickRow(index)"
                 >
-                  <td style="align: center">
+                  <td style="align: center; padding-left: 20px">
                     <CInput
                       readonly
                       :value.sync="item.itf_var_name"
@@ -111,7 +111,7 @@
                       :disabled="action == 'Read'"
                       placeholder="-Select-"
                       :options="listType"
-                      horizontal
+                      :horizontal="{ input: 'col-md-12' }"
                       :value.sync="item.generate_type_id"
                       inline
                       @change="handleChangeType(index)"
@@ -125,7 +125,7 @@
                       "
                     />
                   </td>
-                  <td>
+                  <td style="padding-right: 20px">
                     <!-- Associated Field -->
                     <CRow>
                       <CCol md="12">
@@ -233,16 +233,32 @@
                 </CDataTable>
               </div>
               <br />
-              <CButton size="sm" color="primary" @click="handleSwipe('UP')">
+              <CButton
+                :disabled="action == 'Read'"
+                size="sm"
+                color="primary"
+                @click="handleSwipe('UP')"
+              >
                 <v-icon name="arrow-up" />
               </CButton>
               &nbsp;
-              <CButton size="sm" color="primary" @click="handleSwipe('DOWN')">
+              <CButton
+                :disabled="action == 'Read'"
+                size="sm"
+                color="primary"
+                @click="handleSwipe('DOWN')"
+              >
                 <v-icon name="arrow-down" />
               </CButton>
               &nbsp;
               <CButton
-                :disabled="selectedAssociated.flag_system ? true : false"
+                :disabled="
+                  action == 'Read'
+                    ? true
+                    : selectedAssociated.flag_system
+                    ? true
+                    : false
+                "
                 size="sm"
                 color="primary"
                 @click="handleConfigAssociated()"
@@ -576,7 +592,7 @@ export default {
       this.selectedAssociated = { flag_system: 1 };
     },
     editAssociatedField(index) {
-      if (this.action === "Read") return;
+      // if (this.action === "Read") return;
       this.resetData();
       let layout_selected = this.formData.items[index];
       this.associated_content = layout_selected.field_associated ?? [];
@@ -775,6 +791,11 @@ export default {
     },
     associated_list() {
       return this.associated_content.map((item) => {
+        let idx = this.listFormatDate.findIndex(
+          (o) => o.value == item.format_ref
+        );
+        if (~idx) item.format_ref_data = this.listFormatDate[idx].label;
+
         let title = `${item.identifier_name} ` + (item.format_ref_data || "");
         return {
           ...item,

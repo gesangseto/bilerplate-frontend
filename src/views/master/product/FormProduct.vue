@@ -107,7 +107,6 @@
                   label="Category"
                   placeholder="--Select--"
                 >
-                  >
                   <template #label>
                     <p class="col-form-label col-sm-3">
                       Category
