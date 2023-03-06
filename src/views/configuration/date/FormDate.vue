@@ -341,9 +341,6 @@ export default {
       if (_res) {
         let data = _res.data[0];
         let _data = data;
-        // let _data = get_date();
-        // _data = _data[0];
-        this.data = _data;
         this.data.delimiter = _data.df_delimiter ?? "";
         this.data.around = _data.df_around ?? "";
         this.data.override = _data.df_overwrite ?? "";
@@ -399,6 +396,7 @@ export default {
     },
     reFormatDate() {
       let around = this.data.around.split(" ");
+
       let del = this.data.delimiter;
       let data = this.data;
       // let format = `${data.field1_format}${del}${data.field2_format}${del}${data.field3_format}`;
