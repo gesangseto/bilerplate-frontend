@@ -447,27 +447,46 @@ export default {
         return true;
       }
     },
+    isNum(num) {
+      if (isNaN(num)) return false;
+      else return true;
+    },
     handleChangePid(num) {
       this.error[num] = this.initial_error();
       // this.result[num].error = false;
       let id1 = this.result[num].id1 ?? "";
       let id2 = this.result[num].id2 ?? "";
+      let id3 = this.result[num].id3 ?? "";
+      let id4 = this.result[num].id4 ?? "";
+      let sn_prefix = this.result[num].sn_prefix ?? "";
       let epc = this.result[num].epc_type;
       let sn_generate_type = this.result[num].sn_generate_type;
       let generated_sn_len = this.result[num].generated_sn_len;
       let sn_charset = this.result[num].sn_charset;
       let layout_id = this.result[num].layout_id;
       // Check id1 and id2 and generate type
-      if (!id1) {
+      if (!id1 || !this.isNum(id1)) {
         this.error[num].id1 = true;
       }
-      if (id2.length < 6 || id2.length > 9) {
+      if (id2.length < 6 || id2.length > 9 || !this.isNum(id2)) {
         this.error[num].id2 = true;
+      }
+      if (!this.isNum(id3)) {
+        this.error[num].id3 = true;
+      }
+      if (!this.isNum(id4)) {
+        this.error[num].id4 = true;
+      }
+      if (!this.isNum(sn_prefix)) {
+        this.error[num].sn_prefix = true;
       }
       if (!sn_generate_type && this.packaging_level != 1) {
         this.error[num].sn_generate_type = true;
       }
-      if (!generated_sn_len && this.packaging_level != 1) {
+      if (
+        (!generated_sn_len && this.packaging_level != 1) ||
+        !this.isNum(generated_sn_len)
+      ) {
         this.error[num].generated_sn_len = true;
       }
       if (!sn_charset && this.packaging_level != 1) {

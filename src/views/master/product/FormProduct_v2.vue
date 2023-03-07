@@ -572,8 +572,8 @@ export default {
         { value: false, label: "Inactive" },
       ],
       productTypeOption: [
-        { value: 0, label: "Serial" },
-        { value: 1, label: "Non-Serial" },
+        { value: "0", label: "Serial" },
+        { value: "1", label: "Non-Serial" },
       ],
     };
   },
@@ -601,7 +601,7 @@ export default {
       let _res = await getMstProduct({ id: this.$route.params.id });
       let data = _res.data[0];
       this.product = data;
-      this.product.status = data.status == "Active" ? true : false;
+      this.product.product_type = `${this.product.product_type}`;
       for (let it of data.mst_pid) {
         this.ResultPid[`level_${it.packaging_level}`].push(it);
       }
@@ -838,7 +838,6 @@ export default {
       }
       let body = JSON.parse(JSON.stringify(this.product));
       let is_serial = body.product_type == "1" ? 0 : 1;
-      body.status = body.status ? "Active" : "Inactive";
       let master_pid = [];
       for (const key in this.ResultPid) {
         if (key == "level_4" && !this.product.packagingl4_id) {
