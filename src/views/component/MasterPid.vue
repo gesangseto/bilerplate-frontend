@@ -472,13 +472,13 @@ export default {
       if (id2.length < 6 || id2.length > 9 || !this.isNum(id2)) {
         this.error[num].id2 = true;
       }
-      if (!this.isNum(id3)) {
+      if (id3 && !this.isNum(id3)) {
         this.error[num].id3 = true;
       }
-      if (!this.isNum(id4)) {
+      if (id4 && !this.isNum(id4)) {
         this.error[num].id4 = true;
       }
-      if (!this.isNum(sn_prefix)) {
+      if (sn_prefix && !this.isNum(sn_prefix)) {
         this.error[num].sn_prefix = true;
       }
       if (!sn_generate_type && this.packaging_level != 1) {
