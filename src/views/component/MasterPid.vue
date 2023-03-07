@@ -448,8 +448,9 @@ export default {
       }
     },
     isNum(num) {
-      if (isNaN(num)) return false;
-      else return true;
+      const pattern = /^\d+$/;
+      if (pattern.test(num)) return true;
+      else return false;
     },
     handleChangePid(num) {
       this.error[num] = this.initial_error();

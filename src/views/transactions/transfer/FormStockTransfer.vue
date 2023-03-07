@@ -38,7 +38,6 @@
                     initialLoad ? null : !formData.to_warehouse ? false : true
                   "
                 >
-                  >
                   <template #label>
                     <p class="col-form-label col-sm-3">
                       Destination Warehouse
@@ -439,7 +438,13 @@ export default {
     },
     save() {
       if (!this.checkValidation()) {
-        return;
+        return this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
       }
       if (this.items.length <= 0) {
         this.$toast.open({

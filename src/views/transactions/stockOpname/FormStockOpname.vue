@@ -260,7 +260,15 @@ export default {
     generateProduct() {
       //
       this.initialLoad = false;
-      if (!this.validation()) return;
+      if (!this.validation()) {
+        return this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
+      }
       this.items = [];
       this.views = false;
       let _url = `/v3/transaction/stock-opname/generate?raw=true&warehouse_id=${this.stock.warehouse_id}`;
@@ -296,14 +304,17 @@ export default {
       this.viewModal = false;
     },
     save() {
-      if (!this.stock.warehouse_id)
+      //
+      this.initialLoad = false;
+      if (!this.validation()) {
         return this.$toast.open({
-          message: `Warehouse is required.`,
+          message: `Please input all the required data.`,
           type: "error",
           dissmissible: true,
           position: "top-right",
           duration: 5000,
         });
+      }
       for (const it of this.items) {
         if (it.status != 1) {
           this.$toast.open({

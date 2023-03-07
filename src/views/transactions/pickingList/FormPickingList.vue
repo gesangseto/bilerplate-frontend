@@ -88,10 +88,7 @@
                 @change="uploadFile($event, 1)"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">
-                    SO Ref
-                    <span class="text-danger"> * </span>
-                  </p>
+                  <p class="col-form-label col-sm-3">SO Ref</p>
                 </template>
               </CInputFile>
               <CInputFile
@@ -102,10 +99,7 @@
                 @change="uploadFile($event, 2)"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">
-                    ERP PL Ref
-                    <span class="text-danger"> * </span>
-                  </p>
+                  <p class="col-form-label col-sm-3">ERP PL Ref</p>
                 </template>
               </CInputFile>
             </CCol>
@@ -496,7 +490,7 @@ export default {
     addProduct() {
       if (!this.checkValidation()) {
         this.$toast.open({
-          message: `Please complete the required form data!`,
+          message: `Please input all the required data.`,
           type: "error",
           dissmissible: true,
           position: "top-right",

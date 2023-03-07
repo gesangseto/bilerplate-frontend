@@ -439,7 +439,13 @@ export default {
     },
     generatePacking() {
       if (!this.checkValidation()) {
-        return;
+        return this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
       }
 
       this.items = [];

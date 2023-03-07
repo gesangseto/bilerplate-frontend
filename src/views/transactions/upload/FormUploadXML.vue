@@ -199,7 +199,13 @@ export default {
     save() {
       this.initialLoad = false;
       if (!this.validation()) {
-        return;
+        return this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
       }
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
