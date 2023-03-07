@@ -272,26 +272,28 @@
       title="Warning Session Timeout"
       color="info"
       :show.sync="modalRefDate"
-      size="sm"
+      size="lg"
     >
       <template #header>
         <h5><strong>Select Date Format</strong></h5>
       </template>
       <CCardBody>
-        <CRow>
-          <CCol class="md-2">
-            <label>Date Format</label>
-          </CCol>
-          <CCol class="md-12">
-            <v-select
-              placeholder="--Select--"
+        <div class="form-group row mb-2">
+          <label
+            for="product-name"
+            class="col-sm-3 col-md-3 col-lg-3 form-label"
+          >
+            Date Format <strong class="text-danger">*</strong>
+          </label>
+          <div class="col-sm-9 col-md-9 col-lg-9">
+            <model-select
               :options="listFormatDate"
-              :reduce="(opt) => opt.value"
-              v-model="selectedDate"
+              v-model="vSelectDate"
+              placeholder="--Select--"
             >
-            </v-select>
-          </CCol>
-        </CRow>
+            </model-select>
+          </div>
+        </div>
       </CCardBody>
       <template #footer>
         <div style="display: block; margin-left: auto">
@@ -331,6 +333,7 @@ td {
 }
 </style>
 <script>
+import { ModelSelect } from "vue-search-select";
 import moment from "moment";
 import { getConfDate } from "../../../resource/ConfDate";
 import {
@@ -348,6 +351,7 @@ import {
 } from "../../../utils";
 
 export default {
+  components: { ModelSelect },
   name: "Customer",
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
@@ -376,6 +380,7 @@ export default {
       listFormatDate: [],
       listType: [],
       selectedDate: null,
+      vSelectDate: null,
       // items: [],
       identifier: [],
       associated_content: [],
@@ -641,6 +646,15 @@ export default {
       }
     },
     handleConfigAssociated() {
+      let idx = this.listFormatDate.findIndex(
+        (it) => this.selectedAssociated.format_ref === it.value
+      );
+      if (~idx) {
+        this.vSelectDate = this.listFormatDate[idx].value;
+      } else {
+        this.vSelectDate = null;
+      }
+
       if (this.selectedAssociated) {
         if (this.selectedAssociated.data_type == "Date") {
           this.selectedDate = this.selectedAssociated.format_ref;
@@ -649,6 +663,7 @@ export default {
       }
     },
     handleSetDateFormat() {
+      this.selectedDate = this.vSelectDate;
       let i = this.selectedIndex;
       let associated = this.selectedAssociated;
       associated.format_ref = this.selectedDate;
@@ -664,6 +679,7 @@ export default {
       //   n += 1;
       // }
       this.modalRefDate = false;
+      this.vSelectDate = null;
       this.rewriteIdentifierText();
       this.rewriteIdentifierText();
     },
@@ -720,8 +736,10 @@ export default {
           }
           dt = dt.toUpperCase();
           this.listFormatDate.push({
+            id: `${it.df_id}`,
             value: `${it.df_id}`,
             label: `${it.df_name_overwrite} - ${dt}`,
+            text: `${it.df_name_overwrite} - ${dt}`,
           });
         }
       }
