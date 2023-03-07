@@ -542,7 +542,7 @@ export default {
       product: {
         gtin: "",
         product_type: "0",
-        status: true,
+        status: "Active",
         show_status: true,
         mst_pid: [],
       },
