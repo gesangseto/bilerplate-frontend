@@ -364,7 +364,7 @@ export default {
   computed: {},
   methods: {
     async loadLayout() {
-      let _res = await getConfLayout();
+      let _res = await getConfLayout({ status: "Active" });
       if (_res) {
         this.list_layout = [];
         for (const it of _res.data) {
