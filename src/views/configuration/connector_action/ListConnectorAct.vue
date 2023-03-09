@@ -110,11 +110,15 @@ export default {
         },
         {
           key: "folder_backup",
-          label: "Folder Backup",
+          label: "Folder Archive",
         },
         {
           key: "schedule",
           label: "Time Interval (in minute)",
+        },
+        {
+          key: "value_name",
+          label: "Key",
         },
         {
           key: "status",
