@@ -28,7 +28,7 @@
                 </template>
               </CInputFile>
             </CCol>
-            <CCol sm="10" lg="10">
+            <!-- <CCol sm="10" lg="10">
               <CSelect
                 placeholder="-Select-"
                 :options="typeXmlOptions"
@@ -45,7 +45,7 @@
                   </p>
                 </template>
               </CSelect>
-            </CCol>
+            </CCol> -->
             <CCol sm="10" lg="10">
               <CSelect
                 placeholder="-Select-"
@@ -163,7 +163,30 @@ export default {
           let data = result.data;
           if (data.error || data.data.length === 0) {
             this.$toast.open({
-              message: `Sorry, this supplier dont have any connector`,
+              message: `The Supplier you have selected is not assigned to any Connector Action.`,
+              type: "error",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            this.form.connector_action_id = null;
+            return;
+          } else if (data.data[0].status !== "Active") {
+            this.$toast.open({
+              message: `The Supplier you have selected is not assigned to Active Connector Action.`,
+              type: "error",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            this.form.connector_action_id = null;
+            return;
+          }
+          let params = data.data[0].params;
+          let idx = params.findIndex((it) => it.variable_name === "type");
+          if (!~idx || !params[idx].variable_value) {
+            this.$toast.open({
+              message: `The supplier you selected has not completed the Connector Action configuration.`,
               type: "error",
               dissmissible: true,
               position: "top-right",
@@ -173,6 +196,7 @@ export default {
             return;
           }
           this.form.connector_action_id = data.data[0].id;
+          this.form.data.type = params[idx].variable_value;
         })
         .catch((e) => {
           this.$toast.open({
