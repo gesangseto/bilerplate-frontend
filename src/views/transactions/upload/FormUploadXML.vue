@@ -9,6 +9,7 @@
           <CRow>
             <CCol sm="10" lg="10">
               <CInputFile
+                accept=".xml"
                 :placeholder="form.data.file_name"
                 horizontal
                 custom
