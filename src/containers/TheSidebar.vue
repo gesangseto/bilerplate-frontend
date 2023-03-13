@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { getLogo } from "../utils";
+import { getLogo, getMenu } from "../utils";
 import nav from "./_nav";
 
 export default {
@@ -105,6 +105,11 @@ export default {
     };
   },
   name: "TheSidebar",
+  beforeCreate() {
+    let navmenu = nav;
+    navmenu[0]._children = getMenu();
+    this.nav = navmenu;
+  },
   mounted() {
     console.log("%cWhat are You looking for?", "color:red;font-size:24pt");
     this.navMenu = this.renderMenu();

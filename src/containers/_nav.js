@@ -218,7 +218,7 @@ const generalMenu = [
 const userMenu = [
   {
     _name: "CSidebarNav",
-    _children: JSON.parse(localStorage.getItem("menu")),
+    _children: [],
   },
 ];
 

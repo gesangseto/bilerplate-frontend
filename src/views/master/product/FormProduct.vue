@@ -746,8 +746,8 @@ export default {
         { value: "Inactive", label: "Inactive" },
       ],
       productTypeOption: [
-        { value: 0, label: "Serial" },
-        { value: 1, label: "Non-Serial" },
+        { value: "0", label: "Serial" },
+        { value: "1", label: "Non-Serial" },
       ],
       // minimumQty: 0,
       // maximumQty: 0,
@@ -806,6 +806,7 @@ export default {
         let data = response.data.data[0];
         this.product = data;
         this.product.prefix_packagingl3 = "-";
+        this.product.product_type = `${data.product_type}`;
       });
       return;
     },

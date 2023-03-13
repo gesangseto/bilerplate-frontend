@@ -108,6 +108,7 @@ import {
   setConfig,
   setProfile,
   getProfile,
+  setMenu,
 } from "../../utils";
 import { logoMertrack } from "../../constants";
 import { getSysConfig } from "../../resource/SysConfig";
@@ -197,7 +198,7 @@ export default {
           },
         ];
         let role = reformatRole(flatten(_data.role_menu, "items"));
-        localStorage.setItem("menu", JSON.stringify(menu));
+        setMenu(menu);
         setRole(role);
         setProfile(_data);
         setLoginTimeout(_data.idletimeout ?? 0);
