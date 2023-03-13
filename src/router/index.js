@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import { getUserId } from "../utils";
 
 // Containers
 const TheContainer = () => import("@/containers/TheContainer");
@@ -32,7 +33,7 @@ const FormProductCategory = () =>
 // Product Article
 const ListProduct = () => import("@/views/master/product/ListProduct");
 const FormProduct = () =>
-  localStorage.getItem("user_id") == 0
+  getUserId() == 0
     ? import("@/views/master/product/FormProduct_v2")
     : import("@/views/master/product/FormProduct");
 // Packaging

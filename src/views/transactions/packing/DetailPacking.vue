@@ -163,7 +163,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { printLabelV3 } from "../../../utils";
+import { getUserId, printLabelV3 } from "../../../utils";
 
 export default {
   name: "DetailPacking",
@@ -196,7 +196,7 @@ export default {
   },
   data() {
     return {
-      user_id: localStorage.getItem("user_id"),
+      user_id: getUserId(),
       action: "",
       print_buttonProperty: {
         size: "sm",

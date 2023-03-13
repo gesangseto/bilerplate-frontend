@@ -111,7 +111,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportDataV3 } from "../../../utils";
+import { calculatePaginationV3, exportDataV3, getUserId } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListBpom",
@@ -153,7 +153,7 @@ export default {
         text: "",
         tooltip: "Cancel sending via API",
       },
-      user_id: localStorage.getItem("user_id"),
+      user_id: getUserId(),
       items: [],
       tempItems: [],
       buttonStatus: null,

@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { getLogo } from "../utils";
 import nav from "./_nav";
 
 export default {
@@ -44,7 +45,7 @@ export default {
   },
   name: "TheSidebar",
   mounted() {
-    this.entityLogo = localStorage.getItem("app_image");
+    this.entityLogo = getLogo();
   },
   computed: {
     show() {

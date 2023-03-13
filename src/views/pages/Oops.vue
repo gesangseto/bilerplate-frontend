@@ -25,10 +25,11 @@
 </template>
 
 <script>
+import { getProfile } from "../../utils";
 export default {
   name: "Oops",
   beforeCreate() {
-    if (localStorage.getItem("is_login") != "true") {
+    if (!getProfile()) {
       localStorage.clear();
       this.$router.push({ path: `/login` });
     }

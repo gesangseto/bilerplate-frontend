@@ -99,6 +99,7 @@ import {
   printLabelV3,
   calculatePaginationV3,
   exportDataV3,
+  getUserId,
 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
@@ -109,7 +110,7 @@ export default {
   },
   data() {
     return {
-      user_id: localStorage.getItem("user_id"),
+      user_id: getUserId(),
       filter: {
         page: 1,
         limit: 10,

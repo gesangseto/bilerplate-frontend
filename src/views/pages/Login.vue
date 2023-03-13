@@ -97,15 +97,17 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import moment from "moment";
 import {
   reformatRole,
-  reformatMenu,
   isThatYou,
   setAsSuperAdmin,
   convertMenuV3,
   flatten,
+  setLoginTimeout,
+  setRole,
+  setConfig,
+  setProfile,
+  getProfile,
 } from "../../utils";
 import { logoMertrack } from "../../constants";
 import { getSysConfig } from "../../resource/SysConfig";
@@ -132,7 +134,7 @@ export default {
     this.loadConfig();
   },
   beforeCreate() {
-    if (localStorage.getItem("is_login") == "true") {
+    if (getProfile()) {
       if (localStorage.getItem("current_url")) {
         this.$router.push({ path: localStorage.getItem("current_url") });
         return;
@@ -144,7 +146,7 @@ export default {
     async loadConfig() {
       let _res = await getSysConfig();
       if (_res) {
-        localStorage.setItem("configuration", JSON.stringify(_res.data[0]));
+        setConfig(_res.data[0]);
         this.entityLogo = _res.data[0].identity_logo_path;
       }
     },
@@ -195,20 +197,11 @@ export default {
           },
         ];
         let role = reformatRole(flatten(_data.role_menu, "items"));
-        let time_out = _data.idletimeout ?? 0;
         localStorage.setItem("menu", JSON.stringify(menu));
-        localStorage.setItem("role", JSON.stringify(role));
-        localStorage.setItem("profile", JSON.stringify(_data));
-        localStorage.setItem("user_id", _data.id);
+        setRole(role);
+        setProfile(_data);
         localStorage.setItem("token", _data.token);
-        localStorage.setItem("is_login", true);
-        localStorage.setItem("app_image", this.entityLogo);
-        localStorage.setItem(
-          "time_out",
-          `${moment()
-            .add(time_out, "minutes")
-            .format("DD/MM/YYYY HH:mm:ss:SSS")}`
-        );
+        setLoginTimeout(_data.idletimeout ?? 0);
         window.location.reload();
         return;
       }

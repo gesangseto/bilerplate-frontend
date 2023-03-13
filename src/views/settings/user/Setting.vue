@@ -109,6 +109,7 @@
 <script>
 import $axiosMertrack from "../../../apiMertrack";
 import { authChangePwd } from "../../../resource/SysAuth";
+import { getProfile } from "../../../utils";
 export default {
   name: "UserSetting",
   components: {},
@@ -142,7 +143,7 @@ export default {
     };
   },
   mounted() {
-    this.profile = JSON.parse(localStorage.getItem("profile"));
+    this.profile = getProfile();
   },
   methods: {
     checkValidation() {

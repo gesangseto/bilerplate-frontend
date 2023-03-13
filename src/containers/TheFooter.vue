@@ -112,6 +112,7 @@
 </style>
 <script>
 import { logoMertrack, logoMerindo } from "../constants";
+import { getConfig } from "../utils";
 export default {
   data() {
     return {
@@ -129,7 +130,7 @@ export default {
   },
   name: "TheFooter",
   mounted() {
-    this.data = JSON.parse(localStorage.getItem("configuration"));
+    this.data = getConfig();
     this.data.about = `
     This copy of <strong>Mertrack® Warehouse</strong> is licensed to:
     <br/>

@@ -225,7 +225,7 @@ export default {
       action: "",
       rejectProperty: { title: "Disposal", modal: false, id: null, reason: "" },
       detail_item: {},
-      user_id: localStorage.getItem("user_id"),
+      user_id: getUserId(),
       datas: [],
       viewModal: false,
       view: {

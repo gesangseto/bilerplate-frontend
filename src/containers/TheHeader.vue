@@ -106,6 +106,12 @@ import {
   getMstNotification,
   updateMstNotification,
 } from "../resource/MstNotification";
+import {
+  setLoginTimeout,
+  getLoginTimeout,
+  getRole,
+  getProfile,
+} from "../utils";
 import moment from "moment";
 export default {
   name: "TheHeader",
@@ -134,7 +140,7 @@ export default {
     this.countingTImeOut();
   },
   beforeCreate() {
-    if (localStorage.getItem("is_login") != "true") {
+    if (!getProfile()) {
       localStorage.clear();
       this.$router.push({ path: `/login` });
     }
@@ -170,7 +176,7 @@ export default {
     },
 
     getDifferentSecond() {
-      let time_out = localStorage.getItem("time_out");
+      let time_out = getLoginTimeout();
       let time_now = moment(new Date())
         .add(1, "seconds")
         .format("DD/MM/YYYY HH:mm:ss:SSS");
@@ -213,7 +219,7 @@ export default {
     checkPermission(route) {
       let can_access = false;
       var method = route.params.type;
-      let role = JSON.parse(localStorage.getItem("role"));
+      let role = getRole();
       for (const it of role) {
         if (route.path.includes(it.link)) {
           if (method) {
@@ -259,10 +265,7 @@ export default {
       localStorage.setItem("current_url", this.current_route.path);
       localStorage.setItem("message", message);
       this.$router.push({ path: "/login" });
-      let time_out = moment()
-        .add(-1, "seconds")
-        .format("DD/MM/YYYY HH:mm:ss:SSS");
-      localStorage.setItem("time_out", `${time_out}`);
+      setLoginTimeout(-1);
       // window.location.reload();
       return;
     },

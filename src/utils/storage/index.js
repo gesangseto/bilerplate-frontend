@@ -38,6 +38,14 @@ export function getProfile() {
     return null;
   }
 }
+export function getUserId() {
+  try {
+    let user = getProfile();
+    return parseInt(user.id);
+  } catch (error) {
+    return null;
+  }
+}
 export function setMenu(data) {
   localStorage.setItem("menu", encrypt(JSON.stringify(data)));
 }
@@ -75,10 +83,10 @@ export function getToken() {
     return profile.token;
   }
 }
-export function setTimeout(data) {
+export function setLoginTimeout(data) {
   let time = moment().add(data, "minutes").format("DD/MM/YYYY HH:mm:ss:SSS");
   localStorage.setItem("time_out", time);
 }
-export function getTimeout() {
+export function getLoginTimeout() {
   return localStorage.getItem("time_out");
 }

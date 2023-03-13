@@ -1,22 +1,19 @@
 import axios from "axios";
-import moment from "moment";
+import { getProfile, setLoginTimeout } from "./utils";
 import { getBrowserType, getOsType } from "./utils/helper";
 
 const $axiosMertrack = axios.create();
 $axiosMertrack.interceptors.request.use(
   function (config) {
     let token = "c71d88f3-e144-49c9-91df-d9a6bd0e3414";
-    let profile = JSON.parse(localStorage.getItem("profile"));
+    let profile = getProfile();
     let deviceProfile = `Website App: ${getOsType()}, ${getBrowserType()}`;
     let time_out = "-1";
     if (profile) {
       token = profile.token;
       time_out = profile.idletimeout;
     }
-    localStorage.setItem(
-      "time_out",
-      `${moment().add(time_out, "minutes").format("DD/MM/YYYY HH:mm:ss:SSS")}`
-    );
+    setLoginTimeout(time_out);
     NProgress.configure({ easing: "ease", speed: 500 });
     NProgress.start();
     config.baseURL = process.env.VUE_APP_URL_API_MERTRACK + "/api";

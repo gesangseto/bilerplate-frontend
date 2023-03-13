@@ -82,6 +82,7 @@
 import $axiosMertrack from "../../apiMertrack";
 import "vue-select/dist/vue-select.css";
 import moment from "moment";
+import { getConfig } from "../../utils";
 export default {
   name: "FormAddItemV3",
   props: { currentItem: Array, filter: Object, useDeliveryDayLimit: Boolean },
@@ -171,7 +172,7 @@ export default {
       this.alertExpired = false;
       for (const it of this.listBatchNo) {
         // if (this.formData.batch_no == it.batch_no) {
-        let day_limit = JSON.parse(localStorage.getItem("configuration"));
+        let day_limit = getConfig();
         day_limit = day_limit.delivery_day_limit ?? 0;
         let diff_day = this.getDifferentDays(it.expired_date);
         if (diff_day < day_limit) {

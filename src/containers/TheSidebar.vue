@@ -89,6 +89,7 @@
 </template>
 
 <script>
+import { getLogo } from "../utils";
 import nav from "./_nav";
 
 export default {
@@ -107,7 +108,7 @@ export default {
   mounted() {
     console.log("%cWhat are You looking for?", "color:red;font-size:24pt");
     this.navMenu = this.renderMenu();
-    this.entityLogo = localStorage.getItem("app_image");
+    this.entityLogo = getLogo();
   },
   computed: {
     show() {

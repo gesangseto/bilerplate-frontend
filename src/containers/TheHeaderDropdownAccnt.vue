@@ -35,6 +35,7 @@
 
 <script>
 import { authLogout } from "../resource/SysAuth";
+import { getLogo, getProfile } from "../utils";
 
 export default {
   name: "TheHeaderDropdownAccnt",
@@ -47,12 +48,12 @@ export default {
     };
   },
   mounted() {
-    this.profile = JSON.parse(localStorage.getItem("profile"));
+    this.profile = getProfile();
     this.full_name = this.profile.full_name;
     this.email = this.profile.email;
     this.avatar_path = this.profile.path
       ? `img/avatars/${this.profile.path}`
-      : localStorage.getItem("app_image");
+      : getLogo();
   },
   methods: {
     async logOut() {
@@ -77,7 +78,7 @@ export default {
     //   this.$router.push({ path: "/setting/user-profile" });
     // },
     toSetting() {
-      this.profile = JSON.parse(localStorage.getItem("profile"));
+      this.profile = getProfile();
       // let section = this.profile.mst_section_id;
       // if (section == 0) {
       // this.$router.push({ path: "/setting/configuration" });

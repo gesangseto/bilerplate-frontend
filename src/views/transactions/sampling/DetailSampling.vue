@@ -200,6 +200,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
+import { getUserId } from "../../../utils";
 
 export default {
   name: "DetailSampling",
@@ -234,7 +235,7 @@ export default {
       },
       action: "",
       detail_item: {},
-      user_id: localStorage.getItem("user_id"),
+      user_id: getUserId(),
       datas: [],
       viewModal: false,
       view: {

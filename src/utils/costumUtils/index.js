@@ -1,5 +1,6 @@
 import { tableAliasName } from "../../constants";
 import { strToBool } from "../helper";
+import { getRole } from "../storage";
 
 export function isNumeric(num) {
   return !isNaN(num);
@@ -147,7 +148,7 @@ export function buttonPermission({ path }) {
     can_print: false,
     can_approve: false,
   };
-  let role = JSON.parse(localStorage.getItem("role"));
+  let role = getRole();
   for (const it of role) {
     if (path.includes(it.link)) {
       action.can_create = strToBool(it.can_create) ? true : false;

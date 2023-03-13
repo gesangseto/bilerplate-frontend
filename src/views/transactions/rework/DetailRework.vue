@@ -200,6 +200,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
+import { getUserId } from "../../../utils";
 
 export default {
   name: "DetailRework",
@@ -229,7 +230,7 @@ export default {
       rejectProperty: { title: "Rework", modal: false, id: null, reason: "" },
       action: "",
       detail_item: {},
-      user_id: localStorage.getItem("user_id"),
+      user_id: getUserId(),
       packaging_level: [],
       datas: [],
       viewModal: false,
