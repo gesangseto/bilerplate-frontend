@@ -114,9 +114,11 @@
               :format="formatDate"
               v-model="MfgPostfix.mfg_date"
             ></datepicker>
-            <!-- <small v-if="required.mfgDate.error" style="color: red">{{
-              required.mfgDate.message
-            }}</small> -->
+            <small
+              v-if="getDifferentDays(MfgPostfix.mfg_date) > 0"
+              style="color: red"
+              >Mfg Date cannot be grater than today's date.</small
+            >
           </td>
         </tr>
         <tr>
@@ -161,11 +163,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import {
-  exportData,
-  calculatePagination,
-  calculatePaginationV3,
-} from "../../../utils";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 import Datepicker from "vuejs-datepicker";
 import moment from "moment";
@@ -323,13 +321,13 @@ export default {
       if (this.MfgPostfix.mfg_date) {
         let sisa = this.getDifferentDays(this.MfgPostfix.mfg_date);
         if (sisa > 0) {
-          this.$toast.open({
-            message: "Cannot set Mfg date bigger than today",
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
+          // this.$toast.open({
+          //   message: "Mfg Date cannot be grater than today's date.",
+          //   type: "error",
+          //   dissmissible: true,
+          //   position: "top-right",
+          //   duration: 5000,
+          // });
           return;
         }
       }
