@@ -926,7 +926,6 @@ function configRoutes() {
       component: UserSetting,
     },
   ];
-  // if (localStorage.getItem("token") != null) {
   return [
     {
       path: "/",

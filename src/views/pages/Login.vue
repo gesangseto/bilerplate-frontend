@@ -200,7 +200,6 @@ export default {
         localStorage.setItem("menu", JSON.stringify(menu));
         setRole(role);
         setProfile(_data);
-        localStorage.setItem("token", _data.token);
         setLoginTimeout(_data.idletimeout ?? 0);
         window.location.reload();
         return;

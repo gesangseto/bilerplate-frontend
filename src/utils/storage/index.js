@@ -46,6 +46,14 @@ export function getUserId() {
     return null;
   }
 }
+export function getToken() {
+  try {
+    let user = getProfile();
+    return user.token;
+  } catch (error) {
+    return null;
+  }
+}
 export function setMenu(data) {
   localStorage.setItem("menu", encrypt(JSON.stringify(data)));
 }
@@ -74,13 +82,6 @@ export function getLogo() {
     return conf.identity_logo_path;
   } catch (error) {
     return null;
-  }
-}
-export function getToken() {
-  let profile = decrypt(localStorage.getItem("profile"));
-  if (profile) {
-    profile = JSON.parse(profile);
-    return profile.token;
   }
 }
 export function setLoginTimeout(data) {

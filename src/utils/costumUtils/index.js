@@ -1,6 +1,6 @@
 import { tableAliasName } from "../../constants";
 import { strToBool } from "../helper";
-import { getRole } from "../storage";
+import { getRole, getToken } from "../storage";
 
 export function isNumeric(num) {
   return !isNaN(num);
@@ -164,7 +164,7 @@ export function buttonPermission({ path }) {
 
 export function exportData({ param = {}, exportType = "xls" }) {
   let new_param = param;
-  new_param.MertrackApiToken = localStorage.getItem("token");
+  new_param.MertrackApiToken = getToken();
   if (!new_param.SearchVal1Text) {
     new_param.SearchVal1Text = "All";
   }
@@ -192,7 +192,7 @@ export function exportDataV3({
   let new_param = { ...param };
   delete new_param.limit;
   delete new_param.page;
-  new_param.MertrackApiToken = localStorage.getItem("token");
+  new_param.MertrackApiToken = getToken();
   if (!new_param.SearchVal1Text) {
     new_param.SearchVal1Text = "All";
   }

@@ -111,7 +111,12 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportDataV3, getUserId } from "../../../utils";
+import {
+  calculatePaginationV3,
+  exportDataV3,
+  getToken,
+  getUserId,
+} from "../../../utils";
 import { dateFilter } from "../../../constants";
 export default {
   name: "ListBpom",
@@ -251,7 +256,7 @@ export default {
       let body = {};
       body.id = item.id;
       body.PrintTo = "csv";
-      body.MertrackApiToken = localStorage.getItem("token");
+      body.MertrackApiToken = getToken();
       let url = `${new URLSearchParams(body).toString()}`;
       url = `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/transaction/bpom?raw=true&${url}`;
       window.open(url, "_blank").focus();
