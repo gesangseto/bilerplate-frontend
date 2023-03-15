@@ -136,6 +136,9 @@ const ListRepack = () => import("@/views/transactions/repack/ListRepack");
 const DetailRepack = () => import("@/views/transactions/repack/DetailRepack");
 // BPOM
 const ListBpom = () => import("@/views/transactions/bpom/ListBpom");
+// QUEUE BPOM
+const ListQueueBpom = () =>
+  import("@/views/transactions/queue_bpom/ListQueueBpom");
 // ========================TRANSACTION========================
 
 // ========================REPORT========================
@@ -747,6 +750,13 @@ function configRoutes() {
           name: "BPOM Reporting (Home)",
           meta: { login: true },
           component: ListBpom,
+        },
+        // Queue BPOM
+        {
+          path: "queue_bpom",
+          name: "Queue BPOM",
+          meta: { login: true },
+          component: ListQueueBpom,
         },
       ],
     },

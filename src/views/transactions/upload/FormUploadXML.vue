@@ -242,7 +242,7 @@ export default {
             this.$toast.open({
               message: result.data.error
                 ? `${result.data.message}`
-                : "Data Saved",
+                : "Data has been saved successfully.",
               type: result.data.error ? "error" : "success",
               dissmissible: true,
               position: "top-right",
