@@ -481,8 +481,8 @@ export default {
         temp_item.gtin_sscc = this.formData.batch_detail["gtin_sscc"];
         temp_item.quantity = incomplete_box;
         temp_item.remark = "Generated on Web";
-        temp_item.product_no = this.formData.batch_detail["no"];
-        temp_item.product_name = this.formData.batch_detail["name"];
+        temp_item.product_no = this.formData.batch_detail["product_no"];
+        temp_item.product_name = this.formData.batch_detail["product_name"];
         temp_item.type = "Partial";
         this.items.push(temp_item);
         this.can_proccess = true;
