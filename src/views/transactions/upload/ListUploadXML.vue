@@ -117,8 +117,9 @@
             <small
               v-if="getDifferentDays(MfgPostfix.mfg_date) > 0"
               style="color: red"
-              >Mfg Date cannot be grater than today's date.</small
             >
+              Mfg Date cannot be greater than today's date.
+            </small>
           </td>
         </tr>
         <tr>
