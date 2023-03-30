@@ -426,25 +426,20 @@ export default {
       this.initialLoad = false;
       if (!this.formData.from_warehouse || !this.formData.to_warehouse) {
         this.$toast.open({
-          message: "Please complete the form",
-          type: "error",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
-        return false;
-      }
-      return true;
-    },
-    save() {
-      if (!this.checkValidation()) {
-        return this.$toast.open({
           message: `Please input all the required data.`,
           type: "error",
           dissmissible: true,
           position: "top-right",
           duration: 5000,
         });
+        return false;
+        return false;
+      }
+      return true;
+    },
+    save() {
+      if (!this.checkValidation()) {
+        return;
       }
       if (this.items.length <= 0) {
         this.$toast.open({

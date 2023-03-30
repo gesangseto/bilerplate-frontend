@@ -439,13 +439,7 @@ export default {
     },
     generatePacking() {
       if (!this.checkValidation()) {
-        return this.$toast.open({
-          message: `Please input all the required data.`,
-          type: "error",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
+        return;
       }
 
       this.items = [];
@@ -499,8 +493,16 @@ export default {
         !this.formData.warehouse_id ||
         !this.formData.product_id ||
         !this.formData.batch_no
-      )
+      ) {
+        this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
         return false;
+      }
       return true;
     },
     save() {

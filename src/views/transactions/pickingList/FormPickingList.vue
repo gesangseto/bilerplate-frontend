@@ -489,13 +489,6 @@ export default {
     },
     addProduct() {
       if (!this.checkValidation()) {
-        this.$toast.open({
-          message: `Please input all the required data.`,
-          type: "error",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
         return;
       }
       this.modalAdd = true;
@@ -549,6 +542,13 @@ export default {
         !data.so_number ||
         !data.so_date
       ) {
+        this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
         return false;
       }
       return true;
