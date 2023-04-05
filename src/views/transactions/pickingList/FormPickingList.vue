@@ -81,7 +81,7 @@
             </CCol>
             <CCol class="md-5">
               <CInputFile
-                :placeholder="formData.fileName1"
+                :placeholder="formData.file_1_name"
                 horizontal
                 custom
                 class="input-form-upload"
@@ -92,7 +92,7 @@
                 </template>
               </CInputFile>
               <CInputFile
-                :placeholder="formData.fileName2"
+                :placeholder="formData.file_2_name"
                 horizontal
                 custom
                 class="input-form-upload"
@@ -354,10 +354,10 @@ export default {
         so_date: new Date().toISOString().slice(0, 10),
         so_number: "",
         erp_number: "",
-        fileName1: null,
-        fileContent1: null,
-        fileName2: null,
-        fileContent2: null,
+        file_1_name: null,
+        file_1_content: null,
+        file_2_name: null,
+        file_2_content: null,
         customer_id: null,
         warehouse_id: null,
         items: [],
@@ -489,6 +489,13 @@ export default {
     },
     addProduct() {
       if (!this.checkValidation()) {
+        this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
         return;
       }
       this.modalAdd = true;
@@ -499,7 +506,7 @@ export default {
       let fileName = event[0].name;
       let fileExt = event[0].name.split(".").reverse()[0];
       let fileSize = event[0].size;
-      this.formData[`fileName${index}`] = "Choose file...";
+      this.formData[`file_${index}_name`] = "Choose file...";
       if (fileRef) {
         if (!ekstensiFileValid.includes(fileExt)) {
           this.$toast.open({
@@ -521,14 +528,14 @@ export default {
           return false;
         }
         this.convertBase64(fileRef, index);
-        this.formData[`fileName${index}`] = fileName;
+        this.formData[`file_${index}_name`] = fileName;
         return;
       }
       return;
     },
     convertBase64(file, index) {
       reader.onload = (e) => {
-        this.formData[`fileContent${index}`] = e.target.result;
+        this.formData[`file_${index}_content`] = e.target.result;
       };
       reader.readAsDataURL(file);
     },
@@ -542,13 +549,6 @@ export default {
         !data.so_number ||
         !data.so_date
       ) {
-        this.$toast.open({
-          message: `Please input all the required data.`,
-          type: "error",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
         return false;
       }
       return true;
@@ -556,6 +556,13 @@ export default {
     save() {
       // // cek semua input yang mandatory
       if (!this.checkValidation()) {
+        this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
         return;
       }
       if (this.items.length == 0) {
