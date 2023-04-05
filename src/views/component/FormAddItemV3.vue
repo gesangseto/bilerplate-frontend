@@ -6,6 +6,7 @@
       </label>
       <div class="col-sm-5 col-md-5 col-lg-5">
         <v-select
+          key="value"
           placeholder="--Select--"
           :options="listProduct"
           :reduce="(opt) => opt.value"
@@ -224,13 +225,15 @@ export default {
       this.listProduct = [];
       $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
-
+        let temps = [];
         for (const it of data) {
           let tmp = it;
           tmp.value = it.id;
           tmp.label = `[${it.no}] ${it.name}`;
-          this.listProduct.push(tmp);
+          tmp.item = it;
+          temps.push(tmp);
         }
+        this.listProduct = temps;
       });
     },
     getBatchNo() {
