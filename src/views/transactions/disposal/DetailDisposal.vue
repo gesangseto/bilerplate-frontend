@@ -196,6 +196,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
+import { getUserId } from "../../../utils";
 
 export default {
   name: "DetailDisposal",
