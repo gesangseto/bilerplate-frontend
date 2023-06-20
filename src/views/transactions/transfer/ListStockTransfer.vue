@@ -126,7 +126,7 @@ export default {
         { key: "created_date", label: "Trx Date" },
         {
           key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          label: "Product Name [Batch No, Qty]",
         },
         { key: "from_warehouse_name", label: "Source WH" },
         { key: "to_warehouse_name", label: "Destination WH" },

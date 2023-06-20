@@ -238,6 +238,10 @@ export default {
           label: "File Name",
         },
         {
+          key: "quantity_lvl_1",
+          label: "Quantity L1",
+        },
+        {
           key: "source_name",
           label: "Source Type",
           _classes: "font-weight-bold",

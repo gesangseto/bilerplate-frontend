@@ -91,7 +91,7 @@
                   </td>
                 </tr>
 
-                <tr style="height: 50px" v-for="index in 4" :key="index">
+                <tr style="height: 50px" v-for="index in 1" :key="index">
                   <td
                     style="width: 40%"
                     v-if="inbound[`quantity_lvl_${index}`] > 0"
