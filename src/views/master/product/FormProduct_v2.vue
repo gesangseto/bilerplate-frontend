@@ -164,7 +164,9 @@
                       :checked.sync="product.product_type"
                     />
                     <p class="col-form-label col-sm-3" v-if="action == 'Read'">
-                      {{ product.product_type ? "Serial" : "Non-Serial" }}
+                      {{
+                        product.product_type == "0" ? "Serial" : "Non-Serial"
+                      }}
                     </p>
                   </CCol>
                 </CRow>

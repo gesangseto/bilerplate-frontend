@@ -805,6 +805,18 @@ export default {
       $axiosMertrack.get(`v3/master/product?${param}`).then((response) => {
         let data = response.data.data[0];
         this.product = data;
+        let gtin_lvl_2 = data.mst_pid.find(
+          (it) => it.packaging_level == 2 && it.flag_full == 1
+        );
+        if (gtin_lvl_2) {
+          if (gtin_lvl_2.epc_type == "sgtin") {
+            this.product.prefix_packagingl2 = gtin_lvl_2.sn_prefix;
+          } else {
+            this.product.prefix_packagingl2 = gtin_lvl_2.id1;
+          }
+        } else {
+          this.product.prefix_packagingl2 = "-";
+        }
         this.product.prefix_packagingl3 = "-";
         this.product.product_type = `${data.product_type}`;
       });

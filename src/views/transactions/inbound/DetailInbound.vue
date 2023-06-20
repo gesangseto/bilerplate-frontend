@@ -7,125 +7,135 @@
         </CCardHeader>
         <CCardBody>
           <CRow>
-            <CCol sm="12" md="12" lg="12">
-              <CRow>
-                <CCol md="12">
-                  <table style="width: 100%">
-                    <tr style="height: 50px">
-                      <td style="width: 20%">ID</td>
-                      <td style="width: 30%">
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.id"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Trx Date</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.created_date"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Created By</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound['_created.full_name']"
-                        />
-                      </td>
-                    </tr>
-                    <tr
-                      style="height: 50px"
-                      v-if="
-                        inbound.source.toLowerCase() != 'return' &&
-                        inbound.source.toLowerCase() != 'transfer'
-                      "
-                    >
-                      <td>Remark</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.remark"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Type</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.source"
-                        />
-                      </td>
-                      <td style="width: 5%; text-align: left"></td>
-                      <td style="width: 15%; text-align: left">Trx Ref ID</td>
-                      <td style="width: 30%">
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.trx_ref_id"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Source</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.from"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Destination</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.to"
-                        />
-                      </td>
-                    </tr>
-                  </table>
-                </CCol>
-              </CRow>
-              <CDataTable
-                tableFilter
-                hover
-                striped
-                sorter
-                border
-                :items="detailInbound"
-                :fields="fields"
-                class="text-left"
-                style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td>
-                    <CButton
-                      v-if="item.packaging_level > 1"
-                      color="info"
-                      size="sm"
-                      @click="rowClicked(item, index)"
-                      class="px-2 mx-2"
-                    >
-                      <v-icon name="eye" />
-                    </CButton>
+            <CCol md="6">
+              <table style="width: 100%">
+                <tr style="height: 50px">
+                  <td style="width: 40%">ID</td>
+                  <td style="width: 60%">
+                    <input class="form-control" readonly v-model="inbound.id" />
                   </td>
-                </template>
-              </CDataTable>
-            </CCol>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Trx Date</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound.created_date"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Created By</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound['created_full_name']"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  style="height: 50px"
+                  v-if="
+                    inbound.source.toLowerCase() != 'return' &&
+                    inbound.source.toLowerCase() != 'transfer'
+                  "
+                >
+                  <td>Remark</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound.remark"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Type</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound['source']"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Source</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound.from"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Destination</td>
+                  <td>
+                    <input class="form-control" readonly v-model="inbound.to" />
+                  </td>
+                </tr></table
+            ></CCol>
+            <CCol md="6">
+              <table style="width: 100%">
+                <tr style="height: 50px">
+                  <td style="width: 40%">Trx Ref ID</td>
+                  <td style="width: 60%">
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound.trx_ref_id"
+                    />
+                  </td>
+                </tr>
+
+                <tr style="height: 50px" v-for="index in 4" :key="index">
+                  <td
+                    style="width: 40%"
+                    v-if="inbound[`quantity_lvl_${index}`] > 0"
+                  >
+                    {{ "Level " + index }} Quantity
+                  </td>
+                  <td
+                    style="width: 60%"
+                    v-if="inbound[`quantity_lvl_${index}`] > 0"
+                  >
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound[`quantity_lvl_${index}`]"
+                    />
+                  </td>
+                </tr></table
+            ></CCol>
           </CRow>
+          <CDataTable
+            tableFilter
+            hover
+            striped
+            sorter
+            border
+            :items="detailInbound"
+            :fields="fields"
+            class="text-left"
+            style="font-size: 12px"
+          >
+            <template #action="{ item, index }">
+              <td>
+                <CButton
+                  v-if="item.packaging_level > 1"
+                  color="info"
+                  size="sm"
+                  @click="rowClicked(item, index)"
+                  class="px-2 mx-2"
+                >
+                  <v-icon name="eye" />
+                </CButton>
+              </td>
+            </template>
+          </CDataTable>
         </CCardBody>
         <CCardFooter>
           <CButton
