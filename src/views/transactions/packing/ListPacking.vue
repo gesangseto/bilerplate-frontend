@@ -127,7 +127,7 @@ export default {
         },
         {
           key: "quantity_lvl_1",
-          label: "Qty L1",
+          label: "L1 Qty",
         },
         {
           key: "packaging_level",

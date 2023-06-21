@@ -50,6 +50,10 @@ export default {
       this.property.icon = "clipboard-check";
       this.property.color = "success";
       this.property.tooltip = "Approve / Reject";
+    } else if (this.type == "barcode") {
+      this.property.icon = "barcode";
+      this.property.color = "success";
+      this.property.tooltip = "Show Barcode";
     }
     if (this.buttonProperty) {
       this.property = this.buttonProperty;

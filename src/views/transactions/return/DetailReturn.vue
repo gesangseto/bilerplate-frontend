@@ -130,7 +130,7 @@
                         style="width: 40%"
                         v-if="returnDetail[`quantity_lvl_${index}`] > 0"
                       >
-                        {{ "Level " + index }} Quantity
+                        {{ "L" + index }} Quantity
                       </td>
                       <td
                         style="width: 60%"

@@ -142,7 +142,7 @@ export default {
         },
         {
           key: "product_name_batch",
-          label: "Product Name [Batch No, Qty]",
+          label: "Product Name [Batch No, L1 Qty]",
         },
         {
           key: "so_number",

@@ -6,6 +6,7 @@ import MasterPid from "./MasterPid";
 import CancelModal from "./CancelModal";
 import ShowLockedStatus from "./ShowLockedStatus";
 import DetailBarcodeGenerator from "./DetailBarcodeGenerator";
+import ModalBarcodeGenerator from "./ModalBarcodeGenerator";
 import HeaderManualBarcodeGenerator from "./HeaderManualBarcodeGenerator";
 import ModalPrintLabelV3 from "./ModalPrintLabelV3";
 import FormAddItemV3 from "./FormAddItemV3";
@@ -25,6 +26,7 @@ export {
   CancelModal,
   ShowLockedStatus,
   DetailBarcodeGenerator,
+  ModalBarcodeGenerator,
   HeaderManualBarcodeGenerator,
   ModalPrintLabelV3,
   FormAddItemV3,

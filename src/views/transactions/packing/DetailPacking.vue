@@ -92,7 +92,7 @@
                         style="width: 40%"
                         v-if="repack[`quantity_lvl_${index}`] > 0"
                       >
-                        {{ "Level " + index }} Quantity
+                        {{ "L" + index }} Quantity
                       </td>
                       <td
                         style="width: 60%"
@@ -153,6 +153,11 @@
                       :permission="'print'"
                       @click="selected_data = item"
                     />
+                    &nbsp;
+                    <Button
+                      :type="'barcode'"
+                      @click="selected_barcode = item"
+                    />
                   </td>
                 </template>
               </CDataTable>
@@ -172,6 +177,10 @@
         </CCardFooter>
       </CCard>
     </CCol>
+    <ModalBarcodeGenerator
+      :property="selected_barcode"
+      v-on:onClose="selected_barcode = {}"
+    />
     <ModalPrintLabelV3
       :item="selected_data"
       v-on:onClose="selected_data = {}"
@@ -246,8 +255,9 @@ export default {
         color: "danger",
         icon: "print",
         text: "",
-        tooltip: "Print V2",
+        tooltip: "Print this data",
       },
+      selected_barcode: {},
       selected_data: {},
       can_print_all: true,
       datas: [],

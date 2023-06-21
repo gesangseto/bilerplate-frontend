@@ -199,7 +199,7 @@ export default {
         },
         {
           key: "quantity",
-          label: "Qty L1",
+          label: "L1 Qty",
         },
         {
           key: "action",
@@ -259,6 +259,7 @@ export default {
         this.barcode_hr = " ";
         return;
       }
+      console.log(this.barcode);
       let parse = parsingBarcodeToHr(this.barcode);
       this.barcode_hr = this.renderEpcHr(parse) ?? " ";
       let canvas = bwipjs.toCanvas("canvasBarcode", {

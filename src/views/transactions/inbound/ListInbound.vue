@@ -144,7 +144,7 @@ export default {
         },
         {
           key: "quantity_lvl_1",
-          label: "Quantity",
+          label: "L1 Qty",
         },
         {
           key: "source",

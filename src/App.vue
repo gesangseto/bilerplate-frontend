@@ -17,6 +17,7 @@ import {
   CancelModal,
   ShowLockedStatus,
   DetailBarcodeGenerator,
+  ModalBarcodeGenerator,
   ModalPrintLabelV3,
   FormAddItemV3,
   DetailTransactionV3,
@@ -37,6 +38,7 @@ Vue.component("HeaderFilterDefault", HeaderFilterDefault);
 Vue.component("CancelModal", CancelModal);
 Vue.component("ShowLockedStatus", ShowLockedStatus);
 Vue.component("DetailBarcodeGenerator", DetailBarcodeGenerator);
+Vue.component("ModalBarcodeGenerator", ModalBarcodeGenerator);
 Vue.component("ModalPrintLabelV3", ModalPrintLabelV3);
 Vue.component("FormAddItemV3", FormAddItemV3);
 Vue.component("HeaderFilterTransactionV3", HeaderFilterTransactionV3);

@@ -46,18 +46,23 @@
                       :permission="'read'"
                       @click="rowClicked(item, index)"
                     />
-                    &nbsp;
+                    <!-- &nbsp;
                     <ButtonPermission
                       :buttonProperty="btn_printProp"
                       :permission="'print'"
                       @click="printV3(item, index)"
-                    />
+                    /> -->
                     &nbsp;
                     <ButtonPermission
                       v-if="user_id == 0"
                       :buttonProperty="btn_printProp2"
                       :permission="'print'"
                       @click="selected_data = item"
+                    />
+                    &nbsp;
+                    <Button
+                      :type="'barcode'"
+                      @click="selected_barcode = item"
                     />
                   </td>
                 </template>
@@ -86,6 +91,10 @@
         </CCardBody>
       </CCard>
     </CCol>
+    <ModalBarcodeGenerator
+      :property="selected_barcode"
+      v-on:onClose="selected_barcode = {}"
+    />
     <ModalPrintLabelV3
       :item="selected_data"
       v-on:onClose="selected_data = {}"
@@ -133,8 +142,9 @@ export default {
         color: "danger",
         icon: "print",
         text: "",
-        tooltip: "Print V2",
+        tooltip: "Print this data",
       },
+      selected_barcode: {},
       selected_data: {},
       items: [],
       fields: [
@@ -170,7 +180,7 @@ export default {
         },
         {
           key: "quantity_lvl_1",
-          label: "Qty L1",
+          label: "L1 Qty",
         },
         {
           key: "packaging_level",
