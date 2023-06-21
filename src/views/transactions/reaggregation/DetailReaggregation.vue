@@ -115,6 +115,24 @@
                         />
                       </td>
                     </tr>
+                    <tr style="height: 50px" v-for="index in 1" :key="index">
+                      <td
+                        style="width: 40%"
+                        v-if="reaggregation[`quantity_lvl_${index}`] > 0"
+                      >
+                        {{ "Level " + index }} Quantity
+                      </td>
+                      <td
+                        style="width: 60%"
+                        v-if="reaggregation[`quantity_lvl_${index}`] > 0"
+                      >
+                        <input
+                          class="form-control"
+                          readonly
+                          v-model="reaggregation[`quantity_lvl_${index}`]"
+                        />
+                      </td>
+                    </tr>
                   </table>
                 </CCol>
               </CRow>

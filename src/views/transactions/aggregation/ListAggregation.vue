@@ -164,6 +164,10 @@ export default {
           label: "Aggregation SN",
         },
         {
+          key: "quantity_lvl_1",
+          label: "Qty L1",
+        },
+        {
           key: "packaging_level",
           label: "Pkg Level",
         },

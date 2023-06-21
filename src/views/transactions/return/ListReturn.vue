@@ -150,7 +150,7 @@ export default {
         },
         {
           key: "product_name_batch",
-          label: "Product Name [Batch No, Qty]",
+          label: "Product Name [Batch No]",
         },
         {
           key: "type",

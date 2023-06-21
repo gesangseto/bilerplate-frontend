@@ -237,10 +237,10 @@ export default {
           key: "file_name",
           label: "File Name",
         },
-        {
-          key: "quantity_lvl_1",
-          label: "Quantity L1",
-        },
+        // {
+        //   key: "quantity_lvl_1",
+        //   label: "Quantity L1",
+        // },
         {
           key: "source_name",
           label: "Source Type",
