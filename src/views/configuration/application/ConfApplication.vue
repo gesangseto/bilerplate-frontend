@@ -68,6 +68,26 @@
               </CCol>
               <CCol sm="10">
                 <CInput
+                  label="ID Location"
+                  horizontal
+                  type="number"
+                  v-model="data.id_location"
+                  :is-valid="
+                    initialLoad ? null : !data.id_location ? false : true
+                  "
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      ID Location (BPOM)
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+              <CCol sm="10">
+                <CInput
                   label="Latitude"
                   horizontal
                   v-model="data.latitude"
@@ -326,6 +346,106 @@
                   </CCol>
                 </CCardBody>
               </CCard>
+
+              <CCard>
+                <CCardHeader style="font-weight: bold"
+                  >Transaction Option</CCardHeader
+                >
+                <CCardBody>
+                  <CRow form class="form-group">
+                    <CCol sm="4">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Allow Inbound Multiple Batch
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.allow_multiple_batch_inbound"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+
+                    <CCol sm="4">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Return Record to Inbound
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.return_record_to_inbound"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+
+                    <CCol sm="4">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Transfer Record to Outbound
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.transfer_record_to_outbound"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+
+                  <CRow form class="form-group">
+                    <CCol sm="4">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Allow Transfer Multiple Batch
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.allow_multiple_batch_transfer"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="4">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Transfer Record to Inbound
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.transfer_record_to_inbound"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="4">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Return Record to Outbound
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.return_record_to_outbound"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+                </CCardBody>
+              </CCard>
+
               <CCol sm="10">
                 <CSelect
                   :options="periodicBackupOptions"
@@ -347,6 +467,7 @@
                   <template #append-content>Day's</template>
                 </CInput>
               </CCol>
+
               <CCol sm="10">
                 <CRow form class="form-group">
                   <CCol tag="label" sm="3" class="col-form-label">
@@ -357,6 +478,20 @@
                       class="mr-1"
                       color="success"
                       :checked.sync="data.return_ext_aggregation"
+                    />
+                  </CCol>
+                </CRow>
+              </CCol>
+              <CCol sm="10">
+                <CRow form class="form-group">
+                  <CCol tag="label" sm="3" class="col-form-label">
+                    Record Data for BPOM Report
+                  </CCol>
+                  <CCol sm="9">
+                    <CSwitch
+                      class="mr-1"
+                      color="success"
+                      :checked.sync="data.report_bpom"
                     />
                   </CCol>
                 </CRow>
