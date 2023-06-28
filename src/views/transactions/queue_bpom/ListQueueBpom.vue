@@ -47,7 +47,7 @@
                     <ButtonPermission
                       v-if="item.status != 'Success'"
                       :permission="'update'"
-                      @click="rowUpdateClicked(item, index)"
+                      @click="sendToBpom(item, index)"
                       :buttonProperty="btn_updateProp"
                     />
                     &nbsp;
@@ -207,7 +207,7 @@ export default {
       });
     },
     loadMenu() {
-      let path = this.$router.currentRoute.fullPath;
+      let path = this.$route.fullPath;
       $axiosMertrack
         .get(`/v3/master/menu?link=${path}`)
         .then((res) => {
@@ -286,16 +286,8 @@ export default {
       this.filter.page = 1;
       this.loadData();
     },
-    handleDownloadClick(item) {
-      let body = {};
-      body.id = item.id;
-      body.PrintTo = "csv";
-      body.MertrackApiToken = getToken();
-      let url = `${new URLSearchParams(body).toString()}`;
-      url = `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/transaction/bpom?raw=true&${url}`;
-      window.open(url, "_blank").focus();
-    },
-    rowUpdateClicked(item) {
+    handleDownloadClick(item) {},
+    sendToBpom(item) {
       let param = this.formData;
       param.data.trx_ref_id = item.trx_ref_id;
       $axiosMertrack
@@ -311,6 +303,7 @@ export default {
             position: "top-right",
             duration: 5000,
           });
+          if (!result.data.error) this.loadData();
         })
         .catch((err) => {
           this.$isLoading(false);

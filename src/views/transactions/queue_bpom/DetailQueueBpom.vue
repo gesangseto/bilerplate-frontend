@@ -98,13 +98,22 @@
                   </table>
                 </CCol>
               </CRow>
+
+              <CButton
+                color="success"
+                size="sm"
+                @click="sendToBpom(formData)"
+                class="m-1 float-right"
+              >
+                <v-icon name="paper-plane" />
+              </CButton>
               <CDataTable
                 tableFilter
                 hover
                 striped
                 sorter
                 border
-                :items="detailReaggregation"
+                :items="details"
                 :fields="fields"
                 class="text-left"
                 style="font-size: 12px"
@@ -152,15 +161,16 @@
 </template>
 
 <script>
+import moment from "moment";
 import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, humanize } from "../../../utils";
+import { calculatePaginationV3, getUserId, humanize } from "../../../utils";
 
 export default {
   name: "DetailQueueBpom",
   mounted() {
     this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
     this.loadData();
-    // this.loadMenu();
+    this.loadMenu();
   },
   data() {
     return {
@@ -181,12 +191,13 @@ export default {
       test: null,
       status: "",
       formData: {},
-      reaggregation: {
-        id: "",
-        add: "",
-        serial: "",
-        warehouse: {},
-        packaging_level: "",
+      formConnector: {
+        connector_action_id: null,
+        data: {
+          menu_id: null,
+          trx_ref_id: null,
+          created_by: getUserId(),
+        },
       },
       pages: null,
       page: null,
@@ -203,6 +214,10 @@ export default {
         {
           key: "level",
           label: "Level",
+        },
+        {
+          key: "parent",
+          label: "Parent Barcode",
         },
         {
           key: "is_active",
@@ -225,6 +240,10 @@ export default {
           label: "Res Message",
         },
         {
+          key: "modified_date",
+          label: "Last Modified",
+        },
+        {
           key: "status",
           label: "Status",
         },
@@ -240,10 +259,19 @@ export default {
         }
       },
     },
+    formConnector: {
+      handler(n, o) {
+        if (n.data.menu_id) {
+          this.loadConnector();
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
     loadData() {
       this.items = [];
+      this.formConnector.data.trx_ref_id = this.$route.params.id;
       let param = { trx_ref_id: this.$route.params.id };
       let url = `/v3/transaction/queue-bpom?${new URLSearchParams(param)}`;
       $axiosMertrack.get(url).then((res) => {
@@ -257,12 +285,17 @@ export default {
       });
     },
     loadMenu() {
-      let path = this.$router.currentRoute.fullPath;
+      let path = this.$route.fullPath;
+      let params = this.$route.params;
+      for (const key in params) {
+        path = path.replace(params[key], "");
+      }
+      path = path.replace(/\/+$/, "");
       $axiosMertrack
         .get(`/v3/master/menu?link=${path}`)
         .then((res) => {
           let _data = res.data.data[0];
-          this.formData.data.menu_id = _data.id;
+          this.formConnector.data.menu_id = _data.id;
         })
         .catch((e) => {
           this.$toast.open({
@@ -276,7 +309,7 @@ export default {
       return;
     },
     loadConnector() {
-      let param = { key: "menu_id", value: this.formData.data.menu_id };
+      let param = { key: "menu_id", value: this.formConnector.data.menu_id };
       param = new URLSearchParams(param).toString();
       $axiosMertrack
         .get(`/v3/connector/connector-action?${param}`)
@@ -290,7 +323,7 @@ export default {
               position: "top-right",
               duration: 5000,
             });
-            this.formData.connector_action_id = null;
+            this.formConnector.connector_action_id = null;
             return;
           } else if (data.data[0].status !== "Active") {
             this.$toast.open({
@@ -300,15 +333,45 @@ export default {
               position: "top-right",
               duration: 5000,
             });
-            this.formData.connector_action_id = null;
+            this.formConnector.connector_action_id = null;
             return;
           }
-          this.formData.connector_action_id = data.data[0].id;
+          this.formConnector.connector_action_id = data.data[0].id;
         })
         .catch((e) => {
           this.$toast.open({
             message: `${e.message}`,
             type: "error",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+        });
+    },
+    sendToBpom(item) {
+      console.log();
+      let param = this.formConnector;
+      param.data.trx_ref_id = item.trx_ref_id;
+      $axiosMertrack
+        .post("/v3/connector/connector-action/execute", param)
+        .then((result) => {
+          this.$isLoading(false);
+          this.$toast.open({
+            message: result.data.error
+              ? `${result.data.message}`
+              : "Data has been saved successfully.",
+            type: result.data.error ? "error" : "success",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+          if (!result.data.error) this.loadData();
+        })
+        .catch((err) => {
+          this.$isLoading(false);
+          this.$toast.open({
+            message: `${err}`,
+            type: `error`,
             dissmissible: true,
             position: "top-right",
             duration: 5000,
@@ -340,7 +403,7 @@ export default {
     },
   },
   computed: {
-    detailReaggregation() {
+    details() {
       return this.items.map((item) => {
         let level = "";
         if (item.barcode_level) {
@@ -353,6 +416,12 @@ export default {
           type: humanize(item.type),
           level: humanize(level),
           status: humanize(item.status),
+          status_code: item.status_code || "",
+          message: item.message || "",
+          parent: item.parent || "",
+          modified_date: moment(item.modified_date).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
         };
       });
     },
