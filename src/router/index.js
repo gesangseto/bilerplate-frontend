@@ -139,6 +139,8 @@ const ListBpom = () => import("@/views/transactions/bpom/ListBpom");
 // QUEUE BPOM
 const ListQueueBpom = () =>
   import("@/views/transactions/queue_bpom/ListQueueBpom");
+const DetailQueueBpom = () =>
+  import("@/views/transactions/queue_bpom/DetailQueueBpom");
 // ========================TRANSACTION========================
 
 // ========================REPORT========================
@@ -753,10 +755,16 @@ function configRoutes() {
         },
         // Queue BPOM
         {
-          path: "queue_bpom",
+          path: "queue-bpom",
           name: "Queue BPOM",
           meta: { login: true },
           component: ListQueueBpom,
+        },
+        {
+          path: "queue-bpom/:type/:id",
+          name: "Queue BPOM (Details)",
+          meta: { login: true },
+          component: DetailQueueBpom,
         },
       ],
     },

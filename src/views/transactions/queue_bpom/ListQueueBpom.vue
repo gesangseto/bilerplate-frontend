@@ -8,33 +8,22 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-            ]" -->
               <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
-                    value: 'transaction',
-                    code: 'transaction',
-                    label: 'Type',
+                    value: 'trx_ref_name',
+                    code: 'trx_ref_name',
+                    label: 'Trx Name',
                     data: [
-                      { value: 'inbound', label: 'Production ' },
-                      { value: 'outbound', label: 'Release ' },
-                      { value: 'picking', label: 'Distribution ' },
+                      { value: 'Transfer', label: 'Transfer ' },
+                      { value: 'Re-Aggregation', label: 'Re-Aggregation ' },
+                      { value: 'Aggregation', label: 'Aggregation ' },
+                      { value: 'Picking', label: 'Picking ' },
                     ],
                   },
                 ]"
-                :filter="['All', 'id']"
-                status_code="generate_csv"
+                :filter="['All']"
+                status_code="bpom_transaction"
                 v-on:handleClickFilter="handleClickFilter($event)"
                 v-on:handleChangeSize="handleChangeSize($event)"
               />
@@ -56,7 +45,7 @@
                       @click="rowReadClicked(item, index)"
                     />
                     <ButtonPermission
-                      v-if="item.status != 'success'"
+                      v-if="item.status != 'Success'"
                       :permission="'update'"
                       @click="rowUpdateClicked(item, index)"
                       :buttonProperty="btn_updateProp"
@@ -99,6 +88,7 @@ import {
   exportDataV3,
   getToken,
   getUserId,
+  humanize,
 } from "../../../utils";
 import { dateFilter } from "../../../constants";
 import moment from "moment";
@@ -107,6 +97,7 @@ export default {
   mounted() {
     this.page = 1;
     this.loadData();
+    this.loadMenu();
   },
   data() {
     return {
@@ -134,7 +125,14 @@ export default {
         text: "",
         tooltip: "Send via API now",
       },
-      user_id: getUserId(),
+      formData: {
+        connector_action_id: null,
+        data: {
+          menu_id: null,
+          trx_ref_id: null,
+          created_by: getUserId(),
+        },
+      },
       items: [],
       tempItems: [],
       buttonStatus: null,
@@ -185,6 +183,16 @@ export default {
       ],
     };
   },
+  watch: {
+    formData: {
+      handler(n, o) {
+        if (n.data.menu_id) {
+          this.loadConnector();
+        }
+      },
+      deep: true,
+    },
+  },
   methods: {
     loadData() {
       this.items = [];
@@ -197,6 +205,65 @@ export default {
           item: res,
         });
       });
+    },
+    loadMenu() {
+      let path = this.$router.currentRoute.fullPath;
+      $axiosMertrack
+        .get(`/v3/master/menu?link=${path}`)
+        .then((res) => {
+          let _data = res.data.data[0];
+          this.formData.data.menu_id = _data.id;
+        })
+        .catch((e) => {
+          this.$toast.open({
+            message: `${e.message}`,
+            type: "error",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+        });
+      return;
+    },
+    loadConnector() {
+      let param = { key: "menu_id", value: this.formData.data.menu_id };
+      param = new URLSearchParams(param).toString();
+      $axiosMertrack
+        .get(`/v3/connector/connector-action?${param}`)
+        .then((result) => {
+          let data = result.data;
+          if (data.error || data.data.length === 0) {
+            this.$toast.open({
+              message: `The Menu you have visited is not assigned to any Connector Action.`,
+              type: "error",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            this.formData.connector_action_id = null;
+            return;
+          } else if (data.data[0].status !== "Active") {
+            this.$toast.open({
+              message: `The Menu you have selected is not assigned to Active Connector Action.`,
+              type: "error",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            this.formData.connector_action_id = null;
+            return;
+          }
+          this.formData.connector_action_id = data.data[0].id;
+        })
+        .catch((e) => {
+          this.$toast.open({
+            message: `${e.message}`,
+            type: "error",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+        });
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -229,22 +296,35 @@ export default {
       window.open(url, "_blank").focus();
     },
     rowUpdateClicked(item) {
-      this.$toast.open({
-        message: `This Action is currently unavailable`,
-        type: "success",
-        dissmissible: true,
-        position: "top-right",
-        duration: 5000,
-      });
+      let param = this.formData;
+      param.data.trx_ref_id = item.trx_ref_id;
+      $axiosMertrack
+        .post("/v3/connector/connector-action/execute", param)
+        .then((result) => {
+          this.$isLoading(false);
+          this.$toast.open({
+            message: result.data.error
+              ? `${result.data.message}`
+              : "Data has been saved successfully.",
+            type: result.data.error ? "error" : "success",
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+        })
+        .catch((err) => {
+          this.$isLoading(false);
+          this.$toast.open({
+            message: `${err}`,
+            type: `error`,
+            dissmissible: true,
+            position: "top-right",
+            duration: 5000,
+          });
+        });
     },
     rowReadClicked(item) {
-      this.$toast.open({
-        message: `This Action is currently unavailable`,
-        type: "danger",
-        dissmissible: true,
-        position: "top-right",
-        duration: 5000,
-      });
+      this.$router.push({ path: `queue-bpom/read/${item.trx_ref_id}` });
     },
   },
   computed: {
@@ -256,6 +336,7 @@ export default {
           modified_date: moment(item.modified_date).format(
             "YYYY-MM-DD HH:mm:ss"
           ),
+          status: humanize(item.status),
         };
       });
     },
