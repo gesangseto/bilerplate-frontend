@@ -51,29 +51,12 @@
               >
                 <template #action="{ item, index }">
                   <td>
-                    <!-- <CButton
-                      tpye="button"
-                      size="sm"
-                      class="float-right"
-                      color="secondary"
-                      @click="handleDownloadClick(item)"
-                    >
-                      <v-icon style="align-self: center" name="download" />
-                    </CButton> -->
-
                     <ButtonPermission
-                      :permission="'print'"
-                      @click="handleDownloadClick(item)"
-                      :buttonProperty="btn_downloadProp"
+                      :permission="'read'"
+                      @click="rowReadClicked(item, index)"
                     />
                     <ButtonPermission
-                      v-if="item.status_send_api != 'Success'"
-                      :permission="'delete'"
-                      :buttonProperty="btn_deleteProp"
-                      @click="rowDeleteClicked(item, index)"
-                    />
-                    <ButtonPermission
-                      v-if="item.status_send_api != 'Success'"
+                      v-if="item.status != 'success'"
                       :permission="'update'"
                       @click="rowUpdateClicked(item, index)"
                       :buttonProperty="btn_updateProp"
@@ -118,6 +101,7 @@ import {
   getUserId,
 } from "../../../utils";
 import { dateFilter } from "../../../constants";
+import moment from "moment";
 export default {
   name: "ListQueueBpom",
   mounted() {
@@ -150,14 +134,6 @@ export default {
         text: "",
         tooltip: "Send via API now",
       },
-      btn_deleteProp: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        text: "",
-        tooltip: "Cancel sending via API",
-      },
       user_id: getUserId(),
       items: [],
       tempItems: [],
@@ -165,54 +141,45 @@ export default {
       dataUsers: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
+          key: "trx_ref_name",
+          label: "Trx Name",
           _classes: "font-weight-bold",
         },
         {
-          key: "generate_date",
-          label: "Generated Date",
+          key: "nie",
+          label: "Nie",
         },
         {
-          key: "id_trx",
-          label: "Trx Ref ID",
-          _classes: "font-weight-bold",
+          key: "batch_no",
+          label: "Batch No",
         },
         {
-          key: "transaction_desc",
-          label: "Type",
-          _style: "text-transform: capitalize;",
-          _classes: "font-weight-bold",
+          key: "lot_no",
+          label: "Batch No",
         },
         {
-          key: "csv_name",
-          label: "CSV Name",
+          key: "exp_date",
+          label: "Exp Date",
         },
         {
-          key: "status_desc",
-          label: "Approval Status",
-          _classes: "font-weight-bold",
+          key: "gtin",
+          label: "GTIN",
         },
         {
-          key: "approval_date",
-          label: "Approval Date",
+          key: "id_kemasan",
+          label: "Kemasan",
         },
         {
-          key: "approved_by_name",
-          label: "Approval By",
+          key: "status",
+          label: "Status",
         },
         {
-          key: "date_send_api",
+          key: "modified_date",
           label: "Last API Sent Date",
         },
         {
-          key: "status_send_api",
-          label: "API Sent Status",
-          _classes: "font-weight-bold",
-        },
-        {
           key: "action",
-          _style: "width:16%",
+          _style: "width:10%",
           label: "Action",
         },
       ],
@@ -222,7 +189,7 @@ export default {
     loadData() {
       this.items = [];
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/queue-bpom?raw=true&${param}`;
+      let url = `/v3/transaction/queue-bpom?${param}`;
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePaginationV3({
@@ -270,7 +237,7 @@ export default {
         duration: 5000,
       });
     },
-    rowDeleteClicked(item) {
+    rowReadClicked(item) {
       this.$toast.open({
         message: `This Action is currently unavailable`,
         type: "danger",
@@ -286,10 +253,9 @@ export default {
         return {
           ...item,
           // transaction_desc: item.transaction_desc.charAt(0).toUpperCase(),
-          status_send_api: item.status_send_api ?? " ",
-          date_send_api: item.date_send_api ?? " ",
-          approved_by_name: item.approved_by_name ?? " ",
-          approval_date: item.approval_date ?? " ",
+          modified_date: moment(item.modified_date).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
         };
       });
     },

@@ -24,8 +24,13 @@
     <p>Visit : <CLink>https://www.neodynamic.com/downloads/jspm/</CLink></p>
 
     <template #footer>
-      <CButton size="sm" color="success" type="button" @click="doPrintZPL()">
-        Print
+      <CButton
+        size="sm"
+        color="success"
+        type="button"
+        @click="handleClickPrint()"
+      >
+        Print [{{ stockData.print_count ? stockData.print_count : 1 }}]
       </CButton>
       <CButton
         size="sm"
@@ -78,7 +83,7 @@ export default {
       printData: "",
       print2default: false,
       printers: [],
-
+      stockData: {},
       selected_printer: "",
     };
   },
@@ -120,6 +125,7 @@ export default {
           for (const it of _data.data) {
             content += it._layout;
           }
+          this.stockData = _data.data[0];
           this.printData = content;
         });
       } else if (!itm.items) {
@@ -142,10 +148,42 @@ export default {
               duration: 3000,
             });
           }
+          this.stockData = _data.data[0];
           this.printData = _data.data[0]._layout;
         });
       }
       return;
+    },
+
+    updatePrintCount() {
+      let _body = {
+        serial: this.stockData.serial,
+        gtin_sscc: this.stockData.gtin_sscc,
+      };
+      $axiosMertrack
+        .post(`/v3/helper/print-layout/update-count`, _body)
+        .then((result) => {
+          let _data = result.data;
+          if (_data.error) {
+            this.isOpenModal = false;
+            return this.$toast.open({
+              message: `${_data.message}`,
+              type: "error",
+              dissmissible: true,
+              position: "top-right",
+              duration: 3000,
+            });
+          }
+        });
+    },
+    handleClickPrint() {
+      if (this.selected_printer === "" && !this.print2default) {
+        alert("You must select a printer");
+        return;
+      }
+      this.updatePrintCount();
+      console.log("COUNT+1");
+      this.doPrintZPL();
     },
     doPrintZPL() {
       if (this.selected_printer === "" && !this.print2default) {
@@ -161,26 +199,6 @@ export default {
       }
       cpj.printerCommands = this.printData;
       NProgress.done();
-      cpj.sendToClient();
-    },
-    doPrintPDF() {
-      if (this.selected_printer === "" && !this.print2default) {
-        alert("You must select a printer");
-        return;
-      }
-      let cpj = new JSPM.ClientPrintJob();
-      if (this.print2default) {
-        cpj.clientPrinter = new JSPM.DefaultPrinter();
-      } else {
-        cpj.clientPrinter = new JSPM.InstalledPrinter(this.selected_printer);
-      }
-      var my_file = new JSPM.PrintFilePDF(
-        "https://neodynamic.com/temp/LoremIpsum.pdf",
-        JSPM.FileSourceType.URL,
-        "MyFile.pdf",
-        1
-      );
-      cpj.files.push(my_file);
       cpj.sendToClient();
     },
     onPrinterChange(value) {

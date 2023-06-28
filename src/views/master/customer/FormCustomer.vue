@@ -193,6 +193,33 @@
                   </p>
                 </template>
               </CInput>
+
+              <CInput
+                :disabled="action == 'Read' ? true : false"
+                placeholder=""
+                horizontal
+                v-model="customer.id_sarana"
+                :invalid-feedback="required.id_sarana.message"
+                :add-input-classes="{
+                  'is-invalid': required.email.error,
+                }"
+                @keypress="
+                  limitPhone({
+                    event: $event,
+                    data: customer.id_sarana,
+                    max: 12,
+                  })
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    ID Sarana (BPOM)
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template>
+              </CInput>
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
                 <SwitchStatusMaster
@@ -276,6 +303,7 @@ export default {
         name: { error: false, message: "Name is required" },
         pic: { error: false, message: "PIC is required" },
         email: { error: false, message: "Please provide valid email address" },
+        id_sarana: { error: false, message: "Please provide id sarana" },
         address: { error: false, message: "Address is required" },
         tlp_code: { error: false, message: "Country code is required" },
         tlp: {
