@@ -100,6 +100,7 @@
               </CRow>
 
               <CButton
+                v-if="formData.can_proccess"
                 color="success"
                 size="sm"
                 @click="sendToBpom(formData)"

@@ -45,7 +45,7 @@
                       @click="rowReadClicked(item, index)"
                     />
                     <ButtonPermission
-                      v-if="item.status != 'Success'"
+                      v-if="item.can_proccess"
                       :permission="'update'"
                       @click="sendToBpom(item, index)"
                       :buttonProperty="btn_updateProp"
