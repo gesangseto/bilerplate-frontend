@@ -4,7 +4,11 @@
       <CCol col="12" xl="12">
         <CCard>
           <CCardHeader>
-            <ButtonPermission :permission="'create'" @click="addNew()" />
+            <ButtonPermission
+              :permission="'create'"
+              @click="addNew()"
+              :useHref="true"
+            />
             <h5>Stock Transfer</h5>
           </CCardHeader>
           <CCardBody>
@@ -34,6 +38,8 @@
               <template #action="{ item, index }">
                 <td>
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'read'"
                     @click="rowClicked(item, index)"
                   />

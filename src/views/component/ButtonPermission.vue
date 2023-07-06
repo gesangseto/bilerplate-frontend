@@ -1,28 +1,34 @@
 <template>
-  <CButton
-    :class="property.class"
-    v-c-tooltip="property.tooltip"
-    style="margin: 2px; text-align: center"
-    v-if="is_visible"
-    size="sm"
-    :color="property.color"
-    v-on:click="$emit('click', $event.target.value)"
-  >
-    <v-icon
-      style="margin-bottom: -1px"
-      v-if="property.icon"
-      :name="property.icon"
-    />
-    {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
-  </CButton>
+  <a :href="href">
+    <CButton
+      :class="property.class"
+      v-c-tooltip="property.tooltip"
+      style="margin: 2px; text-align: center"
+      v-if="is_visible"
+      size="sm"
+      :color="property.color"
+      v-on:click="$emit('click', $event.target.value)"
+    >
+      <v-icon
+        style="margin-bottom: -1px"
+        v-if="property.icon"
+        :name="property.icon"
+      />
+      {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
+    </CButton>
+  </a>
 </template>
 
 <script>
 import { buttonPermission } from "../../utils";
 export default {
   name: "ButtonPermission",
-  props: ["permission", "buttonProperty", "exportType"],
+  props: ["permission", "useHref", "id", "buttonProperty", "exportType"],
   mounted() {
+    if (this.useHref) {
+      this.href = `#${this.$route.path}/${this.permission}`;
+      if (this.id) this.href += `/${this.id}`;
+    }
     this.is_visible = this.button[`can_${this.permission}`];
     if (this.permission == "create") {
       this.property.color = "success";
@@ -60,6 +66,7 @@ export default {
   },
   data() {
     return {
+      href: null,
       button: buttonPermission({ path: this.$route.path }),
       is_visible: false,
       property: {

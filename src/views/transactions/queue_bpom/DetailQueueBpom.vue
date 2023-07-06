@@ -3,7 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>Re-Aggregation [{{ action }}]</h5>
+          <h5>Queue BPOM [{{ action }}]</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>

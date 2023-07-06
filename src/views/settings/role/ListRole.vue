@@ -27,10 +27,14 @@
             <template #action="{ item, index }">
               <td>
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'update'"
                   @click="rowUpdate(item, index)"
                 />
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'read'"
                   @click="rowRead(item, index)"
                 />

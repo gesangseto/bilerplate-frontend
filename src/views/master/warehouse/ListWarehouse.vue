@@ -7,6 +7,7 @@
             v-if="can_add_warehouse"
             :permission="'create'"
             @click="addNew()"
+            :useHref="true"
           />
           <h5>Warehouse</h5>
         </CCardHeader>
@@ -34,10 +35,14 @@
                   @click="deleteRow(item, index)"
                 />
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'update'"
                   @click="rowUpdate(item, index)"
                 />
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'read'"
                   @click="rowRead(item, index)"
                 />

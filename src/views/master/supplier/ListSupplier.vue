@@ -3,7 +3,11 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
           <h5>Supplier</h5>
         </CCardHeader>
         <CCardBody>
@@ -46,10 +50,14 @@
                       @click="deleteRow(item, index)"
                     />
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'update'"
                       @click="rowUpdate(item, index)"
                     />
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowRead(item, index)"
                     />

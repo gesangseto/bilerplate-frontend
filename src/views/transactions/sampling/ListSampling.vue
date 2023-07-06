@@ -50,11 +50,15 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowViewClicked(item, index)"
                     />
                     &nbsp;
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       v-if="item.approval_id == user_id && item.status == 0"
                       :permission="'approve'"
                       @click="rowUpdateClicked(item, index)"

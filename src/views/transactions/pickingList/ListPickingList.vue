@@ -3,7 +3,11 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
           <h5>Picking List</h5>
         </CCardHeader>
         <CCardBody>
@@ -29,6 +33,8 @@
               <template #action="{ item, index }">
                 <td>
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'read'"
                     @click="rowClicked(item, index)"
                   />
@@ -40,6 +46,8 @@
                   />
                   <ButtonPermission
                     v-if="item.status === 99"
+                    :id="item.id"
+                    :useHref="true"
                     :buttonProperty="btn_updateProperty"
                     :permission="'update'"
                     @click="rowUpdate(item, index)"

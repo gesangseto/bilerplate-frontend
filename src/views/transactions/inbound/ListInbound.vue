@@ -64,6 +64,8 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowClicked(item, index)"
                     />
