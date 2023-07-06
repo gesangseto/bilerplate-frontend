@@ -859,6 +859,9 @@ export default {
         this.$isLoading(true);
         let dataPost = body;
         let res = {};
+        if (this.action === "create" && dataPost.id) {
+          delete dataPost.id;
+        }
         if (dataPost.id) {
           res = await updateMstProduct(dataPost);
         } else {

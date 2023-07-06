@@ -127,12 +127,12 @@ export default {
     };
   },
   mounted() {
+    this.loadConfig();
     this.message = null;
     if (!this.message && localStorage.getItem("message")) {
       this.message = localStorage.getItem("message");
       localStorage.removeItem("message");
     }
-    this.loadConfig();
   },
   beforeCreate() {
     if (getProfile()) {
@@ -173,7 +173,8 @@ export default {
         return;
       }
       if (isThatYou({ param: param })) {
-        window.location.reload();
+        // window.location.reload();
+        this.$router.push({ path: `dashboard` });
         return;
       }
       this.$isLoading(true);
@@ -202,7 +203,8 @@ export default {
         setRole(role);
         setProfile(_data);
         setLoginTimeout(_data.idletimeout ?? 0);
-        window.location.reload();
+        this.$router.push({ path: `dashboard` });
+        // window.location.reload();
         return;
       }
     },

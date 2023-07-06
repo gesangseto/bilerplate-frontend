@@ -358,7 +358,8 @@ export default {
     this.page = 1;
     this.getGenerateType();
     this.getDateFromat();
-    if (this.action != "Create") this.loadData();
+    // if (this.action != "Create") this.loadData();
+    if (this.$route.params.id !== undefined) this.loadData();
   },
   data() {
     return {
@@ -793,6 +794,9 @@ export default {
         let dataPost = param;
         this.$isLoading(true);
         let res = {};
+        if (this.action === "create" && dataPost.id) {
+          delete dataPost.id;
+        }
         if (dataPost.id) {
           res = await updateConfLayout(dataPost);
         } else {
