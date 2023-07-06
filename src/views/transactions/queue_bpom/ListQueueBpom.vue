@@ -41,14 +41,12 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
-                      :id="item.id"
+                      :id="item.trx_ref_id"
                       :useHref="true"
                       :permission="'read'"
                       @click="rowReadClicked(item, index)"
                     />
                     <ButtonPermission
-                      :id="item.id"
-                      :useHref="true"
                       v-if="item.can_proccess"
                       :permission="'update'"
                       @click="sendToBpom(item, index)"
