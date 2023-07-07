@@ -12,12 +12,12 @@
                 <CCol md="6">
                   <table style="width: 100%">
                     <tr style="height: 50px">
-                      <td style="width: 40%">ID</td>
+                      <td style="width: 40%">Trx ID</td>
                       <td style="width: 60%">
                         <input
                           class="form-control"
                           readonly
-                          v-model="formData.trx_ref_id"
+                          v-model="formData.trx_id"
                         />
                       </td>
                     </tr>

@@ -482,20 +482,6 @@
                   </CCol>
                 </CRow>
               </CCol>
-              <CCol sm="10">
-                <CRow form class="form-group">
-                  <CCol tag="label" sm="3" class="col-form-label">
-                    Record Data for BPOM Report
-                  </CCol>
-                  <CCol sm="9">
-                    <CSwitch
-                      class="mr-1"
-                      color="success"
-                      :checked.sync="data.report_bpom"
-                    />
-                  </CCol>
-                </CRow>
-              </CCol>
             </CForm>
           </CCardBody>
           <CCardFooter>

@@ -213,6 +213,7 @@ export default {
     pageChange(page) {
       this.filter.page = page;
       this.loadData();
+      this.$forceUpdate();
     },
     handleChangeSize($event) {
       this.filter.limit = $event;

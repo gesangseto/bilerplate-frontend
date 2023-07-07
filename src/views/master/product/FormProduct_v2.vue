@@ -528,7 +528,7 @@ export default {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
-    if (this.$route.params.id !== undefined) {
+    if (this.$route.params.id) {
       this.loadData();
       this.readOnly = true;
     }
@@ -859,7 +859,7 @@ export default {
         this.$isLoading(true);
         let dataPost = body;
         let res = {};
-        if (this.action === "create" && dataPost.id) {
+        if (this.action === "Create" && dataPost.id) {
           delete dataPost.id;
         }
         if (dataPost.id) {

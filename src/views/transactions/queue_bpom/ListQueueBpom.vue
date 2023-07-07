@@ -141,6 +141,11 @@ export default {
       dataUsers: [],
       fields: [
         {
+          key: "trx_id",
+          label: "Trx ID",
+          _classes: "font-weight-bold",
+        },
+        {
           key: "trx_ref_name",
           label: "Trx Name",
           _classes: "font-weight-bold",

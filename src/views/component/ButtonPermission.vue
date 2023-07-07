@@ -7,7 +7,7 @@
       v-if="is_visible"
       size="sm"
       :color="property.color"
-      v-on:click="$emit('click', $event.target.value)"
+      v-on:click="!useHref ? $emit('click', $event.target.value) : null"
     >
       <v-icon
         style="margin-bottom: -1px"
@@ -24,6 +24,18 @@ import { buttonPermission } from "../../utils";
 export default {
   name: "ButtonPermission",
   props: ["permission", "useHref", "id", "buttonProperty", "exportType"],
+
+  watch: {
+    id: {
+      deep: true,
+      handler(n, o) {
+        if (this.useHref) {
+          this.href = `#${this.$route.path}/${this.permission}`;
+          if (n) this.href += `/${n}`;
+        }
+      },
+    },
+  },
   mounted() {
     if (this.useHref) {
       this.href = `#${this.$route.path}/${this.permission}`;
