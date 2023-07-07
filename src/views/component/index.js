@@ -16,10 +16,12 @@ import HeaderFilterTransactionV3 from "./HeaderFilterTransactionV3";
 import SwitchStatusMaster from "./SwitchStatusMaster";
 import SwitchStatusTrx from "./SwitchStatusTrx";
 import SwitchDefault from "./SwitchDefault";
+import ButtonBack from "./ButtonBack";
 
 export {
   ButtonPermission,
   Button,
+  ButtonBack,
   HeaderFilterDefault,
   MasterPid,
   HeaderShowStatus,

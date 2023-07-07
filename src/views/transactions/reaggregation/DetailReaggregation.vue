@@ -165,15 +165,7 @@
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            type="reset"
-            size="sm"
-            class="m-1 float-right"
-            color="primary"
-            @click="cancel()"
-          >
-            <CIcon name="cil-arrow-left" /> Back
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </CCol>

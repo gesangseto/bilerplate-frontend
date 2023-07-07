@@ -112,9 +112,7 @@
             </CForm>
           </CCardBody>
           <CCardFooter>
-            <CButton size="sm" class="m-1" color="danger" @click="cancel()">
-              <CIcon name="cil-ban" /> Cancel
-            </CButton>
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>

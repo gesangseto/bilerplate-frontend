@@ -136,16 +136,7 @@
           </div>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            @click="cancel()"
-            class="my-2 mx-2 float-right"
-            color="primary"
-            size="sm"
-            type="button"
-          >
-            <CIcon name="cil-arrow-left" />
-            Back
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </div>

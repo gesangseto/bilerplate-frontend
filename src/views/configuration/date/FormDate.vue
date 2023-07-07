@@ -155,9 +155,7 @@
           >
             <CIcon name="cil-check-circle" /> Submit
           </CButton>
-          <CButton size="sm" class="m-1" color="danger" @click="cancel()">
-            <CIcon name="cil-ban" /> Cancel
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </CCol>

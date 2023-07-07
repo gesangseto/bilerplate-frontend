@@ -229,13 +229,8 @@
           >
             <CIcon name="cil-pencil" /> Input DO
           </button>
-          <button
-            class="btn btn-sm btn-primary float-right"
-            type="button"
-            @click="back()"
-          >
-            <CIcon name="cil-arrow-left" /> Back
-          </button>
+
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </div>

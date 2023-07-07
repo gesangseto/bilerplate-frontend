@@ -10,6 +10,7 @@ import Icon from "vue-awesome/components/Icon";
 import VueCustomTooltip from "@adamdehaven/vue-custom-tooltip";
 import {
   Button,
+  ButtonBack,
   ButtonPermission,
   HeaderFilterDefault,
   MasterPid,
@@ -32,6 +33,7 @@ Vue.use(loading);
 Vue.component("v-icon", Icon);
 Vue.component("MasterPid", MasterPid);
 Vue.component("Button", Button);
+Vue.component("ButtonBack", ButtonBack);
 Vue.component("ButtonPermission", ButtonPermission);
 Vue.component("HeaderShowStatus", HeaderShowStatus);
 Vue.component("HeaderFilterDefault", HeaderFilterDefault);

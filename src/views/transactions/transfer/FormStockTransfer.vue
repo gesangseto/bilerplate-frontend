@@ -97,15 +97,7 @@
           <CButton @click="save()" color="primary" size="sm" type="submit">
             <CIcon name="cil-check-circle" /> Submit
           </CButton>
-          <CButton
-            @click="cancel()"
-            class="m-1"
-            color="danger"
-            size="sm"
-            type="button"
-          >
-            <CIcon name="cil-ban" /> Cancel
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </CCol>

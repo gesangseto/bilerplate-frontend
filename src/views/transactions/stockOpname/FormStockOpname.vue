@@ -103,9 +103,7 @@
               color="primary"
               ><CIcon name="cil-check-circle" /> Submit</CButton
             >
-            <CButton type="reset" size="sm" @click="cancel()" color="danger"
-              ><CIcon name="cil-ban" /> Cancel</CButton
-            >
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>

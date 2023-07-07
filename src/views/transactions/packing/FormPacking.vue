@@ -157,9 +157,7 @@
             color="primary"
             ><CIcon name="cil-check-circle" /> Submit</CButton
           >
-          <CButton type="reset" size="sm" @click="cancel()" color="danger"
-            ><CIcon name="cil-ban" /> Cancel</CButton
-          >
+          <ButtonBack />
           <!-- <CButton
             v-if="can_print == true"
             type="button"
