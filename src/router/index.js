@@ -33,9 +33,10 @@ const FormProductCategory = () =>
 // Product Article
 const ListProduct = () => import("@/views/master/product/ListProduct");
 const FormProduct = () =>
-  getUserId() == 0
-    ? import("@/views/master/product/FormProduct_v2")
-    : import("@/views/master/product/FormProduct");
+  // getUserId() == 0
+  // ? import("@/views/master/product/FormProduct_v2")
+  //   : import("@/views/master/product/FormProduct");
+  import("@/views/master/product/FormProduct_v2");
 // Packaging
 const ListPackaging = () => import("@/views/master/packaging/ListPackaging");
 const FormPackaging = () => import("@/views/master/packaging/FormPackaging");

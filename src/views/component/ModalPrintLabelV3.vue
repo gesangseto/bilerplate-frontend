@@ -103,7 +103,7 @@ export default {
       };
     },
 
-    loadData(itm) {
+    loadData(itm, updateCount, doPrint) {
       let _body = { items: [] };
       if (itm.items) {
         for (const it of itm.items) {
@@ -134,6 +134,7 @@ export default {
         _body = {
           serial: serial,
           gtin_sscc: gtin_sscc,
+          update_count: updateCount,
         };
         var _url = new URLSearchParams(_body).toString();
         $axiosMertrack.get(`/v3/helper/print-layout?${_url}`).then((result) => {
@@ -150,6 +151,9 @@ export default {
           }
           this.stockData = _data.data[0];
           this.printData = _data.data[0]._layout;
+          if (doPrint) {
+            this.doPrintZPL();
+          }
         });
       }
       return;
@@ -181,9 +185,12 @@ export default {
         alert("You must select a printer");
         return;
       }
-      this.updatePrintCount();
-      console.log("COUNT+1");
-      this.doPrintZPL();
+      let message = `You are about to print this data.\nThis operation will be update the count of print.\nWould you like to continue?`;
+      if (confirm(message)) {
+        this.loadData(this.item, true, true);
+        // this.doPrintZPL();
+        return;
+      }
     },
     doPrintZPL() {
       if (this.selected_printer === "" && !this.print2default) {

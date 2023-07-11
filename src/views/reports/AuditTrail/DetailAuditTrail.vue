@@ -55,6 +55,60 @@
                   <p class="col-form-label col-sm-3">User Agent</p>
                 </template>
               </CInput>
+              <div v-if="Object.keys(oldDataBody).length > 0">
+                <hr />
+                <hr />
+                <h5>Old Data</h5>
+                <hr />
+                <div v-for="(value, name, index) in oldDataBody" :key="index">
+                  <!-- VIEW JIKA KARAKTERNYA NORMAL -->
+                  <CInput
+                    v-if="!Array.isArray(value) && value && value.length <= 100"
+                    disabled
+                    horizontal
+                    :value="value"
+                  >
+                    <template #label>
+                      <p
+                        class="col-form-label col-sm-3"
+                        style="text-transform: capitalize"
+                      >
+                        {{ name === "id" ? "ID" : name.replace(/_/g, " ") }}
+                      </p>
+                    </template>
+                  </CInput>
+                  <!-- VIEW JIKA KARAKTERNYA TERLALU BANYAK -->
+                  <CTextarea
+                    v-if="!Array.isArray(value) && value && value.length > 100"
+                    disabled
+                    horizontal
+                    :value="value"
+                    rows="10"
+                  >
+                    <template #label>
+                      <p
+                        class="col-form-label col-sm-3"
+                        style="text-transform: capitalize"
+                      >
+                        {{ name === "id" ? "ID" : name.replace(/_/g, " ") }}
+                      </p>
+                    </template>
+                  </CTextarea>
+
+                  <!-- JIKA VIEW BERUPA ARRAY -->
+                  <p v-if="Array.isArray(value) && value.length > 0">Items</p>
+                  <CDataTable
+                    v-if="Array.isArray(value) && value.length > 0"
+                    hover
+                    striped
+                    sorter
+                    border
+                    :items="value"
+                    class="data-table"
+                    style="font-size: 12px"
+                  />
+                </div>
+              </div>
               <div v-if="Object.keys(dataBody).length > 0">
                 <hr />
                 <hr />
@@ -150,6 +204,7 @@ export default {
       data: {},
       detail: {},
       dataBody: {},
+      oldDataBody: {},
     };
   },
   mounted() {
@@ -172,7 +227,7 @@ export default {
         let data = response.data.data[0];
         this.data = data;
         this.dataBody = JSON.parse(this.data["data"]);
-        console.log(this.dataBody);
+        this.oldDataBody = JSON.parse(this.data["old_data"]) || {};
       });
     },
     isJsonString(str) {
