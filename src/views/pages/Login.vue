@@ -109,6 +109,8 @@ import {
   setProfile,
   getProfile,
   setMenu,
+  getConfig,
+  setLogo,
 } from "../../utils";
 import { logoMertrack } from "../../constants";
 import { getSysConfig } from "../../resource/SysConfig";
@@ -140,7 +142,7 @@ export default {
         this.$router.push({ path: localStorage.getItem("current_url") });
         return;
       }
-      this.$router.push({ path: `dashboard` });
+      this.$router.go({ path: `dashboard` });
     }
   },
   methods: {
@@ -148,6 +150,7 @@ export default {
       let _res = await getSysConfig();
       if (_res) {
         setConfig(_res.data[0]);
+        setLogo(_res.data[0].identity_logo_path);
         this.entityLogo = _res.data[0].identity_logo_path;
       }
     },
@@ -174,7 +177,7 @@ export default {
       }
       if (isThatYou({ param: param })) {
         // window.location.reload();
-        this.$router.push({ path: `dashboard` });
+        this.$router.go({ path: `/dashboard` });
         return;
       }
       this.$isLoading(true);

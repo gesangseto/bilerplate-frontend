@@ -231,6 +231,16 @@
           </button>
 
           <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardFooter>
       </CCard>
     </div>
@@ -291,6 +301,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
+import { exportDataV3 } from "../../../utils";
 export default {
   name: "DetailPicking",
   data() {
@@ -472,6 +483,19 @@ export default {
         this.modalDO = false;
         return;
       }
+    },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          SearchType: "id",
+          SearchTypeText: "ID",
+          SearchVal1: this.$route.params.id,
+          SearchVal1Text: this.$route.params.id,
+        },
+        exportType: type,
+        url: "/v3/transaction/picking",
+      });
     },
   },
   computed: {

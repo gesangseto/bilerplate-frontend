@@ -28,6 +28,11 @@ export function decrypt(ciphertext) {
   return bytes.toString(CryptoJS.enc.Utf8);
 }
 
+export function clearStorage() {
+  localStorage.removeItem("profile");
+  localStorage.removeItem("menu");
+}
+
 export function setProfile(data) {
   localStorage.setItem("profile", encrypt(JSON.stringify(data)));
 }
@@ -73,16 +78,16 @@ export function getRole() {
 export function setConfig(data) {
   localStorage.setItem("configuration", encrypt(JSON.stringify(data)));
 }
-export function getConfig() {
-  return JSON.parse(decrypt(localStorage.getItem("configuration")));
+export function setLogo(data) {
+  localStorage.setItem("logo", data);
 }
 export function getLogo() {
-  try {
-    let conf = JSON.parse(decrypt(localStorage.getItem("configuration")));
-    return conf.identity_logo_path;
-  } catch (error) {
-    return null;
-  }
+  let data = localStorage.getItem("logo");
+  return data;
+}
+
+export function getConfig() {
+  return JSON.parse(decrypt(localStorage.getItem("configuration")));
 }
 export function setLoginTimeout(data) {
   let time = moment().add(data, "minutes").format("DD/MM/YYYY HH:mm:ss:SSS");

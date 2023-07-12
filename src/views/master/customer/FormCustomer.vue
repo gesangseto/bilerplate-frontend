@@ -201,7 +201,7 @@
                 v-model="customer.id_sarana"
                 :invalid-feedback="required.id_sarana.message"
                 :add-input-classes="{
-                  'is-invalid': required.email.error,
+                  'is-invalid': required.id_sarana.error,
                 }"
                 @keypress="
                   limitPhone({

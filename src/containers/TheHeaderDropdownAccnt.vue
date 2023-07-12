@@ -70,7 +70,7 @@ export default {
         });
         if (!_res.error) {
           localStorage.clear();
-          this.$router.push({ path: "/login" });
+          this.$router.go({ path: "/login" });
         }
       }
     },

@@ -226,7 +226,10 @@
               <CCol sm="12">
                 <MasterPid
                   v-if="ExpandPid.level_1"
-                  :readonly="action == 'Read' || product.flag_upd_del == 0"
+                  :readonly="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   :item="product"
                   :packaging_level="1"
                   v-on:handleResultPid="
@@ -255,7 +258,10 @@
               </CCol>
               <CCol sm="4">
                 <CInput
-                  :disabled="action == 'Read' || product.flag_upd_del == 0"
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   label="Quantity *"
                   description="L1 Qty inside Pkg L2."
                   horizontal
@@ -285,7 +291,10 @@
               <CCol sm="12">
                 <MasterPid
                   v-if="ExpandPid.level_2"
-                  :readonly="action == 'Read' || product.flag_upd_del == 0"
+                  :readonly="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   :item="product"
                   :packaging_level="2"
                   v-on:handleResultPid="
@@ -314,7 +323,10 @@
               </CCol>
               <CCol sm="4">
                 <CInput
-                  :disabled="action == 'Read' || product.flag_upd_del == 0"
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   label="Quantity *"
                   description="L1 Qty inside Pkg L3."
                   horizontal
@@ -344,7 +356,10 @@
               <CCol sm="12">
                 <MasterPid
                   v-if="ExpandPid.level_3"
-                  :readonly="action == 'Read' || product.flag_upd_del == 0"
+                  :readonly="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   :item="product"
                   :packaging_level="3"
                   v-on:handleResultPid="
@@ -373,7 +388,10 @@
               </CCol>
               <CCol sm="4">
                 <CInput
-                  :disabled="action == 'Read' || product.flag_upd_del == 0"
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   label="Quantity *"
                   description="L1 Qty inside Pkg L4."
                   horizontal
@@ -403,7 +421,10 @@
               <CCol sm="12">
                 <MasterPid
                   v-if="ExpandPid.level_4"
-                  :readonly="action == 'Read' || product.flag_upd_del == 0"
+                  :readonly="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   :item="product"
                   :packaging_level="4"
                   v-on:handleResultPid="
