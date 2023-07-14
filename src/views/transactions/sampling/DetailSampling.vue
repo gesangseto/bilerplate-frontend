@@ -166,6 +166,16 @@
             <CIcon name="cil-ban" /> Reject
           </CButton>
           <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -192,7 +202,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { getUserId } from "../../../utils";
+import { exportDataV3, getUserId } from "../../../utils";
 
 export default {
   name: "DetailSampling",
@@ -429,6 +439,19 @@ export default {
       this.view.expiredDate = "";
       this.datas = [];
       this.viewModal = false;
+    },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          SearchType: "id",
+          SearchTypeText: "ID",
+          SearchVal1: this.$route.params.id,
+          SearchVal1Text: this.$route.params.id,
+        },
+        exportType: type,
+        url: "/v3/transaction/sampling",
+      });
     },
   },
   computed: {

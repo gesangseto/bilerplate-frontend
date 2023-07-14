@@ -95,10 +95,10 @@
                   placeholder="Enter packaging description registered at BPOM"
                   horizontal
                   @keyup="validationData()"
-                  v-model="product.size"
+                  v-model="product.kemasan_nie"
                   invalid-feedback="NIE packaging (kemasan NIE) is required"
                   :add-input-classes="{
-                    'is-invalid': error.size,
+                    'is-invalid': error.kemasan_nie,
                   }"
                 />
               </CCol>
@@ -601,7 +601,7 @@ export default {
         print_name: false,
         gtin: false,
         nie: false,
-        size: false,
+        kemasan_nie: false,
         mst_product_category_id: false,
         suhu: false,
         product_type: false,
