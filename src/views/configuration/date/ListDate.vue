@@ -100,12 +100,12 @@ export default {
           _classes: "font-weight-bold",
         },
         {
-          key: "df_name",
+          key: "name",
           label: "Format",
           _classes: "font-weight-bold",
         },
         {
-          key: "df_overwrite",
+          key: "overwrite",
           label: "Overwrite",
         },
         {
@@ -202,12 +202,12 @@ export default {
     list_item() {
       return this.items.map((item) => {
         let result = "";
-        if (item.df_overwrite === "last_day_of_month") {
-          result = moment().endOf("month").format(item.df_name);
-        } else if (item.df_overwrite === "first_day_of_month") {
-          result = moment().startOf("month").format(item.df_name);
+        if (item.overwrite === "last_day_of_month") {
+          result = moment().endOf("month").format(item.name);
+        } else if (item.overwrite === "first_day_of_month") {
+          result = moment().startOf("month").format(item.name);
         } else {
-          result = moment().format(item.df_name);
+          result = moment().format(item.name);
         }
         result = result.toString().toUpperCase();
         return {

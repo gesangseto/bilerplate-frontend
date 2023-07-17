@@ -726,19 +726,19 @@ export default {
       if (_res) {
         for (const it of _res.data) {
           let dt = "";
-          if (it.df_overwrite === "last_day_of_month") {
-            dt = moment().endOf("month").format(it.df_name);
-          } else if (it.df_overwrite === "first_day_of_month") {
-            dt = moment().startOf("month").format(it.df_name);
+          if (it.overwrite === "last_day_of_month") {
+            dt = moment().endOf("month").format(it.name);
+          } else if (it.overwrite === "first_day_of_month") {
+            dt = moment().startOf("month").format(it.name);
           } else {
-            dt = moment().format(it.df_name);
+            dt = moment().format(it.name);
           }
           dt = dt.toUpperCase();
           this.listFormatDate.push({
-            id: `${it.df_id}`,
-            value: `${it.df_id}`,
-            label: `${it.df_name_overwrite} - ${dt}`,
-            text: `${it.df_name_overwrite} - ${dt}`,
+            id: `${it.id}`,
+            value: `${it.id}`,
+            label: `${it.name_overwrite} - ${dt}`,
+            text: `${it.name_overwrite} - ${dt}`,
           });
         }
       }

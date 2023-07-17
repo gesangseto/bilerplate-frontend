@@ -340,17 +340,17 @@ export default {
         let data = _res.data[0];
         let _data = data;
         this.data.status = _data.status;
-        this.data.df_id = _data.df_id ?? "";
-        this.data.used_in_layout = _data.used_in_layout ?? "";
-        this.data.delimiter = _data.df_delimiter ?? "";
-        this.data.around = _data.df_around ?? "";
-        this.data.override = _data.df_overwrite ?? "";
-        this.data.field1_format = _data.df_field1 ?? "";
-        this.data.field1_type = this.typeFormat(_data.df_field1) ?? "";
-        this.data.field2_format = _data.df_field2 ?? "";
-        this.data.field2_type = this.typeFormat(_data.df_field2) ?? "";
-        this.data.field3_format = _data.df_field3 ?? "";
-        this.data.field3_type = this.typeFormat(_data.df_field3) ?? "";
+        this.data.id = _data.id ?? "";
+        this.data.used_in_layout = _data.used_in_layout ?? null;
+        this.data.delimiter = _data.delimiter ?? "";
+        this.data.around = _data.around ?? "";
+        this.data.override = _data.overwrite ?? "";
+        this.data.field1_format = _data.field1 ?? "";
+        this.data.field1_type = this.typeFormat(_data.field1) ?? "";
+        this.data.field2_format = _data.field2 ?? "";
+        this.data.field2_type = this.typeFormat(_data.field2) ?? "";
+        this.data.field3_format = _data.field3 ?? "";
+        this.data.field3_type = this.typeFormat(_data.field3) ?? "";
         this.checkDisabled();
         this.reFormatDate();
       }
@@ -542,14 +542,13 @@ export default {
       }
       let body = {
         id: this.$route.params.id,
-        df_id: this.data.df_id,
-        df_name: this.data.format,
-        df_delimiter: this.data.delimiter,
-        df_around: this.data.around,
-        df_field1: this.data.field1_format,
-        df_field2: this.data.field2_format,
-        df_field3: this.data.field3_format,
-        df_overwrite: this.data.override,
+        name: this.data.format,
+        delimiter: this.data.delimiter,
+        around: this.data.around,
+        field1: this.data.field1_format,
+        field2: this.data.field2_format,
+        field3: this.data.field3_format,
+        overwrite: this.data.override,
         status: this.data.status,
       };
       let dataPost = body;
