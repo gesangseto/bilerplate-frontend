@@ -54,15 +54,38 @@
             <CCol md="12"
               ><CInput
                 :disabled="action == 'Read'"
-                v-model="formData.layout_name"
+                v-model="formData.name"
                 horizontal
-                :is-valid="
-                  initialLoad ? null : !formData.layout_name ? false : true
-                "
+                :is-valid="initialLoad ? null : !formData.name ? false : true"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
                     Name
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template></CInput
+              >
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol md="12"
+              ><CInput
+                :disabled="true"
+                v-model="formData.bpom_barcode_format"
+                horizontal
+                :is-valid="
+                  initialLoad
+                    ? null
+                    : !formData.bpom_barcode_format
+                    ? false
+                    : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Barcode Format (BPOM)
                     <span class="text-danger">
                       <strong>*</strong>
                     </span>
@@ -84,8 +107,9 @@
             <table style="width: 100%">
               <thead>
                 <th style="text-align: center; width: 30%">Name Parameter</th>
-                <th style="text-align: center; width: 30%">Type</th>
+                <th style="text-align: center; width: 15%">Type</th>
                 <th style="text-align: center; width: 40%">Associated Field</th>
+                <th style="text-align: center; width: 15%">As Barcode</th>
               </thead>
 
               <tbody
@@ -112,14 +136,14 @@
                       placeholder="-Select-"
                       :options="listType"
                       :horizontal="{ input: 'col-md-12' }"
-                      :value.sync="item.generate_type_id"
+                      :value.sync="item.layout_generate_type_id"
                       inline
                       @change="handleChangeType(index)"
                       @click="editAssociatedField((selectedIndex = index))"
                       :is-valid="
                         initialLoad
                           ? null
-                          : !item.generate_type_id
+                          : !item.layout_generate_type_id
                           ? false
                           : true
                       "
@@ -154,6 +178,14 @@
                         </CInput>
                       </CCol>
                     </CRow>
+                  </td>
+                  <td>
+                    <CInputCheckbox
+                      :checked.sync="item.set_bpom_barcode_format"
+                      size="sm"
+                      class="center-checkbox"
+                      @change="handleCheckBarcodeFormat(item, index)"
+                    />
                   </td>
                 </tr>
               </tbody>
@@ -222,7 +254,7 @@
                   <td>
                     <input
                       type="radio"
-                      :value="item.identifier_id"
+                      :value="item.layout_identifier_id"
                       v-model="selectedIdentifier"
                     />
                   </td>
@@ -329,6 +361,12 @@ th,
 td {
   padding-top: 15px;
 }
+.center-checkbox {
+  padding-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
 <script>
 import { ModelSelect } from "vue-search-select";
@@ -386,24 +424,26 @@ export default {
       uploadFile: { fileName: null, fileContent: null },
       // V2 API
       formData: {
-        layout_name: "",
+        name: "",
         itf_name: "",
         itf_content: "",
+        bpom_barcode_format: "",
         layout_status: true,
         items: [
           // formType
         ],
       },
       formType: {
-        generate_type_id: "",
+        layout_generate_type_id: "",
         itf_var_name: "",
+        set_bpom_barcode_format: false,
         associated_field: "",
         field_associated: [
           // formAssociated
         ],
       },
       formAssociated: {
-        identifier_id: "",
+        layout_identifier_id: "",
         format_ref: "",
         table_name: null,
         column_name: null,
@@ -418,11 +458,11 @@ export default {
           label: " ",
         },
         {
-          key: "identifier_AI",
+          key: "AI",
           label: "AI",
         },
         {
-          key: "identifier_name",
+          key: "name",
           label: "Name",
         },
       ],
@@ -434,11 +474,11 @@ export default {
           label: " ",
         },
         {
-          key: "identifier_AI",
+          key: "AI",
           label: "AI",
         },
         {
-          key: "identifier_name",
+          key: "name",
           label: "Name",
         },
       ],
@@ -459,7 +499,7 @@ export default {
     selectedIdentifier: {
       handler(n, o) {
         let idx = this.associated_content.findIndex(
-          (it) => it.identifier_id === n
+          (it) => it.layout_identifier_id === n
         );
         if (~idx) this.selectedAssociated = this.associated_content[idx];
       },
@@ -471,8 +511,8 @@ export default {
           return;
         } else if (n != o) {
           let row_selected = this.formData.items[n];
-          if (row_selected.generate_type_id) {
-            let type_id = row_selected.generate_type_id;
+          if (row_selected.layout_generate_type_id) {
+            let type_id = row_selected.layout_generate_type_id;
             await this.getIdentifier(type_id);
           } else {
             this.identifier = [];
@@ -500,7 +540,7 @@ export default {
         } else {
           $("#error-upload").text("");
           reader.onload = (e) => {
-            this.formData.layout_name = fileName.replace(".itf", "");
+            this.formData.name = fileName.replace(".itf", "");
             this.formData.itf_name = fileName;
             this.formData.itf_content = e.target.result;
             this.generateField(e.target.result);
@@ -539,12 +579,25 @@ export default {
       this.formData.items[index].associated_field = "";
       this.formData.items[index].field_associated = [];
       let layout_selected = this.formData.items[index];
-      this.getIdentifier(layout_selected.generate_type_id);
+      this.getIdentifier(layout_selected.layout_generate_type_id);
     },
     /*
     END
     */
+    handleCheckBarcodeFormat(item, index) {
+      let n = 0;
 
+      let newData = [];
+      for (const it of this.formData.items) {
+        if (n != index) {
+          it.set_bpom_barcode_format = false;
+        }
+        n += 1;
+        newData.push(it);
+      }
+      this.formData.items = newData;
+      this.formData.bpom_barcode_format = item.associated_field;
+    },
     /*
     START
     INI UNTUK SAAT PILIH IDENTIFIER
@@ -569,7 +622,7 @@ export default {
       } else {
         let n = 0;
         for (const it of this.formData.items[i].field_associated) {
-          if (it.identifier_id === item.identifier_id) {
+          if (it.layout_identifier_id === item.layout_identifier_id) {
             lineParameter.field_associated.splice(n, 1);
           }
           n += 1;
@@ -585,10 +638,10 @@ export default {
       if (this.formData.items[i].field_associated.length > 0) {
         for (const it of this.formData.items[i].field_associated) {
           //
-          if (it.identifier_AI) {
-            text += "-" + it.identifier_AI;
+          if (it.layout_identifier_AI) {
+            text += "-" + it.layout_identifier_AI;
           } else {
-            text += "-" + it.identifier_name;
+            text += "-" + it.layout_identifier_name;
           }
         }
       } else {
@@ -599,6 +652,7 @@ export default {
       this.associated_content = content;
       text = text.trim();
       this.formData.items[i].associated_field = text.replace("-", "");
+      this.formData.bpom_barcode_format = text.replace("-", "");
     },
     /*
     END
@@ -630,7 +684,7 @@ export default {
           return this;
         };
         for (const it of layout) {
-          if (selected.identifier_id == it.identifier_id) {
+          if (selected.layout_identifier_id == it.layout_identifier_id) {
             if (swipe == "UP" && i > 0) {
               this.formData.items[N].field_associated.swapItems(i - 1, i);
             } else if (swipe == "DOWN" && i + 1 < layout.length) {
@@ -668,11 +722,11 @@ export default {
       associated.format_ref = this.selectedDate;
       associated.format_ref_data = this.matchDate(this.selectedDate);
       let idx = this.formData.items[i].field_associated.findIndex(
-        (it) => it.identifier_id == associated.identifier_id
+        (it) => it.layout_identifier_id == associated.layout_identifier_id
       );
       if (~idx) this.formData.items[i].field_associated[idx] = associated;
       // for (const it of this.formData.items[i].field_associated) {
-      //   if (it.identifier_id === associated.identifier_id) {
+      //   if (it.layout_identifier_id === associated.layout_identifier_id) {
       //     this.formData.items[i].field_associated[n] = associated;
       //   }
       //   n += 1;
@@ -696,10 +750,10 @@ export default {
     START
     Connect API
     */
-    async getIdentifier(generate_type_id) {
+    async getIdentifier(layout_generate_type_id) {
       this.identifier = [];
       let _res = await getLayoutIdentifier({
-        generate_type_id: generate_type_id,
+        layout_generate_type_id: layout_generate_type_id,
       });
       if (_res) {
         this.identifier = _res.data;
@@ -711,8 +765,8 @@ export default {
       if (_res) {
         for (const it of _res.data) {
           this.listType.push({
-            value: `${it.generate_type_id}`,
-            label: it.generate_type_name,
+            value: `${it.id}`,
+            label: it.name,
           });
         }
       }
@@ -749,7 +803,15 @@ export default {
       if (_res) {
         let _data = _res.data;
         this.formData = _data[0];
-        this.formData.layout_status = _data[0].layout_status ? true : false;
+        for (var i = 0; i < this.formData.items.length; i++) {
+          if (
+            this.formData.items[i].associated_field ==
+            this.formData.bpom_barcode_format
+          ) {
+            this.formData.items[i].set_bpom_barcode_format = true;
+            i = this.formData.items;
+          }
+        }
       }
     },
     /*
@@ -757,12 +819,12 @@ export default {
     */
 
     validation() {
-      let required = ["layout_name", "itf_name"];
+      let required = ["name", "itf_name"];
       let next = true;
       for (const key in this.formData) {
         if (required.includes(key) && !this.formData[key]) next = false;
       }
-      let required_item = ["generate_type_id", "associated_field"];
+      let required_item = ["layout_generate_type_id", "associated_field"];
       if (this.formData.items.length == 0) next = false;
       for (const it of this.formData.items) {
         for (const req of required_item) {
@@ -792,7 +854,7 @@ export default {
         let dataPost = param;
         this.$isLoading(true);
         let res = {};
-        if (this.action === "create" && dataPost.id) {
+        if (this.action === "Create" && dataPost.id) {
           delete dataPost.id;
         }
         if (dataPost.id) {
@@ -824,13 +886,13 @@ export default {
         let is_selected = false;
         let idn = this.formData.items[this.selectedIndex].field_associated;
         for (const it of idn) {
-          if (item.identifier_id == it.identifier_id) {
+          if (item.layout_identifier_id == it.layout_identifier_id) {
             is_selected = true;
           }
         }
         return {
           ...item,
-          identifier_AI: item.identifier_AI || "",
+          AI: item.layout_identifier_AI || "",
           is_selected: is_selected,
         };
       });
@@ -842,11 +904,12 @@ export default {
         );
         if (~idx) item.format_ref_data = this.listFormatDate[idx].label;
 
-        let title = `${item.identifier_name} ` + (item.format_ref_data || "");
+        let title =
+          `${item.layout_identifier_name} ` + (item.format_ref_data || "");
         return {
           ...item,
-          identifier_AI: item.identifier_AI || "",
-          identifier_name: title,
+          AI: item.layout_identifier_AI || "",
+          name: title,
         };
       });
     },

@@ -225,10 +225,10 @@
                 <CSelect
                   size="sm"
                   @change="handleChangePid(index - 1)"
-                  :value.sync="result[index - 1].layout_id"
+                  :value.sync="result[index - 1].conf_layout_id"
                   :options="list_layout"
                   placeholder="-"
-                  :is-valid="!error[index - 1].layout_id"
+                  :is-valid="!error[index - 1].conf_layout_id"
                 />
               </td>
             </tr>
@@ -307,7 +307,7 @@ export default {
               (key === "generated_sn_len" ||
                 key === "sn_charset" ||
                 key === "sn_generate_type" ||
-                key === "layout_id")
+                key === "conf_layout_id")
             ) {
               have_error = false;
             } else if (this.error[index][key]) {
@@ -368,8 +368,8 @@ export default {
       if (_res) {
         this.list_layout = [];
         for (const it of _res.data) {
-          it.value = it.layout_id;
-          it.label = it.layout_name;
+          it.value = it.id;
+          it.label = it.name;
           this.list_layout.push(it);
         }
       }
@@ -392,7 +392,7 @@ export default {
         sn_generate_type: false,
         id1: false,
         id2: false,
-        layout_id: false,
+        conf_layout_id: false,
       };
       return it;
     },
@@ -411,7 +411,7 @@ export default {
         sn_generate_type: null,
         sn_prefix: null,
         generated_sn_len: null,
-        layout_id: null,
+        conf_layout_id: null,
         error: true,
       };
       return it;
@@ -464,7 +464,7 @@ export default {
       let sn_generate_type = this.result[num].sn_generate_type;
       let generated_sn_len = this.result[num].generated_sn_len;
       let sn_charset = this.result[num].sn_charset;
-      let layout_id = this.result[num].layout_id;
+      let conf_layout_id = this.result[num].conf_layout_id;
       // Check id1 and id2 and generate type
       if (!id1 || !this.isNum(id1)) {
         this.error[num].id1 = true;
@@ -493,8 +493,8 @@ export default {
       if (!sn_charset && this.packaging_level != 1) {
         this.error[num].sn_charset = true;
       }
-      if (!layout_id && this.packaging_level != 1) {
-        this.error[num].layout_id = true;
+      if (!conf_layout_id && this.packaging_level != 1) {
+        this.error[num].conf_layout_id = true;
       }
       // Check epc type
       if (epc === "sscc") {

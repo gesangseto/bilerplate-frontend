@@ -118,7 +118,7 @@ export default {
           _classes: "font-weight-bold",
         },
         {
-          key: "layout_name",
+          key: "name",
           label: "Name",
           _classes: "font-weight-bold",
         },
