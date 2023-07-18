@@ -10,40 +10,20 @@
             <th style="text-align: center; width: 11%">ID 2</th>
             <th style="text-align: center; width: 8%">ID 3</th>
             <th style="text-align: center; width: 6%">ID 4</th>
-            <th
-              style="text-align: center; width: 6%"
-              v-if="packaging_level != 1"
-            >
-              SN Prefix (static)
+            <th style="text-align: center; width: 6%">
+              <p v-if="packaging_level != 1">SN Prefix (static)</p>
             </th>
-            <th
-              style="text-align: center; width: 5%"
-              v-if="packaging_level != 1"
-            >
-              SN Length (dynamic)
+            <th style="text-align: center; width: 5%">
+              <p v-if="packaging_level != 1">SN Length (dynamic)</p>
             </th>
-            <th
-              style="text-align: center; width: 12%"
-              v-if="packaging_level != 1"
-            >
-              Generate Type
+            <th style="text-align: center; width: 12%">
+              <p v-if="packaging_level != 1">Generate Type</p>
             </th>
-            <th
-              style="text-align: center; width: 12%"
-              v-if="packaging_level != 1"
-            >
-              Charset
+            <th style="text-align: center; width: 12%">
+              <p v-if="packaging_level != 1">Charset</p>
             </th>
-            <th
-              v-if="packaging_level != 1"
-              style="text-align: center; width: 18%"
-            >
-              Layout
-            </th>
-            <th
-              style="text-align: center; width: 53%"
-              v-if="packaging_level == 1"
-            ></th>
+            <th style="text-align: center; width: 18%">Layout</th>
+            <th style="text-align: center; width: 53%"></th>
           </thead>
           <tbody :v-if="total_pid > 0" v-for="index in total_pid" :key="index">
             <tr>
@@ -154,9 +134,10 @@
                   :is-valid="result[index - 1].id4 && !error[index - 1].id4"
                 />
               </td>
-              <td v-if="packaging_level != 1">
+              <td>
                 <br />
                 <CInput
+                  v-if="packaging_level != 1"
                   size="sm"
                   :disabled="readonly"
                   v-model="result[index - 1].sn_prefix"
@@ -176,9 +157,10 @@
                   :is-valid="!error[index - 1].sn_prefix"
                 />
               </td>
-              <td v-if="packaging_level != 1">
+              <td>
                 <br />
                 <CInput
+                  v-if="packaging_level != 1"
                   size="sm"
                   :disabled="readonly"
                   :readonly="result[index - 1].epc_type === 'sscc'"
@@ -196,9 +178,10 @@
                   :is-valid="!error[index - 1].generated_sn_len"
                 />
               </td>
-              <td v-if="packaging_level != 1">
+              <td>
                 <br />
                 <CSelect
+                  v-if="packaging_level != 1"
                   size="sm"
                   :disabled="readonly"
                   :value.sync="result[index - 1].sn_generate_type"
@@ -208,9 +191,10 @@
                   :is-valid="!error[index - 1].sn_generate_type"
                 />
               </td>
-              <td v-if="packaging_level != 1">
+              <td>
                 <br />
                 <CSelect
+                  v-if="packaging_level != 1"
                   size="sm"
                   :disabled="result[index - 1].epc_type === 'sscc' || readonly"
                   @change="handleChangePid(index - 1)"
@@ -220,7 +204,7 @@
                   :is-valid="!error[index - 1].sn_charset"
                 />
               </td>
-              <td v-if="packaging_level != 1">
+              <td>
                 <br />
                 <CSelect
                   size="sm"
@@ -493,7 +477,10 @@ export default {
       if (!sn_charset && this.packaging_level != 1) {
         this.error[num].sn_charset = true;
       }
-      if (!conf_layout_id && this.packaging_level != 1) {
+      // if (!conf_layout_id && this.packaging_level != 1) {
+      //   this.error[num].conf_layout_id = true;
+      // }
+      if (!conf_layout_id) {
         this.error[num].conf_layout_id = true;
       }
       // Check epc type
