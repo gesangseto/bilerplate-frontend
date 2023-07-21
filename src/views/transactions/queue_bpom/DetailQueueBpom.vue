@@ -212,18 +212,18 @@ export default {
           key: "parent",
           label: "Parent Barcode",
         },
-        {
-          key: "is_active",
-          label: "Is Active",
-        },
-        {
-          key: "is_reject",
-          label: "Is Reject",
-        },
-        {
-          key: "is_sample",
-          label: "Is Sample",
-        },
+        // {
+        //   key: "is_active",
+        //   label: "Is Active",
+        // },
+        // {
+        //   key: "is_reject",
+        //   label: "Is Reject",
+        // },
+        // {
+        //   key: "is_sample",
+        //   label: "Is Sample",
+        // },
         {
           key: "status_code",
           label: "Res Status",
@@ -235,6 +235,10 @@ export default {
         {
           key: "modified_date",
           label: "Last Modified",
+        },
+        {
+          key: "modified_by_full_name",
+          label: "Last Modified By",
         },
         {
           key: "status",
@@ -406,6 +410,7 @@ export default {
         }
         return {
           ...item,
+          modified_by_full_name: item.modified_by_full_name || "",
           type: humanize(item.type),
           level: humanize(level),
           status: humanize(item.status),
