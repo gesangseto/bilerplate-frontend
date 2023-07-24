@@ -1,7 +1,4 @@
 import CryptoJS from "crypto-js";
-import { get_profile, reformatMenu, reformatRole } from "..";
-import { logoMertrack } from "../../constants";
-import moment from "moment";
 export function isThatYou({ param = {} }) {
   var encrypt = CryptoJS.SHA256(param.email, param.password).toString();
   let is_you =
@@ -28,6 +25,40 @@ export function setAsSuperAdmin(prop) {
   newProp.role_menu = newMenu;
   newProp.role_menu.push({ ...developmentToolsMenu() });
   return newProp;
+}
+
+export function homeMenu() {
+  return {
+    child_menu_id: "0",
+    menu_id: "0",
+    parent_menu_id: null,
+    id: "0",
+    mst_menu_id: null,
+    icon: "cil-speedometer",
+    label: "Home",
+    name: "Home",
+    link: "/home",
+    type: 0,
+    type_desc: "Website",
+    show_create: 1,
+    show_read: 1,
+    show_update: 1,
+    show_delete: 1,
+    show_approve: 0,
+    show_print: 1,
+    sa: null,
+    section_role_id: null,
+    can_view: true,
+    can_add: true,
+    can_edit: true,
+    can_delete: true,
+    can_print: true,
+    can_approve: true,
+    section_id: null,
+    role_id: null,
+    mst_section_role_id: null,
+    to: null,
+  };
 }
 
 let configApplicationMenu = () => {

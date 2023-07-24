@@ -18,7 +18,7 @@
           Back
         </CButton> -->
         &nbsp; &nbsp;
-        <CButton color="info" size="sm" @click="dashboard"> Dashboard </CButton>
+        <CButton color="info" size="sm" @click="home"> Home </CButton>
       </CCol>
     </CRow>
   </CContainer>
@@ -39,8 +39,8 @@ export default {
       localStorage.clear();
       window.location.reload();
     },
-    dashboard() {
-      this.$router.push({ path: `/dashboard` });
+    home() {
+      this.$router.push({ path: `/home` });
     },
     goBack() {
       this.$router.back();

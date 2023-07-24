@@ -6,6 +6,9 @@ import { getUserId } from "../utils";
 const TheContainer = () => import("@/containers/TheContainer");
 
 // Views
+const Home = () => import("@/views/Home");
+
+// Views
 const Dashboard = () => import("@/views/Dashboard");
 
 // Views - Pages
@@ -264,6 +267,11 @@ export default router;
 
 function configRoutes() {
   var tempRoute = [
+    {
+      path: "home",
+      name: "Home",
+      component: Home,
+    },
     {
       path: "dashboard",
       name: "Dashboard",

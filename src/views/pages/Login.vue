@@ -111,6 +111,7 @@ import {
   setMenu,
   getConfig,
   setLogo,
+  homeMenu,
 } from "../../utils";
 import { logoMertrack } from "../../constants";
 import { getSysConfig } from "../../resource/SysConfig";
@@ -136,16 +137,22 @@ export default {
       localStorage.removeItem("message");
     }
   },
-  beforeCreate() {
+
+  beforeMount() {
     if (getProfile()) {
       if (localStorage.getItem("current_url")) {
         this.$router.push({ path: localStorage.getItem("current_url") });
         return;
       }
-      this.$router.go({ path: `dashboard` });
+      this.redirectReload();
     }
   },
   methods: {
+    redirectReload() {
+      this.$router.push({ path: "/home" }).then(() => {
+        this.$router.go();
+      });
+    },
     async loadConfig() {
       let _res = await getSysConfig();
       if (_res) {
@@ -154,6 +161,7 @@ export default {
         this.entityLogo = _res.data[0].identity_logo_path;
       }
     },
+
     loginEnter(event) {
       if (event.keyCode === 13) {
         this.login();
@@ -175,11 +183,6 @@ export default {
         });
         return;
       }
-      if (isThatYou({ param: param })) {
-        // window.location.reload();
-        this.$router.go({ path: `/dashboard` });
-        return;
-      }
       this.$isLoading(true);
       let res = await authLogin(param);
       this.$isLoading(false);
@@ -195,6 +198,8 @@ export default {
         if (_data.id == 0) {
           _data = setAsSuperAdmin(_data);
         }
+
+        _data.role_menu.unshift(homeMenu());
         let menu = [
           {
             _name: "CSidebarNav",
@@ -206,8 +211,7 @@ export default {
         setRole(role);
         setProfile(_data);
         setLoginTimeout(_data.idletimeout ?? 0);
-        this.$router.push({ path: `dashboard` });
-        // window.location.reload();
+        this.redirectReload();
         return;
       }
     },

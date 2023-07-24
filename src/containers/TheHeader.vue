@@ -160,7 +160,7 @@ export default {
   methods: {
     handleClickLink(it, index) {
       if (!index) {
-        this.$router.push({ path: `/dashboard` });
+        this.$router.push({ path: `/home` });
         return;
       }
       let url = this.path_url[index + 1];
