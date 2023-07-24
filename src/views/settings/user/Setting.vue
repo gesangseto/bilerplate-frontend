@@ -37,15 +37,15 @@
     </CRow>
 
     <CRow>
-      <CCol col="12" xl="12">
+      <CCol col="6" xl="6">
         <CCard>
           <CCardHeader>
-            <strong>Setting</strong>
+            <strong>Update Password</strong>
           </CCardHeader>
           <CCardBody>
             <CRow class="mt-3"
-              ><CCol md="3"> Old Password </CCol>
-              <CCol md="3">
+              ><CCol md="6"> Old Password </CCol>
+              <CCol md="6">
                 <CInput
                   placeholder="Old Password"
                   type="password"
@@ -58,8 +58,8 @@
                 /> </CCol
             ></CRow>
             <CRow
-              ><CCol md="3"> New Password </CCol>
-              <CCol md="3">
+              ><CCol md="6"> New Password </CCol>
+              <CCol md="6">
                 <CInput
                   placeholder="New Password"
                   type="password"
@@ -72,8 +72,8 @@
                 /> </CCol
             ></CRow>
             <CRow
-              ><CCol md="3"> Confirm New Password </CCol>
-              <CCol md="3">
+              ><CCol md="6"> Confirm New Password </CCol>
+              <CCol md="6">
                 <CInput
                   placeholder="Confirm Password"
                   type="password"
@@ -102,14 +102,46 @@
           >
         </CCard>
       </CCol>
+      <CCol col="6" xl="6">
+        <CCard>
+          <CCardHeader>
+            <strong>Settings App</strong>
+          </CCardHeader>
+          <CCardBody>
+            <CRow class="mt-3">
+              <CCol md="6"> Accordion Effect </CCol>
+              <CCol md="6">
+                <SwitchDefault
+                  :default_value="conf_user_app.accordion"
+                  v-on:onChange="conf_user_app.accordion = $event"
+                />
+              </CCol>
+            </CRow>
+          </CCardBody>
+          <CCardFooter
+            ><CButton
+              size="sm"
+              class="float-right ml-2"
+              color="success"
+              @click="changeConf"
+              >Submit</CButton
+            ></CCardFooter
+          >
+        </CCard>
+      </CCol>
     </CRow>
   </div>
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import { updateMstUser } from "../../../resource/MstUser";
 import { authChangePwd } from "../../../resource/SysAuth";
-import { getProfile } from "../../../utils";
+import {
+  getConfUserApp,
+  getProfile,
+  getUserId,
+  setProfile,
+} from "../../../utils";
 export default {
   name: "UserSetting",
   components: {},
@@ -131,6 +163,7 @@ export default {
         newPassword: "",
         confirmPassword: "",
       },
+      conf_user_app: {},
       profile: {},
       required: {
         oldPassword: { error: false, message: "Old password is required" },
@@ -144,6 +177,7 @@ export default {
   },
   mounted() {
     this.profile = getProfile();
+    this.conf_user_app = getConfUserApp();
   },
   methods: {
     checkValidation() {
@@ -191,6 +225,16 @@ export default {
         duration: 5000,
       });
       if (!res["error"]) this.$router.back();
+    },
+    async changeConf() {
+      let profile = getProfile();
+      profile.conf_app = this.conf_user_app;
+      setProfile(profile);
+      let params = {
+        id: getUserId(),
+        conf_app: this.conf_user_app,
+      };
+      await updateMstUser(params);
     },
   },
 };

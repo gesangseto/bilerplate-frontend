@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { getLogo, getMenu } from "../utils";
+import { getConfUserApp, getLogo, getMenu } from "../utils";
 import nav from "./_nav";
 
 export default {
@@ -102,6 +102,7 @@ export default {
       backupNavMenu: [],
       full_path: null,
       part_path: [],
+      conf_user_app: null,
     };
   },
   name: "TheSidebar",
@@ -154,11 +155,14 @@ export default {
       return JSON.parse(menus);
     },
     getExpandMenu(index) {
+      let conf_app = getConfUserApp();
       if (this.navMenu[index].expand == true) {
         this.navMenu[index].expand = false;
         return;
       }
-      this.navMenu = this.renderMenu();
+      if (conf_app.accordion) {
+        this.navMenu = this.renderMenu();
+      }
       setTimeout(() => {
         this.navMenu[index].expand = !this.navMenu[index].expand;
       }, 100);

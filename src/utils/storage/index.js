@@ -43,6 +43,14 @@ export function getProfile() {
     return null;
   }
 }
+export function getConfUserApp() {
+  try {
+    let profile = getProfile();
+    return profile.conf_app;
+  } catch (error) {
+    return {};
+  }
+}
 export function getUserId() {
   try {
     let user = getProfile();
