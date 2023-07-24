@@ -325,10 +325,7 @@ export default {
       exportDataV3({
         alert: true,
         param: {
-          SearchType: "id",
-          SearchTypeText: "ID",
-          SearchVal1: this.$route.params.id,
-          SearchVal1Text: this.$route.params.id,
+          id: this.$route.params.id,
         },
         exportType: type,
         url: "/v3/transaction/inbound",
