@@ -144,6 +144,10 @@ export default {
           label: "L1 Qty",
         },
         {
+          key: "remark",
+          label: "Remark",
+        },
+        {
           key: "action",
           label: "Selection",
         },
@@ -268,6 +272,7 @@ export default {
         status: 1,
         parent: null,
         raw: true,
+        show_remark: true,
       };
       param = new URLSearchParams(param).toString();
       let _url = `/v3/helper/detail-item/stock?${param}`;
