@@ -138,6 +138,11 @@
         </CCardBody>
         <CCardFooter>
           <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -156,7 +161,12 @@
 <script>
 import moment from "moment";
 import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, getUserId, humanize } from "../../../utils";
+import {
+  calculatePaginationV3,
+  exportDataV3,
+  getUserId,
+  humanize,
+} from "../../../utils";
 
 export default {
   name: "DetailQueueBpom",
@@ -397,6 +407,16 @@ export default {
     closeModal() {
       this.datas = [];
       this.viewModal = false;
+    },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          trx_ref_id: this.$route.params.id,
+        },
+        exportType: type,
+        url: "/v3/transaction/queue-bpom",
+      });
     },
   },
   computed: {

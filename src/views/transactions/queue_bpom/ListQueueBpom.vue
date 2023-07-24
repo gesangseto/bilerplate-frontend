@@ -65,16 +65,6 @@
                   @update:activePage="pageChange"
                 />
               </template>
-              <ButtonPermission
-                exportType="excel"
-                :permission="'print'"
-                @click="handleClickExport('xls')"
-              />
-              <ButtonPermission
-                exportType="pdf"
-                :permission="'print'"
-                @click="handleClickExport('pdf')"
-              />
             </CCol>
           </CRow>
         </CCardBody>
@@ -88,7 +78,6 @@ import $axiosMertrack from "../../../apiMertrack";
 import {
   calculatePaginationV3,
   exportDataV3,
-  getToken,
   getUserId,
   humanize,
 } from "../../../utils";
@@ -275,14 +264,6 @@ export default {
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
       this.loadData();
-    },
-    handleClickExport(type) {
-      exportDataV3({
-        alert: true,
-        param: this.filter,
-        exportType: type,
-        url: "/v3/transaction/queue-bpom",
-      });
     },
     pageChange(page) {
       this.filter.page = page;
