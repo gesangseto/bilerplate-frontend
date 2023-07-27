@@ -41,23 +41,31 @@
 }
 </style>
 <script>
-import bwipjs from "bwip-js";
-import Table from "../base/Table.vue";
-import invalid_barcode from "../../assets/invalid_barcode.png";
+import bwipjs from 'bwip-js';
+import invalid_barcode from '../../assets/invalid_barcode.png';
 export default {
-  components: { Table },
-  name: "ModalBarcodeGenerator",
+  name: 'ModalBarcodeGenerator',
   props: { property: Object },
   watch: {
     property: {
       deep: true,
-      handler(n, o) {
+      handler(n) {
+        console.log(n);
         if (Object.keys(n).length > 0) {
-          this.showModal = true;
-          let barcode = `(${n.epc_type == "sscc" ? "00" : "01"})`;
-          barcode += `${n.gtin_sscc}`;
-          if (n.epc_type == "sgtin") barcode += `(21)${n.serial}`;
-          this.generateBarcode(barcode);
+          if (n.trx_pack_epc_type) {
+            this.showModal = true;
+            let barcode = `(${n.trx_pack_epc_type == 'sscc' ? '00' : '01'})`;
+            barcode += `${n.trx_pack_gtin_sscc}`;
+            if (n.trx_pack_epc_type == 'sgtin')
+              barcode += `(21)${n.trx_pack_serial}`;
+            this.generateBarcode(barcode);
+          } else {
+            this.showModal = true;
+            let barcode = `(${n.epc_type == 'sscc' ? '00' : '01'})`;
+            barcode += `${n.gtin_sscc}`;
+            if (n.epc_type == 'sgtin') barcode += `(21)${n.serial}`;
+            this.generateBarcode(barcode);
+          }
         }
       },
     },
@@ -80,21 +88,21 @@ export default {
         return;
       }
       let parse = barcode;
-      this.barcode_hr = this.renderEpcHr(parse) ?? " ";
-      bwipjs.toCanvas("canvasBarcode", {
+      this.barcode_hr = this.renderEpcHr(parse) ?? ' ';
+      bwipjs.toCanvas('canvasBarcode', {
         bcid: `gs1datamatrix`, // Barcode type
         text: parse, // Text to encode
         scaleX: 4, // 3x scaling factor
         scaleY: 4, // 3x scaling factor
         // height: 3, // Bar height, in millimeters
         includetext: true, // Show human-readable text
-        textxalign: "center", // Always good to set this
+        textxalign: 'center', // Always good to set this
       });
       return;
     },
     invalidBarcode() {
       let cvn = this.$refs.canvasBarcode;
-      let ctx = cvn.getContext("2d");
+      let ctx = cvn.getContext('2d');
       cvn.width = 140;
       cvn.height = 140;
       let bg = new Image();
@@ -105,7 +113,7 @@ export default {
       return;
     },
     renderEpcHr(item) {
-      item = item.replace(/\(/g, " (");
+      item = item.replace(/\(/g, ' (');
       item = item.trim();
       return item;
     },
