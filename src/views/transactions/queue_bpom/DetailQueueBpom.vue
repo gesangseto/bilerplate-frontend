@@ -31,67 +31,17 @@
                         />
                       </td>
                     </tr>
-                    <tr style="height: 50px">
-                      <td style="width: 40%">Nie</td>
-                      <td style="width: 60%">
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="formData.nie"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td style="width: 40%">GTIN</td>
-                      <td style="width: 60%">
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="formData.gtin"
-                        />
-                      </td>
-                    </tr>
                   </table>
                 </CCol>
                 <CCol md="6">
                   <table style="width: 100%">
                     <tr style="height: 50px">
-                      <td>ID Kemasan</td>
+                      <td>Product Name [Bacth]</td>
                       <td>
-                        <input
+                        <textarea
                           class="form-control"
                           readonly
-                          v-model="formData.id_kemasan"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Batch No</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="formData.batch_no"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Lot No</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="formData.lot_no"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Exp Date</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="formData.exp_date"
+                          v-model="formData.product_name_batch"
                         />
                       </td>
                     </tr>
@@ -159,40 +109,40 @@
 </template>
 
 <script>
-import moment from "moment";
-import $axiosMertrack from "../../../apiMertrack";
+import moment from 'moment';
+import $axiosMertrack from '../../../apiMertrack';
 import {
   calculatePaginationV3,
   exportDataV3,
   getUserId,
   humanize,
-} from "../../../utils";
+} from '../../../utils';
 
 export default {
-  name: "DetailQueueBpom",
+  name: 'DetailQueueBpom',
   mounted() {
-    this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     this.loadData();
     this.loadMenu();
   },
   data() {
     return {
-      action: "",
+      action: '',
       detail_item: {},
       datas: [],
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       sn: false,
       test: null,
-      status: "",
+      status: '',
       formData: {},
       formConnector: {
         connector_action_id: null,
@@ -206,21 +156,25 @@ export default {
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       items: [],
       fields: [
         {
-          key: "type",
-          label: "Type",
+          key: 'type',
+          label: 'Type',
         },
         {
-          key: "level",
-          label: "Level",
+          key: 'level',
+          label: 'Level',
         },
         {
-          key: "parent",
-          label: "Parent Barcode",
+          key: 'parent',
+          label: 'Parent Barcode',
+        },
+        {
+          key: 'batch_no',
+          label: 'Batch No',
         },
         // {
         //   key: "is_active",
@@ -235,24 +189,24 @@ export default {
         //   label: "Is Sample",
         // },
         {
-          key: "status_code",
-          label: "Res Status",
+          key: 'status_code',
+          label: 'Res Status',
         },
         {
-          key: "message",
-          label: "Res Message",
+          key: 'message',
+          label: 'Res Message',
         },
         {
-          key: "modified_date",
-          label: "Last Modified",
+          key: 'modified_date',
+          label: 'Last Modified',
         },
         {
-          key: "modified_by_full_name",
-          label: "Last Modified By",
+          key: 'modified_by_full_name',
+          label: 'Last Modified By',
         },
         {
-          key: "status",
-          label: "Status",
+          key: 'status',
+          label: 'Status',
         },
       ],
     };
@@ -267,7 +221,7 @@ export default {
       },
     },
     formConnector: {
-      handler(n, o) {
+      handler(n) {
         if (n.data.menu_id) {
           this.loadConnector();
         }
@@ -295,9 +249,9 @@ export default {
       let path = this.$route.fullPath;
       let params = this.$route.params;
       for (const key in params) {
-        path = path.replace(params[key], "");
+        path = path.replace(params[key], '');
       }
-      path = path.replace(/\/+$/, "");
+      path = path.replace(/\/+$/, '');
       $axiosMertrack
         .get(`/v3/master/menu?link=${path}`)
         .then((res) => {
@@ -307,16 +261,16 @@ export default {
         .catch((e) => {
           this.$toast.open({
             message: `${e.message}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       return;
     },
     loadConnector() {
-      let param = { key: "menu_id", value: this.formConnector.data.menu_id };
+      let param = { key: 'menu_id', value: this.formConnector.data.menu_id };
       param = new URLSearchParams(param).toString();
       $axiosMertrack
         .get(`/v3/connector/connector-action?${param}`)
@@ -325,19 +279,19 @@ export default {
           if (data.error || data.data.length === 0) {
             this.$toast.open({
               message: `The Menu you have visited is not assigned to any Connector Action.`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             this.formConnector.connector_action_id = null;
             return;
-          } else if (data.data[0].status !== "Active") {
+          } else if (data.data[0].status !== 'Active') {
             this.$toast.open({
               message: `The Menu you have selected is not assigned to Active Connector Action.`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             this.formConnector.connector_action_id = null;
@@ -348,9 +302,9 @@ export default {
         .catch((e) => {
           this.$toast.open({
             message: `${e.message}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
@@ -360,16 +314,16 @@ export default {
       let param = this.formConnector;
       param.data.trx_ref_id = item.trx_ref_id;
       $axiosMertrack
-        .post("/v3/connector/connector-action/execute", param)
+        .post('/v3/connector/connector-action/execute', param)
         .then((result) => {
           this.$isLoading(false);
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
-              : "Data has been saved successfully.",
-            type: result.data.error ? "error" : "success",
+              : 'Data has been saved successfully.',
+            type: result.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           if (!result.data.error) this.loadData();
@@ -380,7 +334,7 @@ export default {
             message: `${err}`,
             type: `error`,
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
@@ -393,9 +347,9 @@ export default {
       if (item.packaging_level == 1) {
         this.$toast.open({
           message: `No detail SN data to be viewed, SN [${item.serial_id}] is Packaging L1`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -415,14 +369,14 @@ export default {
           trx_ref_id: this.$route.params.id,
         },
         exportType: type,
-        url: "/v3/transaction/queue-bpom",
+        url: '/v3/transaction/queue-bpom',
       });
     },
   },
   computed: {
     details() {
       return this.items.map((item) => {
-        let level = "";
+        let level = '';
         if (item.barcode_level) {
           level = item.barcode_level;
         } else if (item.parent_type) {
@@ -430,15 +384,15 @@ export default {
         }
         return {
           ...item,
-          modified_by_full_name: item.modified_by_full_name || "",
+          modified_by_full_name: item.modified_by_full_name || '',
           type: humanize(item.type),
           level: humanize(level),
           status: humanize(item.status),
-          status_code: item.status_code || "",
-          message: item.message || "",
-          parent: item.parent || "",
+          status_code: item.status_code || '',
+          message: item.message || '',
+          parent: item.parent || '',
           modified_date: moment(item.modified_date).format(
-            "YYYY-MM-DD HH:mm:ss"
+            'YYYY-MM-DD HH:mm:ss'
           ),
         };
       });

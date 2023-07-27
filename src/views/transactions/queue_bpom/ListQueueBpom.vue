@@ -74,17 +74,12 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import {
-  calculatePaginationV3,
-  exportDataV3,
-  getUserId,
-  humanize,
-} from "../../../utils";
-import { dateFilter } from "../../../constants";
-import moment from "moment";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, getUserId, humanize } from '../../../utils';
+import { dateFilter } from '../../../constants';
+import moment from 'moment';
 export default {
-  name: "ListQueueBpom",
+  name: 'ListQueueBpom',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -101,20 +96,20 @@ export default {
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_downloadProp: {
-        size: "sm",
-        class: "float-right",
-        color: "secondary",
-        icon: "download",
-        text: "",
-        tooltip: "Download csv",
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'download',
+        text: '',
+        tooltip: 'Download csv',
       },
       btn_updateProp: {
-        size: "sm",
-        class: "float-right",
-        color: "success",
-        icon: "paper-plane",
-        text: "",
-        tooltip: "Send via API now",
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'paper-plane',
+        text: '',
+        tooltip: 'Send via API now',
       },
       formData: {
         connector_action_id: null,
@@ -130,58 +125,38 @@ export default {
       dataUsers: [],
       fields: [
         {
-          key: "trx_id",
-          label: "Trx ID",
-          _classes: "font-weight-bold",
+          key: 'trx_id',
+          label: 'Trx ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "trx_ref_name",
-          label: "Trx Name",
-          _classes: "font-weight-bold",
+          key: 'trx_ref_name',
+          label: 'Trx Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "nie",
-          label: "Nie",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch]',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'status',
+          label: 'Status',
         },
         {
-          key: "lot_no",
-          label: "Batch No",
+          key: 'modified_date',
+          label: 'Last API Sent Date',
         },
         {
-          key: "exp_date",
-          label: "Exp Date",
-        },
-        {
-          key: "gtin",
-          label: "GTIN",
-        },
-        {
-          key: "id_kemasan",
-          label: "Kemasan",
-        },
-        {
-          key: "status",
-          label: "Status",
-        },
-        {
-          key: "modified_date",
-          label: "Last API Sent Date",
-        },
-        {
-          key: "action",
-          _style: "width:10%",
-          label: "Action",
+          key: 'action',
+          _style: 'width:10%',
+          label: 'Action',
         },
       ],
     };
   },
   watch: {
     formData: {
-      handler(n, o) {
+      handler(n) {
         if (n.data.menu_id) {
           this.loadConnector();
         }
@@ -213,16 +188,16 @@ export default {
         .catch((e) => {
           this.$toast.open({
             message: `${e.message}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       return;
     },
     loadConnector() {
-      let param = { key: "menu_id", value: this.formData.data.menu_id };
+      let param = { key: 'menu_id', value: this.formData.data.menu_id };
       param = new URLSearchParams(param).toString();
       $axiosMertrack
         .get(`/v3/connector/connector-action?${param}`)
@@ -231,19 +206,19 @@ export default {
           if (data.error || data.data.length === 0) {
             this.$toast.open({
               message: `The Menu you have visited is not assigned to any Connector Action.`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             this.formData.connector_action_id = null;
             return;
-          } else if (data.data[0].status !== "Active") {
+          } else if (data.data[0].status !== 'Active') {
             this.$toast.open({
               message: `The Menu you have selected is not assigned to Active Connector Action.`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             this.formData.connector_action_id = null;
@@ -254,9 +229,9 @@ export default {
         .catch((e) => {
           this.$toast.open({
             message: `${e.message}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
@@ -274,21 +249,20 @@ export default {
       this.filter.page = 1;
       this.loadData();
     },
-    handleDownloadClick(item) {},
     sendToBpom(item) {
       let param = this.formData;
       param.data.trx_ref_id = item.trx_ref_id;
       $axiosMertrack
-        .post("/v3/connector/connector-action/execute", param)
+        .post('/v3/connector/connector-action/execute', param)
         .then((result) => {
           this.$isLoading(false);
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
-              : "Data has been saved successfully.",
-            type: result.data.error ? "error" : "success",
+              : 'Data has been saved successfully.',
+            type: result.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           if (!result.data.error) this.loadData();
@@ -299,7 +273,7 @@ export default {
             message: `${err}`,
             type: `error`,
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
@@ -315,7 +289,7 @@ export default {
           ...item,
           // transaction_desc: item.transaction_desc.charAt(0).toUpperCase(),
           modified_date: moment(item.modified_date).format(
-            "YYYY-MM-DD HH:mm:ss"
+            'YYYY-MM-DD HH:mm:ss'
           ),
           status: humanize(item.status),
         };
