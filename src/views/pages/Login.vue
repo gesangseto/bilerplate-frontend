@@ -99,7 +99,6 @@
 <script>
 import {
   reformatRole,
-  isThatYou,
   setAsSuperAdmin,
   convertMenuV3,
   flatten,
@@ -109,15 +108,13 @@ import {
   setProfile,
   getProfile,
   setMenu,
-  getConfig,
   setLogo,
-  homeMenu,
-} from "../../utils";
-import { logoMertrack } from "../../constants";
-import { getSysConfig } from "../../resource/SysConfig";
-import { authLogin } from "../../resource/SysAuth";
+} from '../../utils';
+import { logoMertrack } from '../../constants';
+import { getSysConfig } from '../../resource/SysConfig';
+import { authLogin } from '../../resource/SysAuth';
 export default {
-  name: "Login",
+  name: 'Login',
 
   data() {
     return {
@@ -132,16 +129,16 @@ export default {
   mounted() {
     this.loadConfig();
     this.message = null;
-    if (!this.message && localStorage.getItem("message")) {
-      this.message = localStorage.getItem("message");
-      localStorage.removeItem("message");
+    if (!this.message && localStorage.getItem('message')) {
+      this.message = localStorage.getItem('message');
+      localStorage.removeItem('message');
     }
   },
 
   beforeMount() {
     if (getProfile()) {
-      if (localStorage.getItem("current_url")) {
-        this.$router.push({ path: localStorage.getItem("current_url") });
+      if (localStorage.getItem('current_url')) {
+        this.$router.push({ path: localStorage.getItem('current_url') });
         return;
       }
       this.redirectReload();
@@ -149,7 +146,7 @@ export default {
   },
   methods: {
     redirectReload() {
-      this.$router.push({ path: "/home" }).then(() => {
+      this.$router.push({ path: '/home' }).then(() => {
         this.$router.go();
       });
     },
@@ -176,9 +173,9 @@ export default {
       if (!this.email || !this.password) {
         this.$toast.open({
           message: `Please enter username and password`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -189,9 +186,9 @@ export default {
       if (res) {
         this.$toast.open({
           message: `${res.message}`,
-          type: res.error ? "error" : "success",
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         let _data = res.data[0];
@@ -199,14 +196,13 @@ export default {
           _data = setAsSuperAdmin(_data);
         }
 
-        _data.role_menu.unshift(homeMenu());
         let menu = [
           {
-            _name: "CSidebarNav",
+            _name: 'CSidebarNav',
             _children: convertMenuV3(_data.role_menu),
           },
         ];
-        let role = reformatRole(flatten(_data.role_menu, "items"));
+        let role = reformatRole(flatten(_data.role_menu, 'items'));
         setMenu(menu);
         setRole(role);
         setProfile(_data);

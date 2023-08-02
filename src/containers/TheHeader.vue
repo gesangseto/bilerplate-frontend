@@ -101,27 +101,27 @@
 </template>
 
 <script>
-import TheHeaderDropdownAccnt from "./TheHeaderDropdownAccnt";
+import TheHeaderDropdownAccnt from './TheHeaderDropdownAccnt';
 import {
   getMstNotification,
   updateMstNotification,
-} from "../resource/MstNotification";
+} from '../resource/MstNotification';
 import {
   setLoginTimeout,
   getLoginTimeout,
   getRole,
   getProfile,
-} from "../utils";
-import moment from "moment";
+} from '../utils';
+import moment from 'moment';
 export default {
-  name: "TheHeader",
+  name: 'TheHeader',
   components: {
     TheHeaderDropdownAccnt,
   },
   data() {
     return {
       path_url: [],
-      then: moment().add(15, "minutes"),
+      then: moment().add(15, 'minutes'),
       current_route: null,
       limit: 30,
       timeout: 0,
@@ -164,10 +164,10 @@ export default {
         return;
       }
       let url = this.path_url[index + 1];
-      if (url.path.indexOf("/:") < 1) {
+      if (url.path.indexOf('/:') < 1) {
         url = url.path;
       } else {
-        url = url.path.substring(0, url.path.indexOf("/:"));
+        url = url.path.substring(0, url.path.indexOf('/:'));
       }
       if (url !== this.current_route.path) {
         this.$router.push({ path: `${url}` });
@@ -178,10 +178,10 @@ export default {
     getDifferentSecond() {
       let time_out = getLoginTimeout();
       let time_now = moment(new Date())
-        .add(1, "seconds")
-        .format("DD/MM/YYYY HH:mm:ss:SSS");
-      let time_diff = moment(time_out, "DD/MM/YYYY HH:mm:ss").diff(
-        moment(time_now, "DD/MM/YYYY HH:mm:ss")
+        .add(1, 'seconds')
+        .format('DD/MM/YYYY HH:mm:ss:SSS');
+      let time_diff = moment(time_out, 'DD/MM/YYYY HH:mm:ss').diff(
+        moment(time_now, 'DD/MM/YYYY HH:mm:ss')
       );
       let sisa = parseInt(time_diff / 1000);
       return sisa;
@@ -229,20 +229,21 @@ export default {
           }
         }
       }
-      if (route.path === "/setting/user-setting") {
+      let allow_access = ['/setting/user-setting', '/home'];
+      if (allow_access.includes(route.path)) {
         can_access = true;
       }
-      if (can_access === "false" || !can_access) {
+      if (can_access === 'false' || !can_access) {
         this.$router.push({ path: `/oops` });
       }
     },
     async readNotif(item) {
       let _res = await updateMstNotification({ id: [item.id] });
       this.$toast.open({
-        message: _res.error ? _res.message : "Data has been saved succesfully ",
-        type: _res.error ? "error" : "success",
+        message: _res.error ? _res.message : 'Data has been saved succesfully ',
+        type: _res.error ? 'error' : 'success',
         dissmissible: true,
-        position: "top-right",
+        position: 'top-right',
         duration: 5000,
       });
       this.getNotif();
@@ -250,7 +251,7 @@ export default {
     async getNotif() {
       let _res = await getMstNotification();
       if (_res) {
-        if (_res.status_code && _res.status_code == "401") {
+        if (_res.status_code && _res.status_code == '401') {
           this.sessionExpired();
           return;
         }
@@ -261,10 +262,10 @@ export default {
     },
     sessionExpired() {
       localStorage.clear();
-      let message = "Your login session has expired, please login again.";
-      localStorage.setItem("current_url", this.current_route.path);
-      localStorage.setItem("message", message);
-      this.$router.push({ path: "/login" });
+      let message = 'Your login session has expired, please login again.';
+      localStorage.setItem('current_url', this.current_route.path);
+      localStorage.setItem('message', message);
+      this.$router.push({ path: '/login' });
       setLoginTimeout(-1);
       // window.location.reload();
       return;

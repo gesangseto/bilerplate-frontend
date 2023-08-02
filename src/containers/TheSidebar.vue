@@ -8,7 +8,7 @@
     :show="show"
     @update:show="(value) => $store.commit('set', ['sidebarShow', value])"
   >
-    <CSidebarBrand to="/">
+    <CSidebarBrand to="/home">
       <div
         class="col-sm-12"
         style="background-color: #000060"
@@ -89,8 +89,8 @@
 </template>
 
 <script>
-import { getConfUserApp, getLogo, getMenu } from "../utils";
-import nav from "./_nav";
+import { getConfUserApp, getLogo, getMenu } from '../utils';
+import nav from './_nav';
 
 export default {
   data() {
@@ -105,14 +105,14 @@ export default {
       conf_user_app: null,
     };
   },
-  name: "TheSidebar",
+  name: 'TheSidebar',
   beforeCreate() {
     let navmenu = nav;
     navmenu[0]._children = getMenu();
     this.nav = navmenu;
   },
   mounted() {
-    console.log("%cWhat are You looking for?", "color:red;font-size:24pt");
+    console.log('%cWhat are You looking for?', 'color:red;font-size:24pt');
     this.navMenu = this.renderMenu();
     this.entityLogo = getLogo();
   },
@@ -130,12 +130,8 @@ export default {
       handler(route) {
         // this.full_path = route.matched[1];
         this.full_path = route.path;
-        this.part_path = this.full_path.split("/");
+        this.part_path = this.full_path.split('/');
       },
-    },
-    show: {
-      immediate: true,
-      handler(n, o) {},
     },
   },
   methods: {
