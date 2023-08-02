@@ -110,14 +110,14 @@
                     @click="handleClickSerial(item, total_child + 1 - idx)"
                   >
                     [{{
-                      item.epc_type == "sscc"
+                      item.epc_type == 'sscc'
                         ? item.company_prefix
                         : item.gtin_sscc
                     }}] {{ item.serial }}
                     {{
                       total_child + 1 - idx != 1
                         ? ` - [${item.quantity_child}]`
-                        : ""
+                        : ''
                     }}
                   </option>
                 </select>
@@ -137,17 +137,18 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
+import $axiosMertrack from '../../apiMertrack';
 export default {
-  name: "DetailTransactionV3",
+  name: 'DetailTransactionV3',
   props: { item: Object, disable_header: Boolean },
   mounted() {
     if (this.item) {
       const _it = JSON.parse(JSON.stringify(this.item));
       this.trx_detail_id = _it.id;
       this.detail_product = _it;
+      this.detail_product.expired_date = _it.expired_date || _it.exp_date;
       this.detail_product.gtin_cp =
-        _it.epc_type == "sscc" ? _it.company_prefix : _it.gtin_sscc;
+        _it.epc_type == 'sscc' ? _it.company_prefix : _it.gtin_sscc;
       this.total_child = _it.packaging_level - 1 ?? 1;
       this.getDetailItem(_it, _it.packaging_level);
     }
@@ -220,6 +221,10 @@ export default {
           param = { pss_id_parent: item.pss_id, item_id: item.id };
           param = new URLSearchParams(param).toString();
           url = `/v3/helper/detail-item/transaction?raw=true&${param}`;
+        } else if (item.batch_list_id) {
+          param = { parent: item.id };
+          param = new URLSearchParams(param).toString();
+          url = `/v3/helper/detail-item/production?raw=true&${param}`;
         } else {
           param = { parent: item.id };
           param = new URLSearchParams(param).toString();
@@ -235,16 +240,16 @@ export default {
           }
           let data = result.data.data;
           if (!this.detail_product.name && !this.detail_product.no) {
-            this.detail_product.no = data[0]["no"];
-            this.detail_product.name = data[0]["name"];
-            this.detail_product.nie = data[0]["nie"];
-            this.detail_product.expired_date = data[0]["expired_date"];
-            this.detail_product.mfg_date = data[0]["mfg_date"];
+            this.detail_product.no = data[0]['no'];
+            this.detail_product.name = data[0]['name'];
+            this.detail_product.nie = data[0]['nie'];
+            this.detail_product.expired_date = data[0]['expired_date'];
+            this.detail_product.mfg_date = data[0]['mfg_date'];
           }
           let qty = 0;
           if (
-            (data && data[0].serial == "0000000000") ||
-            data[0].serial == "0000000000"
+            (data && data[0].serial == '0000000000') ||
+            data[0].serial == '0000000000'
           ) {
             qty = data[0].quantity;
           } else {

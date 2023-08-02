@@ -1,8 +1,8 @@
 import $axiosMertrack from '../apiMertrack';
 
-let url = `/v3/master/supplier`;
+let url = `/v3/production/proccess-order`;
 
-export const getMstSupplier = async (param = Object) => {
+export const getProccessOrder = async (param = Object) => {
   var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
@@ -21,7 +21,7 @@ export const getMstSupplier = async (param = Object) => {
   });
 };
 
-export const insertMstSupplier = async (param = Object) => {
+export const insertProccessOrder = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -39,30 +39,14 @@ export const insertMstSupplier = async (param = Object) => {
   });
 };
 
-export const updateMstSupplier = async (param = Object) => {
+export const generateProccessOrder = async (param = Object) => {
   if (!param) {
     return false;
   }
+
   return new Promise((resolve) => {
     $axiosMertrack
       .post(url, param)
-      .then((result) => {
-        let res = result.data;
-        return resolve(res);
-      })
-      .catch((e) => {
-        console.log('ERROR => ', e);
-        return resolve(false);
-      });
-  });
-};
-
-export const deleteMstSupplier = async (param = Object) => {
-  if (!param.id) return false;
-  param = { data: { ...param } };
-  return new Promise((resolve) => {
-    $axiosMertrack
-      .delete(url, param)
       .then((result) => {
         let res = result.data;
         return resolve(res);
