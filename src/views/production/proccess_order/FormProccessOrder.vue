@@ -253,6 +253,15 @@
             ><CIcon name="cil-check-circle" /> Submit</CButton
           >
           <CButton
+            v-if="action == 'Approve'"
+            type="submit"
+            size="sm"
+            @click="save()"
+            class="mr-2"
+            color="primary"
+            ><CIcon name="cil-check-circle" /> Release</CButton
+          >
+          <CButton
             v-if="formData.status == 0"
             type="submit"
             size="sm"
@@ -403,7 +412,13 @@ export default {
     // cek parameter url
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+      this.action == 'Create'
+        ? 'ADD'
+        : this.action == 'Read'
+        ? 'VIEW'
+        : this.action == 'Update'
+        ? 'EDIT'
+        : 'APPROVE';
     // get product
     let _product = await getMstProduct({ product_type: 1, status: 'Active' });
     if (_product) {
