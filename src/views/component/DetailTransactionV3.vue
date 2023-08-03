@@ -216,6 +216,7 @@ export default {
           this.loading[`level_${pack_level}`] = true;
         }
         let param = {};
+        console.log(item);
         let url = `/v3/helper/detail-item/transaction?${param}`;
         if (item.pss_id && item.id) {
           param = { pss_id_parent: item.pss_id, item_id: item.id };
@@ -225,6 +226,13 @@ export default {
           param = { parent: item.id };
           param = new URLSearchParams(param).toString();
           url = `/v3/helper/detail-item/production?raw=true&${param}`;
+        } else if (item.pre_inbound_id) {
+          param = {
+            psl_id_parent: item.psl_id,
+            pre_inbound_id: item.pre_inbound_id,
+          };
+          param = new URLSearchParams(param).toString();
+          url = `/v3/helper/detail-item/pre-inbound?raw=true&${param}`;
         } else {
           param = { parent: item.id };
           param = new URLSearchParams(param).toString();

@@ -85,6 +85,11 @@ const FormUploadXML = () => import('@/views/transactions/upload/FormUploadXML');
 const DetailUploadXML = () =>
   import('@/views/transactions/upload/DetailUploadXML');
 const ListUploadXML = () => import('@/views/transactions/upload/ListUploadXML');
+// Pre-Inbound
+const ListPreInbound = () =>
+  import('@/views/transactions/pre-inbound/ListPreInbound');
+const DetailPreInbound = () =>
+  import('@/views/transactions/pre-inbound/DetailPreInbound');
 // Inbound
 const ListInbound = () => import('@/views/transactions/inbound/ListInbound');
 const DetailInbound = () =>
@@ -557,6 +562,19 @@ function configRoutes() {
           name: 'Upload XML (Home)',
           meta: { login: true },
           component: ListUploadXML,
+        },
+        // PRE INBOUND
+        {
+          path: 'pre-inbound/:type/:id',
+          name: 'Pre Inbound (Details) ',
+          meta: { login: true },
+          component: DetailPreInbound,
+        },
+        {
+          path: 'pre-inbound',
+          name: 'Pre Inbound (Home)',
+          meta: { login: true },
+          component: ListPreInbound,
         },
         // INBOUND
         {

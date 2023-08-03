@@ -204,11 +204,20 @@
                 hover
                 striped
                 sorter
-                border
                 :items="itemGenerateCount"
                 :fields="fieldGenerateCount"
                 style="font-size: 12px"
               />
+              <CButton
+                v-if="formData.status == '4'"
+                type="submit"
+                size="sm"
+                @click="requestSerial()"
+                class="mr-2"
+                color="primary"
+                ><CIcon name="cil-check-circle" /> Request Additional
+                Serial</CButton
+              >
             </CCol>
           </CRow>
           <CDataTable
@@ -282,6 +291,56 @@
             <CIcon name="cil-print" /> Print
           </CButton> -->
         </CCardFooter>
+        <CModal
+          title="Request Additional Serial"
+          color="warning"
+          :show.sync="viewModalRequestSerial"
+          size="md"
+        >
+          <CRow>
+            <CCol sm="12" md="12" lg="12">
+              <div v-for="(item, index) in itemGenerateCount" :key="index">
+                <CInput
+                  horizontal
+                  :value.sync="
+                    additionalSerial[`generate_count_level_${index}`]
+                  "
+                  type="number"
+                  @keypress="limitNumber({ event: $event, max: 7 })"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Pack Level {{ index + 1 }}
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </div>
+              <CRow form class="form-group">
+                <CCol tag="label" sm="3" class="col-form-label"> All </CCol>
+                <CCol sm="9">
+                  <CSwitch
+                    class="mr-1"
+                    color="success"
+                    :checked.sync="additionalSerial.all"
+                  />
+                </CCol>
+              </CRow>
+            </CCol>
+          </CRow>
+          <template #footer>
+            <CButton
+              size="sm"
+              color="danger"
+              type="button"
+              @click="closeModal()"
+            >
+              <CIcon name="cil-x-circle" /> Close
+            </CButton>
+          </template>
+        </CModal>
         <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
           <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
           <template #footer>
@@ -341,6 +400,14 @@ export default {
   data() {
     return {
       initialLoad: true,
+      additionalSerial: {
+        id: this.$route.params.id,
+        generate_count_level_1: null,
+        generate_count_level_2: null,
+        generate_count_level_3: null,
+        generate_count_level_4: null,
+        all: true,
+      },
       formData: {
         items: [],
         product_id: null,
@@ -406,6 +473,7 @@ export default {
       itemGenerateCount: [],
       detail_item: {},
       viewModal: false,
+      viewModalRequestSerial: false,
     };
   },
   async mounted() {
@@ -557,9 +625,13 @@ export default {
       this.viewModal = true;
       return;
     },
+    requestSerial() {
+      this.viewModalRequestSerial = true;
+    },
     closeModal() {
       this.view = {};
       this.viewModal = false;
+      this.viewModalRequestSerial = false;
     },
     cancel() {
       this.$router.back();

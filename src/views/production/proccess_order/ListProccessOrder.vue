@@ -60,13 +60,6 @@
                     <ButtonPermission
                       :id="item.id"
                       :useHref="true"
-                      :permission="'approve'"
-                      v-if="item.status == 6"
-                      @click="rowUpdateClicked(item, index)"
-                    />
-                    <ButtonPermission
-                      :id="item.id"
-                      :useHref="true"
                       :permission="'read'"
                       @click="rowRead(item, index)"
                     />
