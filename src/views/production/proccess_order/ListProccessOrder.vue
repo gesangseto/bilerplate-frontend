@@ -95,8 +95,10 @@
 
 <script>
 import moment from 'moment';
-import { deleteMstSupplier } from '../../../resource/MstSupplier';
-import { getProccessOrder } from '../../../resource/ProccessOrder';
+import {
+  deleteProccessOrder,
+  getProccessOrder,
+} from '../../../resource/ProccessOrder';
 import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 
 export default {
@@ -207,16 +209,16 @@ export default {
       });
     },
     async deleteRow(item) {
-      let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
+      let message = `You are about to delete to this data (Batch No: ${item.batch_no}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
         let param = { id: item.id };
-        let _res = await deleteMstSupplier(param);
+        let _res = await deleteProccessOrder(param);
         this.$isLoading(false);
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : 'Data has been deleted succesfully',
+            : 'Data has been canceled succesfully',
           type: _res.error ? 'error' : 'success',
           dissmissible: true,
           position: 'top-right',

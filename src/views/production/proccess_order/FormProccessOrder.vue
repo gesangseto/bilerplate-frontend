@@ -214,12 +214,31 @@
                 size="sm"
                 @click="requestSerial()"
                 class="mr-2"
-                color="primary"
+                color="success"
                 ><CIcon name="cil-check-circle" /> Request Additional
                 Serial</CButton
               >
+              <CButton
+                v-if="[1, 4, 5, 6].includes(formData.status)"
+                type="submit"
+                size="sm"
+                @click="viewModalHistory = true"
+                class="mr-2"
+                color="info"
+                ><CIcon name="cil-check-circle" /> View History</CButton
+              >
+              <CButton
+                v-if="formData.status == '4'"
+                type="submit"
+                size="sm"
+                @click="viewModalSerial = true"
+                class="mr-2"
+                color="primary"
+                ><CIcon name="cil-check-circle" /> View Serial</CButton
+              >
             </CCol>
           </CRow>
+          <!-- DATA TABLE untuk menampilkan semua data yang sudah berhasil di aggregatio oleh pihak ke 3 -->
           <CDataTable
             hover
             striped
@@ -249,9 +268,7 @@
           </CDataTable>
         </CCardBody>
         <CCardFooter>
-          <!-- <CButton type="button" size="sm" color="primary" @click="save()">
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton> -->
+          <!-- Simpan data saat create-->
           <CButton
             v-if="action == 'Create'"
             type="submit"
@@ -261,17 +278,9 @@
             color="primary"
             ><CIcon name="cil-check-circle" /> Submit</CButton
           >
+          <!-- Generate Serial data saat update-->
           <CButton
-            v-if="action == 'Approve'"
-            type="submit"
-            size="sm"
-            @click="save()"
-            class="mr-2"
-            color="primary"
-            ><CIcon name="cil-check-circle" /> Release</CButton
-          >
-          <CButton
-            v-if="formData.status == 0"
+            v-if="formData.status == 0 && action == 'Update'"
             type="submit"
             size="sm"
             @click="generate_serial()"
@@ -279,31 +288,24 @@
             color="primary"
             ><CIcon name="cil-check-circle" /> Generate Serial</CButton
           >
+          <!-- Buton Cancel-->
           <ButtonBack />
-          <!-- <CButton
-            v-if="can_print == true"
-            type="button"
-            size="sm"
-            class="m-1"
-            color="warning"
-            @click="print_all()"
-          >
-            <CIcon name="cil-print" /> Print
-          </CButton> -->
         </CCardFooter>
+        <!-- Modal untuk menambahkan data Request Additional Serial-->
         <CModal
           title="Request Additional Serial"
           color="warning"
           :show.sync="viewModalRequestSerial"
-          size="md"
         >
           <CRow>
             <CCol sm="12" md="12" lg="12">
               <div v-for="(item, index) in itemGenerateCount" :key="index">
                 <CInput
+                  v-if="product[`qty_packagingl${index + 1}`] || index == 0"
+                  :disabled="additionalSerial.all && index >= 1"
                   horizontal
                   :value.sync="
-                    additionalSerial[`generate_count_level_${index}`]
+                    additionalSerial[`generate_count_level_${index + 1}`]
                   "
                   type="number"
                   @keypress="limitNumber({ event: $event, max: 7 })"
@@ -333,6 +335,14 @@
           <template #footer>
             <CButton
               size="sm"
+              color="success"
+              type="button"
+              @click="submitAdditionSerial()"
+            >
+              <CIcon name="cil-check-circle" /> Request
+            </CButton>
+            <CButton
+              size="sm"
               color="danger"
               type="button"
               @click="closeModal()"
@@ -341,6 +351,8 @@
             </CButton>
           </template>
         </CModal>
+
+        <!-- Modal untuk melihat detail aggregasi item stock setelah berhasil di closed / partial closed-->
         <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
           <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
           <template #footer>
@@ -354,7 +366,74 @@
             </CButton>
           </template>
         </CModal>
-        <!-- Modal Detail Barang Dipilih  -->
+
+        <!-- Modal untuk melihat view history dari request additional serial-->
+        <CModal
+          title="History Request Serial"
+          color="warning"
+          :show.sync="viewModalHistory"
+        >
+          <table style="width: 100%">
+            <tr>
+              <td><strong>Request Time</strong></td>
+              <td><strong>Level 1</strong></td>
+              <td><strong>Level 2</strong></td>
+              <td><strong>Level 3</strong></td>
+              <td><strong>Level 4</strong></td>
+            </tr>
+            <tr
+              v-for="(item, index) in formData.generate_count_additional"
+              :key="index"
+            >
+              <td>{{ item.modified_date }}</td>
+              <td>{{ item.generate_count_level_1 }}</td>
+              <td>{{ item.generate_count_level_2 }}</td>
+              <td>{{ item.generate_count_level_3 }}</td>
+              <td>{{ item.generate_count_level_4 }}</td>
+            </tr>
+          </table>
+          <template #footer>
+            <CButton
+              size="sm"
+              color="danger"
+              type="button"
+              @click="viewModalHistory = false"
+            >
+              <CIcon name="cil-x-circle" /> Close
+            </CButton>
+          </template>
+        </CModal>
+        <!-- Modal untuk melihat semua serial yang tersedia-->
+        <CModal
+          title="View Generated Serial"
+          color="warning"
+          :show.sync="viewModalSerial"
+          size="lg"
+        >
+          <CDataTable
+            hover
+            striped
+            sorter
+            tableFilter
+            border
+            :pagination="true"
+            :items-per-page="10"
+            :items="detailSerial"
+            :fields="fieldSerial"
+            style="font-size: 12px"
+          />
+
+          <template #footer>
+            <CButton
+              size="sm"
+              color="danger"
+              type="button"
+              @click="viewModalSerial = false"
+            >
+              <CIcon name="cil-x-circle" /> Close
+            </CButton>
+          </template>
+        </CModal>
       </CCard>
     </div>
   </div>
@@ -367,13 +446,44 @@ import moment from 'moment';
 import { getMstProduct } from '../../../resource/MstProduct';
 import {
   generateProccessOrder,
+  getAvalaibleSerial,
   getProccessOrder,
   insertProccessOrder,
+  requestAdditionalSerial,
 } from '../../../resource/ProccessOrder';
 import { capitalizeFirstLetter, onlyNumber } from '../../../utils';
 export default {
   name: 'FormPacking',
   watch: {
+    viewModalSerial: {
+      deep: true,
+      async handler(item) {
+        if (item && this.serials.length == 0) {
+          let _serials = await getAvalaibleSerial({
+            id: this.$route.params.id,
+          });
+          console.log(_serials.data[0]);
+
+          if (_serials && !_serials.error) {
+            this.serials = _serials.data[0].items;
+          }
+        }
+      },
+    },
+    additionalSerial: {
+      deep: true,
+      handler(item) {
+        if (item.generate_count_level_1 && item.all) {
+          let last_qty = item.generate_count_level_1;
+          for (var i = 2; i <= 4; i++) {
+            let pack_qty = this.product[`qty_packagingl${i}`];
+            last_qty = last_qty / pack_qty;
+            this.additionalSerial[`generate_count_level_${i}`] =
+              Math.ceil(last_qty) || 0;
+          }
+        }
+      },
+    },
     formData: {
       deep: true,
       handler(item) {
@@ -470,10 +580,31 @@ export default {
         },
         { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
+      fieldSerial: [
+        {
+          key: 'gtin_cp',
+          label: 'GTIN / CP',
+        },
+        {
+          key: 'serial',
+          label: 'SN',
+        },
+        {
+          key: 'packaging_level',
+          label: 'Pkg Level',
+        },
+        {
+          key: 'epc_type',
+          label: 'Epc Type',
+        },
+      ],
+      serials: [],
       itemGenerateCount: [],
       detail_item: {},
       viewModal: false,
       viewModalRequestSerial: false,
+      viewModalHistory: false,
+      viewModalSerial: false,
     };
   },
   async mounted() {
@@ -488,15 +619,17 @@ export default {
         ? 'EDIT'
         : 'APPROVE';
     // get product
-    let _product = await getMstProduct({ product_type: 1, status: 'Active' });
+    let _product = await getMstProduct({ product_type: 0 });
     if (_product) {
       for (const it of _product.data) {
-        this.productOptions.push({
-          value: it.id,
-          name: it.name,
-          label: `[${it.no}] ${it.name}`,
-          item: it,
-        });
+        if (it.status == 'Active') {
+          this.productOptions.push({
+            value: it.id,
+            name: it.name,
+            label: `[${it.no}] ${it.name}`,
+            item: it,
+          });
+        }
       }
     }
     if (this.action !== 'Create') {
@@ -569,6 +702,32 @@ export default {
         duration: 5000,
       });
       if (!res['error']) this.$router.back();
+    },
+    async submitAdditionSerial() {
+      this.initialLoad = false;
+      if (!this.additionalSerial.generate_count_level_1) {
+        this.$toast.open({
+          message: 'Please complete all required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return false;
+      }
+      this.$isLoading(true);
+      let res = await requestAdditionalSerial(this.additionalSerial);
+      this.$isLoading(false);
+      this.$toast.open({
+        message: res['error']
+          ? `${res['message']}`
+          : 'Data has been saved succesfully ',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!res['error']) this.loadData();
     },
     async save() {
       this.initialLoad = false;
@@ -643,6 +802,15 @@ export default {
         return {
           ...item,
           quantity: item.quantity || '-',
+        };
+      });
+    },
+    detailSerial() {
+      return this.serials.map((item) => {
+        return {
+          ...item,
+          gtin_cp:
+            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
