@@ -181,7 +181,7 @@ export default {
       exportDataV3({
         param: this.filter,
         exportType: type,
-        url: '/v3/master/supplier',
+        url: '/v3/production/proccess-order',
       });
     },
     pageChange(page) {
@@ -193,21 +193,9 @@ export default {
       this.filter.page = 1;
       this.loadData();
     },
-    rowUpdate(item) {
-      this.$router.push({
-        path: `supplier/update/${item.id}`,
-      });
-    },
-    rowRead(item) {
-      this.$router.push({
-        path: `supplier/read/${item.id}`,
-      });
-    },
-    addNew() {
-      this.$router.push({
-        path: `supplier/create`,
-      });
-    },
+    rowUpdate() {},
+    rowRead() {},
+    addNew() {},
     async deleteRow(item) {
       let message = `You are about to delete to this data (Batch No: ${item.batch_no}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
