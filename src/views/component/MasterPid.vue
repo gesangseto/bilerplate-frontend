@@ -11,7 +11,7 @@
             <th style="text-align: center; width: 8%">ID 3</th>
             <th style="text-align: center; width: 6%">ID 4</th>
             <th style="text-align: center; width: 6%">
-              <p v-if="packaging_level != 1">SN Prefix (static)</p>
+              <p>SN Prefix (static)</p>
             </th>
             <th style="text-align: center; width: 5%">
               <p v-if="packaging_level != 1">SN Length (dynamic)</p>
@@ -137,7 +137,6 @@
               <td>
                 <br />
                 <CInput
-                  v-if="packaging_level != 1"
                   size="sm"
                   :disabled="readonly"
                   v-model="result[index - 1].sn_prefix"
@@ -224,9 +223,9 @@
 </template>
 
 <script>
-import { getConfLayout } from "../../resource/ConfLayout";
+import { getConfLayout } from '../../resource/ConfLayout';
 export default {
-  name: "MasterPid",
+  name: 'MasterPid',
   props: {
     item: Object,
     packaging_level: Number,
@@ -245,7 +244,7 @@ export default {
     }
     if (Object.keys(this.item).length > 5) {
       idx = 0;
-      this.item.mst_pid.map((val, index) => {
+      this.item.mst_pid.map((val) => {
         if (val.packaging_level == this.packaging_level) {
           have_pid = true;
           this.result[idx] = val;
@@ -268,7 +267,7 @@ export default {
   },
   watch: {
     item: {
-      handler(n, o) {
+      handler() {
         let index = 0;
         let pid_level_1 = {};
         let have_error = false;
@@ -280,7 +279,7 @@ export default {
         for (const it of this.result) {
           if (this.packaging_level !== 1) {
             this.result[index].id2 = pid_level_1.id2;
-            if (it.epc_type == "sgtin") {
+            if (it.epc_type == 'sgtin') {
               this.result[index].id3 = pid_level_1.id3;
             }
           }
@@ -288,10 +287,10 @@ export default {
           for (var key in this.error[index]) {
             if (
               this.packaging_level === 1 &&
-              (key === "generated_sn_len" ||
-                key === "sn_charset" ||
-                key === "sn_generate_type" ||
-                key === "conf_layout_id")
+              (key === 'generated_sn_len' ||
+                key === 'sn_charset' ||
+                key === 'sn_generate_type' ||
+                key === 'conf_layout_id')
             ) {
               have_error = false;
             } else if (this.error[index][key]) {
@@ -305,7 +304,7 @@ export default {
           }
           index += 1;
         }
-        this.$emit("handleResultPid", this.result);
+        this.$emit('handleResultPid', this.result);
       },
       deep: true,
     },
@@ -316,7 +315,7 @@ export default {
   data() {
     return {
       total_pid: 2,
-      title: ["Full", "Partial"],
+      title: ['Full', 'Partial'],
       digit_sscc: 17, // 1 digit adalah check digit
       digit_sgtin: 13, // 1 digit adalah check digit
       max_digit_ssscc: null,
@@ -326,19 +325,19 @@ export default {
       product: {},
       result: [this.initial_value(0), this.initial_value(1)],
       list_charset: [
-        { value: "alphanumeric", label: "Alphanumeric" },
-        { value: "numeric", label: "Numeric" },
+        { value: 'alphanumeric', label: 'Alphanumeric' },
+        { value: 'numeric', label: 'Numeric' },
       ],
       list_layout: [],
       list_epc_type: [
-        { value: "sscc", label: "SSCC" },
-        { value: "sgtin", label: "SGTIN" },
+        { value: 'sscc', label: 'SSCC' },
+        { value: 'sgtin', label: 'SGTIN' },
       ],
-      only_sscc: [{ value: "sscc", label: "SSCC" }],
-      only_sgtin: [{ value: "sgtin", label: "SGTIN" }],
+      only_sscc: [{ value: 'sscc', label: 'SSCC' }],
+      only_sgtin: [{ value: 'sgtin', label: 'SGTIN' }],
       list_generate_type: [
-        { value: "random", label: "Random" },
-        { value: "sequential", label: "Sequential" },
+        { value: 'random', label: 'Random' },
+        { value: 'sequential', label: 'Sequential' },
       ],
       error: [this.initial_error(), this.initial_error()],
       have_error: [false, false],
@@ -348,7 +347,7 @@ export default {
   computed: {},
   methods: {
     async loadLayout() {
-      let _res = await getConfLayout({ status: "Active" });
+      let _res = await getConfLayout({ status: 'Active' });
       if (_res) {
         this.list_layout = [];
         for (const it of _res.data) {
@@ -385,7 +384,7 @@ export default {
         product_id: this.item.product_id ?? null,
         packaging_level: this.packaging_level ?? null,
         flag_full: num ?? 1,
-        flag_serial: this.item.product_type == "1" ? 0 : 1,
+        flag_serial: this.item.product_type == '1' ? 0 : 1,
         epc_type: null,
         id1: null,
         id2: null,
@@ -421,7 +420,7 @@ export default {
       var charCode = event.which ? event.which : event.keyCode;
       if (data && data.toString().length > max - 1) {
         event.preventDefault();
-      } else if (!type || type == "number") {
+      } else if (!type || type == 'number') {
         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
           event.preventDefault();
         } else {
@@ -439,11 +438,11 @@ export default {
     handleChangePid(num) {
       this.error[num] = this.initial_error();
       // this.result[num].error = false;
-      let id1 = this.result[num].id1 ?? "";
-      let id2 = this.result[num].id2 ?? "";
-      let id3 = this.result[num].id3 ?? "";
-      let id4 = this.result[num].id4 ?? "";
-      let sn_prefix = this.result[num].sn_prefix ?? "";
+      let id1 = this.result[num].id1 ?? '';
+      let id2 = this.result[num].id2 ?? '';
+      let id3 = this.result[num].id3 ?? '';
+      let id4 = this.result[num].id4 ?? '';
+      let sn_prefix = this.result[num].sn_prefix ?? '';
       let epc = this.result[num].epc_type;
       let sn_generate_type = this.result[num].sn_generate_type;
       let generated_sn_len = this.result[num].generated_sn_len;
@@ -484,31 +483,31 @@ export default {
         this.error[num].conf_layout_id = true;
       }
       // Check epc type
-      if (epc === "sscc") {
+      if (epc === 'sscc') {
         this.checkSSCC(num);
-      } else if (epc === "sgtin") {
+      } else if (epc === 'sgtin') {
         this.checkSGTIN(num);
       } else {
         this.error[num].epc_type = true;
       }
     },
     checkSSCC(num) {
-      let id1 = this.result[num].id1 ?? "";
-      let id2 = this.result[num].id2 ?? "";
-      this.result[num].id3 = "";
-      let sn_prefix = this.result[num].sn_prefix ?? "";
-      let concat = ("" + id1 + id2 + sn_prefix).length;
-      this.result[num].sn_charset = "numeric";
+      let id1 = this.result[num].id1 ?? '';
+      let id2 = this.result[num].id2 ?? '';
+      this.result[num].id3 = '';
+      let sn_prefix = this.result[num].sn_prefix ?? '';
+      let concat = ('' + id1 + id2 + sn_prefix).length;
+      this.result[num].sn_charset = 'numeric';
       this.result[num].generated_sn_len = this.digit_sscc - concat;
       // Check Error Total digit id1,id2,id3
       return;
     },
     checkSGTIN(num) {
-      let id1 = this.result[num].id1 ?? "";
-      let id2 = this.result[num].id2 ?? "";
-      let id3 = this.result[num].id3 ?? "";
+      let id1 = this.result[num].id1 ?? '';
+      let id2 = this.result[num].id2 ?? '';
+      let id3 = this.result[num].id3 ?? '';
       let max_all = this.digit_sgtin.valueOf();
-      let concat = ("" + id1 + id2 + id3).length;
+      let concat = ('' + id1 + id2 + id3).length;
       // Check Error Total digit id1,id2,id3
       if (!id1) {
         this.error[num].id1 = true;
@@ -517,19 +516,19 @@ export default {
         this.error[num].id3 = true;
       }
       // Check Error maximum length id1,id2
-      let concat_1 = ("" + id1 + id2).length;
-      let concat_2 = ("" + id1 + id3).length;
+      let concat_1 = ('' + id1 + id2).length;
+      let concat_2 = ('' + id1 + id3).length;
       if (concat_1 >= this.digit_sgtin) {
-        this.result[num].id3 = "";
+        this.result[num].id3 = '';
         this.digit_max[num].id3 = 0;
       } else {
         this.digit_max[num].id2 = this.digit_sgtin - concat_2;
         this.digit_max[num].id3 = this.digit_sgtin - concat_1;
       }
       // Check Error max sn dan prefix
-      let sn_prefix = this.result[num].sn_prefix ?? "";
-      let generated_sn_len = this.result[num].generated_sn_len ?? "";
-      let concat_sn = ("" + sn_prefix).length;
+      let sn_prefix = this.result[num].sn_prefix ?? '';
+      let generated_sn_len = this.result[num].generated_sn_len ?? '';
+      let concat_sn = ('' + sn_prefix).length;
       let len_sn = parseInt(this.result[num].generated_sn_len);
       if (!generated_sn_len) {
         this.error[num].generated_sn_len = true;
@@ -554,13 +553,13 @@ export default {
           this.error[num][key] = true;
           is_error = true;
         } else if (
-          key == "id2" &&
+          key == 'id2' &&
           this.result[`${num}`][key].toString().length <= 5
         ) {
           this.error[num][key] = true;
           is_error = true;
         } else if (
-          key == "generated_sn_len" &&
+          key == 'generated_sn_len' &&
           this.result[`${num}`][key] <= 0
         ) {
           this.error[num][key] = true;
@@ -570,7 +569,7 @@ export default {
       if (is_error) {
         this.result[num].error = true;
       }
-      this.$emit("handleResultPid", this.result);
+      this.$emit('handleResultPid', this.result);
     },
   },
 };

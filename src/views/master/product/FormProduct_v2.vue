@@ -165,7 +165,7 @@
                     />
                     <p class="col-form-label col-sm-3" v-if="action == 'Read'">
                       {{
-                        product.product_type == "0" ? "Serial" : "Non-Serial"
+                        product.product_type == '0' ? 'Serial' : 'Non-Serial'
                       }}
                     </p>
                   </CCol>
@@ -453,27 +453,27 @@
 </template>
 
 <script>
-import { getMstPackaging } from "../../../resource/MstPackaging";
+import { getMstPackaging } from '../../../resource/MstPackaging';
 import {
   getMstProduct,
   insertMstProduct,
   updateMstProduct,
-} from "../../../resource/MstProduct";
-import { getMstProductCategory } from "../../../resource/MstProductCategory";
-import { capitalizeFirstLetter, onlyNumber } from "../../../utils";
+} from '../../../resource/MstProduct';
+import { getMstProductCategory } from '../../../resource/MstProductCategory';
+import { capitalizeFirstLetter, onlyNumber } from '../../../utils';
 
 export default {
   watch: {
-    "product.mst_pid": {
-      handler(val, o) {
+    'product.mst_pid': {
+      handler(val) {
         for (const it of val) {
           if (it.packaging_level == 1) {
-            let id1 = it.id1 ?? "";
-            let id2 = it.id2 ?? "";
-            let id3 = it.id3 ?? "";
-            let concat_gtin = "" + id1 + id2 + id3;
+            let id1 = it.id1 ?? '';
+            let id2 = it.id2 ?? '';
+            let id3 = it.id3 ?? '';
+            let concat_gtin = '' + id1 + id2 + id3;
             if (concat_gtin.length == 13) {
-              concat_gtin = "" + concat_gtin + this.gtinCheckDigit(concat_gtin);
+              concat_gtin = '' + concat_gtin + this.gtinCheckDigit(concat_gtin);
             }
             this.product.gtin = concat_gtin;
           }
@@ -481,8 +481,8 @@ export default {
       },
       deep: true,
     },
-    "product.qty_packagingl2": {
-      handler(val, o) {
+    'product.qty_packagingl2': {
+      handler(val) {
         if (this.product.packagingl2_id) {
           if (this.product.packagingl3_id) {
             this.error.qty_packagingl3 = `Please re-enter this quantity`;
@@ -500,8 +500,8 @@ export default {
       },
       deep: true,
     },
-    "product.qty_packagingl3": {
-      handler(val, o) {
+    'product.qty_packagingl3': {
+      handler(val) {
         if (this.product.packagingl3_id) {
           if (this.product.packagingl4_id) {
             this.error.qty_packagingl4 = `Please re-enter this quantity`;
@@ -519,8 +519,8 @@ export default {
       },
       deep: true,
     },
-    "product.qty_packagingl4": {
-      handler(val, o) {
+    'product.qty_packagingl4': {
+      handler(val) {
         if (this.product.packagingl4_id) {
           val = parseInt(val);
           let qty_child = parseInt(this.product.qty_packagingl3);
@@ -540,7 +540,7 @@ export default {
     // Mengecek ada parameter yg dikiri di URL atau tidak
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id) {
       this.loadData();
       this.readOnly = true;
@@ -551,13 +551,13 @@ export default {
   },
   data() {
     return {
-      route_action: "",
+      route_action: '',
       action: null,
       initial_load: true,
       product: {
-        gtin: "",
-        product_type: "0",
-        status: "Active",
+        gtin: '',
+        product_type: '0',
+        status: 'Active',
         show_status: true,
         mst_pid: [],
       },
@@ -583,12 +583,12 @@ export default {
         max_qty_level_3: null,
       },
       statusOptions: [
-        { value: true, label: "Active" },
-        { value: false, label: "Inactive" },
+        { value: true, label: 'Active' },
+        { value: false, label: 'Inactive' },
       ],
       productTypeOption: [
-        { value: "0", label: "Serial" },
-        { value: "1", label: "Non-Serial" },
+        { value: '0', label: 'Serial' },
+        { value: '1', label: 'Non-Serial' },
       ],
     };
   },
@@ -607,8 +607,8 @@ export default {
         product_type: false,
         packagingl1_id: false,
         packagingl2_id: false,
-        qty_packagingl2: "",
-        qty_packagingl3: "",
+        qty_packagingl2: '',
+        qty_packagingl3: '',
       };
       return tmp;
     },
@@ -660,7 +660,7 @@ export default {
       let this_qty = this.product[`qty_packagingl${level}`];
       this.product[`qty_packagingl${level}`] = this_qty;
       let qty = 0;
-      let err_msg = "";
+      let err_msg = '';
       let is_error = false;
       if (this_packaging && this_qty) {
         // CHEK PACK LEVEL DIBAWAHNYA
@@ -680,7 +680,7 @@ export default {
           if (this.product[`packagingl${level + 1}_id`]) {
             qty = this.product[`qty_packagingl${level + 1}`];
             if (qty % this_qty != 0) {
-              err_msg = "Please re-enter this qty";
+              err_msg = 'Please re-enter this qty';
               this.error[`qty_packagingl${level + 1}`] = err_msg;
               is_error = true;
             } else {
@@ -699,7 +699,7 @@ export default {
       if (is_error) {
         return false;
       }
-      this.error[`qty_packagingl${level}`] = "";
+      this.error[`qty_packagingl${level}`] = '';
       return true;
     },
     gtinCheckDigit(s) {
@@ -715,7 +715,7 @@ export default {
       let value = this.product.gtin;
       if (value) {
         if (value.length != 14) {
-          this.error.gtin = "GTIN must be 14 digits numeric";
+          this.error.gtin = 'GTIN must be 14 digits numeric';
           return false;
         }
         var barcode = value.substring(0, value.length - 1);
@@ -723,7 +723,7 @@ export default {
         var calcSum = 0;
         var calcChecksum = 0;
 
-        barcode.split("").map(function (number, index) {
+        barcode.split('').map(function (number, index) {
           number = parseInt(number, 10);
           if (value.length % 2 === 0) {
             index += 1;
@@ -739,19 +739,19 @@ export default {
         calcChecksum = calcSum === 0 ? 0 : 10 - calcSum;
 
         if (calcChecksum !== checksum) {
-          this.error.gtin = "GTIN number is not valid";
+          this.error.gtin = 'GTIN number is not valid';
           return false;
         }
         this.error.gtin = false;
         return true;
       } else {
-        this.error.gtin = "L1 GTIN is required";
+        this.error.gtin = 'L1 GTIN is required';
         return false;
       }
     },
     async loadProductCategory() {
-      let _res = await getMstProductCategory({ status: "Active" });
-      for (const it of _res["data"]) {
+      let _res = await getMstProductCategory({ status: 'Active' });
+      for (const it of _res['data']) {
         this.listCategory.push({
           label: it.name,
           value: `${it.id}`,
@@ -759,8 +759,8 @@ export default {
       }
     },
     async loadPackaging() {
-      let _res = await getMstPackaging({ status: "Active" });
-      for (const it of _res["data"]) {
+      let _res = await getMstPackaging({ status: 'Active' });
+      for (const it of _res['data']) {
         this.listPackaging.push({
           label: it.name,
           value: `${it.id}`,
@@ -787,7 +787,7 @@ export default {
       }
       // CHECK PRODUCT
       for (var key in this.error) {
-        if (!this.product[key] && this.product[key] != "0") {
+        if (!this.product[key] && this.product[key] != '0') {
           this.error[key] = `Product ${key} is required`;
           is_error = true;
           required.push(capitalizeFirstLetter(key));
@@ -843,19 +843,19 @@ export default {
       this.initial_load = false;
       if (!this.validationData()) {
         this.$toast.open({
-          message: "Please input all the required data",
-          type: "error",
+          message: 'Please input all the required data',
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
       }
       let body = JSON.parse(JSON.stringify(this.product));
-      let is_serial = body.product_type == "1" ? 0 : 1;
+      let is_serial = body.product_type == '1' ? 0 : 1;
       let master_pid = [];
       for (const key in this.ResultPid) {
-        if (key == "level_4" && !this.product.packagingl4_id) {
+        if (key == 'level_4' && !this.product.packagingl4_id) {
           break;
         }
         for (let it of this.ResultPid[key]) {
@@ -872,7 +872,7 @@ export default {
         this.$isLoading(true);
         let dataPost = body;
         let res = {};
-        if (this.action === "Create" && dataPost.id) {
+        if (this.action === 'Create' && dataPost.id) {
           delete dataPost.id;
         }
         if (dataPost.id) {
@@ -882,15 +882,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },

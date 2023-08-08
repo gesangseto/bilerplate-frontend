@@ -228,7 +228,7 @@
                 ><CIcon name="cil-check-circle" /> View History</CButton
               >
               <CButton
-                v-if="formData.status == '4'"
+                v-if="[3, 4].includes(formData.status)"
                 type="submit"
                 size="sm"
                 @click="viewModalSerial = true"
