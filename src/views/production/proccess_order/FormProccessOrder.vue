@@ -29,25 +29,26 @@
                   </p>
                 </template>
               </CInput>
-              <CSelect
-                :disabled="action != 'Create'"
-                placeholder="-Select-"
-                :options="productOptions"
-                horizontal
-                :value.sync="formData.product_id"
-                :is-valid="
-                  initialLoad ? null : !formData.product_id ? false : true
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Product Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
+
+              <div class="form-group row mb-12">
+                <label
+                  for="product-name"
+                  class="col-sm-3 col-md-3 col-lg-3 form-label"
+                >
+                  Product Name <strong class="text-danger">*</strong>
+                </label>
+                <div class="col-sm-9 col-md-9 col-lg-9">
+                  <v-select
+                    :disabled="action != 'Create'"
+                    key="value"
+                    placeholder="--Select--"
+                    :options="productOptions"
+                    :reduce="(opt) => opt.value"
+                    v-model="formData.product_id"
+                  >
+                  </v-select>
+                </div>
+              </div>
 
               <CInput horizontal :value.sync="formData.gtin" disabled>
                 <template #label>

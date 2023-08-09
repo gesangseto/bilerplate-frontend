@@ -5,11 +5,11 @@
         <CCardHeader>
           <h5>
             Label Layout [{{
-              this.action == "Create"
-                ? "ADD"
-                : this.action == "Read"
-                ? "VIEW"
-                : "EDIT"
+              this.action == 'Create'
+                ? 'ADD'
+                : this.action == 'Read'
+                ? 'VIEW'
+                : 'EDIT'
             }}]
           </h5>
         </CCardHeader>
@@ -41,7 +41,7 @@
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
-                    ITF File
+                    Layout File
                     <span class="text-danger">
                       <strong>*</strong>
                     </span>
@@ -65,8 +65,22 @@
                       <strong>*</strong>
                     </span>
                   </p>
-                </template></CInput
-              >
+                </template>
+              </CInput>
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol md="12">
+              <CSelect
+                :disabled="action == 'Read'"
+                label="Packaging Level"
+                :options="[1, 2, 3, 4]"
+                :value.sync="formData.packaging_level"
+                horizontal
+                :is-valid="
+                  initialLoad ? null : !formData.packaging_level ? false : true
+                "
+              />
             </CCol>
           </CRow>
           <CRow>
@@ -369,26 +383,26 @@ td {
 }
 </style>
 <script>
-import { ModelSelect } from "vue-search-select";
-import moment from "moment";
-import { getConfDate } from "../../../resource/ConfDate";
+import { ModelSelect } from 'vue-search-select';
+import moment from 'moment';
+import { getConfDate } from '../../../resource/ConfDate';
 import {
   getConfLayout,
   getLayoutIdentifier,
   getLayoutType,
   insertConfLayout,
   updateConfLayout,
-} from "../../../resource/ConfLayout";
+} from '../../../resource/ConfLayout';
 const reader = new FileReader();
 import {
   capitalizeFirstLetter,
   getStringBetween,
   dynamicSort,
-} from "../../../utils";
+} from '../../../utils';
 
 export default {
   components: { ModelSelect },
-  name: "Customer",
+  name: 'Customer',
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.page = 1;
@@ -400,86 +414,93 @@ export default {
   data() {
     return {
       initialLoad: true,
-      action: "",
+      action: '',
       filter: {
         page: 1,
         limit: 10,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       modalRefDate: false,
       listFormatDate: [],
       listType: [],
       selectedDate: null,
       vSelectDate: null,
+      list_packaging: [
+        { value: 1, name: '1', label: `1` },
+        { value: 1, name: '2', label: `2` },
+        { value: 1, name: '3', label: `3` },
+        { value: 1, name: '4', label: `4` },
+      ],
       // items: [],
       identifier: [],
       associated_content: [],
       uploadFile: { fileName: null, fileContent: null },
       // V2 API
       formData: {
-        name: "",
-        itf_name: "",
-        itf_content: "",
-        bpom_barcode_format: "",
+        name: '',
+        packaging_level: null,
+        itf_name: '',
+        itf_content: '',
+        bpom_barcode_format: '',
         layout_status: true,
         items: [
           // formType
         ],
       },
       formType: {
-        layout_generate_type_id: "",
-        itf_var_name: "",
+        layout_generate_type_id: '',
+        itf_var_name: '',
         set_bpom_barcode_format: false,
-        associated_field: "",
+        associated_field: '',
         field_associated: [
           // formAssociated
         ],
       },
       formAssociated: {
-        layout_identifier_id: "",
-        format_ref: "",
+        layout_identifier_id: '',
+        format_ref: '',
         table_name: null,
         column_name: null,
         order_number: null,
         identifier_AI: null,
-        identifier_name: "",
+        identifier_name: '',
       },
       // DONE
       associated_field: [
         {
-          key: "action",
-          label: " ",
+          key: 'action',
+          label: ' ',
         },
         {
-          key: "AI",
-          label: "AI",
+          key: 'AI',
+          label: 'AI',
         },
         {
-          key: "name",
-          label: "Name",
+          key: 'name',
+          label: 'Name',
         },
       ],
 
       // DONE
       identifier_field: [
         {
-          key: "action",
-          label: " ",
+          key: 'action',
+          label: ' ',
         },
         {
-          key: "AI",
-          label: "AI",
+          key: 'AI',
+          label: 'AI',
         },
         {
-          key: "name",
-          label: "Name",
+          key: 'name',
+          label: 'Name',
         },
       ],
       selectedIndex: null,
@@ -497,7 +518,7 @@ export default {
       },
     },
     selectedIdentifier: {
-      handler(n, o) {
+      handler(n) {
         let idx = this.associated_content.findIndex(
           (it) => it.layout_identifier_id === n
         );
@@ -507,7 +528,7 @@ export default {
     },
     selectedIndex: {
       async handler(n, o) {
-        if (this.action === "Read") {
+        if (this.action === 'Read') {
           return;
         } else if (n != o) {
           let row_selected = this.formData.items[n];
@@ -531,16 +552,16 @@ export default {
       let isiFile = event[0];
       if (isiFile != undefined) {
         let fileName = isiFile.name;
-        $("#error-upload").text("");
-        let ekstensiFile = fileName.split(".").reverse()[0];
-        if (ekstensiFile.toLowerCase() != "itf") {
-          $("#error-upload").text(
+        $('#error-upload').text('');
+        let ekstensiFile = fileName.split('.').reverse()[0];
+        if (ekstensiFile.toLowerCase() != 'itf') {
+          $('#error-upload').text(
             `Your file is not ITF (${fileName}). Please select ITF file`
           );
         } else {
-          $("#error-upload").text("");
+          $('#error-upload').text('');
           reader.onload = (e) => {
-            this.formData.name = fileName.replace(".itf", "");
+            this.formData.name = fileName.replace('.itf', '');
             this.formData.itf_name = fileName;
             this.formData.itf_content = e.target.result;
             this.generateField(e.target.result);
@@ -548,7 +569,7 @@ export default {
           reader.readAsText(isiFile);
         }
       } else {
-        $("#error-upload").text("ITF file is required");
+        $('#error-upload').text('ITF file is required');
       }
     },
     generateField(string) {
@@ -563,7 +584,7 @@ export default {
           listLayout.push(_layout);
         }
       }
-      listLayout.sort(dynamicSort("itf_var_name"));
+      listLayout.sort(dynamicSort('itf_var_name'));
       this.formData.items = listLayout;
     },
     /*
@@ -576,7 +597,7 @@ export default {
     */
     handleChangeType(index) {
       this.selectedIdentifier = null;
-      this.formData.items[index].associated_field = "";
+      this.formData.items[index].associated_field = '';
       this.formData.items[index].field_associated = [];
       let layout_selected = this.formData.items[index];
       this.getIdentifier(layout_selected.layout_generate_type_id);
@@ -606,13 +627,13 @@ export default {
       let i = this.selectedIndex;
       let check_ai = this.identifier[index];
       check_ai.is_selected = !check_ai.selected;
-      if (!check_ai.flag_system && check_ai.data_type == "Date") {
+      if (!check_ai.flag_system && check_ai.data_type == 'Date') {
         check_ai.format_ref = this.listFormatDate[0].value;
         check_ai.format_ref_data = this.listFormatDate[0].label;
       }
       let lineParameter = this.formData.items[i];
       if (
-        check_ai.generate_type === "single" &&
+        check_ai.generate_type === 'single' &&
         lineParameter.field_associated.length > 0
       ) {
         lineParameter.field_associated = [check_ai];
@@ -634,25 +655,25 @@ export default {
     },
 
     rewriteIdentifierText(i = this.selectedIndex) {
-      let text = "";
+      let text = '';
       if (this.formData.items[i].field_associated.length > 0) {
         for (const it of this.formData.items[i].field_associated) {
           //
           if (it.layout_identifier_AI) {
-            text += "-" + it.layout_identifier_AI;
+            text += '-' + it.layout_identifier_AI;
           } else {
-            text += "-" + it.layout_identifier_name;
+            text += '-' + it.layout_identifier_name;
           }
         }
       } else {
-        text = "Automatic";
+        text = 'Automatic';
       }
       let content = [...this.associated_content];
       this.associated_content = [];
       this.associated_content = content;
       text = text.trim();
-      this.formData.items[i].associated_field = text.replace("-", "");
-      this.formData.bpom_barcode_format = text.replace("-", "");
+      this.formData.items[i].associated_field = text.replace('-', '');
+      this.formData.bpom_barcode_format = text.replace('-', '');
     },
     /*
     END
@@ -685,9 +706,9 @@ export default {
         };
         for (const it of layout) {
           if (selected.layout_identifier_id == it.layout_identifier_id) {
-            if (swipe == "UP" && i > 0) {
+            if (swipe == 'UP' && i > 0) {
               this.formData.items[N].field_associated.swapItems(i - 1, i);
-            } else if (swipe == "DOWN" && i + 1 < layout.length) {
+            } else if (swipe == 'DOWN' && i + 1 < layout.length) {
               this.formData.items[N].field_associated.swapItems(i, i + 1);
             }
             break;
@@ -709,7 +730,7 @@ export default {
       }
 
       if (this.selectedAssociated) {
-        if (this.selectedAssociated.data_type == "Date") {
+        if (this.selectedAssociated.data_type == 'Date') {
           this.selectedDate = this.selectedAssociated.format_ref;
           this.modalRefDate = true;
         }
@@ -737,7 +758,7 @@ export default {
       this.rewriteIdentifierText();
     },
     matchDate(id) {
-      let data = "";
+      let data = '';
       let idx = this.listFormatDate.findIndex((it) => it.value == id);
       if (~idx) return this.listFormatDate[idx].label;
       return data;
@@ -776,14 +797,14 @@ export default {
     },
     async getDateFromat() {
       this.listFormatDate = [];
-      let _res = await getConfDate({ status: "Active" });
+      let _res = await getConfDate({ status: 'Active' });
       if (_res) {
         for (const it of _res.data) {
-          let dt = "";
-          if (it.overwrite === "last_day_of_month") {
-            dt = moment().endOf("month").format(it.name);
-          } else if (it.overwrite === "first_day_of_month") {
-            dt = moment().startOf("month").format(it.name);
+          let dt = '';
+          if (it.overwrite === 'last_day_of_month') {
+            dt = moment().endOf('month').format(it.name);
+          } else if (it.overwrite === 'first_day_of_month') {
+            dt = moment().startOf('month').format(it.name);
           } else {
             dt = moment().format(it.name);
           }
@@ -819,12 +840,12 @@ export default {
     */
 
     validation() {
-      let required = ["name", "itf_name"];
+      let required = ['name', 'itf_name'];
       let next = true;
       for (const key in this.formData) {
         if (required.includes(key) && !this.formData[key]) next = false;
       }
-      let required_item = ["layout_generate_type_id", "associated_field"];
+      let required_item = ['layout_generate_type_id', 'associated_field'];
       if (this.formData.items.length == 0) next = false;
       for (const it of this.formData.items) {
         for (const req of required_item) {
@@ -837,15 +858,16 @@ export default {
       this.initialLoad = false;
       if (!this.validation()) {
         this.$toast.open({
-          message: "Please input all the required data.",
-          type: "error",
+          message: 'Please input all the required data.',
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
       }
       let param = JSON.parse(JSON.stringify(this.formData));
+      console.log(param);
       param.layout_status = param.layout_status ? 1 : 0;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
@@ -854,7 +876,7 @@ export default {
         let dataPost = param;
         this.$isLoading(true);
         let res = {};
-        if (this.action === "Create" && dataPost.id) {
+        if (this.action === 'Create' && dataPost.id) {
           delete dataPost.id;
         }
         if (dataPost.id) {
@@ -864,15 +886,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },
@@ -892,7 +914,7 @@ export default {
         }
         return {
           ...item,
-          AI: item.layout_identifier_AI || "",
+          AI: item.layout_identifier_AI || '',
           is_selected: is_selected,
         };
       });
@@ -905,10 +927,10 @@ export default {
         if (~idx) item.format_ref_data = this.listFormatDate[idx].label;
 
         let title =
-          `${item.layout_identifier_name} ` + (item.format_ref_data || "");
+          `${item.layout_identifier_name} ` + (item.format_ref_data || '');
         return {
           ...item,
-          AI: item.layout_identifier_AI || "",
+          AI: item.layout_identifier_AI || '',
           name: title,
         };
       });

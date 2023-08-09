@@ -196,243 +196,255 @@
             </CRow>
             <hr />
             <h4>Packaging Detail</h4>
-            <hr />
             <!-- Packaging LEVEL 1 -->
-            <CRow>
-              <CCol sm="7">
-                <CSelect
-                  :disabled="action == 'Read'"
-                  label="Packaging Level 1 *"
-                  description="Packaging Level 1 of Product."
-                  placeholder="--Select--"
-                  horizontal
-                  @change="validationData()"
-                  :options="listPackaging"
-                  :value.sync="product.packagingl1_id"
-                  :add-input-classes="{
-                    'is-invalid': error.packagingl1_id,
-                  }"
-                />
-              </CCol>
-              <CCol sm="5">
-                <CButton
-                  class="float-right"
-                  v-on:click="ExpandPid.level_1 = !ExpandPid.level_1"
-                >
-                  <v-icon v-if="!ExpandPid.level_1" name="angle-right" />
-                  <v-icon v-if="ExpandPid.level_1" name="angle-down" />
-                </CButton>
-              </CCol>
-              <CCol sm="12">
-                <MasterPid
-                  v-if="ExpandPid.level_1"
-                  :readonly="
-                    action == 'Read' ||
-                    (product.flag_upd_del == 0 && action != 'Create')
-                  "
-                  :item="product"
-                  :packaging_level="1"
-                  v-on:handleResultPid="
-                    handleResultPid({ result: $event, level: 1 })
-                  "
-                />
-              </CCol>
-            </CRow>
-            <hr />
+            <CCard>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="7">
+                    <CSelect
+                      :disabled="action == 'Read'"
+                      label="Packaging Level 1 *"
+                      description="Packaging Level 1 of Product."
+                      placeholder="--Select--"
+                      horizontal
+                      @change="validationData()"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl1_id"
+                      :add-input-classes="{
+                        'is-invalid': error.packagingl1_id,
+                      }"
+                    />
+                  </CCol>
+                  <CCol sm="5">
+                    <CButton
+                      class="float-right"
+                      v-on:click="ExpandPid.level_1 = !ExpandPid.level_1"
+                    >
+                      <v-icon v-if="!ExpandPid.level_1" name="angle-right" />
+                      <v-icon v-if="ExpandPid.level_1" name="angle-down" />
+                    </CButton>
+                  </CCol>
+                  <CCol sm="12">
+                    <MasterPid
+                      v-if="ExpandPid.level_1"
+                      :readonly="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      :item="product"
+                      :packaging_level="1"
+                      v-on:handleResultPid="
+                        handleResultPid({ result: $event, level: 1 })
+                      "
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
             <!-- Packaging LEVEL 2 -->
-            <CRow>
-              <CCol sm="7">
-                <CSelect
-                  :disabled="action == 'Read'"
-                  label="Packaging Level 2 *"
-                  description="Packaging Level 2 of Product."
-                  placeholder="--Select L2 Packaging--"
-                  horizontal
-                  @change="validationData()"
-                  :options="listPackaging"
-                  :value.sync="product.packagingl2_id"
-                  :add-input-classes="{
-                    'is-invalid': error.packagingl2_id,
-                  }"
-                />
-              </CCol>
-              <CCol sm="4">
-                <CInput
-                  :disabled="
-                    action == 'Read' ||
-                    (product.flag_upd_del == 0 && action != 'Create')
-                  "
-                  label="Quantity *"
-                  description="L1 Qty inside Pkg L2."
-                  horizontal
-                  v-model="product.qty_packagingl2"
-                  @keypress="
-                    limitNumber({
-                      event: $event,
-                      data: product.qty_packagingl2,
-                      max: 3,
-                    })
-                  "
-                  :add-input-classes="{
-                    'is-invalid': error.qty_packagingl2,
-                  }"
-                  :invalid-feedback="error.qty_packagingl2"
-                />
-              </CCol>
-              <CCol sm="1">
-                <CButton
-                  class="float-right"
-                  v-on:click="ExpandPid.level_2 = !ExpandPid.level_2"
-                >
-                  <v-icon v-if="!ExpandPid.level_2" name="angle-right" />
-                  <v-icon v-if="ExpandPid.level_2" name="angle-down" />
-                </CButton>
-              </CCol>
-              <CCol sm="12">
-                <MasterPid
-                  v-if="ExpandPid.level_2"
-                  :readonly="
-                    action == 'Read' ||
-                    (product.flag_upd_del == 0 && action != 'Create')
-                  "
-                  :item="product"
-                  :packaging_level="2"
-                  v-on:handleResultPid="
-                    handleResultPid({ result: $event, level: 2 })
-                  "
-                />
-              </CCol>
-            </CRow>
-            <hr />
+            <CCard>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="7">
+                    <CSelect
+                      :disabled="action == 'Read'"
+                      label="Packaging Level 2 *"
+                      description="Packaging Level 2 of Product."
+                      placeholder="--Select L2 Packaging--"
+                      horizontal
+                      @change="validationData()"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl2_id"
+                      :add-input-classes="{
+                        'is-invalid': error.packagingl2_id,
+                      }"
+                    />
+                  </CCol>
+                  <CCol sm="4">
+                    <CInput
+                      :disabled="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      label="Quantity *"
+                      description="L1 Qty inside Pkg L2."
+                      horizontal
+                      v-model="product.qty_packagingl2"
+                      @keypress="
+                        limitNumber({
+                          event: $event,
+                          data: product.qty_packagingl2,
+                          max: 3,
+                        })
+                      "
+                      :add-input-classes="{
+                        'is-invalid': error.qty_packagingl2,
+                      }"
+                      :invalid-feedback="error.qty_packagingl2"
+                    />
+                  </CCol>
+                  <CCol sm="1">
+                    <CButton
+                      class="float-right"
+                      v-on:click="ExpandPid.level_2 = !ExpandPid.level_2"
+                    >
+                      <v-icon v-if="!ExpandPid.level_2" name="angle-right" />
+                      <v-icon v-if="ExpandPid.level_2" name="angle-down" />
+                    </CButton>
+                  </CCol>
+                  <CCol sm="12">
+                    <MasterPid
+                      v-if="ExpandPid.level_2"
+                      :readonly="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      :item="product"
+                      :packaging_level="2"
+                      v-on:handleResultPid="
+                        handleResultPid({ result: $event, level: 2 })
+                      "
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
             <!-- Packaging LEVEL 3 -->
-            <CRow>
-              <CCol sm="7">
-                <CSelect
-                  :disabled="action == 'Read'"
-                  label="Packaging Level 3"
-                  description="Packaging Level 3 of Product."
-                  placeholder="--Select L3 Packaging--"
-                  horizontal
-                  @change="validationData()"
-                  :options="listPackaging"
-                  :value.sync="product.packagingl3_id"
-                  :add-input-classes="{
-                    'is-invalid': error.packagingl3_id,
-                  }"
-                />
-              </CCol>
-              <CCol sm="4">
-                <CInput
-                  :disabled="
-                    action == 'Read' ||
-                    (product.flag_upd_del == 0 && action != 'Create')
-                  "
-                  label="Quantity *"
-                  description="L1 Qty inside Pkg L3."
-                  horizontal
-                  v-model="product.qty_packagingl3"
-                  @keypress="
-                    limitNumber({
-                      event: $event,
-                      data: product.qty_packagingl3,
-                      max: 4,
-                    })
-                  "
-                  :add-input-classes="{
-                    'is-invalid': error.qty_packagingl3,
-                  }"
-                  :invalid-feedback="error.qty_packagingl3"
-                />
-              </CCol>
-              <CCol sm="1">
-                <CButton
-                  class="float-right"
-                  v-on:click="ExpandPid.level_3 = !ExpandPid.level_3"
-                >
-                  <v-icon v-if="!ExpandPid.level_3" name="angle-right" />
-                  <v-icon v-if="ExpandPid.level_3" name="angle-down" />
-                </CButton>
-              </CCol>
-              <CCol sm="12">
-                <MasterPid
-                  v-if="ExpandPid.level_3"
-                  :readonly="
-                    action == 'Read' ||
-                    (product.flag_upd_del == 0 && action != 'Create')
-                  "
-                  :item="product"
-                  :packaging_level="3"
-                  v-on:handleResultPid="
-                    handleResultPid({ result: $event, level: 3 })
-                  "
-                />
-              </CCol>
-            </CRow>
-            <hr />
+            <CCard>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="7">
+                    <CSelect
+                      :disabled="action == 'Read'"
+                      label="Packaging Level 3"
+                      description="Packaging Level 3 of Product."
+                      placeholder="--Select L3 Packaging--"
+                      horizontal
+                      @change="validationData()"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl3_id"
+                      :add-input-classes="{
+                        'is-invalid': error.packagingl3_id,
+                      }"
+                    />
+                  </CCol>
+                  <CCol sm="4">
+                    <CInput
+                      :disabled="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      label="Quantity *"
+                      description="L1 Qty inside Pkg L3."
+                      horizontal
+                      v-model="product.qty_packagingl3"
+                      @keypress="
+                        limitNumber({
+                          event: $event,
+                          data: product.qty_packagingl3,
+                          max: 4,
+                        })
+                      "
+                      :add-input-classes="{
+                        'is-invalid': error.qty_packagingl3,
+                      }"
+                      :invalid-feedback="error.qty_packagingl3"
+                    />
+                  </CCol>
+                  <CCol sm="1">
+                    <CButton
+                      class="float-right"
+                      v-on:click="ExpandPid.level_3 = !ExpandPid.level_3"
+                    >
+                      <v-icon v-if="!ExpandPid.level_3" name="angle-right" />
+                      <v-icon v-if="ExpandPid.level_3" name="angle-down" />
+                    </CButton>
+                  </CCol>
+                  <CCol sm="12">
+                    <MasterPid
+                      v-if="ExpandPid.level_3"
+                      :readonly="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      :item="product"
+                      :packaging_level="3"
+                      v-on:handleResultPid="
+                        handleResultPid({ result: $event, level: 3 })
+                      "
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
             <!-- Packaging LEVEL 4 -->
-            <CRow>
-              <CCol sm="7">
-                <CSelect
-                  :disabled="action == 'Read'"
-                  label="Packaging Level 4"
-                  description="Packaging Level 4 of Product."
-                  placeholder="--Select L4 Packaging--"
-                  horizontal
-                  @change="validationData()"
-                  :options="listPackaging"
-                  :value.sync="product.packagingl4_id"
-                  :add-input-classes="{
-                    'is-invalid': error.packagingl4_id,
-                  }"
-                />
-              </CCol>
-              <CCol sm="4">
-                <CInput
-                  :disabled="
-                    action == 'Read' ||
-                    (product.flag_upd_del == 0 && action != 'Create')
-                  "
-                  label="Quantity *"
-                  description="L1 Qty inside Pkg L4."
-                  horizontal
-                  v-model="product.qty_packagingl4"
-                  @keypress="
-                    limitNumber({
-                      event: $event,
-                      data: product.qty_packagingl4,
-                      max: 5,
-                    })
-                  "
-                  :add-input-classes="{
-                    'is-invalid': error.qty_packagingl4,
-                  }"
-                  :invalid-feedback="error.qty_packagingl4"
-                />
-              </CCol>
-              <CCol sm="1">
-                <CButton
-                  class="float-right"
-                  v-on:click="ExpandPid.level_4 = !ExpandPid.level_4"
-                >
-                  <v-icon v-if="!ExpandPid.level_4" name="angle-right" />
-                  <v-icon v-if="ExpandPid.level_4" name="angle-down" />
-                </CButton>
-              </CCol>
-              <CCol sm="12">
-                <MasterPid
-                  v-if="ExpandPid.level_4"
-                  :readonly="
-                    action == 'Read' ||
-                    (product.flag_upd_del == 0 && action != 'Create')
-                  "
-                  :item="product"
-                  :packaging_level="4"
-                  v-on:handleResultPid="
-                    handleResultPid({ result: $event, level: 4 })
-                  "
-                />
-              </CCol>
-            </CRow>
+            <CCard>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="7">
+                    <CSelect
+                      :disabled="action == 'Read'"
+                      label="Packaging Level 4"
+                      description="Packaging Level 4 of Product."
+                      placeholder="--Select L4 Packaging--"
+                      horizontal
+                      @change="validationData()"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl4_id"
+                      :add-input-classes="{
+                        'is-invalid': error.packagingl4_id,
+                      }"
+                    />
+                  </CCol>
+                  <CCol sm="4">
+                    <CInput
+                      :disabled="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      label="Quantity *"
+                      description="L1 Qty inside Pkg L4."
+                      horizontal
+                      v-model="product.qty_packagingl4"
+                      @keypress="
+                        limitNumber({
+                          event: $event,
+                          data: product.qty_packagingl4,
+                          max: 5,
+                        })
+                      "
+                      :add-input-classes="{
+                        'is-invalid': error.qty_packagingl4,
+                      }"
+                      :invalid-feedback="error.qty_packagingl4"
+                    />
+                  </CCol>
+                  <CCol sm="1">
+                    <CButton
+                      class="float-right"
+                      v-on:click="ExpandPid.level_4 = !ExpandPid.level_4"
+                    >
+                      <v-icon v-if="!ExpandPid.level_4" name="angle-right" />
+                      <v-icon v-if="ExpandPid.level_4" name="angle-down" />
+                    </CButton>
+                  </CCol>
+                  <CCol sm="12">
+                    <MasterPid
+                      v-if="ExpandPid.level_4"
+                      :readonly="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      :item="product"
+                      :packaging_level="4"
+                      v-on:handleResultPid="
+                        handleResultPid({ result: $event, level: 4 })
+                      "
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
           </CForm>
         </CCardBody>
         <CCardFooter>

@@ -1,8 +1,8 @@
 <template>
   <CRow>
     <CCol md="12">
-      <template>
-        <table style="width: 100%">
+      <template class="tableWrapper">
+        <table class="tableElement" style="width: 100%; padding: auto">
           <thead>
             <th style="text-align: center; width: 5%"></th>
             <th style="text-align: center; width: 11%">Type</th>
@@ -13,7 +13,7 @@
             <th style="text-align: center; width: 6%">
               <p>SN Prefix (static)</p>
             </th>
-            <th style="text-align: center; width: 5%">
+            <th style="text-align: center; width: 5%; margin: 0">
               <p v-if="packaging_level != 1">SN Length (dynamic)</p>
             </th>
             <th style="text-align: center; width: 12%">
@@ -347,7 +347,10 @@ export default {
   computed: {},
   methods: {
     async loadLayout() {
-      let _res = await getConfLayout({ status: 'Active' });
+      let _res = await getConfLayout({
+        status: 'Active',
+        packaging_level: this.packaging_level,
+      });
       if (_res) {
         this.list_layout = [];
         for (const it of _res.data) {
@@ -578,5 +581,19 @@ export default {
 .is-valid .custom-select-icon,
 .is-invalid .custom-select-icon {
   width: 1px;
+}
+.tableElement {
+  margin: 0px auto;
+  width: 100%;
+}
+
+.tableCell {
+  width: 50%;
+}
+
+.tableWrapper {
+  border: 1px solid red;
+  margin: 0px;
+  padding: 0 0px;
 }
 </style>

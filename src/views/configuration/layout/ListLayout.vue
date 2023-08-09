@@ -83,12 +83,12 @@
 </template>
 
 <script>
-import moment from "moment";
-import { deleteConfLayout, getConfLayout } from "../../../resource/ConfLayout";
-import { calculatePaginationV3, exportData } from "../../../utils";
+import moment from 'moment';
+import { deleteConfLayout, getConfLayout } from '../../../resource/ConfLayout';
+import { calculatePaginationV3, exportData } from '../../../utils';
 
 export default {
-  name: "Customer",
+  name: 'Customer',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -96,49 +96,53 @@ export default {
   data() {
     return {
       btn_copyProp: {
-        size: "sm",
-        class: "float-right",
-        color: "secondary",
-        icon: "copy",
-        text: "",
-        tooltip: "Copy data",
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'copy',
+        text: '',
+        tooltip: 'Copy data',
       },
       filter: {
         page: 1,
         limit: 10,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
         totalPages: 1,
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
+          key: 'name',
+          label: 'Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "itf_name",
-          label: "File Name",
-          _classes: "font-weight-bold",
+          key: 'itf_name',
+          label: 'File Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Created Date",
+          key: 'created_date',
+          label: 'Created Date',
         },
         {
-          key: "status",
-          label: "Status",
+          key: 'packaging_level',
+          label: 'Packaging Level',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'status',
+          label: 'Status',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -212,10 +216,10 @@ export default {
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : "Data has been deleted succesfully",
-          type: _res.error ? "error" : "success",
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) this.loadData();
@@ -227,7 +231,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          created_date: moment(item.created_date).format("YYYY-MM-DD HH:mm"),
+          created_date: moment(item.created_date).format('YYYY-MM-DD HH:mm'),
         };
       });
     },
