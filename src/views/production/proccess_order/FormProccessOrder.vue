@@ -727,7 +727,14 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!res['error']) this.loadData();
+      if (!res['error']) {
+        this.viewModalRequestSerial = false;
+        this.loadData();
+        this.additionalSerial.generate_count_level_1 = 0;
+        this.additionalSerial.generate_count_level_2 = 0;
+        this.additionalSerial.generate_count_level_3 = 0;
+        this.additionalSerial.generate_count_level_4 = 0;
+      }
     },
     async save() {
       this.initialLoad = false;
