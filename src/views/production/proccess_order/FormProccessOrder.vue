@@ -200,6 +200,16 @@
                   </p>
                 </template>
               </CInput>
+              <CInput
+                :disabled="true"
+                horizontal
+                :value.sync="formData.min_count_generated_serial"
+                type="number"
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">Min Generated</p>
+                </template>
+              </CInput>
               <CDataTable
                 hover
                 striped
@@ -451,7 +461,7 @@ import {
   insertProccessOrder,
   requestAdditionalSerial,
 } from '../../../resource/ProccessOrder';
-import { capitalizeFirstLetter, onlyNumber } from '../../../utils';
+import { capitalizeFirstLetter, getConfig, onlyNumber } from '../../../utils';
 export default {
   name: 'FormPacking',
   watch: {
@@ -462,8 +472,6 @@ export default {
           let _serials = await getAvalaibleSerial({
             id: this.$route.params.id,
           });
-          console.log(_serials.data[0]);
-
           if (_serials && !_serials.error) {
             this.serials = _serials.data[0].items;
           }
@@ -532,6 +540,7 @@ export default {
         generate_count_level_2: null,
         generate_count_level_3: null,
         generate_count_level_4: null,
+        min_count_generated_serial: getConfig().min_count_generated_serial || 0,
       },
       initial_load: true,
       today: moment().format('DD-MMM-YYYY'),
@@ -641,8 +650,9 @@ export default {
       let _res = await getProccessOrder({ id: this.$route.params.id });
       if (_res && !_res.error) {
         this.formData = _res.data[0];
+        this.formData.min_count_generated_serial =
+          getConfig().min_count_generated_serial || 0;
       }
-      console.log(_res);
     },
     limitNumber({ event, data, max }) {
       onlyNumber({ event, data, max });
@@ -654,22 +664,30 @@ export default {
       this.itemGenerateCount = [];
       for (var i = 1; i <= 4; i++) {
         let last_qty = 1;
+        let generate_count = Math.ceil((count + count * _buff) / last_qty);
         if (i == 1) {
           let item = {
             level: 1,
             quantity: 1,
-            generate_count: Math.ceil((count + count * _buff) / last_qty),
             packaging_name: product[`packagingl${i}_name`],
+            generate_count:
+              generate_count < this.formData.min_count_generated_serial
+                ? this.formData.min_count_generated_serial
+                : generate_count,
           };
           this.itemGenerateCount.push(item);
           last_qty = 1 / last_qty;
         } else if (product[`qty_packagingl${i}`]) {
           last_qty = product[`qty_packagingl${i}`] / last_qty;
+          generate_count = Math.ceil((count + count * _buff) / last_qty);
           let item = {
             level: i,
             quantity: product[`qty_packagingl${i}`],
-            generate_count: Math.ceil((count + count * _buff) / last_qty),
             packaging_name: product[`packagingl${i}_name`],
+            generate_count:
+              generate_count < this.formData.min_count_generated_serial
+                ? this.formData.min_count_generated_serial
+                : generate_count,
           };
           this.itemGenerateCount.push(item);
         }

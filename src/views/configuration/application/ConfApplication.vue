@@ -371,6 +371,20 @@
                     <CCol sm="4">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="8" class="col-form-label">
+                          Transfer Record to Inbound
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.transfer_record_to_inbound"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="4">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
                           Return Record to Inbound
                         </CCol>
                         <CCol sm="4">
@@ -378,21 +392,6 @@
                             class="mr-1"
                             color="success"
                             :checked.sync="data.return_record_to_inbound"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Transfer Record to Outbound
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.transfer_record_to_outbound"
                           />
                         </CCol>
                       </CRow>
@@ -417,13 +416,13 @@
                     <CCol sm="4">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="8" class="col-form-label">
-                          Transfer Record to Inbound
+                          Transfer Record to Outbound
                         </CCol>
                         <CCol sm="4">
                           <CSwitch
                             class="mr-1"
                             color="success"
-                            :checked.sync="data.transfer_record_to_inbound"
+                            :checked.sync="data.transfer_record_to_outbound"
                           />
                         </CCol>
                       </CRow>
@@ -441,6 +440,29 @@
                           />
                         </CCol>
                       </CRow>
+                    </CCol>
+                  </CRow>
+                </CCardBody>
+              </CCard>
+              <CCard>
+                <CCardHeader style="font-weight: bold"
+                  >Production Option</CCardHeader
+                >
+                <CCardBody>
+                  <CRow form class="form-group">
+                    <CCol sm="10">
+                      <CInput
+                        label=""
+                        horizontal
+                        type="number"
+                        v-model="data.min_count_generated_serial"
+                      >
+                        <template #label>
+                          <p class="col-form-label col-sm-3">
+                            Min. Count Generated Serial
+                          </p>
+                        </template></CInput
+                      >
                     </CCol>
                   </CRow>
                 </CCardBody>
@@ -508,74 +530,74 @@
 
 <script>
 const reader = new FileReader();
-import "vue2-datepicker/index.css";
-import $axiosMertrack from "../../../apiMertrack";
-import moment from "moment";
-import { getSysConfig } from "../../../resource/SysConfig";
+import 'vue2-datepicker/index.css';
+import $axiosMertrack from '../../../apiMertrack';
+import moment from 'moment';
+import { getSysConfig } from '../../../resource/SysConfig';
 export default {
-  name: "PackageForm",
+  name: 'PackageForm',
   components: {},
   data() {
     return {
       initialLoad: true,
-      action: "Edit",
-      labelLogo: "Choose file...",
+      action: 'Edit',
+      labelLogo: 'Choose file...',
       data: {
-        Username: "",
-        UserPassword: "",
-        IdentityName: "",
-        IdentityNumber: "",
-        logo: { fileName: "", fileContent: "" },
-        identity_logo_path: "",
+        Username: '',
+        UserPassword: '',
+        IdentityName: '',
+        IdentityNumber: '',
+        logo: { fileName: '', fileContent: '' },
+        identity_logo_path: '',
         TotalWh: 0,
         total_device: 0,
-        imei: "",
+        imei: '',
         // DbPwd: "",
-        backup_frequent: "",
-        sftp_folder_1: "",
-        sftp_folder_2: "",
-        sftp_folder_3: "",
-        achived_folder_1: "",
-        achived_folder_2: "",
-        achived_folder_3: "",
-        sscc_no_box_sn: "",
-        sscc_no_box_non_sn: "",
-        sscc_no_pallet_sn: "",
-        sscc_no_pallet_non_sn: "",
-        level_indicator_box_gtin: "",
-        Latitude: "",
-        Longitude: "",
+        backup_frequent: '',
+        sftp_folder_1: '',
+        sftp_folder_2: '',
+        sftp_folder_3: '',
+        achived_folder_1: '',
+        achived_folder_2: '',
+        achived_folder_3: '',
+        sscc_no_box_sn: '',
+        sscc_no_box_non_sn: '',
+        sscc_no_pallet_sn: '',
+        sscc_no_pallet_non_sn: '',
+        level_indicator_box_gtin: '',
+        Latitude: '',
+        Longitude: '',
         list_device: [],
       },
       devicesLooping: 0,
       periodicBackupOptions: [
-        { value: 1, label: "1 Day" },
-        { value: 7, label: "7 Day" },
-        { value: 14, label: "14 Day" },
-        { value: 30, label: "30 Day" },
+        { value: 1, label: '1 Day' },
+        { value: 7, label: '7 Day' },
+        { value: 14, label: '14 Day' },
+        { value: 30, label: '30 Day' },
       ],
       message: {
-        errorAdmin: "",
-        errorPassword: "",
-        errorIdentity: "",
-        errorLogo: "",
-        errorTotalWarehouse: "",
-        errortotal_device: "",
-        errorImeiDevice: "",
-        errorDatabasePassword: "",
-        errorSftp1: "",
-        errorSftp2: "",
-        errorSftp3: "",
-        errorAchived1: "",
-        errorAchived2: "",
-        errorAchived3: "",
-        errorsscc_no_box_sn: "",
-        errorsscc_no_box_non_sn: "",
-        errorsscc_no_pallet_sn: "",
-        errorsscc_no_pallet_non_sn: "",
-        errorlevel_indicator_box_gtin: "",
+        errorAdmin: '',
+        errorPassword: '',
+        errorIdentity: '',
+        errorLogo: '',
+        errorTotalWarehouse: '',
+        errortotal_device: '',
+        errorImeiDevice: '',
+        errorDatabasePassword: '',
+        errorSftp1: '',
+        errorSftp2: '',
+        errorSftp3: '',
+        errorAchived1: '',
+        errorAchived2: '',
+        errorAchived3: '',
+        errorsscc_no_box_sn: '',
+        errorsscc_no_box_non_sn: '',
+        errorsscc_no_pallet_sn: '',
+        errorsscc_no_pallet_non_sn: '',
+        errorlevel_indicator_box_gtin: '',
       },
-      statusOptions: ["Active", "Inactive"],
+      statusOptions: ['Active', 'Inactive'],
     };
   },
   mounted() {
@@ -592,7 +614,7 @@ export default {
       return;
     },
     formatDate(date) {
-      return moment(date).format("yyyy/MM/DD");
+      return moment(date).format('yyyy/MM/DD');
     },
     uploadLogo(event) {
       let file = event[0];
@@ -600,10 +622,10 @@ export default {
         // this.data.logo.fileName = file.name;
         this.labelLogo = file.name;
         this.convertToBase64(file);
-        this.message.errorLogo = "";
+        this.message.errorLogo = '';
       } else {
-        this.labelLogo = "Choose file...";
-        this.message.errorLogo = "The logo file is required";
+        this.labelLogo = 'Choose file...';
+        this.message.errorLogo = 'The logo file is required';
       }
     },
     convertToBase64(file) {
@@ -617,18 +639,18 @@ export default {
     },
     formValidation() {
       let required = [
-        "identity_name",
-        "identity_number",
-        "identity_logo_path",
-        "entity_address",
+        'identity_name',
+        'identity_number',
+        'identity_logo_path',
+        'entity_address',
       ];
       for (const it of required) {
         if (!this.data[it]) {
           this.$toast.open({
-            message: "Please complete all required data",
-            type: "error",
+            message: 'Please complete all required data',
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return false;
@@ -641,14 +663,14 @@ export default {
       if (!this.formValidation()) {
         return;
       }
-      this.message.errorlevel_indicator_box_gtin = "";
+      this.message.errorlevel_indicator_box_gtin = '';
       for (var i = 0; i < this.data.total_device; i++) {
         if (!this.data.list_device[i]) {
           this.$toast.open({
             message: `Please input Android ID  ${i + 1}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return;
@@ -663,10 +685,10 @@ export default {
           this.$toast.open({
             message: res.error
               ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
+              : 'Data has been saved succesfully ',
+            type: res.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           if (!res.error) {

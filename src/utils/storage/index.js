@@ -1,7 +1,7 @@
-import CryptoJS from "crypto-js";
-import moment from "moment";
+import CryptoJS from 'crypto-js';
+import moment from 'moment';
 export function encrypt(plaintext) {
-  const password = "1sampai9";
+  const password = '1sampai9';
   // Buat salt dan key dari password
   const salt = CryptoJS.lib.WordArray.random(16);
   const key = CryptoJS.PBKDF2(password, salt, { keySize: 256 / 32 });
@@ -15,7 +15,7 @@ export function encrypt(plaintext) {
 
 // Fungsi untuk melakukan dekripsi
 export function decrypt(ciphertext) {
-  const password = "1sampai9";
+  const password = '1sampai9';
   // Ambil salt, IV, dan teks terenkripsi dari string
   const salt = CryptoJS.enc.Hex.parse(ciphertext.substr(0, 32));
   const iv = CryptoJS.enc.Hex.parse(ciphertext.substr(32, 32));
@@ -29,16 +29,16 @@ export function decrypt(ciphertext) {
 }
 
 export function clearStorage() {
-  localStorage.removeItem("profile");
-  localStorage.removeItem("menu");
+  localStorage.removeItem('profile');
+  localStorage.removeItem('menu');
 }
 
 export function setProfile(data) {
-  localStorage.setItem("profile", encrypt(JSON.stringify(data)));
+  localStorage.setItem('profile', encrypt(JSON.stringify(data)));
 }
 export function getProfile() {
   try {
-    return JSON.parse(decrypt(localStorage.getItem("profile")));
+    return JSON.parse(decrypt(localStorage.getItem('profile')));
   } catch (error) {
     return null;
   }
@@ -68,39 +68,39 @@ export function getToken() {
   }
 }
 export function setMenu(data) {
-  localStorage.setItem("menu", encrypt(JSON.stringify(data)));
+  localStorage.setItem('menu', encrypt(JSON.stringify(data)));
 }
 export function getMenu() {
   try {
-    return JSON.parse(decrypt(localStorage.getItem("menu")));
+    return JSON.parse(decrypt(localStorage.getItem('menu')));
   } catch (error) {
     return [];
   }
 }
 export function setRole(data) {
-  localStorage.setItem("role", encrypt(JSON.stringify(data)));
+  localStorage.setItem('role', encrypt(JSON.stringify(data)));
 }
 export function getRole() {
-  return JSON.parse(decrypt(localStorage.getItem("role")));
+  return JSON.parse(decrypt(localStorage.getItem('role')));
 }
 export function setConfig(data) {
-  localStorage.setItem("configuration", encrypt(JSON.stringify(data)));
+  localStorage.setItem('configuration', encrypt(JSON.stringify(data)));
 }
 export function setLogo(data) {
-  localStorage.setItem("logo", data);
+  localStorage.setItem('logo', data);
 }
 export function getLogo() {
-  let data = localStorage.getItem("logo");
+  let data = localStorage.getItem('logo');
   return data;
 }
 
 export function getConfig() {
-  return JSON.parse(decrypt(localStorage.getItem("configuration")));
+  return JSON.parse(decrypt(localStorage.getItem('configuration')));
 }
 export function setLoginTimeout(data) {
-  let time = moment().add(data, "minutes").format("DD/MM/YYYY HH:mm:ss:SSS");
-  localStorage.setItem("time_out", time);
+  let time = moment().add(data, 'minutes').format('DD/MM/YYYY HH:mm:ss:SSS');
+  localStorage.setItem('time_out', time);
 }
 export function getLoginTimeout() {
-  return localStorage.getItem("time_out");
+  return localStorage.getItem('time_out');
 }
