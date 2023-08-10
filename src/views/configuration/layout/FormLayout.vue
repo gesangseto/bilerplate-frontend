@@ -445,7 +445,7 @@ export default {
       // V2 API
       formData: {
         name: '',
-        packaging_level: null,
+        packaging_level: 1,
         itf_name: '',
         itf_content: '',
         bpom_barcode_format: '',
