@@ -195,7 +195,17 @@
               </CCol>
             </CRow>
             <hr />
-            <h4>Packaging Detail</h4>
+            <h4>
+              Packaging Detail
+              <CButton
+                class="float-right"
+                v-on:click="viewModalWeight = true"
+                v-c-tooltip="'Config Weight'"
+              >
+                <v-icon name="cog" :color="'black'" />
+              </CButton>
+            </h4>
+            <br />
             <!-- Packaging LEVEL 1 -->
             <CCard>
               <CCardBody>
@@ -224,6 +234,7 @@
                       <v-icon v-if="ExpandPid.level_1" name="angle-down" />
                     </CButton>
                   </CCol>
+                  <!-- CONFIG PID -->
                   <CCol sm="12">
                     <MasterPid
                       v-if="ExpandPid.level_1"
@@ -447,6 +458,61 @@
             </CCard>
           </CForm>
         </CCardBody>
+        <CModal
+          title="Configuration Weight"
+          color="warning"
+          :show.sync="viewModalWeight"
+          size="lg"
+        >
+          <table style="width: 100%">
+            <tr>
+              <td><strong>Level</strong></td>
+              <td><strong>Min Weight (Kg)</strong></td>
+              <td><strong>Max Weight (Kg)</strong></td>
+              <td><strong>Required</strong></td>
+            </tr>
+            <tr v-for="(item, index) in [1, 2, 3, 4]" :key="index">
+              <td>{{ index + 1 }}</td>
+              <td>
+                <CInput
+                  :disabled="action == 'Read'"
+                  :placeholder="`Enter weight minimum L${index + 1}`"
+                  horizontal
+                  v-model="product[`weight_min_l${index + 1}`]"
+                  type="number"
+                />
+              </td>
+              <td>
+                <CInput
+                  :disabled="action == 'Read'"
+                  :placeholder="`Enter weight maximum L${index + 1}`"
+                  horizontal
+                  v-model="product[`weight_max_l${index + 1}`]"
+                  type="number"
+                />
+              </td>
+              <td>
+                <SwitchDefault
+                  :disabled="action == 'Read'"
+                  :default_value="product[`weight_required_l${index + 1}`]"
+                  v-on:onChange="
+                    product[`weight_required_l${index + 1}`] = $event
+                  "
+                />
+              </td>
+            </tr>
+          </table>
+          <template #footer>
+            <CButton
+              size="sm"
+              color="success"
+              type="button"
+              @click="viewModalWeight = false"
+            >
+              <CIcon name="cil-check-circle" /> Set
+            </CButton>
+          </template>
+        </CModal>
         <CCardFooter>
           <CButton
             v-if="action == 'Read' ? false : true"
@@ -563,6 +629,7 @@ export default {
   },
   data() {
     return {
+      viewModalWeight: false,
       route_action: '',
       action: null,
       initial_load: true,
@@ -572,6 +639,18 @@ export default {
         status: 'Active',
         show_status: true,
         mst_pid: [],
+        weight_required_l1: false,
+        weight_min_l1: null,
+        weight_max_l1: null,
+        weight_required_l2: false,
+        weight_min_l2: null,
+        weight_max_l2: null,
+        weight_required_l3: false,
+        weight_min_l3: null,
+        weight_max_l3: null,
+        weight_required_l4: false,
+        weight_min_l4: null,
+        weight_max_l4: null,
       },
       error: this.initial_error(),
       listPackaging: [],
