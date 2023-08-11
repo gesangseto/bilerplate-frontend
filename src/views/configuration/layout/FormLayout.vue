@@ -572,6 +572,7 @@ export default {
         $('#error-upload').text('ITF file is required');
       }
     },
+
     generateField(string) {
       let arr_str = string.split(/\r?\n/);
       this.formData.items = [];
@@ -628,8 +629,16 @@ export default {
       let check_ai = this.identifier[index];
       check_ai.is_selected = !check_ai.selected;
       if (!check_ai.flag_system && check_ai.data_type == 'Date') {
-        check_ai.format_ref = this.listFormatDate[0].value;
-        check_ai.format_ref_data = this.listFormatDate[0].label;
+        let listDate = this.listFormatDate.find(
+          (it) => it.value == check_ai.format_ref
+        );
+        if (listDate) {
+          check_ai.format_ref = listDate.value;
+          check_ai.format_ref_data = listDate.label;
+        } else {
+          check_ai.format_ref = this.listFormatDate[0].value;
+          check_ai.format_ref_data = this.listFormatDate[0].label;
+        }
       }
       let lineParameter = this.formData.items[i];
       if (
@@ -736,6 +745,7 @@ export default {
         }
       }
     },
+
     handleSetDateFormat() {
       this.selectedDate = this.vSelectDate;
       let i = this.selectedIndex;

@@ -199,7 +199,7 @@
               Packaging Detail
               <CButton
                 class="float-right"
-                v-on:click="viewModalWeight = true"
+                v-on:click="showModalWeight()"
                 v-c-tooltip="'Config Weight'"
               >
                 <v-icon name="cog" :color="'black'" />
@@ -478,8 +478,16 @@
                   :disabled="action == 'Read'"
                   :placeholder="`Enter weight minimum L${index + 1}`"
                   horizontal
-                  v-model="product[`weight_min_l${index + 1}`]"
+                  v-model="product_weight[`weight_min_l${index + 1}`]"
                   type="number"
+                  :invalid-feedback="'Weight minimum must smaller than maximum'"
+                  :add-input-classes="{
+                    'is-invalid':
+                      product_weight[`weight_min_l${index + 1}`] &&
+                      product_weight[`weight_max_l${index + 1}`] &&
+                      product_weight[`weight_min_l${index + 1}`] >=
+                        product_weight[`weight_max_l${index + 1}`],
+                  }"
                 />
               </td>
               <td>
@@ -487,16 +495,26 @@
                   :disabled="action == 'Read'"
                   :placeholder="`Enter weight maximum L${index + 1}`"
                   horizontal
-                  v-model="product[`weight_max_l${index + 1}`]"
+                  v-model="product_weight[`weight_max_l${index + 1}`]"
                   type="number"
+                  :invalid-feedback="'Weight maximum must biger than minimum'"
+                  :add-input-classes="{
+                    'is-invalid':
+                      product_weight[`weight_min_l${index + 1}`] &&
+                      product_weight[`weight_max_l${index + 1}`] &&
+                      product_weight[`weight_max_l${index + 1}`] <=
+                        product_weight[`weight_min_l${index + 1}`],
+                  }"
                 />
               </td>
               <td>
                 <SwitchDefault
                   :disabled="action == 'Read'"
-                  :default_value="product[`weight_required_l${index + 1}`]"
+                  :default_value="
+                    product_weight[`weight_required_l${index + 1}`]
+                  "
                   v-on:onChange="
-                    product[`weight_required_l${index + 1}`] = $event
+                    product_weight[`weight_required_l${index + 1}`] = $event
                   "
                 />
               </td>
@@ -504,10 +522,11 @@
           </table>
           <template #footer>
             <CButton
+              :disabled="!allowSetWeight"
               size="sm"
               color="success"
               type="button"
-              @click="viewModalWeight = false"
+              @click="setWeight()"
             >
               <CIcon name="cil-check-circle" /> Set
             </CButton>
@@ -542,6 +561,19 @@ import { capitalizeFirstLetter, onlyNumber } from '../../../utils';
 
 export default {
   watch: {
+    product_weight: {
+      handler(item) {
+        this.allowSetWeight = true;
+        for (var i = 1; i <= 4; i++) {
+          let min = parseFloat(item[`weight_min_l${i}`]);
+          let max = parseFloat(item[`weight_max_l${i}`]);
+          if (min >= max) {
+            this.allowSetWeight = false;
+          }
+        }
+      },
+      deep: true,
+    },
     'product.mst_pid': {
       handler(val) {
         for (const it of val) {
@@ -629,10 +661,25 @@ export default {
   },
   data() {
     return {
+      allowSetWeight: true,
       viewModalWeight: false,
       route_action: '',
       action: null,
       initial_load: true,
+      product_weight: {
+        weight_required_l1: false,
+        weight_min_l1: null,
+        weight_max_l1: null,
+        weight_required_l2: false,
+        weight_min_l2: null,
+        weight_max_l2: null,
+        weight_required_l3: false,
+        weight_min_l3: null,
+        weight_max_l3: null,
+        weight_required_l4: false,
+        weight_min_l4: null,
+        weight_max_l4: null,
+      },
       product: {
         gtin: '',
         product_type: '0',
@@ -929,6 +976,21 @@ export default {
         return false;
       }
       return true;
+    },
+    showModalWeight() {
+      for (var i = 1; i <= 4; i++) {
+        let min = this.product[`weight_min_l${i}`];
+        let max = this.product[`weight_max_l${i}`];
+        let required = this.product[`weight_required_l${i}`];
+        this.product_weight[`weight_required_l${i}`] = required;
+        this.product_weight[`weight_min_l${i}`] = min;
+        this.product_weight[`weight_max_l${i}`] = max;
+      }
+      this.viewModalWeight = true;
+    },
+    setWeight() {
+      this.viewModalWeight = false;
+      this.product = { ...this.product, ...this.product_weight };
     },
     async save() {
       this.initial_load = false;
