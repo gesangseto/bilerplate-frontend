@@ -105,20 +105,6 @@
               <CCol sm="12">
                 <CInput
                   :disabled="action == 'Read'"
-                  label="Product Name (Print) *"
-                  @keyup="validationData()"
-                  horizontal
-                  v-model="product.print_name"
-                  invalid-feedback="Product name (print) is required"
-                  placeholder="Enter product name for label printing"
-                  :add-input-classes="{
-                    'is-invalid': error.print_name,
-                  }"
-                />
-              </CCol>
-              <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
                   label="Storage Termperature *"
                   placeholder="Enter product storage temperature for label printing"
                   @keyup="validationData()"
@@ -194,6 +180,44 @@
                 </CRow>
               </CCol>
             </CRow>
+            <CCard>
+              <CCardBody>
+                <h4>Print Details</h4>
+                <br />
+                <CRow>
+                  <CCol md="12">
+                    <CInput
+                      :disabled="action == 'Read'"
+                      label="Product Name *"
+                      @keyup="validationData()"
+                      horizontal
+                      v-model="product.print_name"
+                      invalid-feedback="Product name (print) is required"
+                      placeholder="Enter product name for label printing"
+                      :add-input-classes="{
+                        'is-invalid': error.print_name,
+                      }"
+                    />
+                  </CCol>
+                  <CCol md="12">
+                    <CInput
+                      :disabled="action == 'Read'"
+                      label="Description 1"
+                      horizontal
+                      v-model="product.print_desc1"
+                    />
+                  </CCol>
+                  <CCol md="12">
+                    <CInput
+                      :disabled="action == 'Read'"
+                      label="Description 2"
+                      horizontal
+                      v-model="product.print_desc2"
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
             <hr />
             <h4>
               Packaging Detail
