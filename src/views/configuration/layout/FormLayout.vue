@@ -23,7 +23,7 @@
                 :disabled="action === 'Read'"
                 horizontal
                 custom
-                accept=".itf"
+                accept=".itf,.csv"
                 class="input-form-upload"
                 @change="handleUploadFile"
                 :is-valid="
@@ -552,41 +552,46 @@ export default {
       let isiFile = event[0];
       if (isiFile != undefined) {
         let fileName = isiFile.name;
-        $('#error-upload').text('');
         let ekstensiFile = fileName.split('.').reverse()[0];
-        if (ekstensiFile.toLowerCase() != 'itf') {
-          $('#error-upload').text(
-            `Your file is not ITF (${fileName}). Please select ITF file`
-          );
-        } else {
-          $('#error-upload').text('');
-          reader.onload = (e) => {
-            this.formData.name = fileName.replace('.itf', '');
-            this.formData.itf_name = fileName;
-            this.formData.itf_content = e.target.result;
-            this.generateField(e.target.result);
-          };
-          reader.readAsText(isiFile);
-        }
+        reader.onload = (e) => {
+          this.formData.name = fileName.replace('.itf', '');
+          this.formData.itf_name = fileName;
+          this.formData.itf_content = e.target.result;
+          this.generateField(e.target.result, ekstensiFile);
+        };
+        reader.readAsText(isiFile);
       } else {
-        $('#error-upload').text('ITF file is required');
+        return;
       }
     },
 
-    generateField(string) {
+    generateField(string, extensi) {
       let arr_str = string.split(/\r?\n/);
       this.formData.items = [];
       let listLayout = [];
-      for (const it of arr_str) {
-        let _variable = getStringBetween({ string: it });
-        if (_variable) {
-          let _layout = JSON.parse(JSON.stringify(this.formType));
-          _layout.itf_var_name = _variable;
-          listLayout.push(_layout);
+      if (extensi === 'itf') {
+        for (const it of arr_str) {
+          let _variable = getStringBetween({ string: it });
+          if (_variable) {
+            let _layout = JSON.parse(JSON.stringify(this.formType));
+            _layout.itf_var_name = _variable;
+            listLayout.push(_layout);
+          }
         }
+        listLayout.sort(dynamicSort('itf_var_name'));
+        this.formData.items = listLayout;
+      } else if (extensi === 'csv') {
+        for (const it of arr_str) {
+          if (it) {
+            let _layout = JSON.parse(JSON.stringify(this.formType));
+            console.log(_layout);
+            _layout.itf_var_name = it;
+            listLayout.push(_layout);
+          }
+        }
+        listLayout.sort(dynamicSort('itf_var_name'));
+        this.formData.items = listLayout;
       }
-      listLayout.sort(dynamicSort('itf_var_name'));
-      this.formData.items = listLayout;
     },
     /*
     END
