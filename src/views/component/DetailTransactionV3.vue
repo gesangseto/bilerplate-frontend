@@ -109,11 +109,7 @@
                     :key="item.value"
                     @click="handleClickSerial(item, total_child + 1 - idx)"
                   >
-                    [{{
-                      item.epc_type == 'sscc'
-                        ? item.company_prefix
-                        : item.gtin_sscc
-                    }}] {{ item.serial }}
+                    [{{ item.epc_key }}] {{ item.serial }}
                     {{
                       total_child + 1 - idx != 1
                         ? ` - [${item.quantity_child}]`

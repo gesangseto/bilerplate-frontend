@@ -231,8 +231,8 @@ export default {
           label: 'NIE',
         },
         {
-          key: 'gtin_cp',
-          label: 'GTIN / CP',
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
           key: 'serial',

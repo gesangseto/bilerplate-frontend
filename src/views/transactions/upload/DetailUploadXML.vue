@@ -115,7 +115,7 @@
                   v-bind:key="value.id"
                 >
                   <td style="width: 40%">
-                    {{ index.replace("_", "") }} Quantity ({{ value.name }})
+                    {{ index.replace('_', '') }} Quantity ({{ value.name }})
                   </td>
                   <td style="width: 60%">
                     <input
@@ -154,9 +154,9 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
 export default {
-  name: "DetailUploadXML",
+  name: 'DetailUploadXML',
   mounted() {
     if (this.$route.params.id != undefined) {
       this.$isLoading(true);
@@ -182,9 +182,9 @@ export default {
           this.$isLoading(false);
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
@@ -196,72 +196,72 @@ export default {
       total: {
         L_1: {
           id: 1,
-          name: "",
+          name: '',
           quantity: 0,
         },
         L_2: {
           id: 2,
-          name: "",
+          name: '',
           quantity: 0,
         },
         L_3: {
           id: 3,
-          name: "",
+          name: '',
           quantity: 0,
         },
         L_4: {
           id: 4,
-          name: "",
+          name: '',
           quantity: 0,
         },
       },
       fields: [
         {
-          key: "product_no",
-          label: "Item No",
+          key: 'product_no',
+          label: 'Item No',
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "product_nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
       ],
       upload: {
-        id: "",
-        suppplier_name: "",
-        type: "",
-        fileName: "",
-        fileContent: "",
-        createdBy: "",
-        createdDate: "",
-        status: "",
+        id: '',
+        suppplier_name: '',
+        type: '',
+        fileName: '',
+        fileContent: '',
+        createdBy: '',
+        createdDate: '',
+        status: '',
         items: [],
       },
     };
@@ -277,7 +277,7 @@ export default {
         let type = item.epc_type ? item.epc_type.toLowerCase() : null;
         return {
           ...item,
-          gtin_cp: type == "sscc" ? item.company_prefix : item.gtin_sscc,
+          gtin_cp: type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

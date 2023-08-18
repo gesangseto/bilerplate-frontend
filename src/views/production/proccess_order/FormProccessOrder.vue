@@ -569,8 +569,8 @@ export default {
       ],
       fieldItems: [
         {
-          key: 'gtin_cp',
-          label: 'GTIN / CP',
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
           key: 'serial',
@@ -592,8 +592,8 @@ export default {
       ],
       fieldSerial: [
         {
-          key: 'gtin_cp',
-          label: 'GTIN / CP',
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
           key: 'serial',
@@ -835,8 +835,6 @@ export default {
       return this.serials.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
