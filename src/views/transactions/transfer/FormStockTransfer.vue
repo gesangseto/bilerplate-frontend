@@ -148,17 +148,16 @@
 </template>
 
 <script>
-import "../../../assets/js/jquery-ui";
-import $axiosMertrack from "../../../apiMertrack";
-import { parsingBarcode } from "../../../utils";
+import '../../../assets/js/jquery-ui';
+import $axiosMertrack from '../../../apiMertrack';
 // import vueSelect from 'vue-select';
 
 export default {
-  name: "FormStockTransfer",
+  name: 'FormStockTransfer',
   watch: {
     formData: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -190,57 +189,57 @@ export default {
       datas: [],
       detailModal: false,
       detailSerialOrAggregation: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       detailItemsFields: [
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
         },
       ],
       item: [],
       modalAdd: false,
-      action: "Edit",
+      action: 'Edit',
       close: false,
       items: [],
       temp_items: [],
       productId: [],
-      productName: "",
+      productName: '',
       transfer: {
-        fromWarehouse: "",
-        toWarehouse: "",
+        fromWarehouse: '',
+        toWarehouse: '',
         detailProduct: {
           product: {},
           batchNumber: {},
-          packaging: "",
-          serial: "",
-          quantity: "",
+          packaging: '',
+          serial: '',
+          quantity: '',
         },
       },
       options: [],
@@ -255,58 +254,58 @@ export default {
       warehouseError: false,
       fields: [
         {
-          key: "product_no",
-          label: "Item No",
+          key: 'product_no',
+          label: 'Item No',
           sorter: false,
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
           sorter: false,
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
           sorter: false,
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
           sorter: false,
         },
         {
-          key: "product_nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
           sorter: false,
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
           sorter: false,
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
           sorter: false,
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
           sorter: false,
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
           sorter: false,
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
           sorter: false,
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
         },
       ],
@@ -317,7 +316,7 @@ export default {
     this.loadListWarehouse();
 
     // aksi add dan edit
-    this.action = this.$route.params.id === undefined ? "ADD" : "EDIT";
+    this.action = this.$route.params.id === undefined ? 'ADD' : 'EDIT';
   },
   methods: {
     closeDetailModal() {
@@ -358,9 +357,9 @@ export default {
       if (this.temp_items.length == 0) {
         this.$toast.open({
           message: `No data to be set`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -376,7 +375,7 @@ export default {
       this.modalAdd = false;
     },
     loadListWarehouse() {
-      var param = { status: "Active", category_id: 1 };
+      var param = { status: 'Active', category_id: 1 };
       param = new URLSearchParams(param).toString();
       var _url = `/v3/master/warehouse?${param}`;
       $axiosMertrack.get(_url).then((result) => {
@@ -388,9 +387,9 @@ export default {
           });
         }
       });
-      var param = { status: "Active", category_id: 3 };
+      param = { status: 'Active', category_id: 3 };
       param = new URLSearchParams(param).toString();
-      var _url = `/v3/master/warehouse?${param}`;
+      _url = `/v3/master/warehouse?${param}`;
       $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
@@ -419,12 +418,11 @@ export default {
       if (!this.formData.from_warehouse || !this.formData.to_warehouse) {
         this.$toast.open({
           message: `Please input all the required data.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        return false;
         return false;
       }
       return true;
@@ -435,10 +433,10 @@ export default {
       }
       if (this.items.length <= 0) {
         this.$toast.open({
-          message: "Please add at least 1 product item to continue",
-          type: "error",
+          message: 'Please add at least 1 product item to continue',
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -448,14 +446,15 @@ export default {
       let items = [];
       for (const it of this.items) {
         let field = {
-          gtin_sscc: it.gtin_sscc,
+          epc_key: it.epc_key,
           serial: it.serial,
         };
-        if (it.serial == "0000000000") {
-          field["product_id"] = it.product_id;
-          field["batch_no"] = it.batch_no;
-          field["expired_date"] = it.expired_date;
-          field["quantity"] = it.quantity;
+        if (it.serial == '0000000000') {
+          field['epc_key'] = it.epc_key;
+          field['product_id'] = it.product_id;
+          field['batch_no'] = it.batch_no;
+          field['expired_date'] = it.expired_date;
+          field['quantity'] = it.quantity;
         }
         items.push(field);
       }
@@ -465,17 +464,17 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         $axiosMertrack
-          .put("/v3/transaction/transfer", param)
+          .put('/v3/transaction/transfer', param)
           .then((result) => {
             this.$isLoading(false);
             let res = result.data;
             this.$toast.open({
               message: res.error
                 ? res.message
-                : "Data has been saved succesfully ",
-              type: res.error ? "error" : "success",
+                : 'Data has been saved succesfully ',
+              type: res.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             if (!res.error) {
@@ -488,9 +487,9 @@ export default {
             this.$isLoading(false);
             this.$toast.open({
               message: `Error : ${err}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
           });
@@ -506,8 +505,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
@@ -515,8 +512,6 @@ export default {
       return this.item.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

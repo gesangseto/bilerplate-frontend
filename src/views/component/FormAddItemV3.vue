@@ -80,26 +80,26 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import "vue-select/dist/vue-select.css";
-import moment from "moment";
-import { getConfig } from "../../utils";
+import $axiosMertrack from '../../apiMertrack';
+import 'vue-select/dist/vue-select.css';
+import moment from 'moment';
+import { getConfig } from '../../utils';
 export default {
-  name: "FormAddItemV3",
+  name: 'FormAddItemV3',
   props: { currentItem: Array, filter: Object, useDeliveryDayLimit: Boolean },
   watch: {
     currentItem: {
-      handler(n, o) {
+      handler() {
         this.resetForm();
       },
       deep: true,
     },
     filter: {
-      handler(n, o) {
-        if (n.hasOwnProperty("warehouse_id") && n.warehouse_id) {
+      handler(n) {
+        if (n.hasOwnProperty('warehouse_id') && n.warehouse_id) {
           this.resetForm();
           this.getProduct();
-        } else if (n.hasOwnProperty("from_warehouse") && n.from_warehouse) {
+        } else if (n.hasOwnProperty('from_warehouse') && n.from_warehouse) {
           this.getProduct();
           this.resetForm();
         }
@@ -124,32 +124,32 @@ export default {
       result: [],
       stockField: [
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "remark",
-          label: "Remark",
+          key: 'remark',
+          label: 'Remark',
         },
         {
-          key: "action",
-          label: "Selection",
+          key: 'action',
+          label: 'Selection',
         },
       ],
     };
@@ -168,8 +168,8 @@ export default {
     },
 
     getDifferentDays(exp_date) {
-      var date_exp = moment(new Date(exp_date), "YYYY-MM-DD");
-      var date_now = moment(new Date(), "YYYY-MM-DD");
+      var date_exp = moment(new Date(exp_date), 'YYYY-MM-DD');
+      var date_now = moment(new Date(), 'YYYY-MM-DD');
       let sisa = Math.ceil(moment.duration(date_exp.diff(date_now)).asDays());
       return sisa;
     },
@@ -216,12 +216,12 @@ export default {
     },
     returnResult() {
       let result = this.formData.stock.filter((e) => e.is_checked);
-      this.$emit("handleResult", result);
+      this.$emit('handleResult', result);
     },
     getProduct() {
       let param = {
-        product_type: this.filter.product_type,
-        status: "Active",
+        product_type: this.filter.product_type || 0,
+        status: 'Active',
         show_status: true,
       };
       param = new URLSearchParams(param).toString();
@@ -299,7 +299,7 @@ export default {
       return this.formData.stock.map((it) => {
         return {
           ...it,
-          gtin_cp: it.epc_type == "sscc" ? it.company_prefix : it.gtin_sscc,
+          gtin_cp: it.epc_type == 'sscc' ? it.company_prefix : it.gtin_sscc,
         };
       });
     },

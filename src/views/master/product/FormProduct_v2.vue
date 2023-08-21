@@ -105,20 +105,6 @@
               <CCol sm="12">
                 <CInput
                   :disabled="action == 'Read'"
-                  label="Storage Termperature *"
-                  placeholder="Enter product storage temperature for label printing"
-                  @keyup="validationData()"
-                  horizontal
-                  v-model="product.suhu"
-                  invalid-feedback="Storage temperature is required"
-                  :add-input-classes="{
-                    'is-invalid': error.suhu,
-                  }"
-                />
-              </CCol>
-              <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
                   label="Min Stock"
                   placeholder="Enter minimum L1 stock threshold"
                   @keyup="validationData()"
@@ -202,6 +188,7 @@
                 <CInput
                   :disabled="action == 'Read'"
                   label="Description 1"
+                  placeholder="Enter product description 1 for label printing"
                   horizontal
                   v-model="product.print_desc1"
                 />
@@ -210,22 +197,40 @@
                 <CInput
                   :disabled="action == 'Read'"
                   label="Description 2"
+                  placeholder="Enter product description 2 for label printing"
                   horizontal
                   v-model="product.print_desc2"
                 />
               </CCol>
+              <CCol sm="12">
+                <CInput
+                  :disabled="action == 'Read'"
+                  label="Storage Termperature *"
+                  placeholder="Enter product storage temperature for label printing"
+                  @keyup="validationData()"
+                  horizontal
+                  v-model="product.suhu"
+                  invalid-feedback="Storage temperature is required"
+                  :add-input-classes="{
+                    'is-invalid': error.suhu,
+                  }"
+                />
+              </CCol>
             </CRow>
             <hr />
-            <h4>
-              Packaging Detail
+            <h4 class="float-left">Packaging Detail</h4>
+            <div style="background-color: red">
               <CButton
                 class="float-right"
                 v-on:click="showModalWeight()"
-                v-c-tooltip="'Config Weight'"
+                v-c-tooltip="'Weight Config'"
               >
                 <v-icon name="cog" :color="'black'" />
               </CButton>
-            </h4>
+              <p class="float-right">TEST</p>
+            </div>
+
+            <br />
             <br />
             <!-- Packaging LEVEL 1 -->
             <CCard>
@@ -480,7 +485,7 @@
           </CForm>
         </CCardBody>
         <CModal
-          title="Configuration Weight"
+          title="Weight Configuration"
           color="warning"
           :show.sync="viewModalWeight"
           size="lg"

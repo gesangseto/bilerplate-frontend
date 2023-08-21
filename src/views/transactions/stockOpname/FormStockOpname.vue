@@ -125,10 +125,10 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import "vue-select/dist/vue-select.css";
+import $axiosMertrack from '../../../apiMertrack';
+import 'vue-select/dist/vue-select.css';
 export default {
-  name: "FormStockOpname",
+  name: 'FormStockOpname',
   data() {
     return {
       property_lock_status: {
@@ -136,20 +136,20 @@ export default {
         item: {},
       },
       btn_1_prop: {
-        size: "sm",
-        class: "float-right",
-        color: "info",
-        icon: "eye",
-        text: "",
-        tooltip: "View",
+        size: 'sm',
+        class: 'float-right',
+        color: 'info',
+        icon: 'eye',
+        text: '',
+        tooltip: 'View',
       },
       btn_2_prop: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "exclamation-circle",
-        text: "",
-        tooltip: "Show Locking Trx",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'exclamation-circle',
+        text: '',
+        tooltip: 'Show Locking Trx',
       },
       initialLoad: true,
       detail_item: {},
@@ -157,62 +157,62 @@ export default {
       datas: [],
       viewModal: false,
       view: {
-        articleId: "",
-        productId: "",
-        productName: "",
-        batch: "",
+        articleId: '',
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       optionType: [
-        { value: 1, label: "Aggregation" },
-        { value: 2, label: "Serialization" },
+        { value: 1, label: 'Aggregation' },
+        { value: 2, label: 'Serialization' },
       ],
       items: [],
       modalAdd: false,
-      action: "",
+      action: '',
       idArticleOptions: [],
       views: false,
       add: {
-        product: { id: "", name: "" },
-        article: { id: "", value: "" },
+        product: { id: '', name: '' },
+        article: { id: '', value: '' },
       },
       warehouseOptions: [],
       productFields: [
-        { key: "product_no", label: "Item No" },
+        { key: 'product_no', label: 'Item No' },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
-        { key: "product_nie", label: "NIE" },
-        { key: "gtin_cp", label: "GTIN / CP" },
+        { key: 'product_nie', label: 'NIE' },
+        { key: 'epc_key', label: 'EPC Key' },
         {
-          key: "serial",
-          label: "SN",
-        },
-        {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
-        { key: "quantity", label: "L1 Qty" },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'packaging_name',
+          label: 'Pkg Name',
+        },
+        { key: 'quantity', label: 'L1 Qty' },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
         },
       ],
       productOptions: [],
@@ -225,7 +225,7 @@ export default {
   mounted() {
     this.loadListWarehouse();
     //   cek apakah ada parameter yang dikirim
-    this.action = this.$route.params.id === undefined ? "ADD" : "EDIT";
+    this.action = this.$route.params.id === undefined ? 'ADD' : 'EDIT';
   },
   methods: {
     loadListWarehouse() {
@@ -241,7 +241,7 @@ export default {
       });
       return;
     },
-    showLockedStatus(item, index) {
+    showLockedStatus(item) {
       this.property_lock_status.modal = true;
       this.property_lock_status.item = item;
     },
@@ -261,9 +261,9 @@ export default {
       if (!this.validation()) {
         return this.$toast.open({
           message: `Please input all the required data.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }
@@ -307,9 +307,9 @@ export default {
       if (!this.validation()) {
         return this.$toast.open({
           message: `Please input all the required data.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }
@@ -317,9 +317,9 @@ export default {
         if (it.status != 1) {
           this.$toast.open({
             message: `This Stock Opname cannot be saved. Please complete the pending process first.`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return;
@@ -329,9 +329,9 @@ export default {
       if (this.items.length == 0) {
         this.$toast.open({
           message: `This Stock Opname cannot be saved. There is no stock item in this warehouse.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -343,17 +343,17 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         $axiosMertrack
-          .put("/v3/transaction/stock-opname", param)
+          .put('/v3/transaction/stock-opname', param)
           .then((result) => {
             this.$isLoading(false);
             let res = result.data;
             this.$toast.open({
               message: res.error
                 ? `${res.message}`
-                : "Data has been saved succesfully",
-              type: res.error ? "error" : "success",
+                : 'Data has been saved succesfully',
+              type: res.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             if (!res.error) {
@@ -373,8 +373,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

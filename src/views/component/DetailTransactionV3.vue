@@ -22,8 +22,8 @@
         />
         <CInput
           horizontal
-          v-model="detail_product.gtin_cp"
-          label="GTIN / CP"
+          v-model="detail_product.epc_key"
+          label="EPC Key"
           readonly
         />
       </CCol>
@@ -143,8 +143,6 @@ export default {
       this.trx_detail_id = _it.id;
       this.detail_product = _it;
       this.detail_product.expired_date = _it.expired_date || _it.exp_date;
-      this.detail_product.gtin_cp =
-        _it.epc_type == 'sscc' ? _it.company_prefix : _it.gtin_sscc;
       this.total_child = _it.packaging_level - 1 ?? 1;
       this.getDetailItem(_it, _it.packaging_level);
     }

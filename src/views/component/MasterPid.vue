@@ -5,22 +5,22 @@
         <table class="tableElement" style="width: 100%; padding: auto">
           <thead>
             <th style="text-align: center; width: 5%"></th>
-            <th style="text-align: center; width: 11%">Type</th>
-            <th style="text-align: center; width: 6%">ID 1</th>
+            <th style="text-align: center; width: 10%">Type</th>
+            <th style="text-align: center; width: 12%">ID 1</th>
             <th style="text-align: center; width: 11%">ID 2</th>
             <th style="text-align: center; width: 8%">ID 3</th>
-            <th style="text-align: center; width: 6%">ID 4</th>
+            <!-- <th style="text-align: center; width: 6%">ID 4</th> -->
             <th style="text-align: center; width: 6%">
               <p>SN Prefix (static)</p>
             </th>
             <th style="text-align: center; width: 5%; margin: 0">
-              <p v-if="packaging_level != 1">SN Length (dynamic)</p>
+              <p>SN Length (dynamic)</p>
             </th>
             <th style="text-align: center; width: 12%">
-              <p v-if="packaging_level != 1">Generate Type</p>
+              <p>Generate Type</p>
             </th>
             <th style="text-align: center; width: 12%">
-              <p v-if="packaging_level != 1">Charset</p>
+              <p>Charset</p>
             </th>
             <th style="text-align: center; width: 18%">Layout</th>
             <th style="text-align: center; width: 53%"></th>
@@ -119,26 +119,6 @@
                 <CInput
                   size="sm"
                   :disabled="readonly"
-                  readonly
-                  v-model="result[index - 1].id4"
-                  @keyup="handleChangePid(index - 1)"
-                  @keypress="
-                    validateCharSet({
-                      event: $event,
-                      num: index - 1,
-                      max: digit_max[index - 1].id4,
-                      name: 'id4',
-                      type: 'number',
-                    })
-                  "
-                  :is-valid="result[index - 1].id4 && !error[index - 1].id4"
-                />
-              </td>
-              <td>
-                <br />
-                <CInput
-                  size="sm"
-                  :disabled="readonly"
                   v-model="result[index - 1].sn_prefix"
                   @keyup="handleChangePid(index - 1)"
                   @keypress="
@@ -159,7 +139,6 @@
               <td>
                 <br />
                 <CInput
-                  v-if="packaging_level != 1"
                   size="sm"
                   :disabled="readonly"
                   :readonly="result[index - 1].epc_type === 'sscc'"
@@ -180,7 +159,6 @@
               <td>
                 <br />
                 <CSelect
-                  v-if="packaging_level != 1"
                   size="sm"
                   :disabled="readonly"
                   :value.sync="result[index - 1].sn_generate_type"
@@ -193,7 +171,6 @@
               <td>
                 <br />
                 <CSelect
-                  v-if="packaging_level != 1"
                   size="sm"
                   :disabled="result[index - 1].epc_type === 'sscc' || readonly"
                   @change="handleChangePid(index - 1)"
@@ -366,7 +343,7 @@ export default {
         id2: 8,
         id3: 2,
         id4: 0,
-        sn_prefix: num || 2,
+        sn_prefix: num || 3,
       };
       return it;
     },
