@@ -118,11 +118,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportDataV3, getUserId } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3, getUserId } from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListReturn",
+  name: 'ListReturn',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -144,50 +144,50 @@ export default {
       dataUsers: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
         {
-          key: "type",
-          label: "Type",
-          _classes: "font-weight-bold",
+          key: 'type',
+          label: 'Type',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "from",
-          label: "Source",
+          key: 'from',
+          label: 'Source',
         },
         {
-          key: "to",
-          label: "Destination",
+          key: 'to',
+          label: 'Destination',
         },
         {
-          key: "created_full_name",
-          label: "Requested By",
+          key: 'created_full_name',
+          label: 'Requested By',
         },
         {
-          key: "status_desc",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'status_desc',
+          label: 'Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "approval_full_name",
-          label: "Next Approval",
+          key: 'approval_full_name',
+          label: 'Next Approval',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
-          _style: "width:10%",
+          _style: 'width:10%',
         },
       ],
     };
@@ -213,7 +213,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/return",
+        url: '/v3/transaction/return',
       });
     },
     pageChange(page) {
@@ -242,8 +242,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          created_full_name: item.created_full_name || "-",
-          approval_full_name: item.approval_full_name || "-",
+          created_full_name: item.created_full_name || '-',
+          approval_full_name: item.approval_full_name || '-',
         };
       });
     },

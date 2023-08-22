@@ -205,21 +205,15 @@
 </template>
 
 <script>
-const ekstensiFileValid = ["pdf", "doc", "docx", "xls", "xlsx"];
-import $axiosMertrack from "../../../apiMertrack";
-import { parsingBarcode } from "../../../utils";
+const ekstensiFileValid = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+import $axiosMertrack from '../../../apiMertrack';
 const reader = new FileReader();
-import Datepicker from "vuejs-datepicker";
-import moment from "moment";
 export default {
-  name: "FormPickingList",
-  components: {
-    Datepicker,
-  },
+  name: 'FormPickingList',
   watch: {
     formData: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -235,10 +229,10 @@ export default {
       checkedSerials: [],
       checked: [],
       val: [],
-      packingL1: "",
-      packingL2: "",
-      packingL3: "",
-      packingL4: "",
+      packingL1: '',
+      packingL2: '',
+      packingL3: '',
+      packingL4: '',
       qty: 0,
       manyProductId: [],
       manyExpired: [],
@@ -247,105 +241,105 @@ export default {
       datas: [],
       detailModal: false,
       detailSerialOrAggregation: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       detailItemsFields: [
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'gtin_cp',
+          label: 'GTIN / CP',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
         },
       ],
       detail_item: {},
       item: [],
       customerOptions: [],
       warehouseError: false,
-      productName: "",
+      productName: '',
       productOptions: [],
       batchNumberOptions: [],
       items: [],
       temp_items: [],
       fields: [
         {
-          key: "product_no",
-          label: "Item No",
+          key: 'product_no',
+          label: 'Item No',
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
-          _classes: "font-weight-bold",
+          key: 'batch_no',
+          label: 'Batch No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "product_nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'gtin_cp',
+          label: 'GTIN / CP',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
-          _style: "width:12%",
+          _style: 'width:12%',
         },
       ],
       modalAdd: false,
       warehouseOptions: [],
       formData: {
         so_date: new Date().toISOString().slice(0, 10),
-        so_number: "",
-        erp_number: "",
+        so_number: '',
+        erp_number: '',
         file_1_name: null,
         file_1_content: null,
         file_2_name: null,
@@ -356,33 +350,33 @@ export default {
       },
       detail: {
         product: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
         batch: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
-        serial: "",
+        serial: '',
       },
       error: {
-        soNumber: "",
-        ref1: "",
-        ref2: "",
-        warehouseId: "",
-        customerId: "",
+        soNumber: '',
+        ref1: '',
+        ref2: '',
+        warehouseId: '',
+        customerId: '',
       },
       inputError: false,
       file: {
-        ref1: "Choose file...",
-        ref2: "Choose file...",
+        ref1: 'Choose file...',
+        ref2: 'Choose file...',
       },
-      action: "",
+      action: '',
       newPickingData: {},
       required: {
-        warehouse_id: { error: false, message: "Warehouse is required" },
-        customer_id: { error: false, message: "Customer is required" },
-        soNumber: { error: false, message: "SO No is required" },
+        warehouse_id: { error: false, message: 'Warehouse is required' },
+        customer_id: { error: false, message: 'Customer is required' },
+        soNumber: { error: false, message: 'SO No is required' },
       },
     };
   },
@@ -391,11 +385,11 @@ export default {
     this.loadListWarehouse();
     this.loadListCustomer();
     // cek parameter url
-    this.action = this.$route.params.id === undefined ? "ADD" : "Edit";
+    this.action = this.$route.params.id === undefined ? 'ADD' : 'Edit';
   },
   methods: {
     loadListWarehouse() {
-      var param = { status: "Active", category_id: 3 };
+      var param = { status: 'Active', category_id: 3 };
       param = new URLSearchParams(param).toString();
       var _url = `/v3/master/warehouse?${param}`;
       $axiosMertrack.get(_url).then((result) => {
@@ -410,7 +404,7 @@ export default {
       return;
     },
     loadListCustomer() {
-      var param = { status: "Active" };
+      var param = { status: 'Active' };
       param = new URLSearchParams(param).toString();
       var _url = `/v3/master/customer?${param}`;
       $axiosMertrack.get(_url).then((result) => {
@@ -457,9 +451,9 @@ export default {
       if (this.temp_items.length == 0) {
         this.$toast.open({
           message: `No data to be set`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -472,8 +466,8 @@ export default {
     closeModalAdd() {
       this.checked = [];
       this.item = [];
-      this.detail.batch.name = "";
-      this.detail.product.name = "";
+      this.detail.batch.name = '';
+      this.detail.product.name = '';
       this.modalAdd = false;
     },
     deleteRow(item, index) {
@@ -483,9 +477,9 @@ export default {
       if (!this.checkValidation()) {
         this.$toast.open({
           message: `Please input all the required data.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -496,25 +490,25 @@ export default {
     uploadFile(event, index) {
       let fileRef = event[0];
       let fileName = event[0].name;
-      let fileExt = event[0].name.split(".").reverse()[0];
+      let fileExt = event[0].name.split('.').reverse()[0];
       let fileSize = event[0].size;
-      this.formData[`file_${index}_name`] = "Choose file...";
+      this.formData[`file_${index}_name`] = 'Choose file...';
       if (fileRef) {
         if (!ekstensiFileValid.includes(fileExt)) {
           this.$toast.open({
             message: `You have selected an unsupported Ref 1 file type. Please select the following supported file types (pdf, doc, docx, xls, xlsx)`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return false;
         } else if (fileSize > this.maxFileSize * 1000) {
           this.$toast.open({
             message: `The Ref 2 file you have selected exceed the maximum supported file size of ${this.maxFileSize} KB`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return false;
@@ -550,9 +544,9 @@ export default {
       if (!this.checkValidation()) {
         this.$toast.open({
           message: `Please input all the required data.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -560,9 +554,9 @@ export default {
       if (this.items.length == 0) {
         this.$toast.open({
           message: `Please add at least 1 product item to continue`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -570,14 +564,15 @@ export default {
       let items = [];
       for (const it of this.items) {
         let field = {
-          gtin_sscc: it.gtin_sscc,
+          epc_key: it.epc_key,
           serial: it.serial,
         };
-        if (it.serial == "0000000000") {
-          field["product_id"] = it.product_id;
-          field["batch_no"] = it.batch_no;
-          field["expired_date"] = it.expired_date;
-          field["quantity"] = it.quantity;
+        if (it.serial == '0000000000') {
+          field['epc_key'] = it.epc_key;
+          field['product_id'] = it.product_id;
+          field['batch_no'] = it.batch_no;
+          field['expired_date'] = it.expired_date;
+          field['quantity'] = it.quantity;
         }
         items.push(field);
       }
@@ -587,17 +582,17 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         $axiosMertrack
-          .put("/v3/transaction/picking", param)
+          .put('/v3/transaction/picking', param)
           .then((result) => {
             this.$isLoading(false);
             let res = result.data;
             this.$toast.open({
               message: res.error
                 ? res.message
-                : "Data has been saved succesfully ",
-              type: res.error ? "error" : "success",
+                : 'Data has been saved succesfully ',
+              type: res.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             if (!res.error) {
@@ -609,9 +604,9 @@ export default {
             this.$isLoading(false);
             this.$toast.open({
               message: `${err}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
           });
@@ -628,7 +623,7 @@ export default {
         return {
           ...item,
           gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
+            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

@@ -175,7 +175,7 @@
                     style="width: 40%"
                     v-if="picking[`quantity_lvl_${index}`] > 0"
                   >
-                    {{ "L" + index }} Quantity
+                    {{ 'L' + index }} Quantity
                   </td>
                   <td
                     style="width: 60%"
@@ -300,91 +300,91 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportDataV3 } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3 } from '../../../utils';
 export default {
-  name: "DetailPicking",
+  name: 'DetailPicking',
   data() {
     return {
       initial_load: true,
-      action: "",
-      status: "",
+      action: '',
+      status: '',
       datas: [],
       detail_item: {},
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       modalDO: false,
-      doNumber: "",
-      serial: "",
+      doNumber: '',
+      serial: '',
       picking: {
-        status: "",
-        createdDate: "",
-        soDate: "",
+        status: '',
+        createdDate: '',
+        soDate: '',
         warehouse: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
         customer: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
-        file_1_name: "",
-        file_2_name: "",
+        file_1_name: '',
+        file_2_name: '',
       },
       item: [],
       items: [],
       fieldItem: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -392,7 +392,7 @@ export default {
     };
   },
   mounted() {
-    this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     var _url = `/v3/transaction/picking?id=${this.$route.params.id}`;
     $axiosMertrack.get(_url).then((response) => {
       let data = response.data.data[0];
@@ -402,9 +402,9 @@ export default {
       } else {
         this.$toast.open({
           message: `No data to be viewed`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }
@@ -420,9 +420,9 @@ export default {
       if (item.packaging_level == 1) {
         this.$toast.open({
           message: `No detail SN data to be viewed, SN [${item.serial_id}] is Packaging L1`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -444,13 +444,13 @@ export default {
         return;
       }
       let message =
-        "You are about to finalize this transaction. This operation cannot be undone. Would you like to continue?";
+        'You are about to finalize this transaction. This operation cannot be undone. Would you like to continue?';
       if (confirm(message)) {
         let param = {
           id: this.$route.params.id,
           approved: true,
           do_number: this.doNumber,
-          reason: "",
+          reason: '',
         };
         var _url = `/v3/transaction/picking/finish`;
         $axiosMertrack
@@ -460,10 +460,10 @@ export default {
             this.$toast.open({
               message: result.data.error
                 ? result.data.message
-                : "Data has been saved succesfully ",
-              type: result.data.error ? "error" : "success",
+                : 'Data has been saved succesfully ',
+              type: result.data.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             if (!result.data.error) {
@@ -474,9 +474,9 @@ export default {
           .catch((err) => {
             this.$toast.open({
               message: `Error : ${err}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
           });
@@ -491,7 +491,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: "/v3/transaction/picking",
+        url: '/v3/transaction/picking',
       });
     },
   },
@@ -500,8 +500,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

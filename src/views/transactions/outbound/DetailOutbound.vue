@@ -88,7 +88,7 @@
                     style="width: 40%"
                     v-if="outbound[`quantity_lvl_${index}`] > 0"
                   >
-                    {{ "L" + index }} Quantity
+                    {{ 'L' + index }} Quantity
                   </td>
                   <td
                     style="width: 60%"
@@ -157,11 +157,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportDataV3, toTitleCase } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3, toTitleCase } from '../../../utils';
 
 export default {
-  name: "DetailOutbound",
+  name: 'DetailOutbound',
   mounted() {
     if (this.$route.params.id != undefined) {
       let url = `/v3/transaction/outbound?raw=true&id=${this.$route.params.id}`;
@@ -174,9 +174,9 @@ export default {
         } else {
           this.$toast.open({
             message: `No data to be viewed`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         }
@@ -189,81 +189,81 @@ export default {
       datas: [],
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       darkModal: false,
-      status: "",
+      status: '',
       sn: false,
       test: null,
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       items: [],
       storage: [],
       outbound: {
-        id: "",
-        type: "",
-        fromWarehouse: "",
+        id: '',
+        type: '',
+        fromWarehouse: '',
         toWarehouse: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
-        serial: "",
-        reason: "",
+        serial: '',
+        reason: '',
       },
       fields: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -286,9 +286,9 @@ export default {
       if (item.packaging_level == 1) {
         this.$toast.open({
           message: `No detail SN data to be viewed, SN [${item.serial_id}] is Packaging L1`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -298,12 +298,12 @@ export default {
       return;
     },
     closeModal() {
-      this.view.productId = "";
-      this.view.productName = "";
-      this.view.batch = "";
-      this.view.gtin = "";
-      this.view.nie = "";
-      this.view.expiredDate = "";
+      this.view.productId = '';
+      this.view.productName = '';
+      this.view.batch = '';
+      this.view.gtin = '';
+      this.view.nie = '';
+      this.view.expiredDate = '';
       this.datas = [];
       this.viewModal = false;
     },
@@ -317,7 +317,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: "/v3/transaction/outbound",
+        url: '/v3/transaction/outbound',
       });
     },
   },
@@ -326,8 +326,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
