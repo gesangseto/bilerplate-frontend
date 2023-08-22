@@ -55,15 +55,18 @@ export default {
           if (n.trx_pack_epc_type) {
             this.showModal = true;
             let barcode = `(${n.trx_pack_epc_type == 'sscc' ? '00' : '01'})`;
-            barcode += `${n.trx_pack_gtin_sscc}`;
+            barcode += `${n.trx_pack_epc_key}`;
             if (n.trx_pack_epc_type == 'sgtin')
               barcode += `(21)${n.trx_pack_serial}`;
             this.generateBarcode(barcode);
           } else {
             this.showModal = true;
-            let barcode = `(${n.epc_type == 'sscc' ? '00' : '01'})`;
-            barcode += `${n.gtin_sscc}`;
-            if (n.epc_type == 'sgtin') barcode += `(21)${n.serial}`;
+            let barcode = `(${
+              n.epc_type == 'sscc' ? '00' : n.epc_type == 'nie' ? '90' : '01'
+            })`;
+            barcode += `${n.epc_key}`;
+            if (n.epc_type == 'sgtin' || n.epc_type == 'nie')
+              barcode += `(21)${n.serial}`;
             this.generateBarcode(barcode);
           }
         }

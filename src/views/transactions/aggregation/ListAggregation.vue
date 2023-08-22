@@ -105,16 +105,16 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
 import {
   printLabelV3,
   calculatePaginationV3,
   exportDataV3,
   getUserId,
-} from "../../../utils";
-import { dateFilter } from "../../../constants";
+} from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListAggregation",
+  name: 'ListAggregation',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -131,70 +131,70 @@ export default {
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_printProp: {
-        size: "sm",
-        class: "float-right",
-        color: "secondary",
-        icon: "print",
-        text: "",
-        tooltip: "Print this label",
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'print',
+        text: '',
+        tooltip: 'Print this label',
       },
       btn_printProp2: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "print",
-        text: "",
-        tooltip: "Print this data",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'print',
+        text: '',
+        tooltip: 'Print this data',
       },
       selected_data: {},
       selected_barcode: {},
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
         {
-          key: "_warehouse.name",
-          label: "Warehouse",
+          key: '_warehouse.name',
+          label: 'Warehouse',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "Aggregation SN",
+          key: 'serial',
+          label: 'Aggregation SN',
         },
         {
-          key: "quantity_lvl_1",
-          label: "L1 Qty",
+          key: 'quantity_lvl_1',
+          label: 'L1 Qty',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "_created.full_name",
-          label: "Created By",
+          key: '_created.full_name',
+          label: 'Created By',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
         },
       ],
     };
@@ -220,7 +220,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/aggregation",
+        url: '/v3/transaction/aggregation',
       });
     },
     pageChange(page) {
@@ -242,7 +242,7 @@ export default {
       let _body = {
         id: item.stock_serial_id,
         serial: item.serial_no,
-        gtin_sscc: item.gtin_sscc,
+        epc_key: item.epc_key,
         validate: true,
       };
       var _url = new URLSearchParams(_body).toString();
@@ -250,10 +250,10 @@ export default {
         .get(`/v3/helper/print-layout/pdf?${_url}`)
         .then((response) => {
           this.$toast.open({
-            message: `${response.data.message ?? "Success validate"}`,
-            type: response.data.error ? "error" : "success",
+            message: `${response.data.message ?? 'Success validate'}`,
+            type: response.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 3000,
           });
           if (response.data.error) {
@@ -268,9 +268,9 @@ export default {
         .catch((error) => {
           this.$toast.open({
             message: `${error}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 3000,
           });
         });
@@ -311,9 +311,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          ["_created.full_name"]: item["_created.full_name"] || "-",
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
+          ['_created.full_name']: item['_created.full_name'] || '-',
         };
       });
     },
