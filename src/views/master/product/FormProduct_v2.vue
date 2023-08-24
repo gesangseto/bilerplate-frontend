@@ -58,50 +58,7 @@
                   }"
                 />
               </CCol>
-              <CCol sm="12">
-                <CInput
-                  :disabled="true"
-                  label="L1 GTIN *"
-                  description="Can only be changed by changing PID Level 1 and make sure there has been no transaction for this product."
-                  horizontal
-                  v-model="product.gtin"
-                  @keyup="validateGtin()"
-                  @keypress="
-                    limitNumber({ event: $event, data: product.gtin, max: 14 })
-                  "
-                  :add-input-classes="{
-                    'is-invalid': error.gtin,
-                  }"
-                  :invalid-feedback="error.gtin ? error.gtin : ''"
-                />
-              </CCol>
-              <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="NIE *"
-                  placeholder="Enter product NIE"
-                  @keyup="validationData()"
-                  horizontal
-                  v-model="product.nie"
-                  :add-input-classes="{
-                    'is-invalid': error.nie,
-                  }"
-                />
-              </CCol>
-              <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="NIE Packaging (Kemasan NIE) *"
-                  placeholder="Enter packaging description registered at BPOM"
-                  horizontal
-                  @keyup="validationData()"
-                  v-model="product.kemasan_nie"
-                  invalid-feedback="NIE packaging (kemasan NIE) is required"
-                  :add-input-classes="{
-                    'is-invalid': error.kemasan_nie,
-                  }"
-                />
-              </CCol>
+
               <CCol sm="12">
                 <CInput
                   :disabled="action == 'Read'"
@@ -167,6 +124,111 @@
               </CCol>
             </CRow>
             <hr />
+            <h4>Product Regulation</h4>
+            <br />
+            <CRow>
+              <CCol sm="12">
+                <CInput
+                  label="NIE"
+                  horizontal
+                  v-model="product.nie"
+                  placeholder="NIE (Nomor Izin Edar)"
+                  :add-input-classes="{
+                    'is-invalid': !initial_load && !validationNieOrGtin('nie'),
+                  }"
+                  :readonly="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
+                >
+                </CInput>
+              </CCol>
+
+              <CCol sm="12">
+                <CInput
+                  :disabled="action == 'Read'"
+                  label="NIE Packaging (Kemasan NIE) *"
+                  placeholder="Enter packaging description registered at BPOM"
+                  horizontal
+                  @keyup="validationData()"
+                  v-model="product.kemasan_nie"
+                  invalid-feedback="NIE packaging (kemasan NIE) is required"
+                  :add-input-classes="{
+                    'is-invalid': error.kemasan_nie,
+                  }"
+                />
+              </CCol>
+
+              <CCol sm="12">
+                <CInput
+                  :disabled="true"
+                  label="L1 GTIN *"
+                  description="Can only be changed by changing Company Prefix and Item Reference and make sure there has been no transaction for this product."
+                  horizontal
+                  v-model="product.gtin"
+                  @keyup="validationNieOrGtin('gtin')"
+                  @keypress="
+                    limitNumber({ event: $event, data: product.gtin, max: 14 })
+                  "
+                  :add-input-classes="{
+                    'is-invalid': error.gtin,
+                  }"
+                  :invalid-feedback="error.gtin ? error.gtin : ''"
+                />
+              </CCol>
+
+              <CCol sm="12">
+                <CInput
+                  label="Company Prefix"
+                  horizontal
+                  v-model="product.company_prefix"
+                  placeholder="Company Prefix"
+                  @keyup="handleChangeGtin()"
+                  @keypress="
+                    limitNumber({
+                      event: $event,
+                      data: product.company_prefix,
+                      max: 9,
+                    })
+                  "
+                  :add-input-classes="{
+                    'is-invalid': !initial_load && !validationNieOrGtin('gtin'),
+                  }"
+                  :invalid-feedback="'Company prefix and Item Reference must be 13 digits'"
+                  :readonly="
+                    disabled ||
+                    (product.flag_upd_del == 0 && validationNieOrGtin('gtin'))
+                  "
+                >
+                  <template #append>
+                    <CInput
+                      prepend="Item Reference"
+                      class="ml-1"
+                      horizontal
+                      v-model="product.item_reference"
+                      @keyup="handleChangeGtin()"
+                      @keypress="
+                        limitNumber({
+                          event: $event,
+                          data: product.item_reference,
+                          max: 13 - product.company_prefix.length,
+                        })
+                      "
+                      :add-input-classes="{
+                        'is-invalid':
+                          !initial_load && !validationNieOrGtin('gtin'),
+                      }"
+                      :readonly="
+                        disabled ||
+                        (product.flag_upd_del == 0 &&
+                          validationNieOrGtin('gtin'))
+                      "
+                    />
+                  </template>
+                </CInput>
+              </CCol>
+            </CRow>
+            <hr />
             <h4>Print Detail</h4>
             <br />
             <CRow>
@@ -219,17 +281,17 @@
             </CRow>
             <hr />
             <h4 class="float-left">Packaging Detail</h4>
-            <div style="background-color: red">
-              <CButton
-                class="float-right"
-                v-on:click="showModalWeight()"
-                v-c-tooltip="'Weight Config'"
-              >
-                <v-icon name="cog" :color="'black'" />
-              </CButton>
-              <p class="float-right">TEST</p>
-            </div>
-
+            <Button
+              :buttonProperty="{
+                size: 'sm',
+                class: 'float-right',
+                color: 'warning',
+                icon: 'cog',
+                text: 'Weight Config',
+                tooltip: '',
+              }"
+              @click="showModalWeight()"
+            />
             <br />
             <br />
             <!-- Packaging LEVEL 1 -->
@@ -498,7 +560,9 @@
               <td><strong>Required</strong></td>
             </tr>
             <tr v-for="(item, index) in [1, 2, 3, 4]" :key="index">
-              <td>{{ index + 1 }}</td>
+              <td>
+                <p>{{ index + 1 }}</p>
+              </td>
               <td>
                 <CInput
                   :disabled="action == 'Read'"
@@ -583,7 +647,7 @@ import {
   updateMstProduct,
 } from '../../../resource/MstProduct';
 import { getMstProductCategory } from '../../../resource/MstProductCategory';
-import { capitalizeFirstLetter, onlyNumber } from '../../../utils';
+import { capitalizeFirstLetter, checkDigit, onlyNumber } from '../../../utils';
 
 export default {
   watch: {
@@ -600,23 +664,23 @@ export default {
       },
       deep: true,
     },
-    'product.mst_pid': {
-      handler(val) {
-        for (const it of val) {
-          if (it.packaging_level == 1) {
-            let id1 = it.id1 ?? '';
-            let id2 = it.id2 ?? '';
-            let id3 = it.id3 ?? '';
-            let concat_gtin = '' + id1 + id2 + id3;
-            if (concat_gtin.length == 13) {
-              concat_gtin = '' + concat_gtin + this.gtinCheckDigit(concat_gtin);
-            }
-            this.product.gtin = concat_gtin;
-          }
-        }
-      },
-      deep: true,
-    },
+    // 'product.mst_pid': {
+    //   handler(val) {
+    //     for (const it of val) {
+    //       if (it.packaging_level == 1) {
+    //         let id1 = it.id1 ?? '';
+    //         let id2 = it.id2 ?? '';
+    //         let id3 = it.id3 ?? '';
+    //         let concat_gtin = '' + id1 + id2 + id3;
+    //         if (concat_gtin.length == 13) {
+    //           concat_gtin = '' + concat_gtin + this.gtinCheckDigit(concat_gtin);
+    //         }
+    //         this.product.gtin = concat_gtin;
+    //       }
+    //     }
+    //   },
+    //   deep: true,
+    // },
     'product.qty_packagingl2': {
       handler(val) {
         if (this.product.packagingl2_id) {
@@ -681,12 +745,16 @@ export default {
       this.loadData();
       this.readOnly = true;
     }
+    if (this.action == 'Read') {
+      this.disabled = true;
+    }
     // memanggil metod untuk memanggil isi dropdown
     this.loadPackaging();
     this.loadProductCategory();
   },
   data() {
     return {
+      disabled: false,
       allowSetWeight: true,
       viewModalWeight: false,
       route_action: '',
@@ -707,6 +775,9 @@ export default {
         weight_max_l4: null,
       },
       product: {
+        nie: '',
+        company_prefix: '',
+        item_reference: '',
         gtin: '',
         product_type: '0',
         status: 'Active',
@@ -804,6 +875,19 @@ export default {
     extractQuantity() {
       for (var i = 3; i >= 1; i--) {
         // this.product[`qty_packagingl${i}`];
+      }
+    },
+    handleChangeGtin() {
+      let item_reference = this.product.item_reference;
+      if (item_reference && this.product.company_prefix) {
+        let id1 = item_reference.charAt(0);
+        let id2 = this.product.company_prefix;
+        let id3 = item_reference.substring(1);
+        let gtin = `${id1}${id2}${id3}`;
+        gtin = `${gtin}${checkDigit(gtin)}`;
+        this.product.gtin = gtin;
+      } else {
+        this.product.gtin = null;
       }
     },
     handleResultPid({ result, level }) {
@@ -931,6 +1015,29 @@ export default {
         });
       }
     },
+    validationNieOrGtin(type = 'all') {
+      if (type == 'all' && !this.product.gtin && !this.product.nie) {
+        return false;
+      }
+      let mst_pid = this.product.mst_pid;
+      let have_nie = mst_pid.find((it) => it.epc_type == 'nie');
+      let have_gtin_sscc = mst_pid.find(
+        (it) => it.epc_type == 'sgtin' || it.epc_type == 'sscc'
+      );
+      console.log(have_nie, have_gtin_sscc, '=================<>');
+      if ((type == 'all' || type == 'nie') && have_nie && !this.product.nie) {
+        return false;
+      } else if (
+        (type == 'all' || type == 'gtin') &&
+        (!this.product.gtin || !this.product.company_prefix) &&
+        have_gtin_sscc
+      ) {
+        return false;
+      } else if ((type == 'all' || type == 'gtin') && !this.validateGtin()) {
+        return false;
+      }
+      return true;
+    },
     validationData() {
       if (this.initial_load) {
         return false;
@@ -938,10 +1045,10 @@ export default {
       let required = [];
       this.error = this.initial_error();
       let is_error = false;
-      // CHECK GTIN
-      if (!this.validateGtin()) {
-        is_error = true;
-      }
+      // VALIDATE GTIN OLD
+      // if (!this.validateGtin()) {
+      //   is_error = true;
+      // }
       // Check QTY
       if (
         !this.validationQuantity({ level: 3 })
@@ -949,6 +1056,11 @@ export default {
       ) {
         is_error = true;
       }
+      // CHeck Company prefix and item reference / NIE
+      if (!this.validationNieOrGtin()) {
+        is_error = true;
+      }
+
       // CHECK PRODUCT
       for (var key in this.error) {
         if (!this.product[key] && this.product[key] != '0') {

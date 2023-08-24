@@ -1,9 +1,16 @@
-import { tableAliasName } from "../../constants";
-import { strToBool } from "../helper";
-import { getRole, getToken } from "../storage";
+import { tableAliasName } from '../../constants';
+import { strToBool } from '../helper';
+import { getRole, getToken } from '../storage';
 
-export function isNumeric(num) {
-  return !isNaN(num);
+// export function isNumeric(num) {
+//   return !isNaN(num);
+// }
+export function isNumeric(input) {
+  return /^\d+$/.test(input);
+}
+
+export function isAlphaNumeric(input) {
+  return /^[a-zA-Z0-9]+$/.test(input);
 }
 
 export function onlyNumber({ event, data, max }) {
@@ -39,7 +46,7 @@ export function capitalizeFirstLetter(string) {
   if (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   } else {
-    return "";
+    return '';
   }
 }
 
@@ -67,7 +74,7 @@ export function reformatMenu(menu = []) {
         ) {
           // have_access = true;
           temp = {
-            _name: "CSidebarNavItem",
+            _name: 'CSidebarNavItem',
             name: it.label,
             to: it.link,
             link: it.link,
@@ -85,7 +92,7 @@ export function reformatMenu(menu = []) {
         if (it.items) {
           child = reformatMenu(it.items);
           if (child.length > 0) {
-            temp._name = "CSidebarNavDropdown";
+            temp._name = 'CSidebarNavDropdown';
             temp.name = it.label;
             temp.route = `/${it.name.toLowerCase()}`;
             temp.link = it.link;
@@ -162,14 +169,14 @@ export function buttonPermission({ path }) {
   return action;
 }
 
-export function exportData({ param = {}, exportType = "xls" }) {
+export function exportData({ param = {}, exportType = 'xls' }) {
   let new_param = param;
   new_param.MertrackApiToken = getToken();
   if (!new_param.SearchVal1Text) {
-    new_param.SearchVal1Text = "All";
+    new_param.SearchVal1Text = 'All';
   }
   if (!new_param.StatusCodeText) {
-    new_param.StatusCodeText = "All";
+    new_param.StatusCodeText = 'All';
   }
   delete new_param.limit;
   delete new_param.page;
@@ -177,14 +184,14 @@ export function exportData({ param = {}, exportType = "xls" }) {
   let url = `${
     process.env.VUE_APP_URL_API_MERTRACK
   }/api/general/web?${new URLSearchParams(new_param).toString()}`;
-  window.open(`${url}`, "_blank");
+  window.open(`${url}`, '_blank');
   delete new_param.PrintTo;
   return true;
 }
 
 export function exportDataV3({
   param = {},
-  exportType = "xls",
+  exportType = 'xls',
   url,
   alert = false,
 }) {
@@ -194,10 +201,10 @@ export function exportDataV3({
   delete new_param.page;
   new_param.MertrackApiToken = getToken();
   if (!new_param.SearchVal1Text) {
-    new_param.SearchVal1Text = "All";
+    new_param.SearchVal1Text = 'All';
   }
   if (!new_param.StatusCodeText) {
-    new_param.StatusCodeText = "All";
+    new_param.StatusCodeText = 'All';
   }
   // delete new_param.limit;
   // delete new_param.page;
@@ -213,19 +220,19 @@ export function exportDataV3({
     }
   }
   if (!next) return;
-  window.open(`${_url}`, "_blank");
+  window.open(`${_url}`, '_blank');
   delete new_param.PrintTo;
   return true;
 }
 
-export function exportDataReport({ param = {}, exportType = "xls" }) {
+export function exportDataReport({ param = {}, exportType = 'xls' }) {
   let new_param = param;
-  new_param.MertrackApiToken = localStorage.getItem("token");
+  new_param.MertrackApiToken = localStorage.getItem('token');
   if (!new_param.SearchVal1Text) {
-    new_param.SearchVal1Text = "All";
+    new_param.SearchVal1Text = 'All';
   }
   if (!new_param.StatusCodeText) {
-    new_param.StatusCodeText = "All";
+    new_param.StatusCodeText = 'All';
   }
   delete new_param.limit;
   delete new_param.page;
@@ -233,7 +240,7 @@ export function exportDataReport({ param = {}, exportType = "xls" }) {
   let url = `${
     process.env.VUE_APP_URL_API_MERTRACK
   }/api/general/report?${new URLSearchParams(new_param).toString()}`;
-  window.open(`${url}`, "_blank");
+  window.open(`${url}`, '_blank');
   delete new_param.PrintTo;
   return true;
 }

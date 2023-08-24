@@ -63,7 +63,7 @@
               <CInput horizontal :value.sync="formData.nie" disabled>
                 <template #label>
                   <p class="col-form-label col-sm-3">
-                    Nie
+                    NIE
                     <span class="text-danger">
                       <strong>*</strong>
                     </span>
@@ -76,7 +76,7 @@
                 :value.sync="formData.het"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">Het</p>
+                  <p class="col-form-label col-sm-3">HET</p>
                 </template>
               </CInput>
               <CInput
@@ -226,7 +226,7 @@
                 @click="requestSerial()"
                 class="mr-2"
                 color="success"
-                ><CIcon name="cil-check-circle" /> Request Additional
+                ><CIcon name="cil-check-circle" /> Generate Additional
                 Serial</CButton
               >
               <CButton
