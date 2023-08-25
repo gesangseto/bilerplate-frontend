@@ -162,7 +162,7 @@
               <CCol sm="12">
                 <CInput
                   :disabled="true"
-                  label="L1 GTIN *"
+                  label="L1 GTIN "
                   description="Can only be changed by changing Company Prefix and Item Reference and make sure there has been no transaction for this product."
                   horizontal
                   v-model="product.gtin"
@@ -171,7 +171,7 @@
                     limitNumber({ event: $event, data: product.gtin, max: 14 })
                   "
                   :add-input-classes="{
-                    'is-invalid': error.gtin,
+                    'is-invalid': !validationNieOrGtin('gtin'),
                   }"
                   :invalid-feedback="error.gtin ? error.gtin : ''"
                 />
@@ -188,7 +188,10 @@
                     limitNumber({
                       event: $event,
                       data: product.company_prefix,
-                      max: 9,
+                      max:
+                        12 - product.item_reference.length >= 9
+                          ? 9
+                          : 12 - product.item_reference.length,
                     })
                   "
                   :add-input-classes="{
@@ -196,8 +199,9 @@
                   }"
                   :invalid-feedback="'Company prefix and Item Reference must be 13 digits'"
                   :readonly="
-                    disabled ||
-                    (product.flag_upd_del == 0 && validationNieOrGtin('gtin'))
+                    disabled &&
+                    product.flag_upd_del == 0 &&
+                    validationNieOrGtin('gtin')
                   "
                 >
                   <template #append>
@@ -211,7 +215,7 @@
                         limitNumber({
                           event: $event,
                           data: product.item_reference,
-                          max: 13 - product.company_prefix.length,
+                          max: 12 - product.company_prefix.length,
                         })
                       "
                       :add-input-classes="{
@@ -219,9 +223,10 @@
                           !initial_load && !validationNieOrGtin('gtin'),
                       }"
                       :readonly="
-                        disabled ||
-                        (product.flag_upd_del == 0 &&
-                          validationNieOrGtin('gtin'))
+                        (disabled &&
+                          product.flag_upd_del == 0 &&
+                          validationNieOrGtin('gtin')) ||
+                        !product.company_prefix
                       "
                     />
                   </template>
@@ -664,23 +669,13 @@ export default {
       },
       deep: true,
     },
-    // 'product.mst_pid': {
-    //   handler(val) {
-    //     for (const it of val) {
-    //       if (it.packaging_level == 1) {
-    //         let id1 = it.id1 ?? '';
-    //         let id2 = it.id2 ?? '';
-    //         let id3 = it.id3 ?? '';
-    //         let concat_gtin = '' + id1 + id2 + id3;
-    //         if (concat_gtin.length == 13) {
-    //           concat_gtin = '' + concat_gtin + this.gtinCheckDigit(concat_gtin);
-    //         }
-    //         this.product.gtin = concat_gtin;
-    //       }
-    //     }
-    //   },
-    //   deep: true,
-    // },
+    'product.mst_pid': {
+      handler(val) {
+        let find = val.find((it) => it.packaging_level == 1);
+        if (find) this.handleChangeGtin();
+      },
+      deep: true,
+    },
     'product.qty_packagingl2': {
       handler(val) {
         if (this.product.packagingl2_id) {
@@ -830,6 +825,7 @@ export default {
 
   methods: {
     initial_error() {
+      // Inisialisasi error untuk PRODUCT
       let tmp = {
         no: false,
         name: false,
@@ -843,7 +839,6 @@ export default {
         packagingl1_id: false,
         packagingl2_id: false,
         qty_packagingl2: '',
-        qty_packagingl3: '',
       };
       return tmp;
     },
@@ -872,18 +867,18 @@ export default {
         this.quantity_detail[`max_qty_level_${i}`] = parseInt(this_qty);
       }
     },
-    extractQuantity() {
-      for (var i = 3; i >= 1; i--) {
-        // this.product[`qty_packagingl${i}`];
-      }
-    },
     handleChangeGtin() {
+      // Jika terjadi perubahan yang mempengaruhi gtin
+      let pids = this.product.mst_pid;
+      let pid_l1 = pids.find(
+        (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
+      );
+      let id1 = null;
+      if (pid_l1) id1 = pid_l1.id1;
       let item_reference = this.product.item_reference;
-      if (item_reference && this.product.company_prefix) {
-        let id1 = item_reference.charAt(0);
-        let id2 = this.product.company_prefix;
-        let id3 = item_reference.substring(1);
-        let gtin = `${id1}${id2}${id3}`;
+      let company_prefix = this.product.company_prefix;
+      if (item_reference && company_prefix && id1) {
+        let gtin = `${id1}${company_prefix}${item_reference}`;
         gtin = `${gtin}${checkDigit(gtin)}`;
         this.product.gtin = gtin;
       } else {
@@ -896,6 +891,7 @@ export default {
       }
       this.ResultPid[`level_${level}`] = result;
     },
+
     limitGtin({ event, data, max }) {
       onlyNumber({ event, data, max });
     },
@@ -1019,25 +1015,28 @@ export default {
       if (type == 'all' && !this.product.gtin && !this.product.nie) {
         return false;
       }
+      let company_prefix = this.product.company_prefix;
+      let item_reference = this.product.item_reference;
       let mst_pid = this.product.mst_pid;
       let have_nie = mst_pid.find((it) => it.epc_type == 'nie');
       let have_gtin_sscc = mst_pid.find(
         (it) => it.epc_type == 'sgtin' || it.epc_type == 'sscc'
       );
-      console.log(have_nie, have_gtin_sscc, '=================<>');
       if ((type == 'all' || type == 'nie') && have_nie && !this.product.nie) {
         return false;
       } else if (
-        (type == 'all' || type == 'gtin') &&
-        (!this.product.gtin || !this.product.company_prefix) &&
+        (type == 'all' || type == 'gtin' || type == 'sscc') &&
         have_gtin_sscc
       ) {
-        return false;
-      } else if ((type == 'all' || type == 'gtin') && !this.validateGtin()) {
-        return false;
+        if (!item_reference || !company_prefix) {
+          return false;
+        } else if (`${company_prefix}${item_reference}`.length != 12) {
+          return false;
+        }
       }
       return true;
     },
+
     validationData() {
       if (this.initial_load) {
         return false;
@@ -1051,7 +1050,7 @@ export default {
       // }
       // Check QTY
       if (
-        !this.validationQuantity({ level: 3 })
+        !this.validationQuantity({ level: 2 })
         // !this.validationQuantity({ level: 4 })
       ) {
         is_error = true;
@@ -1063,13 +1062,25 @@ export default {
 
       // CHECK PRODUCT
       for (var key in this.error) {
+        // console.log(key);
         if (!this.product[key] && this.product[key] != '0') {
           this.error[key] = `Product ${key} is required`;
           is_error = true;
+          if (key == 'gtin' || key == 'nie' || key == 'company_prefix') {
+            is_error = false;
+          }
           required.push(capitalizeFirstLetter(key));
         }
       }
       // CHECK PACKAGING
+      let lvl_1 = this.product.mst_pid.filter((it) => it.packaging_level == 1);
+      let lvl_2 = this.product.mst_pid.filter((it) => it.packaging_level == 2);
+      let lvl_3 = this.product.mst_pid.filter((it) => it.packaging_level == 3);
+      let lvl_4 = this.product.mst_pid.filter((it) => it.packaging_level == 4);
+      this.ResultPid.level_1 = lvl_1;
+      this.ResultPid.level_2 = lvl_2;
+      this.ResultPid.level_3 = lvl_3;
+      this.ResultPid.level_4 = lvl_4;
       for (var i = 1; i <= 4; i++) {
         let key = `level_${i}`;
         if (Array.isArray(this.ResultPid[key])) {
@@ -1091,25 +1102,6 @@ export default {
           is_error = true;
         }
       }
-      // for (const key in this.ResultPid) {
-      //   if (key == "level_3" && !this.product.packagingl3_id) {
-      //     break;
-      //   } else if (key == "level_4" && !this.product.packagingl4_id) {
-      //     break;
-      //   }
-      //   if (this.ResultPid[key].length == 0) {
-      //     this.ExpandPid[key] = true;
-      //     is_error = true;
-      //   } else {
-      //     for (const it of this.ResultPid[key]) {
-      //       if (it.error) {
-      //         this.ExpandPid[key] = true;
-      //         is_error = true;
-      //       }
-      //     }
-      //   }
-      // }
-      // if have error
       if (is_error) {
         return false;
       }
@@ -1147,6 +1139,8 @@ export default {
       let master_pid = [];
       for (const key in this.ResultPid) {
         if (key == 'level_4' && !this.product.packagingl4_id) {
+          break;
+        } else if (key == 'level_4' && !this.product.packagingl3_id) {
           break;
         }
         for (let it of this.ResultPid[key]) {
