@@ -339,7 +339,7 @@ export default {
         id1 = this.result[idx].id1.length;
         id2 = this.result[idx].id2.length;
         sn_prefix = this.result[idx].sn_prefix.length;
-        this.result[idx].generated_sn_len = 18 - id1 - id2 - sn_prefix;
+        this.result[idx].generated_sn_len = 17 - id1 - id2 - sn_prefix;
       } catch (e) {
         console.log(e);
       }

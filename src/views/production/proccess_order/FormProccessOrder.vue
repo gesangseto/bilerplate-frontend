@@ -73,6 +73,7 @@
               <CInput
                 :disabled="action != 'Create'"
                 horizontal
+                :type="'number'"
                 :value.sync="formData.het"
               >
                 <template #label>
@@ -503,7 +504,7 @@ export default {
           if (product) {
             product = product.item;
             this.product = product;
-            this.formData.gtin = product.gtin;
+            this.formData.gtin = product.gtin || '';
             this.formData.nie = product.nie;
             this.formData.no = product.no;
             this.updateGenerateCount(
