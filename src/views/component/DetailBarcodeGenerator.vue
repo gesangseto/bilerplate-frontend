@@ -142,38 +142,38 @@
 }
 </style>
 <script>
-import bwipjs from "bwip-js";
-import $axiosMertrack from "../../apiMertrack";
-import Table from "../base/Table.vue";
-import { parsingBarcodeToHr } from "../../utils";
-import invalid_barcode from "../../assets/invalid_barcode.png";
+import bwipjs from 'bwip-js';
+import $axiosMertrack from '../../apiMertrack';
+import { parsingBarcodeToHr } from '../../utils';
+import invalid_barcode from '../../assets/invalid_barcode.png';
 export default {
-  components: { Table },
-  name: "DetailBarcodeGenerator",
+  components: {},
+  name: 'DetailBarcodeGenerator',
   props: { property: Object },
   watch: {
     property: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (this.property.modal) {
           this.list_data = this.resetList();
           this.item = JSON.parse(JSON.stringify(this.property.item));
-          this.item.product_detail = `(${this.item["product_no"]}) ${this.item["product_name"]}`;
-          this.item.exp_mfg = `${this.item["expired_date"]} / ${this.item["mfg_date"]}`;
-          this.item.full_serial = `[${this.item["gtin_cp"]}] ${this.item["serial"]}`;
-          this.item.pkg_detail = `(${this.item["packaging_level"]}) ${this.item["packaging_name"]}`;
-          let last_location = !this.item["warehouse_name"]
-            ? this.item["customer_name"]
-            : this.item["warehouse_name"];
-          this.item.status_last = `${this.item["status_desc"]} - ${last_location}`;
+          this.item.product_detail = `(${this.item['product_no']}) ${this.item['product_name']}`;
+          this.item.exp_mfg = `${this.item['expired_date']} / ${this.item['mfg_date']}`;
+          this.item.full_serial = `[${this.item['gtin_cp']}] ${this.item['serial']}`;
+          this.item.pkg_detail = `(${this.item['packaging_level']}) ${this.item['packaging_name']}`;
+          console.log(this.item);
+          let last_location = !this.item['warehouse_name']
+            ? this.item['customer_name']
+            : this.item['warehouse_name'];
+          this.item.status_last = `${this.item['status_desc']} - ${last_location}`;
           this.getDetailItem(this.property.item, true);
-          this.barcode = this.property.item.barcode;
+          this.barcode = this.item.epc_hr;
         }
       },
     },
     barcode: {
       deep: true,
-      handler(n, o) {
+      handler() {
         this.generateBarcode();
       },
     },
@@ -190,20 +190,20 @@ export default {
       barcode_hr: null,
       fields: [
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "Serial",
+          key: 'serial',
+          label: 'Serial',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "View",
+          key: 'action',
+          label: 'View',
         },
       ],
     };
@@ -244,38 +244,34 @@ export default {
       return item_array.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
-    handleClickRow(item, index) {
+    handleClickRow(item) {
       this.barcode = item.barcode;
       this.getDetailItem(item);
     },
     generateBarcode() {
       if (!this.barcode) {
         this.invalidBarcode();
-        this.barcode_hr = " ";
+        this.barcode_hr = ' ';
         return;
       }
-      console.log(this.barcode);
-      let parse = parsingBarcodeToHr(this.barcode);
-      this.barcode_hr = this.renderEpcHr(parse) ?? " ";
-      let canvas = bwipjs.toCanvas("canvasBarcode", {
+      this.barcode_hr = this.barcode.replaceAll(' ', '') || ' ';
+      bwipjs.toCanvas('canvasBarcode', {
         bcid: `gs1datamatrix`, // Barcode type
-        text: parse, // Text to encode
+        text: this.barcode_hr, // Text to encode
         scaleX: 3, // 3x scaling factor
         scaleY: 3, // 3x scaling factor
         // height: 3, // Bar height, in millimeters
         includetext: true, // Show human-readable text
-        textxalign: "center", // Always good to set this
+        textxalign: 'center', // Always good to set this
       });
       return;
     },
     invalidBarcode() {
       let cvn = this.$refs.canvasBarcode;
-      let ctx = cvn.getContext("2d");
+      let ctx = cvn.getContext('2d');
       cvn.width = 140;
       cvn.height = 140;
       let bg = new Image();
@@ -286,7 +282,7 @@ export default {
       return;
     },
     renderEpcHr(item) {
-      item = item.replace(/\(/g, " (");
+      item = item.replace(/\(/g, ' (');
       item = item.trim();
       return item;
     },

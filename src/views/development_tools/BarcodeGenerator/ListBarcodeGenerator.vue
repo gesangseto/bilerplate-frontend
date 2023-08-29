@@ -78,10 +78,10 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportData } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportData } from '../../../utils';
 export default {
-  name: "ListBarcodeGenerator",
+  name: 'ListBarcodeGenerator',
   mounted() {
     this.pages = [10, 20, 50, 100];
     this.page = 1;
@@ -94,69 +94,69 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       datas: [],
       selected_data: { modal: false, item: {} },
       fields: [
         {
-          key: "product_no",
-          label: "Item No",
-          _classes: "font-weight-bold",
+          key: 'product_no',
+          label: 'Item No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "supplier_name",
-          label: "Supplier Name",
+          key: 'supplier_name',
+          label: 'Supplier Name',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: 'warehouse_name',
+          label: 'Warehouse',
         },
         {
-          key: "customer_name",
-          label: "Customer",
+          key: 'customer_name',
+          label: 'Customer',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "status_desc",
-          label: "Status",
+          key: 'status_desc',
+          label: 'Status',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
         },
       ],
     };
@@ -173,10 +173,10 @@ export default {
   },
   methods: {
     loadData() {
-      delete this.filter["StartDate"];
-      delete this.filter["EndDate"];
-      this.filter["parent"] = null;
-      this.filter["advanced"] = true;
+      delete this.filter['StartDate'];
+      delete this.filter['EndDate'];
+      this.filter['parent'] = null;
+      this.filter['advanced'] = true;
       let param = `${new URLSearchParams(this.filter).toString()}`;
       let url = `/v3/transaction/stock?show_barcode=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
@@ -229,11 +229,11 @@ export default {
       return this.datas.map((item) => {
         return {
           ...item,
-          supplier_name: item.supplier_name ?? "",
-          warehouse_name: item.warehouse_name ?? "",
-          customer_name: item.customer_name ?? "",
+          supplier_name: item.supplier_name ?? '',
+          warehouse_name: item.warehouse_name ?? '',
+          customer_name: item.customer_name ?? '',
           gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
+            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
