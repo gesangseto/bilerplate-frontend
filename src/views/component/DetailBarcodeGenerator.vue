@@ -15,7 +15,7 @@
               id="canvasBarcode"
               ref="canvasBarcode"
             ></canvas>
-            <p style="font-size: 6pt">{{ barcode_hr }}</p>
+            <p style="font-size: 6pt">{{ item.epc_hr }}</p>
           </div>
         </CCol>
         <CCol md="5">
@@ -49,8 +49,8 @@
             <template #append-content>
               <CButton
                 style="font-size: 10pt; margin: -10pt"
-                :color="barcode === item.barcode ? 'success' : 'info'"
-                :disabled="barcode === item.barcode"
+                :color="barcode === item.epc_hr ? 'success' : 'info'"
+                :disabled="barcode === item.epc_hr"
                 @click="handleClickRow(item, -1)"
               >
                 <v-icon name="qrcode" /></CButton
@@ -108,8 +108,8 @@
                     size="sm"
                     class="float-left"
                     style="font-size: 1px; margin: -8px"
-                    :color="barcode === item.barcode ? 'success' : 'info'"
-                    :disabled="barcode === item.barcode"
+                    :color="barcode === item.epc_hr ? 'success' : 'info'"
+                    :disabled="barcode === item.epc_hr"
                     @click="handleClickRow(item, index)"
                   >
                     <v-icon style="margin-bottom: -1px" name="qrcode" />
@@ -144,7 +144,6 @@
 <script>
 import bwipjs from 'bwip-js';
 import $axiosMertrack from '../../apiMertrack';
-import { parsingBarcodeToHr } from '../../utils';
 import invalid_barcode from '../../assets/invalid_barcode.png';
 export default {
   components: {},
@@ -248,7 +247,7 @@ export default {
       });
     },
     handleClickRow(item) {
-      this.barcode = item.barcode;
+      this.barcode = item.epc_hr;
       this.getDetailItem(item);
     },
     generateBarcode() {
@@ -257,10 +256,10 @@ export default {
         this.barcode_hr = ' ';
         return;
       }
-      this.barcode_hr = this.barcode.replaceAll(' ', '') || ' ';
+      let barcode = this.barcode.replaceAll(' ', '') || ' ';
       bwipjs.toCanvas('canvasBarcode', {
         bcid: `gs1datamatrix`, // Barcode type
-        text: this.barcode_hr, // Text to encode
+        text: barcode, // Text to encode
         scaleX: 3, // 3x scaling factor
         scaleY: 3, // 3x scaling factor
         // height: 3, // Bar height, in millimeters

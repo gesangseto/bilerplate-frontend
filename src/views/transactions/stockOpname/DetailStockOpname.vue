@@ -226,11 +226,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportDataV3 } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3 } from '../../../utils';
 export default {
   mounted() {
-    this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       let url = `/v3/transaction/stock-opname?id=${this.$route.params.id}`;
       $axiosMertrack.get(url).then((response) => {
@@ -241,9 +241,9 @@ export default {
         } else {
           this.$toast.open({
             message: `No data to be viewed`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         }
@@ -252,67 +252,67 @@ export default {
   },
   data() {
     return {
-      action: "",
+      action: '',
       datas: [],
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       items: [],
       fields: [
         {
-          key: "product_no",
-          label: "Item No",
+          key: 'product_no',
+          label: 'Item No',
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "product_nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "actual_quantity",
-          label: "L1 Qty Actual",
+          key: 'actual_quantity',
+          label: 'L1 Qty Actual',
         },
         {
-          key: "is_same",
-          label: "",
+          key: 'is_same',
+          label: '',
         },
         // {
         //   key: "action",
@@ -322,29 +322,27 @@ export default {
         // },
       ],
       stock: {
-        id: "",
-        warehouse: "",
-        storage: "",
-        createdDate: "",
+        id: '',
+        warehouse: '',
+        storage: '',
+        createdDate: '',
       },
-      stockOpnameDate: "",
+      stockOpnameDate: '',
     };
   },
   computed: {
     detailStock() {
       return this.items.map((item) => {
-        let operator = "=";
+        let operator = '=';
         if (item.quantity < item.actual_quantity) {
-          operator = "+";
+          operator = '+';
         } else if (item.quantity > item.actual_quantity) {
-          operator = "-";
+          operator = '-';
         }
         return {
           ...item,
           is_same: operator,
           actual_quantity: item.actual_quantity ?? 0,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
@@ -364,7 +362,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: "/v3/transaction/stock-opname",
+        url: '/v3/transaction/stock-opname',
       });
     },
   },
