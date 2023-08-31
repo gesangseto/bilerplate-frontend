@@ -73,7 +73,7 @@
                   L2 Full Qty
                 </label>
                 <div class="col-sm-8 col-md-8 col-lg-8">
-                  {{ full_box }} {{ full_box && "Sack" }}
+                  {{ full_box }} {{ full_box && 'Sack' }}
                 </div>
               </div>
               <div class="form-group row mb-2">
@@ -178,17 +178,17 @@
 
 <script>
 let dataPost = [];
-import $axiosMertrack from "../../../apiMertrack";
-import "vue-select/dist/vue-select.css";
-import moment from "moment";
-import { getMstProduct } from "../../../resource/MstProduct";
-import { getMstWarehouse } from "../../../resource/MstWarehouse";
+import $axiosMertrack from '../../../apiMertrack';
+import 'vue-select/dist/vue-select.css';
+import moment from 'moment';
+import { getMstProduct } from '../../../resource/MstProduct';
+import { getMstWarehouse } from '../../../resource/MstWarehouse';
 export default {
-  name: "FormPacking",
+  name: 'FormPacking',
   watch: {
     formData: {
       deep: true,
-      handler(item, o) {
+      handler(item) {
         if (item.warehouse_id && item.product_id) {
           this.getBatch();
         }
@@ -205,7 +205,7 @@ export default {
     },
     data_header: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -224,7 +224,7 @@ export default {
         items: [],
       },
       initial_load: true,
-      today: moment().format("DD-MMM-YYYY"),
+      today: moment().format('DD-MMM-YYYY'),
       data_header: {
         warehouse: null,
         product: null,
@@ -240,73 +240,73 @@ export default {
       checked: [],
       val: [],
       last_stock: 0,
-      full_box: "",
-      serialNumber: "",
+      full_box: '',
+      serialNumber: '',
       temp_item: [],
-      productId: "",
+      productId: '',
       items: [],
       datas: [],
       detailModal: false,
       detailSerialOrAggregation: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       item: [],
       customerOptions: [],
       warehouseError: false,
-      productName: "",
+      productName: '',
       productOptions: [],
       batchNumberOptions: [],
       fields: [
         {
-          key: "no",
-          label: "No",
+          key: 'no',
+          label: 'No',
           sorter: false,
         },
         {
-          key: "product_no",
-          label: "Item No",
+          key: 'product_no',
+          label: 'Item No',
           sorter: false,
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
           sorter: false,
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
           sorter: false,
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
           sorter: false,
         },
         {
-          key: "remark",
-          label: "Remark",
+          key: 'remark',
+          label: 'Remark',
           sorter: false,
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
           sorter: false,
         },
         {
-          key: "type",
-          label: "Type",
-          _classes: "font-weight-bold",
+          key: 'type',
+          label: 'Type',
+          _classes: 'font-weight-bold',
           sorter: false,
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
           // _style: "width:15%",
@@ -316,35 +316,35 @@ export default {
       warehouseOptions: [],
       detail: {
         product: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
         batch: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
-        serial: "",
+        serial: '',
       },
       error: {
-        so: "",
-        ref1: "",
-        ref2: "",
-        from: "",
-        to: "",
+        so: '',
+        ref1: '',
+        ref2: '',
+        from: '',
+        to: '',
       },
-      action: "",
+      action: '',
       required: {
-        warehouse: { error: false, message: "Warehouse is required" },
-        product: { error: false, message: "Customer is required" },
-        batch: { error: false, message: "Batch No is required" },
+        warehouse: { error: false, message: 'Warehouse is required' },
+        product: { error: false, message: 'Customer is required' },
+        batch: { error: false, message: 'Batch No is required' },
       },
     };
   },
   async mounted() {
     // cek parameter url
-    this.action = this.$route.params.type == "read" ? "VIEW" : "ADD";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'ADD';
     // get from warehouse
-    let _wh = await getMstWarehouse({ status: "Active" });
+    let _wh = await getMstWarehouse({ status: 'Active' });
     if (_wh) {
       for (const it of _wh.data) {
         this.warehouseOptions.push({
@@ -354,7 +354,7 @@ export default {
       }
     }
     // get product
-    let _product = await getMstProduct({ product_type: 1, status: "Active" });
+    let _product = await getMstProduct({ product_type: 1, status: 'Active' });
     if (_product) {
       for (const it of _product.data) {
         this.productOptions.push({
@@ -392,7 +392,7 @@ export default {
             });
           }
         } else {
-          this.last_stock = "0";
+          this.last_stock = '0';
         }
       });
     },
@@ -422,9 +422,9 @@ export default {
               message: result.data.error
                 ? result.data.message
                 : `Data has been saved succesfully `,
-              type: result.data.error ? "error" : "success",
+              type: result.data.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             this.$isLoading(false);
@@ -449,16 +449,17 @@ export default {
       console.log(this.formData);
       for (var i = 0; i < parseInt(total_full_box); i++) {
         temp_item.no = i + 1;
-        temp_item.expired_date = this.formData.batch_detail["expired_date"];
-        temp_item.serial = "0000000000";
+        temp_item.expired_date = this.formData.batch_detail['expired_date'];
+        temp_item.serial = '0000000000';
         temp_item.product_id = this.formData.product_id;
         temp_item.batch_no = this.formData.batch_no;
-        temp_item.gtin_sscc = this.formData.batch_detail["gtin_sscc"];
+        temp_item.epc_key = this.formData.batch_detail['epc_key'];
+        temp_item.epc_type = this.formData.batch_detail['epc_type'];
         temp_item.quantity = full_box;
-        temp_item.remark = "Generated on Web";
-        temp_item.product_no = this.formData.batch_detail["product_no"];
-        temp_item.product_name = this.formData.batch_detail["product_name"];
-        temp_item.type = "Full";
+        temp_item.remark = 'Generated on Web';
+        temp_item.product_no = this.formData.batch_detail['product_no'];
+        temp_item.product_name = this.formData.batch_detail['product_name'];
+        temp_item.type = 'Full';
         this.can_proccess = true;
         this.items.push(temp_item);
         temp_item = {};
@@ -466,16 +467,17 @@ export default {
 
       if (incomplete_box != 0) {
         temp_item.no = i + 1;
-        temp_item.expired_date = this.formData.batch_detail["expired_date"];
-        temp_item.serial = "0000000000";
+        temp_item.expired_date = this.formData.batch_detail['expired_date'];
+        temp_item.serial = '0000000000';
         temp_item.product_id = this.formData.product_id;
         temp_item.batch_no = this.formData.batch_no;
-        temp_item.gtin_sscc = this.formData.batch_detail["gtin_sscc"];
+        temp_item.epc_key = this.formData.batch_detail['epc_key'];
+        temp_item.epc_type = this.formData.batch_detail['epc_type'];
         temp_item.quantity = incomplete_box;
-        temp_item.remark = "Generated on Web";
-        temp_item.product_no = this.formData.batch_detail["product_no"];
-        temp_item.product_name = this.formData.batch_detail["product_name"];
-        temp_item.type = "Partial";
+        temp_item.remark = 'Generated on Web';
+        temp_item.product_no = this.formData.batch_detail['product_no'];
+        temp_item.product_name = this.formData.batch_detail['product_name'];
+        temp_item.type = 'Partial';
         this.items.push(temp_item);
         this.can_proccess = true;
         temp_item = {};
@@ -494,9 +496,9 @@ export default {
       ) {
         this.$toast.open({
           message: `Please input all the required data.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -509,9 +511,9 @@ export default {
       if (this.items.length == 0) {
         this.$toast.open({
           message: `Please add at least 1 product item to continue`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;

@@ -46,23 +46,23 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import * as JSPM from "jsprintmanager";
+import $axiosMertrack from '../../apiMertrack';
+import * as JSPM from 'jsprintmanager';
 export default {
-  name: "ModalPrintLabelV3",
-  props: ["item"],
+  name: 'ModalPrintLabelV3',
+  props: ['item'],
   watch: {
     selected_printer(value) {
-      this.$emit("change", value);
+      this.$emit('change', value);
     },
     isOpenModal() {
       if (!this.isOpenModal) {
-        this.printData = "";
-        this.$emit("onClose");
+        this.printData = '';
+        this.$emit('onClose');
       }
     },
     item: {
-      handler(n, o) {
+      handler(n) {
         if (Object.keys(n).length > 0) {
           // this.loadData(n);
           this.loadData(n);
@@ -80,11 +80,11 @@ export default {
   data() {
     return {
       isOpenModal: false,
-      printData: "",
+      printData: '',
       print2default: false,
       printers: [],
       stockData: {},
-      selected_printer: "",
+      selected_printer: '',
     };
   },
   mounted() {
@@ -115,13 +115,13 @@ export default {
             this.isOpenModal = false;
             return this.$toast.open({
               message: `${_data.message}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 3000,
             });
           }
-          let content = "";
+          let content = '';
           for (const it of _data.data) {
             content += it._layout;
           }
@@ -130,10 +130,10 @@ export default {
         });
       } else if (!itm.items) {
         let serial = itm.trx_pack_serial || itm.serial;
-        let gtin_sscc = itm.trx_pack_gtin_sscc || itm.gtin_sscc;
+        let epc_key = itm.trx_pack_epc_key || itm.epc_key;
         _body = {
           serial: serial,
-          gtin_sscc: gtin_sscc,
+          epc_key: epc_key,
           update_count: updateCount,
         };
         var _url = new URLSearchParams(_body).toString();
@@ -143,9 +143,9 @@ export default {
             this.isOpenModal = false;
             return this.$toast.open({
               message: `${_data.message}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 3000,
             });
           }
@@ -162,7 +162,7 @@ export default {
     updatePrintCount() {
       let _body = {
         serial: this.stockData.serial,
-        gtin_sscc: this.stockData.gtin_sscc,
+        epc_key: this.stockData.epc_key,
       };
       $axiosMertrack
         .post(`/v3/helper/print-layout/update-count`, _body)
@@ -172,17 +172,17 @@ export default {
             this.isOpenModal = false;
             return this.$toast.open({
               message: `${_data.message}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 3000,
             });
           }
         });
     },
     handleClickPrint() {
-      if (this.selected_printer === "" && !this.print2default) {
-        alert("You must select a printer");
+      if (this.selected_printer === '' && !this.print2default) {
+        alert('You must select a printer');
         return;
       }
       let message = `You are about to print this data.\nThis operation will be update the count of print.\nWould you like to continue?`;
@@ -193,8 +193,8 @@ export default {
       }
     },
     doPrintZPL() {
-      if (this.selected_printer === "" && !this.print2default) {
-        alert("You must select a printer");
+      if (this.selected_printer === '' && !this.print2default) {
+        alert('You must select a printer');
         return;
       }
       NProgress.start();
@@ -210,7 +210,7 @@ export default {
     },
     onPrinterChange(value) {
       this.selected_printer = value;
-      console.info("Selected printer:", value);
+      console.info('Selected printer:', value);
     },
     getPrinters() {
       return new Promise((ok, err) => {
@@ -223,7 +223,7 @@ export default {
             })
             .catch((e) => err(e));
         } else {
-          console.warn("JSPM WS not open");
+          console.warn('JSPM WS not open');
           ok(printers);
         }
       });

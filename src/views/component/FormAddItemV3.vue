@@ -220,10 +220,12 @@ export default {
     },
     getProduct() {
       let param = {
-        product_type: this.filter.product_type || 0,
         status: 'Active',
         show_status: true,
       };
+      if (this.filter.product_type) {
+        param.product_type = this.filter.product_type;
+      }
       param = new URLSearchParams(param).toString();
       let _url = `/v3/master/product?${param}`;
       this.listProduct = [];

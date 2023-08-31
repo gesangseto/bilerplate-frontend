@@ -449,13 +449,6 @@ export default {
           epc_key: it.epc_key,
           serial: it.serial,
         };
-        if (it.serial == '0000000000') {
-          field['epc_key'] = it.epc_key;
-          field['product_id'] = it.product_id;
-          field['batch_no'] = it.batch_no;
-          field['expired_date'] = it.expired_date;
-          field['quantity'] = it.quantity;
-        }
         items.push(field);
       }
       let param = this.formData;

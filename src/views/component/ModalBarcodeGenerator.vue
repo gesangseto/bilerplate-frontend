@@ -50,15 +50,25 @@ export default {
     property: {
       deep: true,
       handler(n) {
-        console.log(n);
         if (Object.keys(n).length > 0) {
-          if (n.trx_pack_epc_type) {
+          if (n.epc_hr) {
             this.showModal = true;
-            let barcode = `(${n.trx_pack_epc_type == 'sscc' ? '00' : '01'})`;
-            barcode += `${n.trx_pack_epc_key}`;
-            if (n.trx_pack_epc_type == 'sgtin')
-              barcode += `(21)${n.trx_pack_serial}`;
-            this.generateBarcode(barcode);
+            // // let barcode = `(${n.trx_pack_epc_type == 'sscc' ? '00' : '01'})`;
+            // // barcode += `${n.trx_pack_epc_key}`;
+            // // if (n.trx_pack_epc_type == 'sgtin')
+            // //   barcode += `(21)${n.trx_pack_serial}`;
+            // // this.generateBarcode(barcode);
+            // let barcode = `(${
+            //   n.trx_pack_epc_type == 'sscc'
+            //     ? '00'
+            //     : n.epc_type == 'nie'
+            //     ? '90'
+            //     : '01'
+            // })`;
+            // barcode += `${n.trx_pack_epc_key}`;
+            // if (n.trx_pack_epc_type == 'sgtin' || n.trx_pack_epc_type == 'nie')
+            //   barcode += `(21)${n.trx_pack_serial}`;
+            this.generateBarcode(n.epc_hr.replaceAll(' ', ''));
           } else {
             this.showModal = true;
             let barcode = `(${
@@ -92,6 +102,7 @@ export default {
       }
       let parse = barcode;
       this.barcode_hr = this.renderEpcHr(parse) ?? ' ';
+      console.log(parse);
       bwipjs.toCanvas('canvasBarcode', {
         bcid: `gs1datamatrix`, // Barcode type
         text: parse, // Text to encode

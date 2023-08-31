@@ -92,7 +92,7 @@
                         style="width: 40%"
                         v-if="repack[`quantity_lvl_${index}`] > 0"
                       >
-                        {{ "L" + index }} Quantity
+                        {{ 'L' + index }} Quantity
                       </td>
                       <td
                         style="width: 60%"
@@ -142,7 +142,7 @@
                   <td>
                     <ButtonPermission
                       :buttonProperty="btn_printProp"
-                      v-if="item.trx_pack_gtin_sscc"
+                      v-if="item.trx_pack_epc_key"
                       :permission="'print'"
                       @click="printV3(item, index)"
                     />
@@ -191,13 +191,13 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportDataV3, getUserId, printLabelV3 } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3, getUserId, printLabelV3 } from '../../../utils';
 
 export default {
-  name: "DetailPacking",
+  name: 'DetailPacking',
   mounted() {
-    this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       let param = { id: this.$route.params.id, raw: true };
       let url = `/v3/transaction/packing?${new URLSearchParams(param)}`;
@@ -207,16 +207,16 @@ export default {
         if (data.items.length > 0) {
           this.items = data.items;
           for (const it of data.items) {
-            if (!it.trx_pack_gtin_sscc) {
+            if (!it.trx_pack_epc_key) {
               this.can_print_all = false;
             }
           }
         } else {
           this.$toast.open({
             message: `No data to be viewed`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         }
@@ -226,38 +226,38 @@ export default {
   data() {
     return {
       user_id: getUserId(),
-      action: "",
+      action: '',
       print_buttonProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "success",
-        icon: "print",
-        text: "Print All",
-        tooltip: "Print all label",
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'print',
+        text: 'Print All',
+        tooltip: 'Print all label',
       },
       print_buttonProperty2: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "print",
-        text: "Print All",
-        tooltip: "Print all label",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'print',
+        text: 'Print All',
+        tooltip: 'Print all label',
       },
       btn_printProp: {
-        size: "sm",
-        class: "float-right",
-        color: "secondary",
-        icon: "print",
-        text: "",
-        tooltip: "Print this label",
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'print',
+        text: '',
+        tooltip: 'Print this label',
       },
       btn_printProp2: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "print",
-        text: "",
-        tooltip: "Print this data",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'print',
+        text: '',
+        tooltip: 'Print this data',
       },
       selected_barcode: {},
       selected_data: {},
@@ -265,79 +265,79 @@ export default {
       datas: [],
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       sn: false,
       test: null,
-      status: "",
+      status: '',
       repack: {
-        id: "",
-        warehouse: "",
-        remark: "",
-        reason: "",
-        date: "",
-        serialNo: "",
+        id: '',
+        warehouse: '',
+        remark: '',
+        reason: '',
+        date: '',
+        serialNo: '',
       },
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       items: [],
       darkModal: false,
       fieldItem: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
           sorter: false,
           filter: false,
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
           sorter: false,
           filter: false,
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'trx_pack_epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "trx_pack_serial",
-          label: "Packing SN",
+          key: 'trx_pack_serial',
+          label: 'Packing SN',
         },
         {
-          key: "packaging_level",
-          label: "Child Pkg Level",
+          key: 'packaging_level',
+          label: 'Child Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Child Pkg Name",
+          key: 'packaging_name',
+          label: 'Child Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
-        { key: "action", label: "Print", sorter: false, filter: false },
+        { key: 'action', label: 'Print', sorter: false, filter: false },
       ],
     };
   },
@@ -360,7 +360,7 @@ export default {
       for (const it of this.items) {
         let itm = {
           serial: it.trx_pack_serial,
-          gtin_sscc: it.trx_pack_gtin_sscc,
+          epc_key: it.trx_pack_epc_key,
         };
         _body.push(itm);
       }
@@ -373,10 +373,10 @@ export default {
         .then((response) => {
           if (response.data.error) {
             this.$toast.open({
-              message: `${response.data.message ?? "Success validate"}`,
-              type: response.data.error ? "error" : "success",
+              message: `${response.data.message ?? 'Success validate'}`,
+              type: response.data.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 3000,
             });
           } else {
@@ -390,7 +390,7 @@ export default {
     printV3(item) {
       let _body = {
         serial: item.trx_pack_serial,
-        gtin_sscc: item.trx_pack_gtin_sscc,
+        epc_key: item.trx_pack_epc_key,
         validate: true,
       };
       var _url = new URLSearchParams(_body).toString();
@@ -398,10 +398,10 @@ export default {
         .get(`/v3/helper/print-layout/pdf?${_url}`)
         .then((response) => {
           this.$toast.open({
-            message: `${response.data.message ?? "Success validate"}`,
-            type: response.data.error ? "error" : "success",
+            message: `${response.data.message ?? 'Success validate'}`,
+            type: response.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 3000,
           });
           if (response.data.error) {
@@ -416,9 +416,9 @@ export default {
         .catch((error) => {
           this.$toast.open({
             message: `${error}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 3000,
           });
         });
@@ -431,7 +431,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: "/v3/transaction/packing",
+        url: '/v3/transaction/packing',
       });
     },
   },
@@ -440,10 +440,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.trx_pack_epc_type == "sscc"
-              ? item.company_prefix
-              : item.trx_pack_gtin_sscc,
         };
       });
     },
