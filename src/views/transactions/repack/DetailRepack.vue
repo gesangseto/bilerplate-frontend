@@ -120,7 +120,7 @@
                         style="width: 40%"
                         v-if="unpack[`quantity_lvl_${index}`] > 0"
                       >
-                        {{ "L" + index }} Quantity
+                        {{ 'L' + index }} Quantity
                       </td>
                       <td
                         style="width: 60%"
@@ -170,11 +170,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportDataV3 } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3 } from '../../../utils';
 
 export default {
-  name: "DetailRepack",
+  name: 'DetailRepack',
   mounted() {
     let url = `/v3/transaction/re-packing?id=${this.$route.params.id}`;
     $axiosMertrack.get(url).then((response) => {
@@ -184,7 +184,7 @@ export default {
       this.unpack = data;
       this.unpack.packaging_level = 2;
       this.unpack.gtin_cp =
-        data.epc_type == "sscc" || data.epc_type == "SSCC"
+        data.epc_type == 'sscc' || data.epc_type == 'SSCC'
           ? data.company_prefix
           : data.gtin_sscc;
       if (data.items.length > 0) {
@@ -192,9 +192,9 @@ export default {
       } else {
         this.$toast.open({
           message: `No data to be viewed`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }
@@ -204,53 +204,53 @@ export default {
     return {
       sn: false,
       test: null,
-      status: "",
+      status: '',
       unpack: {},
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       items: [],
       item: [],
       darkModal: false,
       fields: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_sscc",
-          label: "GTIN",
+          key: 'gtin',
+          label: 'GTIN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
       ],
     };
@@ -276,7 +276,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: "/v3/transaction/re-packing",
+        url: '/v3/transaction/re-packing',
       });
     },
   },
@@ -285,6 +285,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          gtin: item.gtin ? item.gtin : '',
         };
       });
     },
