@@ -94,15 +94,29 @@ export default {
       },
       deep: true,
     },
-    filter: {
-      handler(n) {
-        if (n.hasOwnProperty('warehouse_id') && n.warehouse_id) {
-          this.resetForm();
-          this.getProduct();
-        } else if (n.hasOwnProperty('from_warehouse') && n.from_warehouse) {
-          this.getProduct();
-          this.resetForm();
-        }
+    // filter: {
+    //   handler(n) {
+    //     if (n.hasOwnProperty('warehouse_id') && n.warehouse_id) {
+    //       this.resetForm();
+    //       this.getProduct();
+    //     } else if (n.hasOwnProperty('from_warehouse') && n.from_warehouse) {
+    //       this.resetForm();
+    //       this.getProduct();
+    //     }
+    //   },
+    //   deep: true,
+    // },
+    'filter.from_warehouse': {
+      handler() {
+        this.resetForm();
+        this.getProduct();
+      },
+      deep: true,
+    },
+    'filter.warehouse_id': {
+      handler() {
+        this.resetForm();
+        this.getProduct();
       },
       deep: true,
     },
@@ -192,6 +206,7 @@ export default {
       }
     },
     handleChangeBatch() {
+      console.log('TERLOAD', this.useDeliveryDayLimit);
       if (this.useDeliveryDayLimit) {
         this.checkDeliveryLimit();
       }

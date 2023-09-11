@@ -448,6 +448,7 @@ export default {
         let field = {
           epc_key: it.epc_key,
           serial: it.serial,
+          quantity: it.quantity,
         };
         items.push(field);
       }
