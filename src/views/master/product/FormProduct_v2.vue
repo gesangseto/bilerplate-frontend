@@ -232,6 +232,18 @@
                   </template>
                 </CInput>
               </CCol>
+
+              <CCol sm="12">
+                <CRow form class="form-group">
+                  <CCol sm="3"> Generate Bpom Report </CCol>
+                  <SwitchDefault
+                    :disabled="action == 'Read'"
+                    :show_label="true"
+                    :default_value="product.generate_bpom_report"
+                    v-on:onChange="product.generate_bpom_report = $event"
+                  />
+                </CRow>
+              </CCol>
             </CRow>
             <hr />
             <h4>Print Detail</h4>
