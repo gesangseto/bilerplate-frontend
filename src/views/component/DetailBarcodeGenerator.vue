@@ -15,7 +15,7 @@
               id="canvasBarcode"
               ref="canvasBarcode"
             ></canvas>
-            <p style="font-size: 6pt">{{ item.epc_hr }}</p>
+            <p style="font-size: 6pt">{{ barcode }}</p>
           </div>
         </CCol>
         <CCol md="5">
@@ -160,7 +160,6 @@ export default {
           this.item.exp_mfg = `${this.item['expired_date']} / ${this.item['mfg_date']}`;
           this.item.full_serial = `[${this.item['gtin_cp']}] ${this.item['serial']}`;
           this.item.pkg_detail = `(${this.item['packaging_level']}) ${this.item['packaging_name']}`;
-          console.log(this.item);
           let last_location = !this.item['warehouse_name']
             ? this.item['customer_name']
             : this.item['warehouse_name'];
@@ -172,7 +171,8 @@ export default {
     },
     barcode: {
       deep: true,
-      handler() {
+      handler(data) {
+        console.log(data, ' <=== BARCODE');
         this.generateBarcode();
       },
     },
