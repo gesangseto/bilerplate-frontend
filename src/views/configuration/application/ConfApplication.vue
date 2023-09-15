@@ -66,62 +66,6 @@
                   </template>
                 </CInput>
               </CCol>
-              <CCol sm="10">
-                <CInput
-                  label="ID Location"
-                  horizontal
-                  type="number"
-                  v-model="data.id_location"
-                  :is-valid="
-                    initialLoad ? null : !data.id_location ? false : true
-                  "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      ID Location (BPOM)
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInput>
-              </CCol>
-              <CCol sm="10">
-                <CInput
-                  label="Latitude"
-                  horizontal
-                  v-model="data.latitude"
-                  :is-valid="initialLoad ? null : !data.latitude ? false : true"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Latitude
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInput>
-              </CCol>
-              <CCol sm="10">
-                <CInput
-                  label="Longitude"
-                  horizontal
-                  v-model="data.longitude"
-                  :is-valid="
-                    initialLoad ? null : !data.longitude ? false : true
-                  "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Longitude
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInput>
-              </CCol>
               <CCol sm="10" lg="10">
                 <CInputFile
                   :placeholder="labelLogo"
@@ -170,6 +114,7 @@
                   v-model="data.total_device"
                 />
               </CCol>
+
               <CCard>
                 <CCardHeader style="font-weight: bold">
                   List Android ID
@@ -195,6 +140,101 @@
                       />
                     </CCol>
                   </div>
+                </CCardBody>
+              </CCard>
+
+              <CCard>
+                <CCardHeader style="font-weight: bold">BPOM Config</CCardHeader>
+                <CCardBody>
+                  <CRow form class="form-group">
+                    <CCol sm="10">
+                      <CInput
+                        label="Latitude"
+                        horizontal
+                        v-model="data.latitude"
+                        :is-valid="
+                          initialLoad ? null : !data.latitude ? false : true
+                        "
+                      >
+                        <template #label>
+                          <p class="col-form-label col-sm-3">
+                            Latitude
+                            <span class="text-danger">
+                              <strong>*</strong>
+                            </span>
+                          </p>
+                        </template>
+                      </CInput>
+                    </CCol>
+                    <CCol sm="10">
+                      <CInput
+                        label="Longitude"
+                        horizontal
+                        v-model="data.longitude"
+                        :is-valid="
+                          initialLoad ? null : !data.longitude ? false : true
+                        "
+                      >
+                        <template #label>
+                          <p class="col-form-label col-sm-3">
+                            Longitude
+                            <span class="text-danger">
+                              <strong>*</strong>
+                            </span>
+                          </p>
+                        </template>
+                      </CInput>
+                    </CCol>
+                    <CCol sm="10">
+                      <CInput
+                        label="ID Location"
+                        horizontal
+                        type="number"
+                        v-model="data.id_location"
+                        :is-valid="
+                          initialLoad ? null : !data.id_location ? false : true
+                        "
+                        description="This value is named 'ID Sarana' is obtained from BPOM and is used for serial reporting to BPOM"
+                      >
+                        <template #label>
+                          <p class="col-form-label col-sm-3">
+                            ID Location (BPOM)
+                            <span class="text-danger">
+                              <strong>*</strong>
+                            </span>
+                          </p>
+                        </template>
+                      </CInput>
+                    </CCol>
+                    <CCol sm="10">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="3" class="col-form-label">
+                          Advance BPOM Reporting
+                        </CCol>
+                        <CCol sm="9">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.advance_bpom_report"
+                          />
+                          <p
+                            style="
+                              font-size: smaller;
+                              color: rgb(143, 143, 143);
+                            "
+                          >
+                            This affects the report that will be generated for
+                            BPOM purposes. If this value is true then all
+                            aggregation processes will be generated. if the
+                            value is false then the report is carried out during
+                            production and during the picking list. This value
+                            cannot change if there is already a transaction in
+                            the bpom Queue
+                          </p>
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  </CRow>
                 </CCardBody>
               </CCard>
 
@@ -484,6 +524,7 @@
                   placeholder="Enter minimum L1 stock threshold"
                   type="number"
                   horizontal
+                  description="This will determine the expiration date that is allowed to be sold"
                   v-model="data.delivery_day_limit"
                 >
                   <template #append-content>Day's</template>
@@ -501,6 +542,11 @@
                       color="success"
                       :checked.sync="data.return_ext_aggregation"
                     />
+                    <p style="font-size: smaller; color: rgb(143, 143, 143)">
+                      If the value is true then when returning externally it is
+                      allowed to return with the aggregation level (maximum
+                      level 2)
+                    </p>
                   </CCol>
                 </CRow>
               </CCol>
