@@ -234,6 +234,58 @@
                         </CCol>
                       </CRow>
                     </CCol>
+                    <CCol sm="10">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="3" class="col-form-label">
+                          Sampling BPOM Reporting
+                        </CCol>
+                        <CCol sm="9">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.sampling_bpom_report"
+                          />
+                          <p
+                            style="
+                              font-size: smaller;
+                              color: rgb(143, 143, 143);
+                            "
+                          >
+                            This affects the report that will be generated for
+                            BPOM purposes. If this value is true then all
+                            Sampling / Indirect-Request transaction will be
+                            generated. This value cannot change if there is
+                            already a transaction in the bpom Queue
+                          </p>
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="10">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="3" class="col-form-label">
+                          Reject BPOM Reporting
+                        </CCol>
+                        <CCol sm="9">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.reject_bpom_report"
+                          />
+                          <p
+                            style="
+                              font-size: smaller;
+                              color: rgb(143, 143, 143);
+                            "
+                          >
+                            This affects the report that will be generated for
+                            BPOM purposes. If this value is true then all Reject
+                            transaction will be generated. This value cannot
+                            change if there is already a transaction in the bpom
+                            Queue
+                          </p>
+                        </CCol>
+                      </CRow>
+                    </CCol>
                   </CRow>
                 </CCardBody>
               </CCard>
