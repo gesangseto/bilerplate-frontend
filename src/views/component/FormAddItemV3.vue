@@ -235,7 +235,6 @@ export default {
     },
     getProduct() {
       let param = {
-        status: 'Active',
         show_status: true,
       };
       if (this.filter.product_type) {
