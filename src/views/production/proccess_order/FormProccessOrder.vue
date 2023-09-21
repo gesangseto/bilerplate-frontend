@@ -630,17 +630,15 @@ export default {
         ? 'EDIT'
         : 'APPROVE';
     // get product
-    let _product = await getMstProduct({ product_type: 0 });
+    let _product = await getMstProduct({ product_type: 0, show_status: true });
     if (_product) {
       for (const it of _product.data) {
-        if (it.status == 'Active') {
-          this.productOptions.push({
-            value: it.id,
-            name: it.name,
-            label: `[${it.no}] ${it.name}`,
-            item: it,
-          });
-        }
+        this.productOptions.push({
+          value: it.id,
+          name: it.name,
+          label: `[${it.no}] ${it.name}`,
+          item: it,
+        });
       }
     }
     if (this.action !== 'Create') {

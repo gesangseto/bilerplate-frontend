@@ -100,11 +100,11 @@
 </template>
 
 <script>
-import { deleteMstProduct, getMstProduct } from "../../../resource/MstProduct";
-import { calculatePaginationV3, exportDataV3 } from "../../../utils";
+import { deleteMstProduct, getMstProduct } from '../../../resource/MstProduct';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 
 export default {
-  name: "ListProduct",
+  name: 'ListProduct',
 
   mounted() {
     this.page = 1;
@@ -113,75 +113,75 @@ export default {
   data() {
     return {
       btn_copyProp: {
-        size: "sm",
-        class: "float-right",
-        color: "secondary",
-        icon: "copy",
-        text: "",
-        tooltip: "Copy data",
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'copy',
+        text: '',
+        tooltip: 'Copy data',
       },
       filter: {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
         {
-          key: "itemNo",
-          label: "Item No",
+          key: 'itemNo',
+          label: 'Item No',
           sorter: false,
         },
         {
-          key: "name",
-          label: "Product Name",
-          _classes: "font-weight-bold",
+          key: 'name',
+          label: 'Product Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "gtin",
-          label: "L1 GTIN",
+          key: 'gtin',
+          label: 'L1 GTIN',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         // {
         //   key: "size",
         // },
         {
-          key: "product_category_name",
-          label: "Category",
+          key: 'product_category_name',
+          label: 'Category',
         },
         {
-          key: "packagingl2_name",
-          label: "L2 Pkg",
+          key: 'packagingl2_name',
+          label: 'L2 Pkg',
         },
         {
-          key: "qty_packagingl2",
-          label: "L2 Qty",
+          key: 'qty_packagingl2',
+          label: 'L2 Qty',
         },
         {
-          key: "product_type",
-          label: "Product Type",
+          key: 'product_type',
+          label: 'Product Type',
           sorter: false,
           filter: false,
         },
         {
-          key: "status",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'status',
+          label: 'Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "show_status",
-          label: "Show",
-          _classes: "font-weight-bold",
+          key: 'show_status',
+          label: 'Show',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -207,7 +207,7 @@ export default {
       exportDataV3({
         param: this.filter,
         exportType: type,
-        url: "/v3/master/product",
+        url: '/v3/master/product',
       });
     },
     pageChange(page) {
@@ -245,10 +245,10 @@ export default {
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : "Data has been deleted succesfully",
-          type: _res.error ? "error" : "success",
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) this.loadData();
@@ -260,12 +260,12 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          show_status: item.show_status ? "Yes" : "No",
+          show_status: item.show_status ? 'Yes' : 'No',
           itemNo: item.no,
-          product_type: item.product_type == 0 ? "Serial" : "Non-Serial",
-          categoryName: item.category ? item.category.name : "",
-          packagingL1Name: item.packagingL1 ? item.packagingL1.name : "",
-          gtin: item.gtin ? item.gtin : "",
+          product_type: item.product_type == 0 ? 'Serial' : 'Non-Serial',
+          categoryName: item.category ? item.category.name : '',
+          packagingL1Name: item.packagingL1 ? item.packagingL1.name : '',
+          gtin: item.gtin ? item.gtin : '',
         };
       });
     },

@@ -354,7 +354,7 @@ export default {
       }
     }
     // get product
-    let _product = await getMstProduct({ product_type: 1, status: 'Active' });
+    let _product = await getMstProduct({ product_type: 1, show_status: true });
     if (_product) {
       for (const it of _product.data) {
         this.productOptions.push({
