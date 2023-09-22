@@ -146,6 +146,7 @@
             type="submit"
             color="success"
             @click="save()"
+            size="sm"
           >
             <CIcon name="cil-check-circle" /> Approve
           </CButton>
@@ -159,6 +160,7 @@
             class="m-1"
             color="danger"
             @click="handleClickReject()"
+            size="sm"
           >
             <CIcon name="cil-ban" /> Reject
           </CButton>
