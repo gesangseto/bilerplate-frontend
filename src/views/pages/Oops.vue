@@ -25,18 +25,18 @@
 </template>
 
 <script>
-import { getProfile } from "../../utils";
+import { clearStorage, getProfile } from '../../utils';
 export default {
-  name: "Oops",
+  name: 'Oops',
   beforeCreate() {
     if (!getProfile()) {
-      localStorage.clear();
+      clearStorage();
       this.$router.push({ path: `/login` });
     }
   },
   methods: {
     logOut() {
-      localStorage.clear();
+      clearStorage();
       window.location.reload();
     },
     home() {

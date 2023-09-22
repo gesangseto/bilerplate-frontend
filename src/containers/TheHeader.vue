@@ -111,6 +111,7 @@ import {
   getLoginTimeout,
   getRole,
   getProfile,
+  clearStorage,
 } from '../utils';
 import moment from 'moment';
 export default {
@@ -141,7 +142,7 @@ export default {
   },
   beforeCreate() {
     if (!getProfile()) {
-      localStorage.clear();
+      clearStorage();
       this.$router.push({ path: `/login` });
     }
   },
@@ -261,10 +262,10 @@ export default {
       return;
     },
     sessionExpired() {
-      localStorage.clear();
       let message = 'Your login session has expired, please login again.';
       localStorage.setItem('current_url', this.current_route.path);
       localStorage.setItem('message', message);
+      clearStorage();
       this.$router.push({ path: '/login' });
       setLoginTimeout(-1);
       // window.location.reload();
