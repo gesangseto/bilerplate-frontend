@@ -66,13 +66,14 @@
                   </template>
                 </CInput>
               </CCol>
+              <!-- IDENTITY PATH LOGO -->
               <CCol sm="10" lg="10">
                 <CInputFile
-                  :placeholder="labelLogo"
+                  :placeholder="labelLogo.identity"
                   horizontal
                   custom
                   class="input-form-upload"
-                  @change="uploadLogo"
+                  @change="uploadLogo($event, 'identity')"
                   :is-valid="
                     initialLoad ? null : !data.identity_logo_path ? false : true
                   "
@@ -89,11 +90,59 @@
               </CCol>
               <div class="form-group row mb-5">
                 <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="logo-identity"> </label>
+                  <label for="identity-logo"> </label>
                 </div>
                 <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
                   <div class="custom-file mb-3">
                     <CImg width="100" v-bind:src="data.identity_logo_path" />
+                  </div>
+                </div>
+              </div>
+              <!-- Home LOGO -->
+              <CCol sm="10" lg="10">
+                <CInputFile
+                  :placeholder="labelLogo.home"
+                  horizontal
+                  custom
+                  class="input-form-upload"
+                  @change="uploadLogo($event, 'home')"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">Home Logo</p>
+                  </template>
+                </CInputFile>
+              </CCol>
+              <div class="form-group row mb-5">
+                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                  <label for="home-logo"> </label>
+                </div>
+                <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
+                  <div class="custom-file mb-3">
+                    <CImg width="100" v-bind:src="data.home_logo" />
+                  </div>
+                </div>
+              </div>
+              <!-- LOGIN LOGO -->
+              <CCol sm="10" lg="10">
+                <CInputFile
+                  :placeholder="labelLogo.login"
+                  horizontal
+                  custom
+                  class="input-form-upload"
+                  @change="uploadLogo($event, 'login')"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">Login Logo</p>
+                  </template>
+                </CInputFile>
+              </CCol>
+              <div class="form-group row mb-5">
+                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                  <label for="login-logo"> </label>
+                </div>
+                <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
+                  <div class="custom-file mb-3">
+                    <CImg width="100" v-bind:src="data.login_logo" />
                   </div>
                 </div>
               </div>
@@ -632,6 +681,7 @@ import 'vue2-datepicker/index.css';
 import $axiosMertrack from '../../../apiMertrack';
 import moment from 'moment';
 import { getSysConfig } from '../../../resource/SysConfig';
+import { setConfig } from '../../../utils';
 export default {
   name: 'PackageForm',
   components: {},
@@ -639,14 +689,19 @@ export default {
     return {
       initialLoad: true,
       action: 'Edit',
-      labelLogo: 'Choose file...',
+      labelLogo: {
+        identity: 'Choose file...',
+        login: 'Choose file...',
+        home: 'Choose file...',
+      },
       data: {
         Username: '',
         UserPassword: '',
         IdentityName: '',
         IdentityNumber: '',
-        logo: { fileName: '', fileContent: '' },
         identity_logo_path: '',
+        login_logo: '',
+        home_logo: '',
         TotalWh: 0,
         total_device: 0,
         imei: '',
@@ -714,21 +769,25 @@ export default {
     formatDate(date) {
       return moment(date).format('yyyy/MM/DD');
     },
-    uploadLogo(event) {
+    uploadLogo(event, type) {
       let file = event[0];
       if (file != undefined) {
         // this.data.logo.fileName = file.name;
-        this.labelLogo = file.name;
-        this.convertToBase64(file);
+        this.labelLogo[type] = file.name;
+        this.convertToBase64(file, type);
         this.message.errorLogo = '';
       } else {
-        this.labelLogo = 'Choose file...';
+        this.labelLogo[type] = 'Choose file...';
         this.message.errorLogo = 'The logo file is required';
       }
     },
-    convertToBase64(file) {
+    convertToBase64(file, type) {
+      console.log(type, '===============');
       reader.onload = (e) => {
-        this.data.identity_logo_path = e.target.result;
+        if (type == 'identity') this.data.identity_logo_path = e.target.result;
+        else if (type == 'login') this.data.login_logo = e.target.result;
+        else if (type == 'home') this.data.home_logo = e.target.result;
+        console.log(this.data.login_logo, '===============');
       };
       reader.readAsDataURL(file);
     },
@@ -790,6 +849,7 @@ export default {
             duration: 5000,
           });
           if (!res.error) {
+            setConfig(this.data);
             this.$router.back();
           }
         });

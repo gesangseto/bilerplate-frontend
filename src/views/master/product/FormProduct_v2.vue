@@ -235,7 +235,7 @@
 
               <CCol sm="12">
                 <CRow form class="form-group">
-                  <CCol sm="3"> Generate Bpom Report </CCol>
+                  <CCol sm="3"> Generate BPOM Report </CCol>
                   <CCol sm="9">
                     <SwitchDefault
                       :disabled="action == 'Read'"

@@ -8,7 +8,7 @@
               <CForm>
                 <!-- <h1>Login</h1> -->
                 <img
-                  v-bind:src="entityLogo"
+                  v-bind:src="loginLogo"
                   class="mb-5"
                   style="width: 120px; heigth: auto"
                 />
@@ -66,7 +66,9 @@
               </div>
               <div class="ml-auto">
                 <div>
-                  <span class="mr-1">Copyright &copy; 2022</span>
+                  <span class="mr-1"
+                    >Copyright &copy; {{ new Date().getFullYear() }}</span
+                  >
                   <a href="http://merindo.co.id/" target="_blank">
                     PT Merindo Makmur</a
                   >
@@ -108,7 +110,7 @@ import {
   setProfile,
   getProfile,
   setMenu,
-  setLogo,
+  getLoginLogo,
 } from '../../utils';
 import { logoMertrack } from '../../constants';
 import { getSysConfig } from '../../resource/SysConfig';
@@ -122,11 +124,12 @@ export default {
       message: null,
       email: null,
       password: null,
-      entityLogo: null,
+      loginLogo: null,
       showPassword: false,
     };
   },
   mounted() {
+    this.loginLogo = getLoginLogo();
     this.loadConfig();
     this.message = null;
     if (!this.message && localStorage.getItem('message')) {
@@ -144,6 +147,7 @@ export default {
       this.redirectReload();
     }
   },
+
   methods: {
     redirectReload() {
       this.$router.push({ path: '/home' }).then(() => {
@@ -154,8 +158,7 @@ export default {
       let _res = await getSysConfig();
       if (_res) {
         setConfig(_res.data[0]);
-        setLogo(_res.data[0].identity_logo_path);
-        this.entityLogo = _res.data[0].identity_logo_path;
+        this.loginLogo = getLoginLogo();
       }
     },
 
@@ -205,6 +208,7 @@ export default {
         let role = reformatRole(flatten(_data.role_menu, 'items'));
         setMenu(menu);
         setRole(role);
+
         setProfile(_data);
         setLoginTimeout(_data.idletimeout ?? 0);
         this.redirectReload();

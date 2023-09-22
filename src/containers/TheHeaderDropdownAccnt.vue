@@ -7,7 +7,7 @@
   >
     <template #toggler>
       <CHeaderNavLink style="border: 1px">
-        <div style="padding-right: 10px">{{ full_name }} {{ " " }}</div>
+        <div style="padding-right: 10px">{{ full_name }} {{ ' ' }}</div>
         <div class="c-avatar">
           <img
             v-bind:src="avatar_path"
@@ -34,17 +34,17 @@
 </template>
 
 <script>
-import { authLogout } from "../resource/SysAuth";
-import { getLogo, getProfile } from "../utils";
+import { authLogout } from '../resource/SysAuth';
+import { clearStorage, getLogo, getProfile } from '../utils';
 
 export default {
-  name: "TheHeaderDropdownAccnt",
+  name: 'TheHeaderDropdownAccnt',
   data() {
     return {
       itemsCount: 0,
-      full_name: "",
-      avatar_path: "",
-      email: "",
+      full_name: '',
+      avatar_path: '',
+      email: '',
     };
   },
   mounted() {
@@ -62,15 +62,15 @@ export default {
         this.$toast.open({
           message: _res.error
             ? _res.message
-            : "You have been logged out successfully",
-          type: _res.error ? "error" : "success",
+            : 'You have been logged out successfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) {
-          localStorage.clear();
-          this.$router.go({ path: "/login" });
+          clearStorage();
+          this.$router.go({ path: '/login' });
         }
       }
     },
@@ -83,7 +83,7 @@ export default {
       // if (section == 0) {
       // this.$router.push({ path: "/setting/configuration" });
       // } else {
-      this.$router.push({ path: "/setting/user-setting" });
+      this.$router.push({ path: '/setting/user-setting' });
       // }
     },
   },
