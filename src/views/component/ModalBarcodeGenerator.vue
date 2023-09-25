@@ -102,7 +102,6 @@ export default {
       }
       let parse = barcode;
       this.barcode_hr = this.renderEpcHr(parse) ?? ' ';
-      console.log(parse);
       bwipjs.toCanvas('canvasBarcode', {
         bcid: `gs1datamatrix`, // Barcode type
         text: parse, // Text to encode

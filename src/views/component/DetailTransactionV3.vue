@@ -210,7 +210,6 @@ export default {
           this.loading[`level_${pack_level}`] = true;
         }
         let param = {};
-        console.log(item);
         let url = `/v3/helper/detail-item/transaction?${param}`;
         if (item.pss_id && item.id) {
           param = { pss_id_parent: item.pss_id, item_id: item.id };

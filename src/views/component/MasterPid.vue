@@ -228,7 +228,6 @@ export default {
     result: {
       handler() {
         this.$emit('handleResultPid', this.result);
-        // console.log(data);
       },
       deep: true,
     },
@@ -341,7 +340,7 @@ export default {
         sn_prefix = this.result[idx].sn_prefix.length;
         this.result[idx].generated_sn_len = 17 - id1 - id2 - sn_prefix;
       } catch (e) {
-        console.log(e);
+        console.log('ERROR => ', e);
       }
       this.result[idx].sn_charset = 'numeric';
     },
@@ -410,7 +409,7 @@ export default {
         }
         this.list_epc_type = data;
       } catch (e) {
-        console.log(e);
+        console.log('ERROR => ', e);
       }
     },
 

@@ -782,12 +782,10 @@ export default {
       }
     },
     convertToBase64(file, type) {
-      console.log(type, '===============');
       reader.onload = (e) => {
         if (type == 'identity') this.data.identity_logo_path = e.target.result;
         else if (type == 'login') this.data.login_logo = e.target.result;
         else if (type == 'home') this.data.home_logo = e.target.result;
-        console.log(this.data.login_logo, '===============');
       };
       reader.readAsDataURL(file);
     },

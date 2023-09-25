@@ -310,7 +310,6 @@ export default {
         });
     },
     sendToBpom(item) {
-      console.log();
       let param = this.formConnector;
       param.data.trx_ref_id = item.trx_ref_id;
       $axiosMertrack

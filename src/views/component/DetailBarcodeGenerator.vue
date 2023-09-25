@@ -171,8 +171,7 @@ export default {
     },
     barcode: {
       deep: true,
-      handler(data) {
-        console.log(data, ' <=== BARCODE');
+      handler() {
         this.generateBarcode();
       },
     },

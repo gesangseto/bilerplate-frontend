@@ -446,7 +446,6 @@ export default {
       var full_box = this.full_box;
       var total_full_box = total_stock / full_box;
       var incomplete_box = total_stock % full_box;
-      console.log(this.formData);
       for (var i = 0; i < parseInt(total_full_box); i++) {
         temp_item.no = i + 1;
         temp_item.expired_date = this.formData.batch_detail['expired_date'];

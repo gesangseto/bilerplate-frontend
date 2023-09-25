@@ -584,7 +584,6 @@ export default {
         for (const it of arr_str) {
           if (it) {
             let _layout = JSON.parse(JSON.stringify(this.formType));
-            console.log(_layout);
             _layout.itf_var_name = it;
             listLayout.push(_layout);
           }
@@ -882,7 +881,6 @@ export default {
         return;
       }
       let param = JSON.parse(JSON.stringify(this.formData));
-      console.log(param);
       param.layout_status = param.layout_status ? 1 : 0;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`

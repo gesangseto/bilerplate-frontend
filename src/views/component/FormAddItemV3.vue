@@ -206,7 +206,6 @@ export default {
       }
     },
     handleChangeBatch() {
-      console.log('TERLOAD', this.useDeliveryDayLimit);
       if (this.useDeliveryDayLimit) {
         this.checkDeliveryLimit();
       }

@@ -1079,7 +1079,6 @@ export default {
 
       // CHECK PRODUCT
       for (var key in this.error) {
-        // console.log(key);
         if (!this.product[key] && this.product[key] != '0') {
           this.error[key] = `Product ${key} is required`;
           is_error = true;

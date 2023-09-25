@@ -186,23 +186,23 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
+import { capitalizeFirstLetter } from '../../../utils';
+import $axiosMertrack from '../../../apiMertrack';
 
 export default {
-  name: "Connector",
+  name: 'Connector',
   data() {
     return {
       initialLoad: true,
-      route_action: "",
+      route_action: '',
       // category: '',
-      action: "Edit",
+      action: 'Edit',
       form: {
         params: [],
         key: null,
         value: null,
         connector_id: null,
-        name: "",
+        name: '',
       },
       detailConnector: { params: [] },
       listConnector: [],
@@ -210,15 +210,15 @@ export default {
       databaseList: [[], [], [], [], [], [], [], [], [], []],
       temp_selected_row: null,
       statusOptions: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
     };
   },
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -234,7 +234,7 @@ export default {
           this.detailConnector.params = data.params;
           let idx = 0;
           for (const it of data.params) {
-            if (it.source === "database") {
+            if (it.source === 'database') {
               this.databaseList[idx].push({
                 label: it.variable_value_name,
                 value: it.variable_value,
@@ -301,22 +301,21 @@ export default {
       this.getDetailConnector();
     },
     validation() {
-      let required = ["name", "connector_id"];
+      let required = ['name', 'connector_id'];
       let next = true;
       for (const key in this.form) {
         if (required.includes(key) && !this.form[key]) next = false;
       }
-      console.log(this.form);
       return next;
     },
     save() {
       this.initialLoad = false;
       if (!this.validation()) {
         this.$toast.open({
-          message: "Please input all the required data.",
-          type: "error",
+          message: 'Please input all the required data.',
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -341,10 +340,10 @@ export default {
               this.$toast.open({
                 message: res.error
                   ? `${res.message}`
-                  : "Data has been saved succesfully ",
-                type: res.error ? "error" : "success",
+                  : 'Data has been saved succesfully ',
+                type: res.error ? 'error' : 'success',
                 dissmissible: true,
-                position: "top-right",
+                position: 'top-right',
                 duration: 5000,
               });
               if (!res.error) {
@@ -360,10 +359,10 @@ export default {
               this.$toast.open({
                 message: res.error
                   ? `${res.message}`
-                  : "Data has been saved succesfully ",
-                type: res.error ? "error" : "success",
+                  : 'Data has been saved succesfully ',
+                type: res.error ? 'error' : 'success',
                 dissmissible: true,
-                position: "top-right",
+                position: 'top-right',
                 duration: 5000,
               });
               if (!res.error) {
