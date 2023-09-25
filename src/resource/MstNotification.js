@@ -1,21 +1,22 @@
-import $axiosMertrack from "../apiMertrack";
+import $axiosMertrack from '../apiMertrack';
+import $axiosMertrackNonLoading from '../apiMertrackNonLoading';
 
 let url = `/v3/master/notification`;
 
 export const getMstNotification = async (param = Object) => {
-  var query_string = "";
+  var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axiosMertrackNonLoading
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -33,7 +34,7 @@ export const updateMstNotification = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
