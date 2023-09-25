@@ -1,22 +1,42 @@
 <template>
-  <a :href="href">
-    <CButton
-      :class="property.class"
-      v-c-tooltip="property.tooltip"
-      style="margin: 2px; text-align: center"
-      v-if="is_visible"
-      size="sm"
-      :color="property.color"
-      v-on:click="!useHref ? $emit('click', $event.target.value) : null"
-    >
-      <v-icon
-        style="margin-bottom: -1px"
-        v-if="property.icon"
-        :name="property.icon"
-      />
-      {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
-    </CButton>
-  </a>
+  <div>
+    <a v-if="href" :href="href">
+      <CButton
+        :class="property.class"
+        v-c-tooltip="property.tooltip"
+        style="margin: 2px; text-align: center"
+        v-if="is_visible"
+        size="sm"
+        :color="property.color"
+        v-on:click="!useHref ? $emit('click', $event.target.value) : null"
+      >
+        <v-icon
+          style="margin-bottom: -1px"
+          v-if="property.icon"
+          :name="property.icon"
+        />
+        {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
+      </CButton>
+    </a>
+    <a v-if="!href">
+      <CButton
+        :class="property.class"
+        v-c-tooltip="property.tooltip"
+        style="margin: 2px; text-align: center"
+        v-if="is_visible"
+        size="sm"
+        :color="property.color"
+        v-on:click="!useHref ? $emit('click', $event.target.value) : null"
+      >
+        <v-icon
+          style="margin-bottom: -1px"
+          v-if="property.icon"
+          :name="property.icon"
+        />
+        {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
+      </CButton>
+    </a>
+  </div>
 </template>
 
 <script>
