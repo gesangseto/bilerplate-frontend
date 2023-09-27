@@ -1,28 +1,15 @@
 <template>
-  <div>
-    <a v-if="href" :href="href">
-      <CButton
-        type="reset"
-        size="sm"
-        color="danger"
-        class="m-1"
-        @click="cancel()"
-      >
-        <CIcon :name="icon" /> {{ judul }}
-      </CButton>
-    </a>
-    <a v-if="!href">
-      <CButton
-        type="reset"
-        size="sm"
-        color="danger"
-        class="m-1"
-        @click="cancel()"
-      >
-        <CIcon :name="icon" /> {{ judul }}
-      </CButton>
-    </a>
-  </div>
+  <a :href="href ? href : null">
+    <CButton
+      type="reset"
+      size="sm"
+      color="danger"
+      class="m-1"
+      @click="cancel()"
+    >
+      <CIcon :name="icon" /> {{ judul }}
+    </CButton>
+  </a>
 </template>
 
 <script>
