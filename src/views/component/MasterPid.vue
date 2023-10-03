@@ -278,6 +278,7 @@ export default {
         { value: 'numeric', label: 'Numeric' },
       ],
       list_layout: [],
+      backup_list_layout: [],
       list_epc_type: [],
       only_sscc: [{ value: 'sscc', label: 'SSCC' }],
       only_sgtin: [{ value: 'sgtin', label: 'SGTIN' }],
@@ -292,14 +293,29 @@ export default {
   },
   computed: {},
   methods: {
+    checkBpomBarcodeFormat(inputString, targetArray) {
+      // Memisahkan string menjadi array berdasarkan tanda hubung (-)
+      const elements = inputString.split('-');
+      // Memeriksa apakah semua elemen dalam targetArray ada dalam elements
+      return targetArray.every((item) => elements.includes(item.toString()));
+    },
     handleChangePid(idx) {
       this.result[idx].error = false;
       let thisData = this.result[idx];
       if (thisData.epc_type === 'nie') {
+        this.list_layout = this.backup_list_layout.filter((it) =>
+          this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['90', '21'])
+        );
         this.syncNie(idx);
       } else if (thisData.epc_type === 'sgtin') {
+        this.list_layout = this.backup_list_layout.filter((it) =>
+          this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['01', '21'])
+        );
         this.syncSgtin(idx);
       } else if (thisData.epc_type === 'sscc') {
+        this.list_layout = this.backup_list_layout.filter((it) =>
+          this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00', '21'])
+        );
         this.syncSSCC(idx);
       }
     },
@@ -419,12 +435,14 @@ export default {
         packaging_level: this.packaging_level,
       });
       if (_res) {
-        this.list_layout = [];
+        this.backup_list_layout = [];
         for (const it of _res.data) {
           it.value = it.id;
           it.label = it.name;
           this.list_layout.push(it);
         }
+        this.backup_list_layout = this.list_layout;
+        console.log(this.backup_list_layout);
       }
     },
 
