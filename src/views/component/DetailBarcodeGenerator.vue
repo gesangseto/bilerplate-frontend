@@ -4,7 +4,7 @@
       centered="centered"
       size="xl"
       :show.sync="property.modal"
-      title="Barcode Generator"
+      title="Barcode GeneratorZZZ"
       color="warning"
     >
       <CRow>
@@ -43,7 +43,7 @@
           <CInput
             horizontal
             v-model="item.full_serial"
-            label="[GTIN / CP] SN"
+            label="[EPC Key] SN"
             readonly
           >
             <template #append-content>
@@ -158,7 +158,7 @@ export default {
           this.item = JSON.parse(JSON.stringify(this.property.item));
           this.item.product_detail = `(${this.item['product_no']}) ${this.item['product_name']}`;
           this.item.exp_mfg = `${this.item['expired_date']} / ${this.item['mfg_date']}`;
-          this.item.full_serial = `[${this.item['gtin_cp']}] ${this.item['serial']}`;
+          this.item.full_serial = `[${this.item['epc_key']}] ${this.item['serial']}`;
           this.item.pkg_detail = `(${this.item['packaging_level']}) ${this.item['packaging_name']}`;
           let last_location = !this.item['warehouse_name']
             ? this.item['customer_name']
