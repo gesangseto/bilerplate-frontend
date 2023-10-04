@@ -4,7 +4,7 @@
       centered="centered"
       size="xl"
       :show.sync="property.modal"
-      title="Barcode GeneratorZZZ"
+      title="Barcode Generator"
       color="warning"
     >
       <CRow>
