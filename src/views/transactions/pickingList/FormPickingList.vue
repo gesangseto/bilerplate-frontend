@@ -53,6 +53,12 @@
                 :is-valid="
                   initial_load ? null : !formData.warehouse_id ? false : true
                 "
+                :disabled="items.length > 0 ? true : false"
+                :description="
+                  items.length > 0
+                    ? 'Cannot change warehouse as long as there are still items in the list'
+                    : ''
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">

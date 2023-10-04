@@ -89,16 +89,12 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import {
-  exportData,
-  calculatePagination,
-  calculatePaginationV3,
-  exportDataV3,
-} from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
+import moment from 'moment';
 export default {
-  name: "ListPickingList",
+  name: 'ListPickingList',
   mounted() {
     this.pages = [10, 20, 50, 100];
     this.page = 1;
@@ -108,19 +104,19 @@ export default {
   data() {
     return {
       btn_deleteProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        tooltip: "Cancel",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'window-close',
+        tooltip: 'Cancel',
       },
       btn_updateProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "success",
-        icon: "edit",
-        text: "DO",
-        tooltip: "Input DO",
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'edit',
+        text: 'DO',
+        tooltip: 'Input DO',
       },
       path: this.$route.path,
       filter: {
@@ -132,55 +128,55 @@ export default {
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       cancelProperty: {
-        title: "Picking List",
+        title: 'Picking List',
         modal: false,
         id: null,
-        reason: "",
+        reason: '',
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No, L1 Qty]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No, L1 Qty]',
         },
         {
-          key: "so_number",
-          label: "SO No",
+          key: 'so_number',
+          label: 'SO No',
         },
         {
-          key: "so_date",
-          label: "SO Date",
+          key: 'so_date',
+          label: 'SO Date',
         },
         {
-          key: "erp_number",
-          label: "ERP Picking List",
+          key: 'erp_number',
+          label: 'ERP Picking List',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: 'warehouse_name',
+          label: 'Warehouse',
         },
         {
-          key: "customer_name",
-          label: "Customer",
+          key: 'customer_name',
+          label: 'Customer',
         },
         {
-          key: "status_desc",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'status_desc',
+          label: 'Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:11%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:11%',
           sorter: false,
           filter: false,
         },
@@ -209,7 +205,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/picking",
+        url: '/v3/transaction/picking',
       });
     },
     pageChange(page) {
@@ -242,17 +238,17 @@ export default {
       };
       this.$isLoading(true);
       $axiosMertrack
-        .post("/v3/transaction/picking", data)
+        .post('/v3/transaction/picking', data)
         .then((result) => {
           this.$isLoading(false);
           this.loadData();
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
-              : "Transaction has been canceled succesfully",
-            type: result.data.error ? "error" : "success",
+              : 'Transaction has been canceled succesfully',
+            type: result.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         })
@@ -260,14 +256,14 @@ export default {
           this.$isLoading(false);
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       this.cancelProperty.id = null;
-      this.cancelProperty.reason = "";
+      this.cancelProperty.reason = '';
       this.cancelProperty.modal = false;
     },
   },
@@ -276,6 +272,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          so_date: moment(item.so_date).format('YYYY-MM-DD'),
         };
       });
     },

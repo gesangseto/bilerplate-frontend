@@ -10,6 +10,7 @@
             <CRow>
               <CCol sm="12">
                 <CSelect
+                  :disabled="items.length > 0 ? true : false"
                   label="Warehouse"
                   placeholder="--Select--"
                   horizontal
@@ -17,6 +18,11 @@
                   :value.sync="formData.from_warehouse"
                   :is-valid="
                     initialLoad ? null : !formData.from_warehouse ? false : true
+                  "
+                  :description="
+                    items.length > 0
+                      ? 'Cannot change source warehouse as long as there are still items in the list'
+                      : ''
                   "
                 >
                   >
@@ -157,7 +163,8 @@ export default {
   watch: {
     formData: {
       deep: true,
-      handler() {
+      handler(data) {
+        console.log(data);
         if (!this.initial_load) {
           this.checkValidation();
         }

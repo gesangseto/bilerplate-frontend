@@ -57,7 +57,7 @@
                 <tr>
                   <td>Type</td>
                   <td>:</td>
-                  <td>{{ detailData.type == 1 ? "Non-Serial" : "Serial" }}</td>
+                  <td>{{ detailData.type == 1 ? 'Non-Serial' : 'Serial' }}</td>
                 </tr>
               </table>
 
@@ -72,8 +72,8 @@
                     <timeline-item
                       :bg-color="item['confirmed'] ? '#42f56c' : '#f54e42'"
                     >
-                      {{ item["transaction"] }} (<small
-                        >{{ formatDate(item["created_date"]) }})
+                      {{ item['transaction'] }} (<small
+                        >{{ formatDate(item['created_date']) }})
                       </small>
                     </timeline-item>
                   </div>
@@ -112,8 +112,8 @@
                 <tr>
                   <td>EPC Type</td>
                   <td>:</td>
-                  <td style="text-transform: capitalize">
-                    {{ detailData.epc_type }}
+                  <td>
+                    {{ detailData.epc_type.toUpperCase() }}
                   </td>
                 </tr>
                 <tr>
@@ -205,21 +205,21 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import jsPDF from "jspdf";
-import domtoimage from "dom-to-image";
-import HeaderShowStatusV3 from "../component/HeaderShowStatusV3.vue";
-import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
-import "vue-cute-timeline/dist/index.css";
-import moment from "moment";
+import $axiosMertrack from '../../apiMertrack';
+import jsPDF from 'jspdf';
+import domtoimage from 'dom-to-image';
+import HeaderShowStatusV3 from '../component/HeaderShowStatusV3.vue';
+import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline';
+import 'vue-cute-timeline/dist/index.css';
+import moment from 'moment';
 
 export default {
   components: { HeaderShowStatusV3 },
-  name: "ReportShowStatus",
+  name: 'ReportShowStatus',
   components: {
     timeline: Timeline,
-    "timeline-item": TimelineItem,
-    "timeline-title": TimelineTitle,
+    'timeline-item': TimelineItem,
+    'timeline-title': TimelineTitle,
   },
 
   mounted() {},
@@ -249,9 +249,10 @@ export default {
       this.initial_data();
     },
     formatDate(item) {
-      return moment.utc(item).format("YYYY-MM-DD HH:mm:ss");
+      return moment.utc(item).format('YYYY-MM-DD HH:mm:ss');
     },
     getData() {
+      console.log(this.result);
       let param = `${new URLSearchParams(this.result).toString()}`;
       let url = `/v3/helper/detail-item/stock?show_barcode=true&show_history=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
@@ -259,9 +260,9 @@ export default {
         if (data.length != 1) {
           this.$toast.open({
             message: `Data cannot be found`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return;
@@ -272,46 +273,46 @@ export default {
       });
     },
     getParent() {
-      let url = `/v3/helper/detail-item/stock?id=${this.detailData["parent"]}`;
+      let url = `/v3/helper/detail-item/stock?id=${this.detailData['parent']}`;
       $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
+        this.parentData = data;
       });
     },
-    testHandle() {},
     handleClickExport() {
       domtoimage
         .toPng(this.$refs.content, {
           width: 3508,
           height: 2480,
           style: {
-            transform: "scale(0.7)",
-            "transform-origin": "top left",
+            transform: 'scale(0.7)',
+            'transform-origin': 'top left',
           },
         })
         .then(function (data) {
           var img = new Image();
           img.src = data;
           const doc = new jsPDF({
-            orientation: "portrait",
-            format: "a4",
+            orientation: 'portrait',
+            format: 'a4',
           });
-          doc.addImage(img, "JPEG", 2, 0);
+          doc.addImage(img, 'JPEG', 2, 0);
           const date = new Date();
           const filename =
-            "showstatus_" +
+            'showstatus_' +
             date.getFullYear() +
-            ("0" + (date.getMonth() + 1)).slice(-2) +
-            ("0" + date.getDate()).slice(-2) +
-            ("0" + date.getHours()).slice(-2) +
-            ("0" + date.getMinutes()).slice(-2) +
-            ("0" + date.getSeconds()).slice(-2) +
-            ".pdf";
+            ('0' + (date.getMonth() + 1)).slice(-2) +
+            ('0' + date.getDate()).slice(-2) +
+            ('0' + date.getHours()).slice(-2) +
+            ('0' + date.getMinutes()).slice(-2) +
+            ('0' + date.getSeconds()).slice(-2) +
+            '.pdf';
           doc.save(filename);
         });
     },
     renderEpcHr(item) {
-      if (!item) return "";
-      item = item.replace(/\(/g, " (");
+      if (!item) return '';
+      item = item.replace(/\(/g, ' (');
       item = item.trim();
       return item;
     },
@@ -321,7 +322,7 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
-          no: this.getNumber(index + 1),
+          no: index + 1,
         };
       });
     },

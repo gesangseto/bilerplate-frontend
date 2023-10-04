@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CRow style="margin-bottom: -10px">
+    <CRow>
       <CCol md="4">
         <CSelect
           label="EPC type"
@@ -13,53 +13,22 @@
       </CCol>
       <CCol md="4">
         <CInput v-if="!result.epc_type" label="*" :disabled="true" />
+
         <CInput
-          v-if="result.epc_type == 'sscc'"
+          v-if="result.epc_type"
           :label="title"
-          v-model="result.sscc"
-          @keyup="validateEpcNumber({ type: 'sscc' })"
-          @keypress="
-            validateCharSet({
-              event: $event,
-              max: role.length_sscc,
-              name: 'sscc',
-              type: 'number',
-            })
-          "
-          :is-valid="valid.sscc"
-          invalid-feedback="SSCC number is not valid"
-        />
-        <CInput
-          v-if="result.epc_type == 'sgtin'"
-          :label="title"
-          v-model="result.gtin"
-          @keyup="validateEpcNumber({ type: 'gtin' })"
-          @keypress="
-            validateCharSet({
-              event: $event,
-              max: role.length_gtin,
-              name: 'gtin',
-              type: 'number',
-            })
-          "
-          :is-valid="valid.gtin"
-          invalid-feedback="GTIN number is not valid"
+          v-model="result.epc_key"
+          @keypress="validateCharSet({ event: $event })"
+          :is-valid="valid.epc_key"
+          invalid-feedback="EPC Key is not valid"
         />
       </CCol>
       <CCol md="4">
         <CInput
-          v-if="role.disabled_serial == false"
+          v-if="result.epc_type && result.epc_type !== 'sscc'"
           label="SN"
-          v-on:keyup="handleInput()"
           v-model="result.serial"
-          @keypress="
-            validateCharSet({
-              event: $event,
-              max: role.length_serial,
-              name: 'serial',
-              type: 'alphanumeric',
-            })
-          "
+          @keypress="validateCharSet({ event: $event, type: 'serial' })"
           :is-valid="valid.serial"
         />
       </CCol>
@@ -82,9 +51,11 @@
 </template>
 
 <script>
+import { isValidEpcKey } from '../../utils';
+
 export default {
-  name: "HeaderShowStatusV3",
-  props: ["filter", "status_code", "costume_filter"],
+  name: 'HeaderShowStatusV3',
+  props: ['filter', 'status_code', 'costume_filter'],
   mounted() {
     if (this.costume_filter && this.costume_filter.constructor === Array) {
       for (const it of this.costume_filter) {
@@ -94,7 +65,7 @@ export default {
       }
     }
     if (!this.title) {
-      this.title = "Report";
+      this.title = 'Report';
     }
   },
   data() {
@@ -102,27 +73,38 @@ export default {
       is_error: false,
       valid: this.initial_valid(),
       role: this.initial_role(),
-      title: "*",
+      title: '*',
       result: this.initial_result(),
       listEpcType: [
         {
-          value: "sscc",
-          label: "SSCC",
+          value: 'sscc',
+          label: 'SSCC',
         },
         {
-          value: "sgtin",
-          label: "SGTIN",
+          value: 'sgtin',
+          label: 'SGTIN',
+        },
+        {
+          value: 'nie',
+          label: 'NIE',
         },
       ],
     };
   },
+  watch: {
+    result: {
+      deep: true,
+      handler() {
+        this.handleValidation();
+      },
+    },
+  },
   methods: {
     initial_valid() {
       let initial = {
-        sscc: null,
-        gtin: null,
-        serial: null,
         epc_type: null,
+        epc_key: null,
+        serial: null,
       };
       return initial;
     },
@@ -137,117 +119,108 @@ export default {
     },
     initial_result() {
       let initial = {
+        epc_key: null,
         serial: null,
         epc_type: null,
-        sscc: null,
-        gtin: null,
-        gtin_sscc: null,
       };
       return initial;
     },
     handleChangeEpc() {
       this.valid = this.initial_valid();
-      if (this.result.epc_type == "sgtin") {
-        this.title = "GTIN (14 digits)";
+      if (this.result.epc_type == 'sgtin') {
+        this.title = 'GTIN (14 digits)';
         this.role.disabled_serial = false;
-      } else if (this.result.epc_type == "sscc") {
+      } else if (this.result.epc_type == 'nie') {
+        this.title = 'NIE (Max 15 character)';
+        this.role.disabled_serial = false;
+      } else if (this.result.epc_type == 'sscc') {
         this.role.disabled_serial = true;
-        this.title = "SSCC (18 digits)";
+        this.title = 'SSCC (18 digits)';
       } else {
-        this.title = "*";
+        this.title = '*';
       }
     },
-    handleInput() {},
-    validateCharSet: function ({ event, name, max, type }) {
-      let data = this.result[name];
-      event = event ? event : window.event;
-      var charCode = event.which ? event.which : event.keyCode;
-      if (data && data.toString().length > max - 1) {
-        event.preventDefault();
-      } else if (!type || type == "number") {
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-          event.preventDefault();
-        } else {
-          return true;
-        }
-      } else {
-        return true;
-      }
-    },
-    validateEpcNumber({ type }) {
-      let limit = this.role.length_gtin;
-      let value = this.result.gtin;
-      if (type == "sscc") {
-        limit = this.role.length_sscc;
-        value = this.result.sscc;
-      }
-      if (value) {
-        if (value.length != limit) {
-          this.valid[`${type}`] = false;
-          this.is_error = true;
-          return false;
-        }
-        var barcode = value.substring(0, value.length - 1);
-        var checksum = parseInt(value.substring(value.length - 1), 10);
-        var calcSum = 0;
-        var calcChecksum = 0;
-        barcode.split("").map(function (number, index) {
-          number = parseInt(number, 10);
-          if (value.length % 2 === 0) {
-            index += 1;
-          }
-          if (index % 2 === 0) {
-            calcSum += number;
-          } else {
-            calcSum += number * 3;
-          }
-        });
-        calcSum %= 10;
-        calcChecksum = calcSum === 0 ? 0 : 10 - calcSum;
-        if (calcChecksum !== checksum) {
-          this.valid[`${type}`] = false;
-          this.is_error = true;
-          return false;
-        }
-        this.valid[`${type}`] = true;
-        return true;
-      } else {
-        this.valid[`${type}`] = false;
+    handleValidation() {
+      this.is_error = false;
+      this.valid.epc_key = true;
+      this.valid.serial = true;
+      if (!this.result.epc_key) {
         this.is_error = true;
+        this.valid.epc_key = false;
+      } else if (this.result.epc_type == 'sscc') {
+        if (
+          !isValidEpcKey(this.result.epc_key) ||
+          this.result.epc_key.length != 18
+        ) {
+          this.is_error = true;
+          this.valid.epc_key = false;
+        }
+      } else if (this.result.epc_type == 'sgtin') {
+        if (
+          !isValidEpcKey(this.result.epc_key) ||
+          this.result.epc_key.length != 14
+        ) {
+          this.is_error = true;
+          this.valid.epc_key = false;
+        }
+      } else if (this.result.epc_type == 'nie') {
+        if (
+          !isValidEpcKey(this.result.epc_key) ||
+          this.result.epc_key.length > 15
+        ) {
+          this.is_error = true;
+          this.valid.epc_key = false;
+        }
+      }
+      if (this.result.epc_type != 'sscc' && !this.result.serial) {
+        this.is_error = true;
+        this.valid.serial = false;
+      }
+      if (!this.result.epc_type) {
+        this.is_error = true;
+      }
+      if (this.is_error) {
         return false;
       }
+      return true;
+    },
+
+    validateCharSet: function ({ event, type }) {
+      let data = this.result.epc_key;
+      let epc_type = this.result.epc_type;
+      event = event ? event : window.event;
+      var charCode = event.which ? event.which : event.keyCode;
+      if (type && type == 'serial') {
+        if (data && data.length === 21) event.preventDefault();
+      } else {
+        if (epc_type === 'sscc') {
+          if (charCode > 31 && (charCode < 48 || charCode > 57))
+            event.preventDefault();
+          if (data && data.length === 18) event.preventDefault();
+        } else if (epc_type === 'sgtin') {
+          if (charCode > 31 && (charCode < 48 || charCode > 57))
+            event.preventDefault();
+          if (data && data.length === 14) event.preventDefault();
+        } else if (epc_type === 'nie') {
+          if (data && data.length === 15) event.preventDefault();
+        }
+      }
+      return true;
     },
     handleClickSearch() {
       this.valid = this.initial_valid();
       this.is_error = false;
-      if (!this.result.epc_type) {
-        this.valid.epc_type = false;
-        this.is_error = true;
-      } else {
-        if (this.result.epc_type == "sscc") {
-          this.validateEpcNumber({ type: "sscc" });
-        } else if (this.result.epc_type == "sgtin") {
-          this.validateEpcNumber({ type: "gtin" });
-          if (!this.result.serial) {
-            this.valid.serial = false;
-            this.is_error = true;
-          }
-        }
-      }
-      if (this.is_error) {
+      if (!this.handleValidation()) {
         return;
       }
-      this.result.gtin_sscc = this.result.gtin || this.result.sscc;
-      // delete this.result.gtin;
-      // delete this.result.sscc;
-      this.$emit("handleClickSearch", this.result);
+      this.$emit('handleClickSearch', this.result);
       return;
     },
     handleReset() {
       this.role = this.initial_role();
       this.result = this.initial_result();
       this.valid = this.initial_valid();
-      this.$emit("handleReset", this.result);
+      this.$emit('handleReset', this.result);
     },
   },
 };
