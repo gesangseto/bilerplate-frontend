@@ -64,17 +64,34 @@
               <CCard>
                 <timeline>
                   <timeline-title
-                    >History: {{ detailData.gtin_sscc }} [{{
+                    >History: {{ detailData.epc_key }} [{{
                       detailData.serial
                     }}]</timeline-title
                   >
                   <div v-for="item in detailData.history" :key="item">
                     <timeline-item
-                      :bg-color="item['confirmed'] ? '#42f56c' : '#f54e42'"
+                      :bg-color="
+                        item['confirmed'] == 1
+                          ? '#42f56c'
+                          : item['confirmed'] == 0
+                          ? '#f54e42'
+                          : 'orange'
+                      "
                     >
-                      {{ item['transaction'] }} (<small
-                        >{{ formatDate(item['created_date']) }})
+                      {{ item['transaction'] }}
+                      <small style="color: gray">
+                        ({{
+                          item['confirmed'] == 1
+                            ? 'Done'
+                            : item['confirmed'] == 0
+                            ? 'Canceled'
+                            : 'Pending'
+                        }})
                       </small>
+                      <br />
+                      <small style="color: gray">{{
+                        formatDate(item['created_date'])
+                      }}</small>
                     </timeline-item>
                   </div>
                 </timeline>
@@ -249,7 +266,7 @@ export default {
       this.initial_data();
     },
     formatDate(item) {
-      return moment.utc(item).format('YYYY-MM-DD HH:mm:ss');
+      return moment.utc(item).calendar();
     },
     getData() {
       console.log(this.result);
