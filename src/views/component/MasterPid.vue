@@ -314,7 +314,7 @@ export default {
         this.syncSgtin(idx);
       } else if (thisData.epc_type === 'sscc') {
         this.list_layout = this.backup_list_layout.filter((it) =>
-          this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00', '21'])
+          this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00'])
         );
         this.syncSSCC(idx);
       }
