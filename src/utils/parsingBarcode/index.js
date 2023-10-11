@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { GS1_application_identifiers } from '../../constants';
+import { isNumeric } from '../costumUtils';
 const AIs = [
   //FIX_AI = [
   { ai: '00', type: 'SSCC', length: 18, alias: 'epc_key' },
@@ -163,11 +164,16 @@ export const parsingDataToBarcode = ({ data_object = Object }) => {
   for (const it in data_object) {
     if (data_object[it]) {
       let filterAI = GS1_application_identifiers.filter((x) => x.column == it);
-      let AI = filterAI.find(
+      let AIs = filterAI.filter(
         (x) =>
           x.length == data_object[it].length ||
           x.max_length >= data_object[it].length
       );
+      let AI = AIs[0];
+      if (AIs.length > 1) {
+        let type = isNumeric(data_object[it]) ? 'numeric' : 'alphanumeric';
+        AI = AIs.find((o) => o.typeData === type);
+      }
       if (AI) {
         str += `(${AI.ai})`;
         if (AI.column.includes('date')) {

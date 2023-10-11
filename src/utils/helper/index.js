@@ -1,3 +1,5 @@
+import { isAlphaNumeric, isNumeric } from '../costumUtils';
+
 export function calculatePagination({ filter = Object, item = Object }) {
   if (item.hasOwnProperty('status') && item.hasOwnProperty('headers')) {
     item = item.data;
@@ -30,19 +32,20 @@ export function getStringBetween({ string, field1 = '$SF$', field2 = '$EF$' }) {
 
 export function isValidEpcKey(epc_key = String) {
   let result = false;
-  if (epc_key.length !== 18 && epc_key.length !== 14 && epc_key.length !== 15) {
+  if (!epc_key) {
     result = false;
   } else {
-    if (epc_key.length == 15 && epc_key.match(/^[0-9A-Z]+$/)) {
-      // INI adalah NIE
+    if (isAlphaNumeric(epc_key) && epc_key.length < 15) {
       result = true;
-    } else {
-      let num = epc_key.slice(0, -1);
-      num = `${num}${gs1CheckDigit(num)}`;
-      if (num != epc_key) {
-        result = false;
-      } else {
-        result = true;
+    } else if (isNumeric(epc_key)) {
+      if (epc_key.length === 18 && epc_key.length === 14) {
+        let num = epc_key.slice(0, -1);
+        num = `${num}${gs1CheckDigit(num)}`;
+        if (num != epc_key) {
+          result = false;
+        } else {
+          result = true;
+        }
       }
     }
   }

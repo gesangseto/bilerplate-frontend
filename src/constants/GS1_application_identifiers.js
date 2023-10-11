@@ -1,14 +1,36 @@
 export const GS1_application_identifiers = [
   //FIX_AI = [
-  { ai: '00', type: 'SSCC', length: 18, alias: 'sscc', column: 'epc_key' },
-  { ai: '01', type: 'GTIN', length: 14, alias: 'sgtin', column: 'epc_key' },
-  { ai: '02', type: 'CONTENT', length: 14, alias: 'content', column: '' }, //GTIN CONTENT
+  {
+    ai: '00',
+    type: 'SSCC',
+    length: 18,
+    alias: 'sscc',
+    column: 'epc_key',
+    typeData: 'numeric',
+  },
+  {
+    ai: '01',
+    type: 'GTIN',
+    length: 14,
+    alias: 'sgtin',
+    column: 'epc_key',
+    typeData: 'numeric',
+  },
+  {
+    ai: '02',
+    type: 'CONTENT',
+    length: 14,
+    alias: 'content',
+    column: '',
+    typeData: null,
+  }, //GTIN CONTENT
   {
     ai: '17',
     type: 'EXPIRY_DATE',
     length: 6,
     alias: 'exp',
     column: 'expired_date',
+    typeData: null,
   },
 
   //  DINAMIC_AI = [
@@ -19,6 +41,7 @@ export const GS1_application_identifiers = [
     max_length: 20,
     alias: 'batch_no',
     column: 'batch_no',
+    typeData: null,
   },
   {
     ai: '21',
@@ -27,6 +50,7 @@ export const GS1_application_identifiers = [
     max_length: 20,
     alias: 'serial',
     column: 'serial',
+    typeData: null,
   },
   {
     ai: '30',
@@ -35,6 +59,7 @@ export const GS1_application_identifiers = [
     max_length: 8,
     alias: null,
     column: 'gtin_sscc',
+    typeData: null,
   },
   {
     ai: '37',
@@ -43,6 +68,7 @@ export const GS1_application_identifiers = [
     max_length: 8,
     alias: 'count',
     column: 'quantity',
+    typeData: null,
   },
   {
     ai: '3100',
@@ -51,6 +77,7 @@ export const GS1_application_identifiers = [
     max_length: null,
     alias: 'weight',
     column: 'weight',
+    typeData: null,
   },
   {
     ai: '3101',
@@ -59,6 +86,7 @@ export const GS1_application_identifiers = [
     max_length: null,
     alias: 'weight',
     column: 'weight',
+    typeData: null,
   },
   {
     ai: '3102',
@@ -67,6 +95,7 @@ export const GS1_application_identifiers = [
     max_length: null,
     alias: 'weight',
     column: 'weight',
+    typeData: null,
   },
   {
     ai: '3103',
@@ -75,6 +104,7 @@ export const GS1_application_identifiers = [
     max_length: null,
     alias: 'weight',
     column: 'weight',
+    typeData: null,
   },
   {
     ai: '3104',
@@ -83,6 +113,7 @@ export const GS1_application_identifiers = [
     max_length: null,
     alias: 'weight',
     column: 'weight',
+    typeData: null,
   },
   {
     ai: '3105',
@@ -91,6 +122,7 @@ export const GS1_application_identifiers = [
     max_length: null,
     alias: 'weight',
     column: 'weight',
+    typeData: null,
   },
   // Di taruh dibawah karena jarang terpakai AI tersebut
   //FIX_AI = [
@@ -100,45 +132,127 @@ export const GS1_application_identifiers = [
     length: 6,
     alias: 'prod_date',
     column: 'mfg_date',
+    typeData: null,
   },
-  { ai: '12', type: 'DUE_DATE', length: 6, alias: 'due_date', column: '' },
-  { ai: '13', type: 'PACK_DATE', length: 6, alias: 'pack_date', column: '' },
+  {
+    ai: '12',
+    type: 'DUE_DATE',
+    length: 6,
+    alias: 'due_date',
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '13',
+    type: 'PACK_DATE',
+    length: 6,
+    alias: 'pack_date',
+    column: '',
+    typeData: null,
+  },
   {
     ai: '15',
     type: 'BEST_BEFORE',
     length: 6,
     alias: 'best_before',
     column: '',
+    typeData: null,
   },
-  { ai: '20', type: 'VARIANT', length: 2, alias: 'variant', column: '' },
+  {
+    ai: '20',
+    type: 'VARIANT',
+    length: 2,
+    alias: 'variant',
+    column: '',
+    typeData: null,
+  },
   {
     ai: '410',
     type: 'SHIP_TO_LOC',
     length: 13,
     alias: 'ship_to_loc',
     column: '',
+    typeData: null,
   },
-  { ai: '411', type: 'BILL_TO', length: 13, alias: 'bill_to', column: '' },
-  { ai: '412', type: 'PURCHASE_FROM', length: 13, alias: null, column: '' },
-  { ai: '413', type: 'SHIP_FOR_LOC', length: 13, alias: null, column: '' },
-  { ai: '414', type: 'LOC_NO', length: 13, alias: 'loc_no', column: '' },
-  { ai: '415', type: 'PAY_TO', length: 13, alias: 'pay_to', column: '' },
-  { ai: '422', type: 'ORIGIN', length: 3, alias: 'origin', column: '' },
-  { ai: '424', type: 'COUNTRY_PROCESS', length: 3, alias: null, column: '' },
+  {
+    ai: '411',
+    type: 'BILL_TO',
+    length: 13,
+    alias: 'bill_to',
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '412',
+    type: 'PURCHASE_FROM',
+    length: 13,
+    alias: null,
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '413',
+    type: 'SHIP_FOR_LOC',
+    length: 13,
+    alias: null,
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '414',
+    type: 'LOC_NO',
+    length: 13,
+    alias: 'loc_no',
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '415',
+    type: 'PAY_TO',
+    length: 13,
+    alias: 'pay_to',
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '422',
+    type: 'ORIGIN',
+    length: 3,
+    alias: 'origin',
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '424',
+    type: 'COUNTRY_PROCESS',
+    length: 3,
+    alias: null,
+    column: '',
+    typeData: null,
+  },
   {
     ai: '426',
     type: 'COUNTRY_FULL_PROCESS',
     length: 3,
     alias: null,
     column: '',
+    typeData: null,
   },
-  { ai: '7001', type: 'NSN', length: 13, alias: 'nsn', column: '' },
+  {
+    ai: '7001',
+    type: 'NSN',
+    length: 13,
+    alias: 'nsn',
+    column: '',
+    typeData: null,
+  },
   {
     ai: '7003',
     type: 'EXPIRY_TIME',
     length: 10,
     alias: 'exp_time',
     column: '',
+    typeData: null,
   },
   {
     ai: '8001',
@@ -146,10 +260,32 @@ export const GS1_application_identifiers = [
     length: 14,
     alias: 'dimensions',
     column: '',
+    typeData: null,
   },
-  { ai: '8005', type: 'PRICE_PER_UNIT', length: 6, alias: null, column: '' },
-  { ai: '8017', type: 'GSRN_PROVIDER', length: 18, alias: null, column: '' },
-  { ai: '8018', type: 'GSRN_RECIPIENT', length: 18, alias: null, column: '' },
+  {
+    ai: '8005',
+    type: 'PRICE_PER_UNIT',
+    length: 6,
+    alias: null,
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '8017',
+    type: 'GSRN_PROVIDER',
+    length: 18,
+    alias: null,
+    column: '',
+    typeData: null,
+  },
+  {
+    ai: '8018',
+    type: 'GSRN_RECIPIENT',
+    length: 18,
+    alias: null,
+    column: '',
+    typeData: null,
+  },
 
   //  DINAMIC_AI = [
   {
@@ -159,6 +295,7 @@ export const GS1_application_identifiers = [
     max_length: 20,
     alias: 'cpv',
     column: '',
+    typeData: null,
   },
   {
     ai: '400',
@@ -167,6 +304,7 @@ export const GS1_application_identifiers = [
     max_length: 30,
     alias: null,
     column: '',
+    typeData: null,
   },
   {
     ai: '401',
@@ -175,6 +313,7 @@ export const GS1_application_identifiers = [
     max_length: 30,
     alias: 'ginc',
     column: '',
+    typeData: null,
   },
   {
     ai: '403',
@@ -183,6 +322,7 @@ export const GS1_application_identifiers = [
     max_length: 30,
     alias: 'route',
     column: '',
+    typeData: null,
   },
   {
     ai: '420',
@@ -191,6 +331,7 @@ export const GS1_application_identifiers = [
     max_length: 20,
     alias: null,
     column: '',
+    typeData: null,
   },
   {
     ai: '8004',
@@ -199,6 +340,7 @@ export const GS1_application_identifiers = [
     max_length: 30,
     alias: 'giai',
     column: '',
+    typeData: null,
   },
   {
     ai: '8007',
@@ -207,6 +349,7 @@ export const GS1_application_identifiers = [
     max_length: 36,
     alias: 'iban',
     column: '',
+    typeData: null,
   },
   {
     ai: '8013',
@@ -215,6 +358,7 @@ export const GS1_application_identifiers = [
     max_length: 30,
     alias: 'gmn',
     column: '',
+    typeData: null,
   },
   {
     ai: '8020',
@@ -223,6 +367,7 @@ export const GS1_application_identifiers = [
     max_length: 25,
     alias: 'ref_no',
     column: '',
+    typeData: null,
   },
   {
     ai: '8110',
@@ -231,14 +376,16 @@ export const GS1_application_identifiers = [
     max_length: 70,
     alias: 'coupon',
     column: '',
+    typeData: null,
   },
   {
     ai: '90',
     type: 'INTERNAL',
     length: null,
-    max_length: 16,
+    max_length: 15,
     alias: 'nie', //NIE UNTUK BPOM
     column: 'epc_key',
+    typeData: 'alphanumeric',
   },
   {
     ai: '91',
@@ -247,6 +394,7 @@ export const GS1_application_identifiers = [
     max_length: 50,
     alias: 'ns', //EPC KEY Khusus untuk nonserial
     column: 'epc_key',
+    typeData: 'alphanumeric',
   },
   // .... sampai AI 99 adalah internal
 ];
