@@ -100,15 +100,15 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
 import {
   toTitleCase,
   calculatePaginationV3,
   exportDataV3,
-} from "../../../utils";
-import { dateFilter } from "../../../constants";
+} from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListInbound",
+  name: 'ListInbound',
   mounted() {
     this.pages = [10, 20, 50, 100];
     this.page = 1;
@@ -128,51 +128,55 @@ export default {
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "quantity_lvl_1",
-          label: "L1 Qty",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "source",
-          label: "Type",
-          _classes: "font-weight-bold",
+          key: 'quantity_lvl_1',
+          label: 'L1 Qty',
         },
         {
-          key: "trx_ref_id",
-          label: "Trx Ref ID",
-          _classes: "font-weight-bold",
+          key: 'source',
+          label: 'Type',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "from",
-          label: "Source",
+          key: 'trx_ref_id',
+          label: 'Trx Ref ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "to",
-          label: "Destination",
+          key: 'from',
+          label: 'Source',
         },
         {
-          key: "_created.full_name",
-          label: "Created By",
+          key: 'to',
+          label: 'Destination',
         },
         {
-          key: "action",
-          label: "Action",
+          key: '_created.full_name',
+          label: 'Created By',
+        },
+        {
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -201,7 +205,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/inbound",
+        url: '/v3/transaction/inbound',
       });
     },
     pageChange(page) {
@@ -230,13 +234,13 @@ export default {
   computed: {
     inbound() {
       return this.items.map((item) => {
-        let created_by = item["_created.full_name"];
+        let created_by = item['_created.full_name'];
         let source = toTitleCase(item.source);
         return {
           ...item,
-          trx_ref_id: item.trx_ref_id || "-",
+          trx_ref_id: item.trx_ref_id || '-',
           source: source,
-          "_created.full_name": created_by || "-",
+          '_created.full_name': created_by || '-',
         };
       });
     },

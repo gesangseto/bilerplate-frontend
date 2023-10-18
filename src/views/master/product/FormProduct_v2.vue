@@ -124,23 +124,9 @@
               </CCol>
             </CRow>
             <hr />
-            <h4>
-              Product Regulation
-              <CButton
-                class="float-right"
-                v-on:click="
-                  expand[`product_regulation`] = !expand[`product_regulation`]
-                "
-              >
-                <v-icon
-                  v-if="!expand[`product_regulation`]"
-                  name="angle-right"
-                />
-                <v-icon v-if="expand[`product_regulation`]" name="angle-down" />
-              </CButton>
-            </h4>
+            <h4>Product Regulation</h4>
             <br />
-            <CRow v-if="expand[`product_regulation`]">
+            <CRow>
               <CCol sm="12">
                 <CInput
                   label="NIE"
@@ -265,18 +251,9 @@
               </CCol>
             </CRow>
             <hr />
-            <h4>
-              Print Detail
-              <CButton
-                class="float-right"
-                v-on:click="expand[`print_detail`] = !expand[`print_detail`]"
-              >
-                <v-icon v-if="!expand[`print_detail`]" name="angle-right" />
-                <v-icon v-if="expand[`print_detail`]" name="angle-down" />
-              </CButton>
-            </h4>
+            <h4>Print Detail</h4>
             <br />
-            <CRow v-if="expand[`print_detail`]">
+            <CRow>
               <CCol md="12">
                 <CInput
                   :disabled="action == 'Read'"
@@ -326,15 +303,6 @@
             </CRow>
             <hr />
             <h4 class="float-left">Packaging Detail</h4>
-            <CButton
-              class="float-right ml-5"
-              v-on:click="
-                expand[`packaging_detail`] = !expand[`packaging_detail`]
-              "
-            >
-              <v-icon v-if="!expand[`packaging_detail`]" name="angle-right" />
-              <v-icon v-if="expand[`packaging_detail`]" name="angle-down" />
-            </CButton>
             <Button
               :buttonProperty="{
                 size: 'sm',
@@ -348,32 +316,8 @@
             />
             <br />
             <br />
-            <div v-if="expand[`packaging_detail`]">
+            <div>
               <MasterPid :product="product" :packaging_level="'1'" />
-              <Button
-                :disabled="product.mst_pid.length == 7 || !product.flag_upd_del"
-                :buttonProperty="{
-                  size: 'sm',
-                  class: 'float-right',
-                  color: 'success',
-                  icon: 'plus',
-                  text: 'Add Packaging',
-                  tooltip: '',
-                }"
-                @click="addPackaging()"
-              />
-              <Button
-                :disabled="product.mst_pid.length == 1 || !product.flag_upd_del"
-                :buttonProperty="{
-                  size: 'sm',
-                  class: 'float-right',
-                  color: 'danger',
-                  icon: 'trash',
-                  text: 'Remove Packaging',
-                  tooltip: '',
-                }"
-                @click="removePackaging()"
-              />
             </div>
           </CForm>
         </CCardBody>
@@ -565,17 +509,13 @@ export default {
     }
     if (this.action == 'Read') {
       this.disabled = true;
+      this.product.flag_upd_del = 0;
     }
     // memanggil metod untuk memanggil isi dropdown
     this.loadProductCategory();
   },
   data() {
     return {
-      expand: {
-        print_detail: true,
-        product_regulation: true,
-        packaging_detail: true,
-      },
       disabled: false,
       allowSetWeight: true,
       viewModalWeight: false,
@@ -624,12 +564,6 @@ export default {
       error: this.initial_error(),
       listPackaging: [],
       listCategory: [],
-      ExpandPid: {
-        level_1: false,
-        level_2: false,
-        level_3: false,
-        level_4: false,
-      },
       pid_level_1: {},
       ResultPid: {
         level_1: [],
@@ -677,6 +611,9 @@ export default {
       let data = _res.data[0];
       this.product = data;
       this.product.product_type = `${this.product.product_type}`;
+      if (this.action === 'Create') {
+        this.product.flag_upd_del = 1;
+      }
     },
     handleChangeGtin() {
       // Jika terjadi perubahan yang mempengaruhi gtin
@@ -766,41 +703,6 @@ export default {
       }
     },
 
-    addPackaging() {
-      this.product.current_pack = Math.max(
-        ...this.product.mst_pid.map((o) => o.packaging_level)
-      );
-      if (this.product.current_pack == 4) {
-        return;
-      } else {
-        this.product.current_pack += 1;
-        this.product.mst_pid.push({
-          ...this.initial_pid,
-          packaging_level: this.product.current_pack,
-          flag_full: 1,
-        });
-        this.product.mst_pid.push({
-          ...this.initial_pid,
-          packaging_level: this.product.current_pack,
-          flag_full: 0,
-        });
-      }
-    },
-
-    removePackaging() {
-      this.product.current_pack = Math.max(
-        ...this.product.mst_pid.map((o) => o.packaging_level)
-      );
-      if (this.product.current_pack == 1) {
-        return;
-      } else {
-        let filteredPid = this.product.mst_pid.filter(
-          (it) => it.packaging_level != this.product.current_pack
-        );
-        this.product.mst_pid = filteredPid;
-        this.product.current_pack -= 1;
-      }
-    },
     validationNieOrGtin(type = 'all') {
       if (type == 'all' && !this.product.gtin && !this.product.nie) {
         return false;

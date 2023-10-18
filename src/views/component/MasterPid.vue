@@ -1,24 +1,28 @@
 <template>
   <div>
     <CCard v-for="level in product.current_pack" :key="level">
-      <CCardHeader> Packaging Level {{ level }} </CCardHeader>
-      <CCardBody>
+      <CCardHeader class="mb-10">
         <CRow>
-          <CCol md="4">
+          <CCol md="6">
             <CSelect
+              :disabled="!product.flag_upd_del"
               size="sm"
+              horizontal
               placeholder="-Select-"
               :options="list_packaging"
               :value.sync="product[`packagingl${level}_id`]"
               :is-valid="product[`packagingl${level}_id`] ? true : false"
-              label="Packaging Name"
-            ></CSelect>
+              :label="`Packaging Level ${level} *`"
+            >
+            </CSelect>
           </CCol>
-          <CCol md="3">
+          <CCol md="4">
             <CInput
               v-if="level > 1"
+              :disabled="!product.flag_upd_del"
+              horizontal
               size="sm"
-              label="Quantity"
+              label="Quantity *"
               v-model="product[`qty_packagingl${level}`]"
               @keypress="
                 validateNumber({
@@ -51,38 +55,25 @@
             >
             </CInput>
           </CCol>
-
-          <!-- <CCol md="2">
-            <CInput
-              label="Min Weight (Kg)"
-              size="sm"
-              v-model="product[`weight_min_l${level}`]"
-            ></CInput>
-          </CCol>
           <CCol md="2">
-            <CInput
-              label="Max Weight (Kg)"
-              size="sm"
-              v-model="product[`weight_max_l${level}`]"
-            ></CInput>
-          </CCol>
-          <CCol md="2">
-            <label>Required Weight</label>
-            <SwitchDefault
-              :default_value="
-                product[`weight_required_l${level}`]
-                  ? product[`weight_required_l${level}`]
-                  : false
-              "
-              v-on:onChange="product[`weight_required_l${level}`] = $event"
-            />
-          </CCol> -->
+            <CButton
+              class="float-right ml-5"
+              v-on:click="expand[`lvl_${level}`] = !expand[`lvl_${level}`]"
+            >
+              <v-icon v-if="!expand[`lvl_${level}`]" name="angle-right" />
+              <v-icon
+                v-if="expand[`lvl_${level}`]"
+                name="angle-down"
+              /> </CButton
+          ></CCol>
         </CRow>
+      </CCardHeader>
+      <CCardBody v-if="expand[`lvl_${level}`]">
         <CRow>
           <CCol md="12">
             <table>
               <thead>
-                <tr>
+                <tr style="font-size: 3mm; font-weight: bold">
                   <td style="width: 5%"></td>
                   <td style="width: 10%">Type</td>
                   <td style="width: 15%">ID1</td>
@@ -111,7 +102,13 @@
                       :disabled="!product.flag_upd_del"
                       size="sm"
                       placeholder="-Select-"
-                      :options="list_epc_type"
+                      :options="
+                        level === 1
+                          ? list_epc_type.filter((it) => it.value != 'sscc')
+                          : !product.mst_pid[index - 1].flag_full
+                          ? list_epc_type.filter((it) => it.value != 'sgtin')
+                          : list_epc_type
+                      "
                       :value.sync="product.mst_pid[index - 1].epc_type"
                       :is-valid="
                         product.mst_pid[index - 1].epc_type ? true : false
@@ -253,6 +250,30 @@
         </CRow>
       </CCardBody>
     </CCard>
+    <Button
+      :disabled="product.mst_pid.length == 7 || !product.flag_upd_del"
+      :buttonProperty="{
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'plus',
+        text: 'Add Packaging',
+        tooltip: '',
+      }"
+      @click="addPackaging()"
+    />
+    <Button
+      :disabled="product.mst_pid.length == 1 || !product.flag_upd_del"
+      :buttonProperty="{
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'trash',
+        text: 'Remove Packaging',
+        tooltip: '',
+      }"
+      @click="removePackaging()"
+    />
   </div>
 </template>
 
@@ -332,6 +353,7 @@ export default {
   },
   data() {
     return {
+      expand: { lvl_1: false, lvl_2: false, lvl_3: false, lvl_4: false },
       backup_list_layout: [],
       list_layout: [],
       list_epc_type: [],
@@ -349,7 +371,40 @@ export default {
   },
   computed: {},
   methods: {
-    validatorID1() {},
+    addPackaging() {
+      this.product.current_pack = Math.max(
+        ...this.product.mst_pid.map((o) => o.packaging_level)
+      );
+      if (this.product.current_pack == 4) {
+        return;
+      } else {
+        this.product.current_pack += 1;
+        this.product.mst_pid.push({
+          ...this.initial_pid,
+          packaging_level: this.product.current_pack,
+          flag_full: 1,
+        });
+        this.product.mst_pid.push({
+          ...this.initial_pid,
+          packaging_level: this.product.current_pack,
+          flag_full: 0,
+        });
+      }
+    },
+    removePackaging() {
+      this.product.current_pack = Math.max(
+        ...this.product.mst_pid.map((o) => o.packaging_level)
+      );
+      if (this.product.current_pack == 1) {
+        return;
+      } else {
+        let filteredPid = this.product.mst_pid.filter(
+          (it) => it.packaging_level != this.product.current_pack
+        );
+        this.product.mst_pid = filteredPid;
+        this.product.current_pack -= 1;
+      }
+    },
     syncNIE(index) {
       this.product.mst_pid[index].error = false;
       this.product.mst_pid[index].id1 = this.product.nie;
