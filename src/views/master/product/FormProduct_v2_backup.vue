@@ -124,23 +124,9 @@
               </CCol>
             </CRow>
             <hr />
-            <h4>
-              Product Regulation
-              <CButton
-                class="float-right"
-                v-on:click="
-                  expand[`product_regulation`] = !expand[`product_regulation`]
-                "
-              >
-                <v-icon
-                  v-if="!expand[`product_regulation`]"
-                  name="angle-right"
-                />
-                <v-icon v-if="expand[`product_regulation`]" name="angle-down" />
-              </CButton>
-            </h4>
+            <h4>Product Regulation</h4>
             <br />
-            <CRow v-if="expand[`product_regulation`]">
+            <CRow>
               <CCol sm="12">
                 <CInput
                   label="NIE"
@@ -265,18 +251,9 @@
               </CCol>
             </CRow>
             <hr />
-            <h4>
-              Print Detail
-              <CButton
-                class="float-right"
-                v-on:click="expand[`print_detail`] = !expand[`print_detail`]"
-              >
-                <v-icon v-if="!expand[`print_detail`]" name="angle-right" />
-                <v-icon v-if="expand[`print_detail`]" name="angle-down" />
-              </CButton>
-            </h4>
+            <h4>Print Detail</h4>
             <br />
-            <CRow v-if="expand[`print_detail`]">
+            <CRow>
               <CCol md="12">
                 <CInput
                   :disabled="action == 'Read'"
@@ -326,15 +303,6 @@
             </CRow>
             <hr />
             <h4 class="float-left">Packaging Detail</h4>
-            <CButton
-              class="float-right ml-5"
-              v-on:click="
-                expand[`packaging_detail`] = !expand[`packaging_detail`]
-              "
-            >
-              <v-icon v-if="!expand[`packaging_detail`]" name="angle-right" />
-              <v-icon v-if="expand[`packaging_detail`]" name="angle-down" />
-            </CButton>
             <Button
               :buttonProperty="{
                 size: 'sm',
@@ -348,33 +316,256 @@
             />
             <br />
             <br />
-            <div v-if="expand[`packaging_detail`]">
-              <MasterPid :product="product" :packaging_level="'1'" />
-              <Button
-                :disabled="product.mst_pid.length == 7 || !product.flag_upd_del"
-                :buttonProperty="{
-                  size: 'sm',
-                  class: 'float-right',
-                  color: 'success',
-                  icon: 'plus',
-                  text: 'Add Packaging',
-                  tooltip: '',
-                }"
-                @click="addPackaging()"
-              />
-              <Button
-                :disabled="product.mst_pid.length == 1 || !product.flag_upd_del"
-                :buttonProperty="{
-                  size: 'sm',
-                  class: 'float-right',
-                  color: 'danger',
-                  icon: 'trash',
-                  text: 'Remove Packaging',
-                  tooltip: '',
-                }"
-                @click="removePackaging()"
-              />
-            </div>
+            <!-- Packaging LEVEL 1 -->
+            <CCard>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="7">
+                    <CSelect
+                      :disabled="action == 'Read'"
+                      label="Packaging Level 1 *"
+                      description="Packaging Level 1 of Product."
+                      placeholder="--Select--"
+                      horizontal
+                      @change="validationData()"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl1_id"
+                      :add-input-classes="{
+                        'is-invalid': error.packagingl1_id,
+                      }"
+                    />
+                  </CCol>
+                  <CCol sm="5">
+                    <CButton
+                      class="float-right"
+                      v-on:click="ExpandPid.level_1 = !ExpandPid.level_1"
+                    >
+                      <v-icon v-if="!ExpandPid.level_1" name="angle-right" />
+                      <v-icon v-if="ExpandPid.level_1" name="angle-down" />
+                    </CButton>
+                  </CCol>
+                  <!-- CONFIG PID -->
+                  <CCol sm="12">
+                    <MasterPid
+                      v-if="ExpandPid.level_1"
+                      :readonly="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      :item="product"
+                      :packaging_level="1"
+                      v-on:handleResultPid="
+                        handleResultPid({ result: $event, level: 1 })
+                      "
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
+            <!-- Packaging LEVEL 2 -->
+            <CCard>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="7">
+                    <CSelect
+                      :disabled="action == 'Read'"
+                      label="Packaging Level 2 *"
+                      description="Packaging Level 2 of Product."
+                      placeholder="--Select L2 Packaging--"
+                      horizontal
+                      @change="validationData()"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl2_id"
+                      :add-input-classes="{
+                        'is-invalid': error.packagingl2_id,
+                      }"
+                    />
+                  </CCol>
+                  <CCol sm="4">
+                    <CInput
+                      :disabled="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      label="Quantity *"
+                      description="L1 Qty inside Pkg L2."
+                      horizontal
+                      v-model="product.qty_packagingl2"
+                      @keypress="
+                        limitNumber({
+                          event: $event,
+                          data: product.qty_packagingl2,
+                          max: 3,
+                        })
+                      "
+                      :add-input-classes="{
+                        'is-invalid': error.qty_packagingl2,
+                      }"
+                      :invalid-feedback="error.qty_packagingl2"
+                    />
+                  </CCol>
+                  <CCol sm="1">
+                    <CButton
+                      class="float-right"
+                      v-on:click="ExpandPid.level_2 = !ExpandPid.level_2"
+                    >
+                      <v-icon v-if="!ExpandPid.level_2" name="angle-right" />
+                      <v-icon v-if="ExpandPid.level_2" name="angle-down" />
+                    </CButton>
+                  </CCol>
+                  <CCol sm="12">
+                    <MasterPid
+                      v-if="ExpandPid.level_2"
+                      :readonly="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      :item="product"
+                      :packaging_level="2"
+                      v-on:handleResultPid="
+                        handleResultPid({ result: $event, level: 2 })
+                      "
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
+            <!-- Packaging LEVEL 3 -->
+            <CCard>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="7">
+                    <CSelect
+                      :disabled="action == 'Read'"
+                      label="Packaging Level 3"
+                      description="Packaging Level 3 of Product."
+                      placeholder="--Select L3 Packaging--"
+                      horizontal
+                      @change="validationData()"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl3_id"
+                      :add-input-classes="{
+                        'is-invalid': error.packagingl3_id,
+                      }"
+                    />
+                  </CCol>
+                  <CCol sm="4">
+                    <CInput
+                      :disabled="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      label="Quantity *"
+                      description="L1 Qty inside Pkg L3."
+                      horizontal
+                      v-model="product.qty_packagingl3"
+                      @keypress="
+                        limitNumber({
+                          event: $event,
+                          data: product.qty_packagingl3,
+                          max: 4,
+                        })
+                      "
+                      :add-input-classes="{
+                        'is-invalid': error.qty_packagingl3,
+                      }"
+                      :invalid-feedback="error.qty_packagingl3"
+                    />
+                  </CCol>
+                  <CCol sm="1">
+                    <CButton
+                      class="float-right"
+                      v-on:click="ExpandPid.level_3 = !ExpandPid.level_3"
+                    >
+                      <v-icon v-if="!ExpandPid.level_3" name="angle-right" />
+                      <v-icon v-if="ExpandPid.level_3" name="angle-down" />
+                    </CButton>
+                  </CCol>
+                  <CCol sm="12">
+                    <MasterPid
+                      v-if="ExpandPid.level_3"
+                      :readonly="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      :item="product"
+                      :packaging_level="3"
+                      v-on:handleResultPid="
+                        handleResultPid({ result: $event, level: 3 })
+                      "
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
+            <!-- Packaging LEVEL 4 -->
+            <CCard>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="7">
+                    <CSelect
+                      :disabled="action == 'Read'"
+                      label="Packaging Level 4"
+                      description="Packaging Level 4 of Product."
+                      placeholder="--Select L4 Packaging--"
+                      horizontal
+                      @change="validationData()"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl4_id"
+                      :add-input-classes="{
+                        'is-invalid': error.packagingl4_id,
+                      }"
+                    />
+                  </CCol>
+                  <CCol sm="4">
+                    <CInput
+                      :disabled="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      label="Quantity *"
+                      description="L1 Qty inside Pkg L4."
+                      horizontal
+                      v-model="product.qty_packagingl4"
+                      @keypress="
+                        limitNumber({
+                          event: $event,
+                          data: product.qty_packagingl4,
+                          max: 5,
+                        })
+                      "
+                      :add-input-classes="{
+                        'is-invalid': error.qty_packagingl4,
+                      }"
+                      :invalid-feedback="error.qty_packagingl4"
+                    />
+                  </CCol>
+                  <CCol sm="1">
+                    <CButton
+                      class="float-right"
+                      v-on:click="ExpandPid.level_4 = !ExpandPid.level_4"
+                    >
+                      <v-icon v-if="!ExpandPid.level_4" name="angle-right" />
+                      <v-icon v-if="ExpandPid.level_4" name="angle-down" />
+                    </CButton>
+                  </CCol>
+                  <CCol sm="12">
+                    <MasterPid
+                      v-if="ExpandPid.level_4"
+                      :readonly="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
+                      :item="product"
+                      :packaging_level="4"
+                      v-on:handleResultPid="
+                        handleResultPid({ result: $event, level: 4 })
+                      "
+                    />
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
           </CForm>
         </CCardBody>
         <CModal
@@ -390,50 +581,52 @@
               <td><strong>Max Weight (Kg)</strong></td>
               <td><strong>Required</strong></td>
             </tr>
-            <tr v-for="level in product.current_pack" :key="level">
+            <tr v-for="(item, index) in [1, 2, 3, 4]" :key="index">
               <td>
-                <p>{{ level }}</p>
+                <p>{{ index + 1 }}</p>
               </td>
               <td>
                 <CInput
                   :disabled="action == 'Read'"
-                  :placeholder="`Enter weight minimum L${level}`"
+                  :placeholder="`Enter weight minimum L${index + 1}`"
                   horizontal
-                  v-model="product_weight[`weight_min_l${level}`]"
+                  v-model="product_weight[`weight_min_l${index + 1}`]"
                   type="number"
                   :invalid-feedback="'Weight minimum must smaller than maximum'"
                   :add-input-classes="{
                     'is-invalid':
-                      product_weight[`weight_min_l${level}`] &&
-                      product_weight[`weight_max_l${level}`] &&
-                      product_weight[`weight_min_l${level}`] >=
-                        product_weight[`weight_max_l${level}`],
+                      product_weight[`weight_min_l${index + 1}`] &&
+                      product_weight[`weight_max_l${index + 1}`] &&
+                      product_weight[`weight_min_l${index + 1}`] >=
+                        product_weight[`weight_max_l${index + 1}`],
                   }"
                 />
               </td>
               <td>
                 <CInput
                   :disabled="action == 'Read'"
-                  :placeholder="`Enter weight maximum L${level}`"
+                  :placeholder="`Enter weight maximum L${index + 1}`"
                   horizontal
-                  v-model="product_weight[`weight_max_l${level}`]"
+                  v-model="product_weight[`weight_max_l${index + 1}`]"
                   type="number"
                   :invalid-feedback="'Weight maximum must biger than minimum'"
                   :add-input-classes="{
                     'is-invalid':
-                      product_weight[`weight_min_l${level}`] &&
-                      product_weight[`weight_max_l${level}`] &&
-                      product_weight[`weight_max_l${level}`] <=
-                        product_weight[`weight_min_l${level}`],
+                      product_weight[`weight_min_l${index + 1}`] &&
+                      product_weight[`weight_max_l${index + 1}`] &&
+                      product_weight[`weight_max_l${index + 1}`] <=
+                        product_weight[`weight_min_l${index + 1}`],
                   }"
                 />
               </td>
               <td>
                 <SwitchDefault
                   :disabled="action == 'Read'"
-                  :default_value="product_weight[`weight_required_l${level}`]"
+                  :default_value="
+                    product_weight[`weight_required_l${index + 1}`]
+                  "
                   v-on:onChange="
-                    product_weight[`weight_required_l${level}`] = $event
+                    product_weight[`weight_required_l${index + 1}`] = $event
                   "
                 />
               </td>
@@ -469,6 +662,7 @@
 </template>
 
 <script>
+import { getMstPackaging } from '../../../resource/MstPackaging';
 import {
   getMstProduct,
   insertMstProduct,
@@ -567,15 +761,11 @@ export default {
       this.disabled = true;
     }
     // memanggil metod untuk memanggil isi dropdown
+    this.loadPackaging();
     this.loadProductCategory();
   },
   data() {
     return {
-      expand: {
-        print_detail: true,
-        product_regulation: true,
-        packaging_detail: true,
-      },
       disabled: false,
       allowSetWeight: true,
       viewModalWeight: false,
@@ -597,7 +787,6 @@ export default {
         weight_max_l4: null,
       },
       product: {
-        id: null,
         nie: '',
         company_prefix: '',
         item_reference: '',
@@ -605,9 +794,7 @@ export default {
         product_type: '0',
         status: 'Active',
         show_status: true,
-        flag_upd_del: 1,
-        current_pack: 1,
-        mst_pid: [{ ...this.initial_pid(), packaging_level: 1, flag_full: 1 }],
+        mst_pid: [],
         weight_required_l1: false,
         weight_min_l1: null,
         weight_max_l1: null,
@@ -677,6 +864,25 @@ export default {
       let data = _res.data[0];
       this.product = data;
       this.product.product_type = `${this.product.product_type}`;
+      for (let it of data.mst_pid) {
+        this.ResultPid[`level_${it.packaging_level}`].push(it);
+      }
+      this.compressQuantity();
+    },
+    compressQuantity() {
+      for (var i = 1; i <= 3; i++) {
+        let lvl = i + 1;
+        let current = i - 1;
+        var this_qty = 0;
+        if (this.quantity_detail[`max_qty_level_${current}`]) {
+          this_qty =
+            this.product[`qty_packagingl${lvl}`] /
+            this.quantity_detail[`max_qty_level_${current}`];
+        } else {
+          this_qty = this.product[`qty_packagingl${lvl}`];
+        }
+        this.quantity_detail[`max_qty_level_${i}`] = parseInt(this_qty);
+      }
     },
     handleChangeGtin() {
       // Jika terjadi perubahan yang mempengaruhi gtin
@@ -708,6 +914,54 @@ export default {
     },
     limitNumber({ event, data, max }) {
       onlyNumber({ event, data, max });
+    },
+    validationQuantity({ level }) {
+      let this_packaging = this.product[`packagingl${level}_id`];
+      // let this_qty = this.product[`qty_packagingl${level}`].replace(/\D/g, "");
+      let this_qty = this.product[`qty_packagingl${level}`];
+      this.product[`qty_packagingl${level}`] = this_qty;
+      let qty = 0;
+      let err_msg = '';
+      let is_error = false;
+      if (this_packaging && this_qty) {
+        // CHEK PACK LEVEL DIBAWAHNYA
+        if (this.product[`packagingl${level - 1}_id`]) {
+          qty = this.product[`qty_packagingl${level - 1}`];
+          if (this_qty % qty != 0) {
+            err_msg = `Qty must be a multiple of ${qty}`;
+            this.error[`qty_packagingl${level}`] = err_msg;
+            is_error = true;
+          } else {
+            this.error[`qty_packagingl${level}`] = false;
+          }
+        }
+
+        // CHEK PACK LEVEL DIATASNYA
+        if (level < 4) {
+          if (this.product[`packagingl${level + 1}_id`]) {
+            qty = this.product[`qty_packagingl${level + 1}`];
+            if (qty % this_qty != 0) {
+              err_msg = 'Please re-enter this qty';
+              this.error[`qty_packagingl${level + 1}`] = err_msg;
+              is_error = true;
+            } else {
+              this.error[`qty_packagingl${level + 1}`] = false;
+            }
+          }
+        }
+      } else if (this_packaging && !this_qty) {
+        err_msg = `Qty cannot be empty`;
+        this.error[`qty_packagingl${level}`] = err_msg;
+        is_error = true;
+      }
+      if (level === 2) {
+        is_error = false;
+      }
+      if (is_error) {
+        return false;
+      }
+      this.error[`qty_packagingl${level}`] = '';
+      return true;
     },
     gtinCheckDigit(s) {
       let result = 0,
@@ -765,40 +1019,13 @@ export default {
         });
       }
     },
-
-    addPackaging() {
-      this.product.current_pack = Math.max(
-        ...this.product.mst_pid.map((o) => o.packaging_level)
-      );
-      if (this.product.current_pack == 4) {
-        return;
-      } else {
-        this.product.current_pack += 1;
-        this.product.mst_pid.push({
-          ...this.initial_pid,
-          packaging_level: this.product.current_pack,
-          flag_full: 1,
+    async loadPackaging() {
+      let _res = await getMstPackaging({ status: 'Active' });
+      for (const it of _res['data']) {
+        this.listPackaging.push({
+          label: it.name,
+          value: `${it.id}`,
         });
-        this.product.mst_pid.push({
-          ...this.initial_pid,
-          packaging_level: this.product.current_pack,
-          flag_full: 0,
-        });
-      }
-    },
-
-    removePackaging() {
-      this.product.current_pack = Math.max(
-        ...this.product.mst_pid.map((o) => o.packaging_level)
-      );
-      if (this.product.current_pack == 1) {
-        return;
-      } else {
-        let filteredPid = this.product.mst_pid.filter(
-          (it) => it.packaging_level != this.product.current_pack
-        );
-        this.product.mst_pid = filteredPid;
-        this.product.current_pack -= 1;
       }
     },
     validationNieOrGtin(type = 'all') {
@@ -834,6 +1061,17 @@ export default {
       let required = [];
       this.error = this.initial_error();
       let is_error = false;
+      // VALIDATE GTIN OLD
+      // if (!this.validateGtin()) {
+      //   is_error = true;
+      // }
+      // Check QTY
+      if (
+        !this.validationQuantity({ level: 2 })
+        // !this.validationQuantity({ level: 4 })
+      ) {
+        is_error = true;
+      }
       // CHeck Company prefix and item reference / NIE
       if (!this.validationNieOrGtin()) {
         is_error = true;
@@ -851,22 +1089,33 @@ export default {
         }
       }
       // CHECK PACKAGING
-      for (var i = 1; lvl <= this.product.current_pack; lvl++) {
-        if (!this.product[`packagingl${i}_id`]) {
-          is_error = true;
-          break;
+      let lvl_1 = this.product.mst_pid.filter((it) => it.packaging_level == 1);
+      let lvl_2 = this.product.mst_pid.filter((it) => it.packaging_level == 2);
+      let lvl_3 = this.product.mst_pid.filter((it) => it.packaging_level == 3);
+      let lvl_4 = this.product.mst_pid.filter((it) => it.packaging_level == 4);
+      this.ResultPid.level_1 = lvl_1;
+      this.ResultPid.level_2 = lvl_2;
+      this.ResultPid.level_3 = lvl_3;
+      this.ResultPid.level_4 = lvl_4;
+      for (var i = 1; i <= 4; i++) {
+        let key = `level_${i}`;
+        if (Array.isArray(this.ResultPid[key])) {
+          for (const it of this.ResultPid[key]) {
+            if (it.error) {
+              this.ExpandPid[key] = true;
+              is_error = true;
+            }
+          }
         }
-      }
-      // Check Quantity
-      for (var lvl = 2; lvl <= this.product.current_pack; lvl++) {
-        let thisQty = this.product[`qty_packagingl${lvl}`];
-        let childQty = 1;
-        if (this.product[`qty_packagingl${lvl - 1}`]) {
-          childQty = this.product[`qty_packagingl${lvl - 1}`];
-        }
-        if (thisQty % childQty != 0 || !thisQty) {
+        if (i == 1 && this.ResultPid[key].length === 0) {
+          this.ExpandPid[key] = true;
           is_error = true;
-          break;
+        } else if (
+          this.product[`packagingl${i}_id`] &&
+          this.ResultPid[key].length === 0
+        ) {
+          this.ExpandPid[key] = true;
+          is_error = true;
         }
       }
       if (is_error) {
@@ -874,7 +1123,6 @@ export default {
       }
       return true;
     },
-
     showModalWeight() {
       for (var i = 1; i <= 4; i++) {
         let min = this.product[`weight_min_l${i}`];
@@ -886,31 +1134,9 @@ export default {
       }
       this.viewModalWeight = true;
     },
-
     setWeight() {
       this.viewModalWeight = false;
       this.product = { ...this.product, ...this.product_weight };
-    },
-
-    initial_pid() {
-      let it = {
-        product_id: null,
-        packaging_level: null,
-        flag_full: null,
-        flag_serial: null,
-        epc_type: null,
-        id1: '',
-        id2: '',
-        id3: '',
-        id4: '',
-        sn_charset: '',
-        sn_generate_type: null,
-        sn_prefix: '',
-        generated_sn_len: '',
-        conf_layout_id: null,
-        error: true,
-      };
-      return it;
     },
     async save() {
       this.initial_load = false;
@@ -926,13 +1152,20 @@ export default {
       }
       let body = JSON.parse(JSON.stringify(this.product));
       let is_serial = body.product_type == '1' ? 0 : 1;
-      body.mst_pid = body.mst_pid.map((it) => {
-        return {
-          ...it,
-          flag_serial: is_serial,
-          product_id: this.$route.params.id,
-        };
-      });
+      let master_pid = [];
+      for (const key in this.ResultPid) {
+        if (key == 'level_4' && !this.product.packagingl4_id) {
+          break;
+        } else if (key == 'level_4' && !this.product.packagingl3_id) {
+          break;
+        }
+        for (let it of this.ResultPid[key]) {
+          it.flag_serial = is_serial;
+          it.product_id = this.$route.params.id;
+          master_pid.push(it);
+        }
+      }
+      body.mst_pid = master_pid;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
