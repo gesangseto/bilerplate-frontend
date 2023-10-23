@@ -237,7 +237,9 @@
                       :disabled="!product.flag_upd_del"
                       placeholder="-Select-"
                       :options="
-                        list_layout.filter((it) => it.packaging_level == level)
+                        list_layout[product.mst_pid[index - 1].epc_type].filter(
+                          (it) => it.packaging_level == level
+                        )
                       "
                       :value.sync="product.mst_pid[index - 1].conf_layout_id"
                       :is-valid="
@@ -357,7 +359,12 @@ export default {
     return {
       expand: { lvl_1: false, lvl_2: false, lvl_3: false, lvl_4: false },
       backup_list_layout: [],
-      list_layout: [],
+      list_layout: {
+        nie: [],
+        sgtin: [],
+        sscc: [],
+      },
+
       list_epc_type: [],
       list_packaging: [],
       list_generate_type: [
@@ -409,9 +416,9 @@ export default {
     },
     syncNIE(index) {
       // Menentukan Layout yang memiliki AI 90-21
-      this.list_layout = this.backup_list_layout.filter((it) =>
-        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['90', '21'])
-      );
+      // this.list_layout = this.backup_list_layout.filter((it) =>
+      //   this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['90', '21'])
+      // );
 
       this.product.mst_pid[index].error = false;
       this.product.mst_pid[index].id1 = this.product.nie;
@@ -447,9 +454,9 @@ export default {
 
     syncSGTIN(index) {
       // Menentukan Layout yang memiliki AI 90-21
-      this.list_layout = this.backup_list_layout.filter((it) =>
-        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['01', '21'])
-      );
+      // this.list_layout = this.backup_list_layout.filter((it) =>
+      //   this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['01', '21'])
+      // );
 
       this.product.mst_pid[index].error = false;
       if (!this.isNum(this.product.mst_pid[index].id1)) {
@@ -492,9 +499,9 @@ export default {
     },
     syncSSCC(index) {
       // Menentukan Layout yang memiliki AI 90-21
-      this.list_layout = this.backup_list_layout.filter((it) =>
-        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00'])
-      );
+      // this.list_layout = this.backup_list_layout.filter((it) =>
+      //   this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00'])
+      // );
 
       this.product.mst_pid[index].error = false;
       if (!this.isNum(this.product.mst_pid[index].id1)) {
@@ -570,9 +577,18 @@ export default {
         for (const it of _res.data) {
           it.value = it.id;
           it.label = it.name;
-          this.list_layout.push(it);
+          this.backup_list_layout.push(it);
         }
-        this.backup_list_layout = this.list_layout;
+        this.list_layout.nie = this.backup_list_layout.filter((it) =>
+          this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['90', '21'])
+        );
+        this.list_layout.sgtin = this.backup_list_layout.filter((it) =>
+          this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['01', '21'])
+        );
+        this.list_layout.sscc = this.backup_list_layout.filter((it) =>
+          this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00'])
+        );
+        console.log(this.list_layout);
       }
     },
     async loadPackaging() {
