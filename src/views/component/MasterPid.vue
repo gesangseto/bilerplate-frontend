@@ -236,7 +236,9 @@
                       size="sm"
                       :disabled="!product.flag_upd_del"
                       placeholder="-Select-"
-                      :options="list_layout"
+                      :options="
+                        list_layout.filter((it) => it.packaging_level == level)
+                      "
                       :value.sync="product.mst_pid[index - 1].conf_layout_id"
                       :is-valid="
                         product.mst_pid[index - 1].conf_layout_id ? true : false
@@ -406,6 +408,11 @@ export default {
       }
     },
     syncNIE(index) {
+      // Menentukan Layout yang memiliki AI 90-21
+      this.list_layout = this.backup_list_layout.filter((it) =>
+        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['90', '21'])
+      );
+
       this.product.mst_pid[index].error = false;
       this.product.mst_pid[index].id1 = this.product.nie;
       this.product.mst_pid[index].id2 = '';
@@ -424,10 +431,6 @@ export default {
         this.product.mst_pid[index].generated_sn_len =
           maxSerial - sn_prefix.toString().length;
       }
-      // Menentukan Layout yang memiliki AI 90-21
-      this.list_layout = this.backup_list_layout.filter((it) =>
-        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['90', '21'])
-      );
       // Check jika ada form kosong atau tidak sesuai dengan ketentuan
       if (!this.product.mst_pid[index].id1) {
         this.product.mst_pid[index].error = true;
@@ -441,7 +444,13 @@ export default {
         this.product.mst_pid[index].error = true;
       }
     },
+
     syncSGTIN(index) {
+      // Menentukan Layout yang memiliki AI 90-21
+      this.list_layout = this.backup_list_layout.filter((it) =>
+        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['01', '21'])
+      );
+
       this.product.mst_pid[index].error = false;
       if (!this.isNum(this.product.mst_pid[index].id1)) {
         this.product.mst_pid[index].id1 = '';
@@ -464,11 +473,6 @@ export default {
         this.product.mst_pid[index].generated_sn_len =
           maxSerial - sn_prefix.toString().length;
       }
-      // Menentukan Layout yang memiliki AI 90-21
-      this.list_layout = this.backup_list_layout.filter((it) =>
-        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['01', '21'])
-      );
-
       // Check jika ada form kosong atau tidak sesuai dengan ketentuan
       if (!this.product.mst_pid[index].id1) {
         this.product.mst_pid[index].error = true;
@@ -487,6 +491,11 @@ export default {
       }
     },
     syncSSCC(index) {
+      // Menentukan Layout yang memiliki AI 90-21
+      this.list_layout = this.backup_list_layout.filter((it) =>
+        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00'])
+      );
+
       this.product.mst_pid[index].error = false;
       if (!this.isNum(this.product.mst_pid[index].id1)) {
         this.product.mst_pid[index].id1 = '';
@@ -513,10 +522,6 @@ export default {
       this.product.mst_pid[index].generated_sn_len = 17 - currentSerial;
       // Menentukan Charset Type SSCC
       this.product.mst_pid[index].sn_charset = 'numeric';
-      // Menentukan Layout yang memiliki AI 90-21
-      this.list_layout = this.backup_list_layout.filter((it) =>
-        this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00'])
-      );
 
       // Check jika ada form kosong atau tidak sesuai dengan ketentuan
       if (!this.product.mst_pid[index].id1) {

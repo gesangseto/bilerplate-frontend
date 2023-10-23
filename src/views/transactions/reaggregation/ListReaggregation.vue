@@ -56,7 +56,6 @@
                     /> -->
                     &nbsp;
                     <ButtonPermission
-                      v-if="user_id == 0"
                       :buttonProperty="btn_printProp2"
                       :permission="'print'"
                       @click="selected_data = item"
