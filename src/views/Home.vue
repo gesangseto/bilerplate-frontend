@@ -1,23 +1,22 @@
 <template>
-  <CCardBody>
-    <div class="center-image">
-      <img v-bind:src="image.home" alt="Your Image" />
-    </div>
-  </CCardBody>
+  <div class="center-image">
+    <img v-bind:src="image.home" alt="Your Image" />
+  </div>
 </template>
 
 <style>
 /* CSS untuk menengahkan gambar */
+
 .center-image {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50vh; /* Atur tinggi div agar gambar berada di tengah halaman vertikal */
+  height: 80vh;
 }
 
 .center-image img {
-  max-width: 75%; /* Pastikan gambar tidak melebihi lebar div */
-  max-height: 75%; /* Pastikan gambar tidak melebihi tinggi div */
+  max-width: 55; /* Pastikan gambar tidak melebihi lebar div */
+  max-height: 55%; /* Pastikan gambar tidak melebihi tinggi div */
 }
 </style>
 <script>
