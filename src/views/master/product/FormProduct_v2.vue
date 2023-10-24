@@ -10,7 +10,7 @@
             <CRow>
               <CCol sm="12">
                 <CInput
-                  :disabled="action == 'Read'"
+                  :disabled="!product.flag_upd_del"
                   label="Item No *"
                   placeholder="Enter item no"
                   horizontal
@@ -141,7 +141,7 @@
                     (product.flag_upd_del == 0 && action != 'Create')
                   "
                   @keypress="
-                    limitNumber({
+                    limitString({
                       event: $event,
                       data: product.nie,
                       max: 15,
@@ -443,13 +443,6 @@ export default {
       },
       deep: true,
     },
-    'product.mst_pid': {
-      handler(val) {
-        let find = val.find((it) => it.packaging_level == 1);
-        if (find) this.handleChangeGtin();
-      },
-      deep: true,
-    },
   },
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
@@ -566,11 +559,13 @@ export default {
       this.product.product_type = `${this.product.product_type}`;
       if (this.action === 'Create') {
         this.product.flag_upd_del = 1;
+      } else if (this.action == 'Read') {
+        this.product.flag_upd_del = 0;
       }
     },
     handleChangeGtin() {
       // Jika terjadi perubahan yang mempengaruhi gtin
-      let pids = this.product.mst_pid;
+      let pids = JSON.parse(JSON.stringify(this.product.mst_pid));
       let pid_l1 = pids.find(
         (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
       );
@@ -668,7 +663,7 @@ export default {
       }
       let company_prefix = this.product.company_prefix;
       let item_reference = this.product.item_reference;
-      let mst_pid = this.product.mst_pid;
+      let mst_pid = JSON.parse(JSON.stringify(this.product.mst_pid));
       let have_nie = mst_pid.find((it) => it.epc_type == 'nie');
       let have_gtin_sscc = mst_pid.find(
         (it) => it.epc_type == 'sgtin' || it.epc_type == 'sscc'

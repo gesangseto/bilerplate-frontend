@@ -76,14 +76,14 @@
                 <tr style="font-size: 3mm; font-weight: bold">
                   <td style="width: 5%"></td>
                   <td style="width: 10%">Type</td>
-                  <td style="width: 15%">ID1</td>
+                  <td style="width: 13%">ID1</td>
                   <td style="width: 11%">ID2</td>
                   <td style="width: 8%">ID3</td>
                   <td style="width: 6%">SN Prefix (static)</td>
                   <td style="width: 5%">SN Length (dynamic)</td>
                   <td style="width: 12%">Generate Type</td>
                   <td style="width: 12%">Charset</td>
-                  <td style="width: 18%">Layout</td>
+                  <td style="width: 20%">Layout</td>
                 </tr>
               </thead>
               <tbody v-for="index in product.mst_pid.length" :key="index">
@@ -291,10 +291,12 @@ export default {
     packaging_level: String,
   },
   beforeMount() {
-    console.log(this.product.mst_pid.length);
     if (this.product.mst_pid.length === 0) {
       this.product.mst_pid.push({
         ...this.initial_pid,
+        id1: '',
+        id2: '',
+        id3: '',
         packaging_level: 1,
         flag_full: 1,
       });
@@ -302,8 +304,7 @@ export default {
   },
   watch: {
     'product.mst_pid': {
-      handler(data) {
-        console.log(data, 'BERUBAH');
+      handler() {
         this.product.current_pack = Math.max(
           ...this.product.mst_pid.map((o) => o.packaging_level)
         );
@@ -396,11 +397,17 @@ export default {
         this.product.current_pack += 1;
         this.product.mst_pid.push({
           ...this.initial_pid,
+          id1: '',
+          id2: '',
+          id3: '',
           packaging_level: this.product.current_pack,
           flag_full: 1,
         });
         this.product.mst_pid.push({
           ...this.initial_pid,
+          id1: '',
+          id2: '',
+          id3: '',
           packaging_level: this.product.current_pack,
           flag_full: 0,
         });
@@ -594,7 +601,6 @@ export default {
         this.list_layout.sscc = this.backup_list_layout.filter((it) =>
           this.checkBpomBarcodeFormat(it.bpom_barcode_format, ['00'])
         );
-        console.log(this.list_layout);
       }
     },
     async loadPackaging() {
