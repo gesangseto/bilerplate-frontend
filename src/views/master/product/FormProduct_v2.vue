@@ -140,6 +140,13 @@
                     action == 'Read' ||
                     (product.flag_upd_del == 0 && action != 'Create')
                   "
+                  @keypress="
+                    limitNumber({
+                      event: $event,
+                      data: product.nie,
+                      max: 15,
+                    })
+                  "
                 >
                 </CInput>
               </CCol>
@@ -443,60 +450,6 @@ export default {
       },
       deep: true,
     },
-    'product.qty_packagingl2': {
-      handler(val) {
-        if (this.product.packagingl2_id) {
-          if (this.product.packagingl3_id) {
-            this.error.qty_packagingl3 = `Please re-enter this quantity`;
-          }
-          if (this.product.packagingl4_id) {
-            this.error.qty_packagingl4 = `Please re-enter this quantity`;
-          }
-          val = parseInt(val);
-          if (!val) {
-            this.error.qty_packagingl2 = `Quantity must be greater than 0`;
-          } else {
-            this.error.qty_packagingl2 = ``;
-          }
-        }
-      },
-      deep: true,
-    },
-    'product.qty_packagingl3': {
-      handler(val) {
-        if (this.product.packagingl3_id) {
-          if (this.product.packagingl4_id) {
-            this.error.qty_packagingl4 = `Please re-enter this quantity`;
-          }
-          val = parseInt(val);
-          let qty_child = parseInt(this.product.qty_packagingl2);
-          if (val < qty_child) {
-            this.error.qty_packagingl3 = `Quantity must be greater than ${qty_child}`;
-          } else if (val % qty_child != 0) {
-            this.error.qty_packagingl3 = `Quantity must be a multiple ${qty_child}`;
-          } else {
-            this.error.qty_packagingl3 = ``;
-          }
-        }
-      },
-      deep: true,
-    },
-    'product.qty_packagingl4': {
-      handler(val) {
-        if (this.product.packagingl4_id) {
-          val = parseInt(val);
-          let qty_child = parseInt(this.product.qty_packagingl3);
-          if (val < qty_child) {
-            this.error.qty_packagingl4 = `Quantity must be greater than ${qty_child}`;
-          } else if (val % qty_child != 0) {
-            this.error.qty_packagingl4 = `Quantity must be a multiple ${qty_child}`;
-          } else {
-            this.error.qty_packagingl4 = ``;
-          }
-        }
-      },
-      deep: true,
-    },
   },
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
@@ -547,7 +500,7 @@ export default {
         show_status: true,
         flag_upd_del: 1,
         current_pack: 1,
-        mst_pid: [{ ...this.initial_pid(), packaging_level: 1, flag_full: 1 }],
+        mst_pid: [],
         weight_required_l1: false,
         weight_min_l1: null,
         weight_max_l1: null,
@@ -645,6 +598,12 @@ export default {
     },
     limitNumber({ event, data, max }) {
       onlyNumber({ event, data, max });
+    },
+    limitString({ event, data, max }) {
+      event = event ? event : window.event;
+      if (data && max && data.toString().length >= max) {
+        event.preventDefault();
+      }
     },
     gtinCheckDigit(s) {
       let result = 0,
@@ -794,26 +753,6 @@ export default {
       this.product = { ...this.product, ...this.product_weight };
     },
 
-    initial_pid() {
-      let it = {
-        product_id: null,
-        packaging_level: null,
-        flag_full: null,
-        flag_serial: null,
-        epc_type: null,
-        id1: '',
-        id2: '',
-        id3: '',
-        id4: '',
-        sn_charset: '',
-        sn_generate_type: null,
-        sn_prefix: '',
-        generated_sn_len: '',
-        conf_layout_id: null,
-        error: true,
-      };
-      return it;
-    },
     async save() {
       this.initial_load = false;
       if (!this.validationData()) {
