@@ -9,6 +9,14 @@
           <CForm>
             <CRow>
               <CCol sm="12">
+                <CInput :disabled="true" horizontal v-model="product.id">
+                  <template #label>
+                    <p class="col-form-label col-sm-3">ID</p>
+                  </template>
+                </CInput>
+              </CCol>
+
+              <CCol sm="12">
                 <CInput
                   :disabled="!product.flag_upd_del"
                   label="Item No *"
@@ -559,6 +567,7 @@ export default {
       this.product.product_type = `${this.product.product_type}`;
       if (this.action === 'Create') {
         this.product.flag_upd_del = 1;
+        this.product.id = null;
       } else if (this.action == 'Read') {
         this.product.flag_upd_del = 0;
       }

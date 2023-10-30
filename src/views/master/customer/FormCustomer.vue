@@ -9,6 +9,11 @@
 
           <CCardBody>
             <CForm>
+              <CInput :disabled="true" horizontal v-model="customer.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
@@ -256,21 +261,21 @@ import {
   capitalizeFirstLetter,
   onlyNumber,
   isEmail,
-} from "../../../utils";
-import { notEmail } from "../../../validator";
-import { required } from "vuelidate/lib/validators";
+} from '../../../utils';
+import { notEmail } from '../../../validator';
+import { required } from 'vuelidate/lib/validators';
 import {
   getMstCustomer,
   insertMstCustomer,
   updateMstCustomer,
-} from "../../../resource/MstCustomer";
+} from '../../../resource/MstCustomer';
 
 export default {
-  name: "Forms",
+  name: 'Forms',
   watch: {
     customer: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -280,27 +285,27 @@ export default {
   data() {
     return {
       initial_load: true,
-      action: "",
-      route_action: "",
-      customer: { status: "Active", tlp_alt: "", tlp: "" },
+      action: '',
+      route_action: '',
+      customer: { status: 'Active', tlp_alt: '', tlp: '' },
       statusOptions: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
       items: [],
       CountryCode: coutryCode(),
 
-      temp_data: { tlp_code: "", tlp_code: "" },
+      temp_data: { tlp_code: '' },
       required: {
-        name: { error: false, message: "Name is required" },
-        pic: { error: false, message: "PIC is required" },
-        email: { error: false, message: "Please provide valid email address" },
-        id_sarana: { error: false, message: "Please provide id sarana" },
-        address: { error: false, message: "Address is required" },
-        tlp_code: { error: false, message: "Country code is required" },
+        name: { error: false, message: 'Name is required' },
+        pic: { error: false, message: 'PIC is required' },
+        email: { error: false, message: 'Please provide valid email address' },
+        id_sarana: { error: false, message: 'Please provide id sarana' },
+        address: { error: false, message: 'Address is required' },
+        tlp_code: { error: false, message: 'Country code is required' },
         tlp: {
           error: false,
-          message: "Please provide 7-12 digits phone number",
+          message: 'Please provide 7-12 digits phone number',
         },
       },
     };
@@ -309,7 +314,7 @@ export default {
     this.reformatCountryCode();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -327,7 +332,7 @@ export default {
   },
   methods: {
     handleChangeInput($value, code) {
-      if (code == "alt_code") {
+      if (code == 'alt_code') {
         this.temp_data.tlp_alt_code = $value;
         this.customer.tlp_alt_code = $value;
       } else {
@@ -344,13 +349,13 @@ export default {
         let data = _res.data[0];
         this.customer = data;
         if (data.tlp) {
-          let tlp = data.tlp.split("-");
+          let tlp = data.tlp.split('-');
           this.temp_data.tlp_code = tlp[0];
           this.customer.tlp_code = tlp[0];
           this.customer.tlp = tlp[1];
         }
         if (data.tlp_alt) {
-          let tlp = data.tlp_alt.split("-");
+          let tlp = data.tlp_alt.split('-');
           this.temp_data.tlp_alt_code = tlp[0];
           this.customer.tlp_alt_code = tlp[0];
           this.customer.tlp_alt = tlp[1];
@@ -434,15 +439,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },

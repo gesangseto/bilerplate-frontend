@@ -130,14 +130,17 @@ export default {
       items: [],
       fields: [
         {
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
+        },
+        {
           key: 'itemNo',
           label: 'Item No',
-          sorter: false,
         },
         {
           key: 'name',
           label: 'Product Name',
-          _classes: 'font-weight-bold',
         },
         {
           key: 'gtin',

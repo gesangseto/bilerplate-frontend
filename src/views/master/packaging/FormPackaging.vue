@@ -8,6 +8,11 @@
           </CCardHeader>
           <CCardBody>
             <CForm>
+              <CInput :disabled="true" horizontal v-model="packaging.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
@@ -81,23 +86,23 @@
 </template>
 
 <script>
-import { required } from "vuelidate/lib/validators";
+import { required } from 'vuelidate/lib/validators';
 import {
   getMstPackaging,
   insertMstPackaging,
   updateMstPackaging,
-} from "../../../resource/MstPackaging";
-import { capitalizeFirstLetter } from "../../../utils";
+} from '../../../resource/MstPackaging';
+import { capitalizeFirstLetter } from '../../../utils';
 export default {
-  name: "PackageForm",
+  name: 'PackageForm',
   data() {
     return {
-      route_action: "",
-      action: "Edit",
-      packaging: { status: "Active", description: "", name: "" },
+      route_action: '',
+      action: 'Edit',
+      packaging: { status: 'Active', description: '', name: '' },
       statusOptions: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
     };
   },
@@ -110,7 +115,7 @@ export default {
   async mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       let param = `id=${this.$route.params.id}`;
       let _res = await getMstPackaging(param);
@@ -137,15 +142,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },

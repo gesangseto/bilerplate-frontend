@@ -9,6 +9,11 @@
 
           <CCardBody>
             <CForm>
+              <CInput :disabled="true" horizontal v-model="department.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
@@ -78,24 +83,23 @@
 </template>
 
 <script>
-import { required } from "vuelidate/lib/validators";
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
+import { required } from 'vuelidate/lib/validators';
+import { capitalizeFirstLetter } from '../../../utils';
 import {
   getMstDepartment,
   insertMstDepartment,
   updateMstDepartment,
-} from "../../../resource/MstDepartment";
+} from '../../../resource/MstDepartment';
 export default {
-  name: "FormDepartment",
+  name: 'FormDepartment',
   data() {
     return {
-      route_action: "",
-      action: "Edit",
-      department: { name: "", description: "", status: "Active" },
+      route_action: '',
+      action: 'Edit',
+      department: { name: '', description: '', status: 'Active' },
       statusOptions: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
     };
   },
@@ -108,7 +112,7 @@ export default {
   async mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       let _res = await getMstDepartment({ id: this.$route.params.id });
       if (_res) {
@@ -136,15 +140,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },

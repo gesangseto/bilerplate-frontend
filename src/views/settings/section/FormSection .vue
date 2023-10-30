@@ -8,6 +8,11 @@
           </CCardHeader>
           <CCardBody>
             <CForm novalidate>
+              <CInput :disabled="true" horizontal v-model="section.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CSelect
                 :disabled="action == 'Read' ? true : false"
                 label="Type Of Temperature *"
@@ -111,36 +116,35 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
-import { required } from "vuelidate/lib/validators";
+import { capitalizeFirstLetter } from '../../../utils';
+import { required } from 'vuelidate/lib/validators';
 import {
   getMstSection,
   insertMstSection,
   updateMstSection,
-} from "../../../resource/MstSection";
-import { getMstDepartment } from "../../../resource/MstDepartment";
+} from '../../../resource/MstSection';
+import { getMstDepartment } from '../../../resource/MstDepartment';
 
 export default {
-  name: "WareHouseForm",
+  name: 'WareHouseForm',
   data() {
     return {
-      route_action: "",
+      route_action: '',
       // category: '',
-      action: "Edit",
+      action: 'Edit',
       listCategoryWarehouse: [
         {
           value: 1,
-          label: "Quarantine",
+          label: 'Quarantine',
         },
         {
           value: 3,
-          label: "Ready To Sell",
+          label: 'Ready To Sell',
         },
       ],
-      section: { status: "Active" },
+      section: { status: 'Active' },
       departmentOptions: [],
-      statusOptions: ["Active", "Inactive"],
+      statusOptions: ['Active', 'Inactive'],
       listProvince: [],
       listEntity: [],
     };
@@ -148,7 +152,7 @@ export default {
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -169,7 +173,7 @@ export default {
       }
     },
     async loadDepartment() {
-      let _res = await getMstDepartment({ status: "Active" });
+      let _res = await getMstDepartment({ status: 'Active' });
       if (_res) {
         for (const it of _res.data) {
           this.departmentOptions.push({
@@ -198,15 +202,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },

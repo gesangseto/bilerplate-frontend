@@ -77,11 +77,11 @@
 import {
   deleteMstPackaging,
   getMstPackaging,
-} from "../../../resource/MstPackaging";
-import { calculatePaginationV3, exportDataV3 } from "../../../utils";
+} from '../../../resource/MstPackaging';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 
 export default {
-  name: "ListPackaging",
+  name: 'ListPackaging',
 
   mounted() {
     this.page = 1;
@@ -93,28 +93,31 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
-          _style: "width:20%",
-        },
-        { key: "description", label: "Description" },
-        {
-          key: "status",
-          _style: "width:7%",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _classes: "font-weight-bold",
-          _style: "width:17%",
+          key: 'name',
+          label: 'Name',
+          _style: 'width:20%',
+        },
+        { key: 'description', label: 'Description' },
+        {
+          key: 'status',
+          _style: 'width:7%',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:17%',
           sorter: false,
           filter: false,
         },
@@ -140,7 +143,7 @@ export default {
       exportDataV3({
         param: this.filter,
         exportType: type,
-        url: "/v3/master/packaging",
+        url: '/v3/master/packaging',
       });
     },
     pageChange(page) {
@@ -175,10 +178,10 @@ export default {
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : "Data has been deleted succesfully",
-          type: _res.error ? "error" : "success",
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) this.loadData();

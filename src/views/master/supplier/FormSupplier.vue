@@ -9,6 +9,11 @@
 
           <CCardBody>
             <CForm>
+              <CInput :disabled="true" horizontal v-model="supplier.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
@@ -233,29 +238,28 @@
 </template>
 
 <script>
-import { notEmail } from "../../../validator";
-import { required } from "vuelidate/lib/validators";
-import $axiosMertrack from "../../../apiMertrack";
+import { notEmail } from '../../../validator';
+import { required } from 'vuelidate/lib/validators';
 import {
   coutryCode,
   isPhone,
   capitalizeFirstLetter,
   onlyNumber,
   isEmail,
-} from "../../../utils";
+} from '../../../utils';
 import {
   getMstSupplier,
   insertMstSupplier,
   updateMstSupplier,
-} from "../../../resource/MstSupplier";
+} from '../../../resource/MstSupplier';
 // import { CheckPhone, SetPhone } from "../../../CustomJs";
 
 export default {
-  name: "Forms",
+  name: 'Forms',
   watch: {
     supplier: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -265,7 +269,7 @@ export default {
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -274,28 +278,28 @@ export default {
   data() {
     return {
       initial_load: true,
-      route_action: "",
-      action: "Edit",
+      route_action: '',
+      action: 'Edit',
       supplier: {
-        status: "Active",
-        tlpAlt: "",
+        status: 'Active',
+        tlpAlt: '',
       },
       statusOptions: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
 
       CountryCode: coutryCode(),
-      temp_data: { tlp_code: "", tlp_code: "" },
+      temp_data: { tlp_code: '' },
       required: {
-        name: { error: false, message: "Name is required" },
-        pic: { error: false, message: "PIC is required" },
-        email: { error: false, message: "Please provide valid email address" },
-        address: { error: false, message: "Address is required" },
-        tlp_code: { error: false, message: "Country code is required" },
+        name: { error: false, message: 'Name is required' },
+        pic: { error: false, message: 'PIC is required' },
+        email: { error: false, message: 'Please provide valid email address' },
+        address: { error: false, message: 'Address is required' },
+        tlp_code: { error: false, message: 'Country code is required' },
         tlp: {
           error: false,
-          message: "Please provide 7-12 digits phone number",
+          message: 'Please provide 7-12 digits phone number',
         },
       },
     };
@@ -318,7 +322,7 @@ export default {
       onlyNumber({ event, data, max });
     },
     handleChangeInput($value, code) {
-      if (code == "alt_code") {
+      if (code == 'alt_code') {
         this.temp_data.tlp_alt_code = $value;
         this.supplier.tlp_alt_code = $value;
       } else {
@@ -327,20 +331,19 @@ export default {
       }
     },
     async loadData() {
-      let param = `id=${this.$route.params.id}`;
       let res = await getMstSupplier({ id: this.$route.params.id });
       if (res) {
         let data = res.data[0];
         this.supplier = data;
-        let tlp = "";
+        let tlp = '';
         if (data.tlp) {
-          tlp = data.tlp.split("-");
+          tlp = data.tlp.split('-');
           this.temp_data.tlp_code = tlp[0];
           this.supplier.tlp_code = tlp[0];
           this.supplier.tlp = tlp[1];
         }
         if (data.tlp_alt) {
-          tlp = data.tlp_alt.split("-");
+          tlp = data.tlp_alt.split('-');
           this.temp_data.tlp_alt_code = tlp[0];
           this.supplier.tlp_alt_code = tlp[0];
           this.supplier.tlp_alt = tlp[1];
@@ -422,15 +425,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },

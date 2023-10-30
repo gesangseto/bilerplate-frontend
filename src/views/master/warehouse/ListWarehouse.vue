@@ -75,15 +75,15 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportDataV3 } from "../../../utils";
-import { getSysConfig } from "../../../resource/SysConfig";
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { getSysConfig } from '../../../resource/SysConfig';
 import {
   deleteMstWarehouse,
   getMstWarehouse,
-} from "../../../resource/MstWarehouse";
+} from '../../../resource/MstWarehouse';
 
 export default {
-  name: "ListWarehouse",
+  name: 'ListWarehouse',
 
   mounted() {
     this.page = 1;
@@ -95,8 +95,8 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       can_add_warehouse: false,
       warningModal: false,
@@ -105,34 +105,37 @@ export default {
       totalWarehouseLimiter: true,
       fields: [
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "category_name",
-          label: "Warehouse Category",
+          key: 'name',
+          label: 'Name',
         },
         {
-          key: "address",
+          key: 'category_name',
+          label: 'Warehouse Category',
         },
         {
-          key: "province_name",
-          label: "Province",
+          key: 'address',
         },
         {
-          key: "entity_name",
-          label: "Entity",
+          key: 'province_name',
+          label: 'Province',
         },
         {
-          key: "status",
-          _classes: "font-weight-bold",
+          key: 'entity_name',
+          label: 'Entity',
         },
         {
-          key: "action",
-          label: "Action",
-          _classes: "font-weight-bold",
-          _style: "width:17%",
+          key: 'status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:17%',
           sorter: false,
           filter: false,
         },
@@ -168,7 +171,7 @@ export default {
       exportDataV3({
         param: this.filter,
         exportType: type,
-        url: "/v3/master/warehouse",
+        url: '/v3/master/warehouse',
       });
     },
     pageChange(page) {
@@ -205,10 +208,10 @@ export default {
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : "Data has been deleted succesfully",
-          type: _res.error ? "error" : "success",
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) this.loadData();

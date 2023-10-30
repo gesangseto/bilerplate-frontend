@@ -80,12 +80,11 @@
 import {
   deleteMstCustomer,
   getMstCustomer,
-} from "../../../resource/MstCustomer";
-import { calculatePaginationV3, exportDataV3 } from "../../../utils";
-import { getMstSupplier } from "../../../resource/MstSupplier";
+} from '../../../resource/MstCustomer';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 
 export default {
-  name: "ListCustomer",
+  name: 'ListCustomer',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -96,41 +95,45 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "pic",
-          label: "Person In Charge",
+          key: 'name',
+          label: 'Name',
         },
         {
-          key: "tlp",
-          label: "Phone No",
+          key: 'pic',
+          label: 'Person In Charge',
         },
         {
-          key: "tlp_alt",
-          label: "Alternative Phone No",
+          key: 'tlp',
+          label: 'Phone No',
         },
         {
-          key: "address",
-          label: "Address",
+          key: 'tlp_alt',
+          label: 'Alternative Phone No',
         },
         {
-          key: "status",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'address',
+          label: 'Address',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'status',
+          label: 'Status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -156,7 +159,7 @@ export default {
       exportDataV3({
         param: this.filter,
         exportType: type,
-        url: "/v3/master/customer",
+        url: '/v3/master/customer',
       });
     },
     pageChange(page) {
@@ -198,10 +201,10 @@ export default {
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : "Data has been deleted succesfully",
-          type: _res.error ? "error" : "success",
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) this.loadData();
@@ -211,12 +214,12 @@ export default {
   computed: {
     customers() {
       return this.items.map((item) => {
-        let addr = "";
+        let addr = '';
         if (item.address) addr = `${item.address.substring(0, 30)}`;
         return {
           ...item,
-          tlp: item.tlp ?? "",
-          tlp_alt: item.tlp_alt ?? "",
+          tlp: item.tlp ?? '',
+          tlp_alt: item.tlp_alt ?? '',
           address: addr,
         };
       });

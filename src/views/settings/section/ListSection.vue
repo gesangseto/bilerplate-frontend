@@ -64,11 +64,11 @@
 </template>
 
 <script>
-import { deleteMstSection, getMstSection } from "../../../resource/MstSection";
-import { exportData, calculatePaginationV3 } from "../../../utils";
+import { deleteMstSection, getMstSection } from '../../../resource/MstSection';
+import { exportData, calculatePaginationV3 } from '../../../utils';
 
 export default {
-  name: "Department",
+  name: 'Department',
 
   mounted() {
     this.page = 1;
@@ -80,19 +80,20 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
-        { key: "name", label: "Section Name" },
-        { key: "description", label: "Section Description" },
-        { key: "department_name", label: "Department Name" },
-        { key: "status", _classes: "font-weight-bold" },
+        { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
+        { key: 'name', label: 'Section Name' },
+        { key: 'description', label: 'Section Description' },
+        { key: 'department_name', label: 'Department Name' },
+        { key: 'status', _classes: 'font-weight-bold' },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
         },
       ],
     };
@@ -147,10 +148,10 @@ export default {
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : "Data has been deleted succesfully",
-          type: _res.error ? "error" : "success",
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) this.loadData();

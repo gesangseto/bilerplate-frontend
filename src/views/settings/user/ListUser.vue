@@ -65,11 +65,11 @@
 </template>
 
 <script>
-import { deleteMstUser, getMstUser } from "../../../resource/MstUser";
-import { exportData, calculatePaginationV3 } from "../../../utils";
+import { deleteMstUser, getMstUser } from '../../../resource/MstUser';
+import { exportData, calculatePaginationV3 } from '../../../utils';
 
 export default {
-  name: "ListUser",
+  name: 'ListUser',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -81,24 +81,26 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
-        { key: "username", label: "Username" },
-        { key: "full_name", label: "Full Name" },
-        { key: "email", label: "Email" },
-        { key: "tlp", label: "Phone Number" },
-        { key: "department_name", label: "Department" },
-        { key: "section_name", label: "Section" },
+        { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
+        { key: 'employee_id', label: 'Global ID' },
+        { key: 'username', label: 'Username' },
+        { key: 'full_name', label: 'Full Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'tlp', label: 'Phone Number' },
+        { key: 'department_name', label: 'Department' },
+        { key: 'section_name', label: 'Section' },
         // { key: "mst_position_name", label: "Level" },
-        { key: "status", label: "Status", _classes: "font-weight-bold" },
+        { key: 'status', label: 'Status', _classes: 'font-weight-bold' },
         {
-          key: "action",
-          label: "Action",
-          _classes: "font-weight-bold",
-          _style: "width:15%",
+          key: 'action',
+          label: 'Action',
+          _classes: 'font-weight-bold',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -155,10 +157,10 @@ export default {
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : "Data has been deleted succesfully",
-          type: _res.error ? "error" : "success",
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) this.loadData();
@@ -170,6 +172,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          employee_id: item.employee_id || '',
         };
       });
     },
