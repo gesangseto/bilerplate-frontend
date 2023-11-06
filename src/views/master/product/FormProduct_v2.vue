@@ -715,6 +715,14 @@ export default {
           required.push(capitalizeFirstLetter(key));
         }
       }
+      // Check Error PID
+      for (const it of this.product.mst_pid) {
+        if (it.error) {
+          is_error = true;
+          break;
+        }
+      }
+
       // CHECK PACKAGING
       for (var i = 1; lvl <= this.product.current_pack; lvl++) {
         if (!this.product[`packagingl${i}_id`]) {

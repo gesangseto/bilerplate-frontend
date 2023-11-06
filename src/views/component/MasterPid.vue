@@ -78,8 +78,8 @@
                   <td style="width: 10%">Type</td>
                   <td style="width: 13%">ID1</td>
                   <td style="width: 11%">ID2</td>
-                  <td style="width: 8%">ID3</td>
-                  <td style="width: 6%">SN Prefix (static)</td>
+                  <td style="width: 7%">ID3</td>
+                  <td style="width: 7%">SN Prefix (static)</td>
                   <td style="width: 5%">SN Length (dynamic)</td>
                   <td style="width: 12%">Generate Type</td>
                   <td style="width: 12%">Charset</td>
@@ -167,12 +167,24 @@
                       size="sm"
                       :readonly="!product.flag_upd_del"
                       v-model="product.mst_pid[index - 1].sn_prefix"
-                      :is-valid="true"
+                      :is-valid="
+                        product.mst_pid[index - 1].sn_prefix &&
+                        product.mst_pid[index - 1].sn_charset === 'numeric' &&
+                        !isNum(product.mst_pid[index - 1].sn_prefix)
+                          ? false
+                          : true
+                      "
                       @keypress="
-                        validateNumber({
-                          data: product.mst_pid[index - 1].sn_prefix,
+                        validateCharSet({
                           event: $event,
+                          num: index - 1,
                           max: 3,
+                          name: 'sn_prefix',
+                          type:
+                            product.mst_pid[index - 1].sn_charset ==
+                            'alphanumeric'
+                              ? 'string'
+                              : 'number',
                         })
                       "
                     />
@@ -463,6 +475,8 @@ export default {
       } else if (!this.product.mst_pid[index].conf_layout_id) {
         this.product.mst_pid[index].error = true;
       }
+      // Check charset type dengan SN Prefix
+      this.checkCharset(index);
     },
 
     syncSGTIN(index) {
@@ -509,6 +523,7 @@ export default {
       } else if (!this.product.mst_pid[index].conf_layout_id) {
         this.product.mst_pid[index].error = true;
       }
+      this.checkCharset(index);
     },
     syncSSCC(index) {
       // Menentukan Layout yang memiliki AI 90-21
@@ -556,6 +571,18 @@ export default {
         this.product.mst_pid[index].error = true;
       } else if (!this.product.mst_pid[index].conf_layout_id) {
         this.product.mst_pid[index].error = true;
+      }
+      this.checkCharset(index);
+    },
+    checkCharset(index) {
+      // Check charset type dengan SN Prefix
+      if (
+        this.product.mst_pid[index].sn_prefix &&
+        this.product.mst_pid[index].sn_charset === 'numeric'
+      ) {
+        if (!this.isNum(this.product.mst_pid[index].sn_prefix)) {
+          this.product.mst_pid[index].error = true;
+        }
       }
     },
     checkBpomBarcodeFormat(inputString, targetArray) {
@@ -651,6 +678,13 @@ export default {
       else return false;
     },
 
+    isInt(value) {
+      return (
+        !isNaN(value) &&
+        parseInt(Number(value)) == value &&
+        !isNaN(parseInt(value, 20))
+      );
+    },
     initial_pid() {
       let it = {
         name: '',
@@ -668,7 +702,7 @@ export default {
         sn_prefix: '',
         generated_sn_len: '',
         conf_layout_id: '',
-        error: true,
+        error: false,
       };
       return it;
     },
