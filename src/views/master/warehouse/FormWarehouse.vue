@@ -8,6 +8,11 @@
           </CCardHeader>
           <CCardBody>
             <CForm novalidate>
+              <CInput :disabled="true" horizontal v-model="warehouse.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
@@ -203,47 +208,46 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
-import { required } from "vuelidate/lib/validators";
+import { capitalizeFirstLetter } from '../../../utils';
+import { required } from 'vuelidate/lib/validators';
 import {
   getMstWarehouse,
   getMstWarehouseCategory,
   getMstWarehouseEntity,
   insertMstWarehouse,
   updateMstWarehouse,
-} from "../../../resource/MstWarehouse";
-import { getMstProvince } from "../../../resource/MstProvince";
+} from '../../../resource/MstWarehouse';
+import { getMstProvince } from '../../../resource/MstProvince';
 
 export default {
-  name: "FormWarehouse",
+  name: 'FormWarehouse',
   data() {
     return {
-      route_action: "",
-      action: "Edit",
+      route_action: '',
+      action: 'Edit',
       warehouse: {
-        status: "Active",
+        status: 'Active',
         entity: {
           id: undefined,
         },
         province: {
           id: undefined,
         },
-        temperature: "",
+        temperature: '',
         // category: { id: '',},
-        categoryId: "",
+        categoryId: '',
       },
       temperaturOptions: [
         {
           value: true,
-          label: "Suhu",
+          label: 'Suhu',
         },
         {
           value: false,
-          label: "Non Suhu",
+          label: 'Non Suhu',
         },
       ],
-      statusOptions: ["Active", "Inactive"],
+      statusOptions: ['Active', 'Inactive'],
       listProvince: [],
       listEntity: [],
       listWhCategory: [],
@@ -252,7 +256,7 @@ export default {
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -274,10 +278,10 @@ export default {
     async loadData() {
       let _res = await getMstWarehouse({ id: this.$route.params.id });
       this.warehouse = _res.data[0];
-      this.warehouse["category_id"] = this.warehouse["category_id"].toString();
+      this.warehouse['category_id'] = this.warehouse['category_id'].toString();
     },
     async loadEntity() {
-      let _res = await getMstWarehouseEntity({ status: "Active" });
+      let _res = await getMstWarehouseEntity({ status: 'Active' });
       for (const it of _res.data) {
         this.listEntity.push({
           label: it.name,
@@ -286,7 +290,7 @@ export default {
       }
     },
     async loadWhCategory() {
-      let _res = await getMstWarehouseCategory({ status: "Active" });
+      let _res = await getMstWarehouseCategory({ status: 'Active' });
       for (const it of _res.data) {
         this.listWhCategory.push({
           label: it.name,
@@ -295,7 +299,7 @@ export default {
       }
     },
     async loadProvince() {
-      let _res = await getMstProvince({ status: "Active" });
+      let _res = await getMstProvince({ status: 'Active' });
       for (const it of _res.data) {
         this.listProvince.push({
           label: it.name,
@@ -322,15 +326,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },
