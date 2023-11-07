@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { HeaderManualBarcodeGenerator } from "../../component";
+import $axiosMertrack from '../../../apiMertrack';
+import { HeaderManualBarcodeGenerator } from '../../component';
 export default {
-  name: "ManualBarcodeGenerator",
+  name: 'ManualBarcodeGenerator',
   components: { HeaderManualBarcodeGenerator: HeaderManualBarcodeGenerator },
 
   mounted() {},
@@ -72,9 +72,9 @@ export default {
         if (data.length != 1) {
           this.$toast.open({
             message: `Data cannot be found`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return;
@@ -87,7 +87,7 @@ export default {
       });
     },
     getParent() {
-      let url = `/v3/helper/detail-item/stock?id=${this.detailData["parent"]}`;
+      let url = `/v3/helper/detail-item/stock?id=${this.detailData['parent']}`;
       $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
         if (data[0] && data[0].stocks) {
@@ -107,33 +107,33 @@ export default {
           width: 3508,
           height: 2480,
           style: {
-            transform: "scale(0.7)",
-            "transform-origin": "top left",
+            transform: 'scale(0.7)',
+            'transform-origin': 'top left',
           },
         })
         .then(function (data) {
           var img = new Image();
           img.src = data;
           const doc = new jsPDF({
-            orientation: "portrait",
-            format: "a4",
+            orientation: 'portrait',
+            format: 'a4',
           });
-          doc.addImage(img, "JPEG", 2, 0);
+          doc.addImage(img, 'JPEG', 2, 0);
           const date = new Date();
           const filename =
-            "showstatus_" +
+            'showstatus_' +
             date.getFullYear() +
-            ("0" + (date.getMonth() + 1)).slice(-2) +
-            ("0" + date.getDate()).slice(-2) +
-            ("0" + date.getHours()).slice(-2) +
-            ("0" + date.getMinutes()).slice(-2) +
-            ("0" + date.getSeconds()).slice(-2) +
-            ".pdf";
+            ('0' + (date.getMonth() + 1)).slice(-2) +
+            ('0' + date.getDate()).slice(-2) +
+            ('0' + date.getHours()).slice(-2) +
+            ('0' + date.getMinutes()).slice(-2) +
+            ('0' + date.getSeconds()).slice(-2) +
+            '.pdf';
           doc.save(filename);
         });
     },
     renderEpcHr(item) {
-      item = item.replace(/\(/g, " (");
+      item = item.replace(/\(/g, ' (');
       item = item.trim();
       return item;
     },

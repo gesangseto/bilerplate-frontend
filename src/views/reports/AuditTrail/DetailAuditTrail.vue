@@ -73,7 +73,7 @@
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === "id" ? "ID" : name.replace(/_/g, " ") }}
+                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
                       </p>
                     </template>
                   </CInput>
@@ -90,7 +90,7 @@
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === "id" ? "ID" : name.replace(/_/g, " ") }}
+                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
                       </p>
                     </template>
                   </CTextarea>
@@ -112,7 +112,9 @@
               <div v-if="Object.keys(dataBody).length > 0">
                 <hr />
                 <hr />
-                <h5>Data</h5>
+                <h5>
+                  {{ Object.keys(oldDataBody).length > 0 ? 'New' : '' }} Data
+                </h5>
                 <hr />
                 <div v-for="(value, name, index) in dataBody" :key="index">
                   <!-- VIEW JIKA KARAKTERNYA NORMAL -->
@@ -127,7 +129,7 @@
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === "id" ? "ID" : name.replace(/_/g, " ") }}
+                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
                       </p>
                     </template>
                   </CInput>
@@ -144,7 +146,7 @@
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === "id" ? "ID" : name.replace(/_/g, " ") }}
+                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
                       </p>
                     </template>
                   </CTextarea>
@@ -175,19 +177,17 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
-import jsPDF from "jspdf";
-import domtoimage from "dom-to-image";
-import Table from "../../base/Table.vue";
+import { capitalizeFirstLetter } from '../../../utils';
+import $axiosMertrack from '../../../apiMertrack';
+import jsPDF from 'jspdf';
+import domtoimage from 'dom-to-image';
 
 export default {
-  components: { Table },
-  name: "DetailAuditTrail",
+  name: 'DetailAuditTrail',
   watch: {
     customer: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -197,9 +197,9 @@ export default {
   data() {
     return {
       initial_load: true,
-      action: "",
-      route_action: "",
-      customer: { status: "Active", tlp_alt: "", tlp: "" },
+      action: '',
+      route_action: '',
+      customer: { status: 'Active', tlp_alt: '', tlp: '' },
 
       data: {},
       detail: {},
@@ -210,7 +210,7 @@ export default {
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -226,8 +226,8 @@ export default {
       $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.data = data;
-        this.dataBody = JSON.parse(this.data["data"]);
-        this.oldDataBody = JSON.parse(this.data["old_data"]) || {};
+        this.dataBody = JSON.parse(this.data['data']);
+        this.oldDataBody = JSON.parse(this.data['old_data']) || {};
       });
     },
     isJsonString(str) {
@@ -244,28 +244,28 @@ export default {
           width: 3508,
           height: 2480,
           style: {
-            transform: "scale(0.6)",
-            "transform-origin": "top left",
+            transform: 'scale(0.6)',
+            'transform-origin': 'top left',
           },
         })
         .then(function (data) {
           var img = new Image();
           img.src = data;
           const doc = new jsPDF({
-            orientation: "portrait",
-            format: "a4",
+            orientation: 'portrait',
+            format: 'a4',
           });
-          doc.addImage(img, "JPEG", 2, 0);
+          doc.addImage(img, 'JPEG', 2, 0);
           const date = new Date();
           const filename =
-            "showstatus_" +
+            'showstatus_' +
             date.getFullYear() +
-            ("0" + (date.getMonth() + 1)).slice(-2) +
-            ("0" + date.getDate()).slice(-2) +
-            ("0" + date.getHours()).slice(-2) +
-            ("0" + date.getMinutes()).slice(-2) +
-            ("0" + date.getSeconds()).slice(-2) +
-            ".pdf";
+            ('0' + (date.getMonth() + 1)).slice(-2) +
+            ('0' + date.getDate()).slice(-2) +
+            ('0' + date.getHours()).slice(-2) +
+            ('0' + date.getMinutes()).slice(-2) +
+            ('0' + date.getSeconds()).slice(-2) +
+            '.pdf';
           doc.save(filename);
         });
     },

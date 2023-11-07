@@ -132,7 +132,7 @@
               </CCol>
             </CRow>
             <hr />
-            <h4>Product Regulation</h4>
+            <h4>Product Registration</h4>
             <br />
             <CRow>
               <CCol sm="12">
@@ -304,7 +304,7 @@
               <CCol sm="12">
                 <CInput
                   :disabled="action == 'Read'"
-                  label="Storage Termperature *"
+                  label="Storage Temperature *"
                   placeholder="Enter product storage temperature for label printing"
                   @keyup="validationData()"
                   horizontal

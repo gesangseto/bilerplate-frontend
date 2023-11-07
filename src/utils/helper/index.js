@@ -38,7 +38,7 @@ export function isValidEpcKey(epc_key = String) {
     if (isAlphaNumeric(epc_key) && epc_key.length < 15) {
       result = true;
     } else if (isNumeric(epc_key)) {
-      if (epc_key.length === 18 && epc_key.length === 14) {
+      if (epc_key.length === 18 || epc_key.length === 14) {
         let num = epc_key.slice(0, -1);
         num = `${num}${gs1CheckDigit(num)}`;
         if (num != epc_key) {
