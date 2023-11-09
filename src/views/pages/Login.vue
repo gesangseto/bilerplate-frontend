@@ -150,9 +150,17 @@ export default {
 
   methods: {
     redirectReload() {
-      this.$router.push({ path: '/home' }).then(() => {
-        this.$router.go();
-      });
+      if (localStorage.getItem('current_url')) {
+        this.$router
+          .push({ path: localStorage.getItem('current_url') })
+          .then(() => {
+            // this.$router.go();
+          });
+      } else {
+        this.$router.push({ path: '/home' }).then(() => {
+          // this.$router.go();
+        });
+      }
     },
     async loadConfig() {
       let _res = await getSysConfig();
