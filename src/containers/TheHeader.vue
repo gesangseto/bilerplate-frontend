@@ -125,7 +125,7 @@ export default {
       then: moment().add(15, 'minutes'),
       current_route: null,
       limit: 30,
-      timeout: 0,
+      timeout: null,
       can_show: true,
       timeoutModal: false,
       notif: null,
@@ -138,12 +138,11 @@ export default {
   mounted() {
     this.timeout = this.getDifferentSecond();
     this.getNotif();
-    this.countingTImeOut();
   },
   beforeCreate() {
     if (!getProfile()) {
       clearStorage();
-      this.$router.push({ path: `/login` });
+      return this.$router.push({ path: `/login` });
     }
   },
   watch: {
@@ -155,6 +154,37 @@ export default {
         this.current_route = route;
         this.getNotif();
         this.checkPermission(route);
+      },
+    },
+    timeout: {
+      immediate: true,
+      handler(val) {
+        if (val != null && val > 0) {
+          if (val <= this.limit) {
+            if (!this.timeoutModal) {
+              this.can_show = true;
+            }
+            if (val <= this.limit && this.can_show) {
+              this.timeoutModal = true;
+              this.can_show = false;
+            }
+          } else {
+            this.timeoutModal = false;
+            this.can_show = true;
+          }
+          if (val % 10 == 0) {
+            setTimeout(() => {
+              let diff = this.getDifferentSecond();
+              this.timeout = diff === val ? val - 1 : diff;
+            }, 1000);
+          } else {
+            setTimeout(() => {
+              this.timeout -= 1;
+            }, 1000);
+          }
+        } else if (val != null && val <= 0) {
+          this.sessionExpired();
+        }
       },
     },
   },
@@ -188,31 +218,6 @@ export default {
       return sisa;
     },
 
-    countingTImeOut() {
-      if (this.timeout > 0) {
-        let sisa = this.timeout - 1;
-        if (sisa > this.limit) {
-          sisa = this.getDifferentSecond();
-          this.timeoutModal = false;
-          this.can_show = true;
-        }
-        if (!this.timeoutModal) {
-          sisa = this.getDifferentSecond();
-          this.can_show = true;
-        }
-        if (sisa <= this.limit && this.can_show) {
-          this.timeoutModal = true;
-          this.can_show = false;
-        }
-        this.timeout = sisa;
-        setTimeout(() => {
-          this.countingTImeOut();
-        }, 1000);
-      } else if (this.timeout <= 0) {
-        this.sessionExpired();
-        return;
-      }
-    },
     handleClickClose() {
       this.timeoutModal = false;
       this.getNotif();
@@ -258,6 +263,7 @@ export default {
         }
         this.notif = _res.data;
         this.notifLength = _res.data.length;
+        this.timeout = this.getDifferentSecond();
       }
       return;
     },
@@ -267,6 +273,7 @@ export default {
       localStorage.setItem('message', message);
       clearStorage();
       this.$router.push({ path: '/login' });
+      this.timeout = null;
       setLoginTimeout(-1);
       // window.location.reload();
       return;
