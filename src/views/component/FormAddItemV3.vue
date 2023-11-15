@@ -35,7 +35,12 @@
     </div>
 
     <CRow>
-      <CCol sm="12" md="12" lg="12" xl="12">
+      <CCol md="10" lg="10" xl="10">
+        <p style="font-size: bold" class="form-group form-check float-right">
+          Total Selected L1 Qty : {{ selected_quantity }}
+        </p>
+      </CCol>
+      <CCol md="2" lg="2" xl="2">
         <div
           class="form-group form-check float-right"
           style="padding-right: 50px"
@@ -106,6 +111,12 @@ export default {
     //   },
     //   deep: true,
     // },
+    'formData.stock': {
+      handler(arr) {
+        console.log(arr);
+      },
+      deep: true,
+    },
     'filter.from_warehouse': {
       handler() {
         this.resetForm();
@@ -130,6 +141,7 @@ export default {
       listProduct: [],
       listBatchNo: [],
       alertExpired: false,
+      selected_quantity: 0,
       formData: {
         product_id: null,
         batch_no: null,
@@ -230,6 +242,10 @@ export default {
     },
     returnResult() {
       let result = this.formData.stock.filter((e) => e.is_checked);
+      this.selected_quantity = result.reduce(
+        (acc, o) => acc + parseInt(o.quantity),
+        0
+      );
       this.$emit('handleResult', result);
     },
     getProduct() {
