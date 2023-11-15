@@ -182,6 +182,7 @@ export default {
   },
   methods: {
     resetForm() {
+      this.selected_quantity = 0;
       this.check_all = false;
       this.formData.stock = [];
       this.formData.product_id = null;
