@@ -36,9 +36,10 @@
 
     <CRow>
       <CCol md="10" lg="10" xl="10">
-        <p style="font-size: bold" class="form-group form-check float-right">
-          Total Selected L1 Qty : {{ selected_quantity }}
-        </p>
+        <div class="form-group form-check float-right">
+          Total Selected L1 Qty :
+          <a style="font-weight: bolder">{{ selected_quantity }}</a>
+        </div>
       </CCol>
       <CCol md="2" lg="2" xl="2">
         <div
