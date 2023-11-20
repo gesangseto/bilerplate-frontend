@@ -23,7 +23,7 @@
             striped
             sorter
             border
-            :items="items"
+            :items="reformatDatas"
             :fields="fields"
             style="font-size: 12px"
           >
@@ -108,6 +108,10 @@ export default {
           label: 'Name',
           _style: 'width:20%',
         },
+        {
+          key: 'code',
+          label: 'Code',
+        },
         { key: 'description', label: 'Description' },
         {
           key: 'status',
@@ -186,6 +190,16 @@ export default {
         });
         if (!_res.error) this.loadData();
       }
+    },
+  },
+  computed: {
+    reformatDatas() {
+      return this.items.map((item) => {
+        return {
+          ...item,
+          code: item.code || '',
+        };
+      });
     },
   },
 };

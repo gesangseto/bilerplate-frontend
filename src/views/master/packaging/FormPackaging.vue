@@ -8,7 +8,7 @@
           </CCardHeader>
           <CCardBody>
             <CForm>
-              <CInput :disabled="true" horizontal v-model="packaging.id">
+              <CInput :disabled="true" horizontal v-model="formData.id">
                 <template #label>
                   <p class="col-form-label col-sm-3">ID</p>
                 </template>
@@ -17,13 +17,8 @@
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Enter packaging name"
-                v-model="packaging.name"
-                invalid-feedback="Packaging name is required"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.packaging.name.$error && $v.packaging.name.required,
-                  'is-invalid': $v.packaging.name.$error,
-                }"
+                v-model="formData.name"
+                :is-valid="initial_load ? null : formData.name ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -34,18 +29,30 @@
                   </p>
                 </template>
               </CInput>
+              <CInput
+                :disabled="action == 'Read' ? true : false"
+                horizontal
+                placeholder="Enter Code name"
+                v-model="formData.code"
+                :is-valid="initial_load ? null : formData.code ? true : false"
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Code
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template>
+              </CInput>
               <CTextarea
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Enter packaging description"
-                v-model="packaging.description"
-                invalid-feedback="Packaging description is required"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.packaging.description.$error &&
-                    $v.packaging.description.required,
-                  'is-invalid': $v.packaging.description.$error,
-                }"
+                v-model="formData.description"
+                :is-valid="
+                  initial_load ? null : formData.description ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -61,8 +68,8 @@
                 <SwitchStatusMaster
                   :disabled="action == 'Read'"
                   :show_label="true"
-                  :default_value="packaging.status"
-                  v-on:onChange="packaging.status = $event"
+                  :default_value="formData.status"
+                  v-on:onChange="formData.status = $event"
                 />
               </CRow>
             </CForm>
@@ -97,9 +104,10 @@ export default {
   name: 'PackageForm',
   data() {
     return {
+      initial_load: true,
       route_action: '',
       action: 'Edit',
-      packaging: { status: 'Active', description: '', name: '' },
+      formData: { id: null, have_error: false },
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
@@ -119,21 +127,41 @@ export default {
     if (this.$route.params.id !== undefined) {
       let param = `id=${this.$route.params.id}`;
       let _res = await getMstPackaging(param);
-      this.packaging = _res.data[0];
+      this.formData = _res.data[0];
     }
   },
   methods: {
+    checkValidation() {
+      this.formData.have_error = false;
+      if (!this.formData.name) {
+        this.formData.have_error = true;
+      } else if (!this.formData.code) {
+        this.formData.have_error = true;
+      } else if (!this.formData.description) {
+        this.formData.have_error = true;
+      }
+      return;
+    },
     async save() {
+      this.initial_load = false;
+      this.checkValidation();
+      if (this.formData.have_error) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
-      this.$v.$touch();
-      if (this.$v.$invalid) {
-        return;
-      }
+
       if (confirm(message)) {
         this.$isLoading(true);
-        let dataPost = this.packaging;
+        let dataPost = this.formData;
         let res = {};
         if (dataPost.id) {
           res = await updateMstPackaging(dataPost);
