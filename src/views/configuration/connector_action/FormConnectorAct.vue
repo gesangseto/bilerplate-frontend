@@ -48,6 +48,20 @@
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
+                :placeholder="
+                  form.folder_sftp
+                    ? 'Default: ' + form.folder_sftp + '/Archive'
+                    : ''
+                "
+                v-model="form.folder_backup"
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">Backup Folder Path</p>
+                </template>
+              </CInput>
+              <CInput
+                :disabled="action == 'Read' ? true : false"
+                horizontal
                 placeholder="Enter time interval (in minute). Leave blank or set value to 0 to disable."
                 v-model="form.schedule"
                 type="number"
