@@ -76,11 +76,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePagination, exportData } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePagination, exportData } from '../../../utils';
 
 export default {
-  name: "ListConnectorAction",
+  name: 'ListConnectorAction',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -90,53 +90,57 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        search: "",
+        search: '',
         totalPages: 1,
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
+          key: 'id',
+          label: 'ID',
         },
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
+          key: 'name',
+          label: 'Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "description",
-          label: "Desc",
+          key: 'description',
+          label: 'Desc',
         },
         {
-          key: "connector_name",
-          label: "Connector",
+          key: 'connector_name',
+          label: 'Connector',
         },
         {
-          key: "folder_sftp",
-          label: "Folder SFTP",
+          key: 'using_connection',
+          label: 'SFTP Form Cloud',
         },
         {
-          key: "folder_backup",
-          label: "Folder Archive",
+          key: 'folder_sftp',
+          label: 'Folder SFTP',
         },
         {
-          key: "schedule",
-          label: "Time Interval (in minute)",
+          key: 'folder_backup',
+          label: 'Folder Archive',
         },
         {
-          key: "value_name",
-          label: "Key",
+          key: 'schedule',
+          label: 'Time Interval (in minute)',
         },
         {
-          key: "status",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'value_name',
+          label: 'Key',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'status',
+          label: 'Status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -217,10 +221,10 @@ export default {
             this.$toast.open({
               message: res.error
                 ? `${res.message}`
-                : "Data has been saved succesfully ",
-              type: res.error ? "error" : "success",
+                : 'Data has been saved succesfully ',
+              type: res.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
           });
@@ -232,9 +236,10 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          description: item.description || "",
-          folder_sftp: item.folder_sftp || "",
-          folder_backup: item.folder_backup || "",
+          description: item.description || '',
+          folder_sftp: item.folder_sftp || '',
+          folder_backup: item.folder_backup || '',
+          using_connection: item.connection ? 'TRUE' : 'FALSE',
         };
       });
     },

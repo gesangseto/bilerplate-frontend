@@ -58,6 +58,64 @@
                   </p>
                 </template>
               </CInput>
+              <CRow form class="form-group">
+                <CCol sm="3"> Using Connection </CCol>
+                <SwitchDefault
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="form.using_connection"
+                  v-on:onChange="form.using_connection = $event"
+                />
+              </CRow>
+              <CCard v-if="form.using_connection">
+                <CCardBody>
+                  <CInput
+                    :disabled="action == 'Read' ? true : false"
+                    horizontal
+                    placeholder="Enter Connection Host"
+                    label="Host *"
+                    v-model="connection.host"
+                    :is-valid="
+                      initialLoad ? null : !connection.host ? false : true
+                    "
+                  >
+                  </CInput>
+                  <CInput
+                    :disabled="action == 'Read' ? true : false"
+                    horizontal
+                    placeholder="Enter Connection PORT"
+                    label="Port *"
+                    v-model="connection.port"
+                    :is-valid="
+                      initialLoad ? null : !connection.port ? false : true
+                    "
+                  >
+                  </CInput>
+                  <CInput
+                    :disabled="action == 'Read' ? true : false"
+                    horizontal
+                    placeholder="Enter Username"
+                    label="Username *"
+                    v-model="connection.username"
+                    :is-valid="
+                      initialLoad ? null : !connection.username ? false : true
+                    "
+                  >
+                  </CInput>
+                  <CInput
+                    :disabled="action == 'Read' ? true : false"
+                    horizontal
+                    type="password"
+                    placeholder="Enter Password"
+                    label="Password *"
+                    v-model="connection.password"
+                    :is-valid="
+                      initialLoad ? null : !connection.password ? false : true
+                    "
+                  >
+                  </CInput>
+                </CCardBody>
+              </CCard>
               <CSelect
                 placeholder="-Select-"
                 :options="listConnector"
@@ -191,6 +249,14 @@ import $axiosMertrack from '../../../apiMertrack';
 
 export default {
   name: 'Connector',
+  watch: {
+    form: {
+      handler(item) {
+        console.log(item);
+      },
+      deep: true,
+    },
+  },
   data() {
     return {
       initialLoad: true,
@@ -203,7 +269,10 @@ export default {
         value: null,
         connector_id: null,
         name: '',
+        using_connection: true,
+        connection: null,
       },
+      connection: { ip: null, username: null, password: null, port: null },
       detailConnector: { params: [] },
       listConnector: [],
       listConnectorProperty: [],
@@ -230,7 +299,10 @@ export default {
         .get(`/v3/connector/connector-action?id=${this.$route.params.id}`)
         .then((response) => {
           let data = response.data.data[0];
+          console.log(data);
           this.form = data;
+          if (this.form.using_connection)
+            this.connection = this.form.connection;
           this.detailConnector.params = data.params;
           let idx = 0;
           for (const it of data.params) {
@@ -306,6 +378,17 @@ export default {
       for (const key in this.form) {
         if (required.includes(key) && !this.form[key]) next = false;
       }
+      if (this.form.using_connection) {
+        if (!this.connection.host) {
+          next = false;
+        } else if (!this.connection.port) {
+          this.connection.port = 22;
+        } else if (!this.connection.username) {
+          next = false;
+        } else if (!this.connection.password) {
+          next = false;
+        }
+      }
       return next;
     },
     save() {
@@ -325,6 +408,11 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
+        if (this.form.using_connection) {
+          this.form.connection = this.connection;
+        } else {
+          this.form.connection = null;
+        }
         for (const it of this.form.params) {
           if (it.variable_name === this.form.key) {
             this.form.value = it.variable_value;
