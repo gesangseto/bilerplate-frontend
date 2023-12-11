@@ -148,6 +148,13 @@
                   </p>
                 </template>
               </CInput>
+              <CInput
+                disabled
+                v-if="action != 'Create'"
+                label="Status"
+                horizontal
+                v-model="formData.status_name"
+              />
             </CCol>
             <CCol sm="6" md="6" lg="6">
               <CInput
@@ -250,7 +257,7 @@
               >
             </CCol>
           </CRow>
-          <!-- DATA TABLE untuk menampilkan semua data yang sudah berhasil di aggregatio oleh pihak ke 3 -->
+          <!-- DATA TABLE untuk menampilkan semua data yang sudah berhasil di production - aggregatio oleh pihak ke 3 -->
           <CDataTable
             hover
             striped
@@ -266,7 +273,7 @@
             <template #action="{ item, index }">
               <td>
                 <CButton
-                  v-if="item.packaging_level > 1"
+                  v-if="item.packaging_level > 1 && item.quantity != '-'"
                   size="sm"
                   color="info"
                   style="font-size: 12px"
@@ -588,6 +595,10 @@ export default {
         {
           key: 'quantity',
           label: 'L1 Qty',
+        },
+        {
+          key: 'status_name',
+          label: 'Status',
         },
         { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
