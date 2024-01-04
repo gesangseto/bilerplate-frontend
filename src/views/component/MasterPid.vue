@@ -243,7 +243,10 @@
                   <td>
                     <CSelect
                       size="sm"
-                      :disabled="!product.flag_upd_del"
+                      :disabled="
+                        !product.flag_upd_del &&
+                        product.mst_pid[index - 1].conf_layout_id
+                      "
                       placeholder="-Select-"
                       :options="
                         !product.mst_pid[index - 1].epc_type

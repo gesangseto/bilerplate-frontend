@@ -451,6 +451,17 @@ export default {
       },
       deep: true,
     },
+    'product.mst_pid': {
+      handler(item = Array) {
+        let pid = item.find(
+          (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
+        );
+        let id1 = null;
+        if (this.product.gtin) id1 = Array.from(this.product.gtin)[0];
+        if (pid && pid.id1 != id1) this.handleChangeGtin();
+      },
+      deep: true,
+    },
   },
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
@@ -574,10 +585,10 @@ export default {
     },
     handleChangeGtin() {
       // Jika terjadi perubahan yang mempengaruhi gtin
-      let pids = JSON.parse(JSON.stringify(this.product.mst_pid));
-      let pid_l1 = pids.find(
+      let pid_l1 = this.product.mst_pid.find(
         (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
       );
+      console.log(pid_l1);
       let id1 = null;
       if (pid_l1) id1 = pid_l1.id1;
       let item_reference = this.product.item_reference;
