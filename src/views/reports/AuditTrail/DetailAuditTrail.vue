@@ -119,10 +119,14 @@
                 <div v-for="(value, name, index) in dataBody" :key="index">
                   <!-- VIEW JIKA KARAKTERNYA NORMAL -->
                   <CInput
-                    v-if="!Array.isArray(value) && value && value.length <= 100"
+                    v-if="
+                      !Array.isArray(value) &&
+                      value &&
+                      value.toString().length <= 100
+                    "
                     disabled
                     horizontal
-                    :value="value"
+                    :value="value.toString()"
                   >
                     <template #label>
                       <p
@@ -135,10 +139,14 @@
                   </CInput>
                   <!-- VIEW JIKA KARAKTERNYA TERLALU BANYAK -->
                   <CTextarea
-                    v-if="!Array.isArray(value) && value && value.length > 100"
+                    v-if="
+                      !Array.isArray(value) &&
+                      value &&
+                      value.toString().length > 100
+                    "
                     disabled
                     horizontal
-                    :value="value"
+                    :value="value.toString()"
                     rows="10"
                   >
                     <template #label>
@@ -228,6 +236,7 @@ export default {
         this.data = data;
         this.dataBody = JSON.parse(this.data['data']);
         this.oldDataBody = JSON.parse(this.data['old_data']) || {};
+        console.log(this.dataBody);
       });
     },
     isJsonString(str) {
