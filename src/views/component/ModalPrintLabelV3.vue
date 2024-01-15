@@ -13,6 +13,7 @@
         :options="printers"
         placeholder="Please select"
       />
+      <CInput horizontal v-model="formData.reason" label="Reson" />
       <!-- <label for="installedPrinterName">Select an installed Printer: </label>
       <select name="printer" id="printer" v-model="selected_printer">
         <option disabled n-bind:key="undefined">Select printer</option>
@@ -30,7 +31,7 @@
         type="button"
         @click="handleClickPrint()"
       >
-        Print [{{ stockData.print_count ? stockData.print_count : 1 }}]
+        Print [{{ formData.print_count ? formData.print_count : '-' }}]
       </CButton>
       <CButton
         size="sm"
@@ -64,9 +65,7 @@ export default {
     item: {
       handler(n) {
         if (Object.keys(n).length > 0) {
-          // this.loadData(n);
           this.loadData(n);
-          this.isOpenModal = true;
         }
       },
       deep: true,
@@ -83,8 +82,16 @@ export default {
       printData: '',
       print2default: false,
       printers: [],
-      stockData: {},
       selected_printer: '',
+      formData: {
+        id: '',
+        serial: '',
+        epc_key: '',
+        reason: '',
+        update_count: true,
+        print_count: 1,
+        items: [],
+      },
     };
   },
   mounted() {
@@ -103,7 +110,7 @@ export default {
       };
     },
 
-    loadData(itm, updateCount, doPrint) {
+    loadData(itm) {
       let _body = { items: [] };
       if (itm.items) {
         for (const it of itm.items) {
@@ -112,7 +119,6 @@ export default {
         $axiosMertrack.post(`/v3/helper/print-layout`, _body).then((result) => {
           let _data = result.data;
           if (_data.error) {
-            this.isOpenModal = false;
             return this.$toast.open({
               message: `${_data.message}`,
               type: 'error',
@@ -120,13 +126,11 @@ export default {
               position: 'top-right',
               duration: 3000,
             });
+          } else {
+            this.formData.items = _data.data;
+            this.formData.print_count = null;
+            this.isOpenModal = true;
           }
-          let content = '';
-          for (const it of _data.data) {
-            content += it._layout;
-          }
-          this.stockData = _data.data[0];
-          this.printData = content;
         });
       } else if (!itm.items) {
         let serial = itm.trx_pack_serial || itm.serial;
@@ -134,7 +138,6 @@ export default {
         _body = {
           serial: serial,
           epc_key: epc_key,
-          update_count: updateCount,
         };
         var _url = new URLSearchParams(_body).toString();
         $axiosMertrack.get(`/v3/helper/print-layout?${_url}`).then((result) => {
@@ -148,38 +151,50 @@ export default {
               position: 'top-right',
               duration: 3000,
             });
-          }
-          this.stockData = _data.data[0];
-          this.printData = _data.data[0]._layout;
-          if (doPrint) {
-            this.doPrintZPL();
+          } else {
+            this.formData = _data.data[0];
+            this.isOpenModal = true;
           }
         });
       }
       return;
     },
-
-    updatePrintCount() {
+    postAndPrint() {
       let _body = {
-        serial: this.stockData.serial,
-        epc_key: this.stockData.epc_key,
+        reason: this.formData?.reason || '-',
       };
-      $axiosMertrack
-        .post(`/v3/helper/print-layout/update-count`, _body)
-        .then((result) => {
-          let _data = result.data;
-          if (_data.error) {
-            this.isOpenModal = false;
-            return this.$toast.open({
-              message: `${_data.message}`,
-              type: 'error',
-              dissmissible: true,
-              position: 'top-right',
-              duration: 3000,
-            });
-          }
-        });
+      if (this.formData?.items && this.formData?.items.length > 0) {
+        _body.update_count = false;
+        _body.items = this.formData?.items;
+      } else {
+        let serial = this.formData?.trx_pack_serial || this.formData?.serial;
+        let epc_key = this.formData?.trx_pack_epc_key || this.formData?.epc_key;
+        _body.update_count = true;
+        _body.serial = serial;
+        _body.epc_key = epc_key;
+      }
+      $axiosMertrack.post(`/v3/helper/print-layout`, _body).then((result) => {
+        let _data = result.data;
+        if (_data.error) {
+          this.isOpenModal = false;
+          return this.$toast.open({
+            message: `${_data.message}`,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 3000,
+          });
+        }
+        let content_itf = '';
+        for (const it of _data.data) {
+          content_itf += it._layout;
+        }
+        this.printData = content_itf;
+        this.doPrintZPL();
+      });
+      return;
     },
+
     handleClickPrint() {
       if (this.selected_printer === '' && !this.print2default) {
         alert('You must select a printer');
@@ -187,8 +202,7 @@ export default {
       }
       let message = `You are about to print this data.\nThis operation will be update the count of print.\nWould you like to continue?`;
       if (confirm(message)) {
-        this.loadData(this.item, true, true);
-        // this.doPrintZPL();
+        this.postAndPrint();
         return;
       }
     },
@@ -197,7 +211,6 @@ export default {
         alert('You must select a printer');
         return;
       }
-      NProgress.start();
       let cpj = new JSPM.ClientPrintJob();
       if (this.print2default) {
         cpj.clientPrinter = new JSPM.DefaultPrinter();
@@ -205,7 +218,6 @@ export default {
         cpj.clientPrinter = new JSPM.InstalledPrinter(this.selected_printer);
       }
       cpj.printerCommands = this.printData;
-      NProgress.done();
       cpj.sendToClient();
     },
     onPrinterChange(value) {

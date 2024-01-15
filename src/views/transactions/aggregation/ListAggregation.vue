@@ -56,7 +56,10 @@
                     /> -->
                     &nbsp;
                     <ButtonPermission
-                      :buttonProperty="btn_printProp2"
+                      :buttonProperty="{
+                        ...btn_printProp2,
+                        color: item.allow_print ? 'warning' : 'secondary',
+                      }"
                       :permission="'print'"
                       @click="selected_data = item"
                     />
@@ -140,7 +143,7 @@ export default {
       btn_printProp2: {
         size: 'sm',
         class: 'float-right',
-        color: 'danger',
+        color: 'warning',
         icon: 'print',
         text: '',
         tooltip: 'Print this data',
@@ -193,7 +196,7 @@ export default {
         {
           key: 'action',
           label: 'Action',
-          _style: 'width:10%',
+          _style: 'width:15%',
         },
       ],
     };
@@ -202,12 +205,13 @@ export default {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
       let url = `/v3/transaction/aggregation?raw=true&${param}`;
+      this.items = [];
       $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
         this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
+        this.items = res.data.data;
       });
     },
     handleClickFilter(val) {

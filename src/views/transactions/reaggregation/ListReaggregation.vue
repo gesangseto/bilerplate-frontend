@@ -56,7 +56,10 @@
                     /> -->
                     &nbsp;
                     <ButtonPermission
-                      :buttonProperty="btn_printProp2"
+                      :buttonProperty="{
+                        ...btn_printProp2,
+                        color: item.allow_print ? 'warning' : 'secondary',
+                      }"
                       :permission="'print'"
                       @click="selected_data = item"
                     />
@@ -198,7 +201,7 @@ export default {
         {
           key: 'action',
           label: 'Action',
-          _style: 'width:10%',
+          _style: 'width:15%',
         },
       ],
     };
