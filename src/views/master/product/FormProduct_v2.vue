@@ -336,7 +336,13 @@
             </div>
           </CForm>
         </CCardBody>
-        <CModal
+        <ProductWeight
+          :product="product"
+          :showModal="viewModalWeight"
+          v-on:onCloseModal="viewModalWeight = false"
+          v-on:onSubmit="handleChangeWeight($event)"
+        />
+        <!-- <CModal
           title="Weight Configuration"
           color="warning"
           :show.sync="viewModalWeight"
@@ -409,7 +415,7 @@
               <CIcon name="cil-check-circle" /> Set
             </CButton>
           </template>
-        </CModal>
+        </CModal> -->
         <CCardFooter>
           <CButton
             v-if="action == 'Read' ? false : true"
@@ -553,6 +559,9 @@ export default {
   },
 
   methods: {
+    handleChangeWeight(item) {
+      this.product = { ...this.product, ...item };
+    },
     initial_error() {
       // Inisialisasi error untuk PRODUCT
       let tmp = {
@@ -588,7 +597,6 @@ export default {
       let pid_l1 = this.product.mst_pid.find(
         (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
       );
-      console.log(pid_l1);
       let id1 = null;
       if (pid_l1) id1 = pid_l1.id1;
       let item_reference = this.product.item_reference;
