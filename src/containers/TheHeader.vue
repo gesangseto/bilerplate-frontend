@@ -133,6 +133,7 @@ export default {
       notifLength: 0,
       notification: 0,
       notifId: [],
+      next_count: true,
     };
   },
   mounted() {
@@ -159,7 +160,8 @@ export default {
     timeout: {
       immediate: true,
       handler(val) {
-        if (val != null && val > 0) {
+        if (val != null && val > 0 && this.next_count) {
+          this.next_count = false;
           if (val <= this.limit) {
             if (!this.timeoutModal) {
               this.can_show = true;
@@ -172,13 +174,16 @@ export default {
             this.timeoutModal = false;
             this.can_show = true;
           }
+          // Resync timeout setiap 10 detik
           if (val % 10 == 0) {
             setTimeout(() => {
               let diff = this.getDifferentSecond();
+              this.next_count = true;
               this.timeout = diff === val ? val - 1 : diff;
             }, 1000);
           } else {
             setTimeout(() => {
+              this.next_count = true;
               this.timeout -= 1;
             }, 1000);
           }
