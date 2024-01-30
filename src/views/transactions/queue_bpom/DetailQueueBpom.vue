@@ -45,6 +45,19 @@
                         />
                       </td>
                     </tr>
+                    <tr
+                      :v-if="formData.remark ? true : false"
+                      style="height: 50px"
+                    >
+                      <td>Submit Remark</td>
+                      <td>
+                        <textarea
+                          class="form-control"
+                          readonly
+                          v-model="formData.remark"
+                        />
+                      </td>
+                    </tr>
                   </table>
                 </CCol>
               </CRow>
@@ -52,11 +65,19 @@
               <CButton
                 v-if="formData.can_proccess"
                 color="success"
-                size="sm"
                 @click="sendToBpom(formData)"
                 class="m-1 float-right"
               >
                 <v-icon name="paper-plane" />
+              </CButton>
+              <CButton
+                v-if="formData.can_proccess"
+                color="info"
+                @click="viewModal = true"
+                class="m-1 float-right"
+              >
+                Submit Manual&nbsp;
+                <v-icon name="clipboard-check" />
               </CButton>
               <CDataTable
                 tableFilter
@@ -68,21 +89,7 @@
                 :fields="fields"
                 class="text-left"
                 style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td>
-                    <CButton
-                      v-if="item.packaging_level > 1"
-                      color="info"
-                      size="sm"
-                      @click="rowClicked(item, index)"
-                      class="px-2 mx-2"
-                    >
-                      <v-icon name="eye" />
-                    </CButton>
-                  </td>
-                </template>
-              </CDataTable>
+              />
             </CCol>
           </CRow>
         </CCardBody>
@@ -97,10 +104,32 @@
       </CCard>
     </CCol>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Submit Manual" color="warning" :show.sync="viewModal">
+      <CTextarea
+        :is-valid="formForceUpdate.remark ? true : false"
+        invalid-feedback="Remark is required"
+        placeholder="Enter Remark"
+        v-model="formForceUpdate.remark"
+        rows="5"
+      >
+        <template #label>
+          <p>
+            Remark
+            <span class="text-danger">
+              <strong>*</strong>
+            </span>
+          </p>
+        </template>
+      </CTextarea>
       <template #footer>
-        <CButton size="sm" color="danger" type="button" @click="closeModal()">
+        <CButton
+          @click="submitForceUpdate()"
+          :disabled="!formForceUpdate.remark"
+          color="primary"
+        >
+          <CIcon name="cil-check-circle" /> Submit
+        </CButton>
+        <CButton color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
         </CButton>
       </template>
@@ -131,18 +160,10 @@ export default {
       detail_item: {},
       datas: [],
       viewModal: false,
-      view: {
-        productId: '',
-        productName: '',
-        batch: '',
-        serial: [],
-        gtin: '',
-        nie: '',
-        expiredDate: '',
+      formForceUpdate: {
+        trx_ref_id: null,
+        remark: null,
       },
-      sn: false,
-      test: null,
-      status: '',
       formData: {},
       formConnector: {
         connector_action_id: null,
@@ -152,12 +173,6 @@ export default {
           created_by: getUserId(),
         },
       },
-      pages: null,
-      page: null,
-      totalPages: 0,
-      size: null,
-      keyword: '',
-      search: false,
       items: [],
       fields: [
         {
@@ -233,6 +248,7 @@ export default {
     loadData() {
       this.items = [];
       this.formConnector.data.trx_ref_id = this.$route.params.id;
+      this.formForceUpdate.trx_ref_id = this.$route.params.id;
       let param = { trx_ref_id: this.$route.params.id };
       let url = `/v3/transaction/queue-bpom?${new URLSearchParams(param)}`;
       $axiosMertrack.get(url).then((res) => {
@@ -360,6 +376,24 @@ export default {
     closeModal() {
       this.datas = [];
       this.viewModal = false;
+    },
+    submitForceUpdate() {
+      $axiosMertrack
+        .post(`/v3/transaction/queue-bpom`, this.formForceUpdate)
+        .then((res) => {
+          let data = res.data;
+          if (data.error) {
+            this.$toast.open({
+              message: data.message,
+              type: 'error',
+              dissmissible: true,
+              position: 'top-right',
+              duration: 5000,
+            });
+          }
+          this.loadData();
+          this.viewModal = false;
+        });
     },
     handleClickExport(type) {
       exportDataV3({
