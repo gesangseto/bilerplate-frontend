@@ -134,7 +134,7 @@
               <CCol sm="12">
                 <CInput
                   :disabled="action == 'Read' ? true : false"
-                  type="password"
+                  :type="showPassword == false ? 'password' : 'text'"
                   :placeholder="
                     action === 'Update'
                       ? `Leave it blank if you don't want to change password.`
@@ -153,7 +153,15 @@
                     <p class="col-form-label col-sm-3">
                       Password
                       <span class="text-danger"><strong>*</strong></span>
-                    </p>
+                    </p> </template
+                  ><template #append-content>
+                    <CButton
+                      style="font-size: 10pt; margin: -10pt"
+                      @click="showPassword = !showPassword"
+                    >
+                      <v-icon v-if="!showPassword" name="eye-slash" />
+                      <v-icon v-if="showPassword" name="eye" />
+                    </CButton>
                   </template>
                 </CInput>
               </CCol>
@@ -441,6 +449,7 @@ import {
   isPhone,
   coutryCode,
   isEmail,
+  validationPassword,
 } from '../../../utils';
 import {
   getMstUser,
@@ -462,6 +471,21 @@ export default {
         }
       },
     },
+    'user.pwd': {
+      deep: true,
+      handler(data) {
+        this.required.pwd.error = false;
+        this.needPassword = false;
+        if (data) {
+          let check = validationPassword(data);
+          if (typeof check === 'string') {
+            this.needPassword = true;
+            this.required.pwd.error = true;
+            this.required.pwd.message = check;
+          }
+        }
+      },
+    },
   },
   mounted() {
     this.reformatCountryCode();
@@ -480,6 +504,7 @@ export default {
       initial_load: true,
       action: '',
       route_action: '',
+      showPassword: false,
       departmentOptions: [],
       optionSections: [],
       needPassword: true,
@@ -617,6 +642,12 @@ export default {
         } else {
           this.required[rq].error = false;
         }
+      }
+      // check validation regex
+      if (validationPassword(this.user.pwd)) {
+        this.required.pwd.error = true;
+        this.required.pwd.message = validationPassword(this.user.pwd);
+        have_error = true;
       }
       // Check Eployee ID
       if (!this.user.employee_id) {

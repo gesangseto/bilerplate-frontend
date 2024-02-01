@@ -1,4 +1,5 @@
 import { isAlphaNumeric, isNumeric } from '../costumUtils';
+import { getConfig } from '../storage';
 
 export function calculatePagination({ filter = Object, item = Object }) {
   if (item.hasOwnProperty('status') && item.hasOwnProperty('headers')) {
@@ -177,4 +178,33 @@ export function strToBool(str) {
   } else {
     return false;
   }
+}
+
+export function validationPassword(input) {
+  let conf = getConfig();
+  if (input && conf.password_pattern) {
+    let pattern = JSON.parse(conf.password_pattern);
+    if (pattern.regex) {
+      let regex = new RegExp(pattern.regex, 'gm');
+      if (!regex.test(input)) {
+        let msg = `Password must`;
+        if (pattern.min && pattern.max)
+          msg += ` be ${pattern.min}-${pattern.max} characters long and`;
+        else if (pattern.min)
+          msg += ` be ${pattern.min} characters min long and`;
+        else if (pattern.max) msg += `be ${pattern.max} characters long and `;
+
+        if (pattern.alphabet_lower) msg += ` contain one lowercase and`;
+        if (pattern.alphabet_upper) msg += ` contain one uppercase and`;
+        if (pattern.numeric) msg += ` contain one numeric and`;
+        if (pattern.symbol) msg += ` contain one symbol and`;
+
+        if (msg.endsWith('and')) {
+          msg = msg.slice(0, -3).trim();
+        }
+        return msg;
+      }
+    }
+  }
+  return;
 }

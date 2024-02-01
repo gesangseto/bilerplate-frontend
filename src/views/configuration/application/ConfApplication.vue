@@ -166,6 +166,122 @@
 
               <CCard>
                 <CCardHeader style="font-weight: bold">
+                  Password Validation
+                </CCardHeader>
+                <CCardBody>
+                  <CRow form class="form-group">
+                    <CCol sm="6">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="4" class="col-form-label">
+                          Min Character
+                        </CCol>
+                        <CCol sm="8">
+                          <CInput
+                            horizontal
+                            type="number"
+                            v-model="data.password_pattern.min"
+                            :is-valid="
+                              data.password_pattern.max &&
+                              data.password_pattern.min
+                                ? parseInt(data.password_pattern.min) >
+                                  parseInt(data.password_pattern.max)
+                                  ? false
+                                  : true
+                                : true
+                            "
+                            invalid-feedback="Min value must smaller than Max value"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="6">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="4" class="col-form-label">
+                          Max Character
+                        </CCol>
+                        <CCol sm="8">
+                          <CInput
+                            horizontal
+                            type="number"
+                            v-model="data.password_pattern.max"
+                            :is-valid="
+                              data.password_pattern.max &&
+                              data.password_pattern.min
+                                ? parseInt(data.password_pattern.min) >
+                                  parseInt(data.password_pattern.max)
+                                  ? false
+                                  : true
+                                : true
+                            "
+                            invalid-feedback="Max value must greater than Min value"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+
+                  <CRow form class="form-group">
+                    <CCol sm="3">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Alphabet (Lower Case)
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.password_pattern.alphabet_lower"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="3">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Alphabet (Upper Case)
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.password_pattern.alphabet_upper"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="3">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Numeric
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.password_pattern.numeric"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="3">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Symbol
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.password_pattern.symbol"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+                </CCardBody>
+              </CCard>
+              <CCard>
+                <CCardHeader style="font-weight: bold">
                   List Android ID
                 </CCardHeader>
                 <CCardBody>
@@ -642,6 +758,14 @@ export default {
         login: 'Choose file...',
         home: 'Choose file...',
       },
+      password_pattern: {
+        min: null,
+        max: null,
+        alphabet_lower: false,
+        alphabet_upper: false,
+        numeric: false,
+        symbol: false,
+      },
       data: {
         Username: '',
         UserPassword: '',
@@ -669,6 +793,7 @@ export default {
         Latitude: '',
         Longitude: '',
         list_device: [],
+        password_pattern: this.password_pattern,
       },
       devicesLooping: 0,
       periodicBackupOptions: [
@@ -709,8 +834,14 @@ export default {
       let _res = await getSysConfig();
       if (_res) {
         let data = _res.data[0];
-        this.data = data;
+        this.data = {
+          ...data,
+          password_pattern: data.password_pattern
+            ? JSON.parse(data.password_pattern)
+            : this.password_pattern,
+        };
         this.devicesLooping = data.total_device;
+        console.log(this.data);
       }
       return;
     },
@@ -747,15 +878,18 @@ export default {
         'identity_logo_path',
         'entity_address',
       ];
+      // Check Pattern
+      if (this.data.password_pattern) {
+        let patt = this.data.password_pattern;
+        if (patt.min && patt.max) {
+          if (parseInt(patt.min) > parseInt(patt.max)) {
+            return false;
+          }
+        }
+        console.log(patt);
+      }
       for (const it of required) {
         if (!this.data[it]) {
-          this.$toast.open({
-            message: 'Please complete all required data',
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
           return false;
         }
       }
@@ -764,6 +898,13 @@ export default {
     save() {
       this.initialLoad = false;
       if (!this.formValidation()) {
+        this.$toast.open({
+          message: 'Please complete all required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
       this.message.errorlevel_indicator_box_gtin = '';
@@ -781,6 +922,7 @@ export default {
       }
       let total = this.data.total_device;
       this.data.list_device = this.data.list_device.slice(0, total);
+      this.data.password_pattern = JSON.stringify(this.data.password_pattern);
       $axiosMertrack
         .post(`v3/configuration/application`, this.data)
         .then((result) => {

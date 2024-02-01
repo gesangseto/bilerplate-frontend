@@ -43,12 +43,12 @@
             <strong>Update Password</strong>
           </CCardHeader>
           <CCardBody>
-            <CRow class="mt-3"
-              ><CCol md="6"> Old Password </CCol>
+            <CRow class="mt-3">
+              <CCol md="6"> Old Password </CCol>
               <CCol md="6">
                 <CInput
                   placeholder="Old Password"
-                  type="password"
+                  :type="showPassword == false ? 'password' : 'text'"
                   autocomplete="old-password"
                   v-model="form_data.oldPassword"
                   :invalid-feedback="required.oldPassword.message"
@@ -62,21 +62,22 @@
               <CCol md="6">
                 <CInput
                   placeholder="New Password"
-                  type="password"
+                  :type="showPassword == false ? 'password' : 'text'"
                   autocomplete="bew-password"
                   v-model="form_data.newPassword"
                   :invalid-feedback="required.newPassword.message"
-                  :add-input-classes="{
-                    'is-invalid': required.newPassword.error,
-                  }"
-                /> </CCol
-            ></CRow>
-            <CRow
-              ><CCol md="6"> Confirm New Password </CCol>
+                  :is-valid="
+                    !form_data.newPassword ? null : !required.newPassword.error
+                  "
+                />
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md="6"> Confirm New Password </CCol>
               <CCol md="6">
                 <CInput
                   placeholder="Confirm Password"
-                  type="password"
+                  :type="showPassword == false ? 'password' : 'text'"
                   autocomplete="confirm-password"
                   v-model="form_data.confirmPassword"
                   :invalid-feedback="
@@ -84,22 +85,34 @@
                       ? 'Confirm password is required'
                       : 'Confirmation password does not match'
                   "
-                  :add-input-classes="{
-                    'is-invalid':
-                      form_data.newPassword !== form_data.confirmPassword,
-                  }"
-                /> </CCol
-            ></CRow>
+                  :is-valid="
+                    !form_data.newPassword
+                      ? null
+                      : form_data.newPassword === form_data.confirmPassword
+                  "
+                />
+              </CCol>
+            </CRow>
           </CCardBody>
-          <CCardFooter
-            ><CButton
+          <CCardFooter>
+            <CButton
               size="sm"
               class="float-right ml-2"
               color="success"
               @click="changePassword"
-              >Submit</CButton
-            ></CCardFooter
-          >
+            >
+              Save
+            </CButton>
+
+            <CButton
+              size="sm"
+              class="float-right"
+              @click="showPassword = !showPassword"
+            >
+              <v-icon v-if="!showPassword" name="eye-slash" size="sm" />
+              <v-icon v-if="showPassword" name="eye" size="sm" />
+            </CButton>
+          </CCardFooter>
         </CCard>
       </CCol>
       <CCol col="6" xl="6">
@@ -118,14 +131,15 @@
               </CCol>
             </CRow>
           </CCardBody>
-          <CCardFooter
-            ><CButton
+          <CCardFooter>
+            <CButton
               size="sm"
               class="float-right ml-2"
               color="success"
               @click="changeConf"
-              >Submit</CButton
-            ></CCardFooter
+            >
+              Save
+            </CButton></CCardFooter
           >
         </CCard>
       </CCol>
@@ -134,16 +148,17 @@
 </template>
 
 <script>
-import { updateMstUser } from "../../../resource/MstUser";
-import { authChangePwd } from "../../../resource/SysAuth";
+import { updateMstUser } from '../../../resource/MstUser';
+import { authChangePwd } from '../../../resource/SysAuth';
 import {
   getConfUserApp,
   getProfile,
   getUserId,
   setProfile,
-} from "../../../utils";
+  validationPassword,
+} from '../../../utils';
 export default {
-  name: "UserSetting",
+  name: 'UserSetting',
   components: {},
   watch: {
     form_data: {
@@ -154,23 +169,36 @@ export default {
         }
       },
     },
+    'form_data.newPassword': {
+      deep: true,
+      handler(data) {
+        this.required.newPassword.message = 'New password is required';
+        this.required.newPassword.error = false;
+        let check = validationPassword(data);
+        if (check) {
+          this.required.newPassword.error = true;
+          this.required.newPassword.message = check;
+        }
+      },
+    },
   },
   data() {
     return {
       initial_load: true,
       form_data: {
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: '',
       },
+      showPassword: false,
       conf_user_app: {},
       profile: {},
       required: {
-        oldPassword: { error: false, message: "Old password is required" },
-        newPassword: { error: false, message: "New password is required" },
+        oldPassword: { error: false, message: 'Old password is required' },
+        newPassword: { error: false, message: 'New password is required' },
         confirmPassword: {
           error: false,
-          message: "Confirm new password required",
+          message: 'Confirm new password required',
         },
       },
     };
@@ -203,8 +231,15 @@ export default {
       this.checkValidation();
       if (this.form_data.have_error) {
         return;
-      }
-      if (this.form_data.newPassword !== this.form_data.confirmPassword) {
+      } else if (
+        this.form_data.newPassword !== this.form_data.confirmPassword
+      ) {
+        return;
+      } else if (validationPassword(this.form_data.newPassword)) {
+        this.required.newPassword.error = true;
+        this.required.newPassword.message = validationPassword(
+          this.form_data.newPassword
+        );
         return;
       }
       this.$isLoading(true);
@@ -216,15 +251,15 @@ export default {
 
       this.$isLoading(false);
       this.$toast.open({
-        message: res["error"]
-          ? `${res["message"]}`
-          : "Data has been saved succesfully ",
-        type: res.error ? "error" : "success",
+        message: res['error']
+          ? `${res['message']}`
+          : 'Data has been saved succesfully ',
+        type: res.error ? 'error' : 'success',
         dissmissible: true,
-        position: "top-right",
+        position: 'top-right',
         duration: 5000,
       });
-      if (!res["error"]) this.$router.back();
+      if (!res['error']) this.$router.back();
     },
     async changeConf() {
       let profile = getProfile();
