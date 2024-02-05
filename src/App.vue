@@ -8,6 +8,12 @@ import loading from 'vuejs-loading-screen';
 import 'vue-awesome/icons';
 import Icon from 'vue-awesome/components/Icon';
 import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip';
+import VueTouchKeyboard from 'vue-touch-keyboard';
+import 'vue-touch-keyboard/dist/vue-touch-keyboard.css'; // load default style
+import 'vue-js-modal/dist/styles.css';
+import vmodal from 'vue-js-modal';
+import VueFab from 'vue-float-action-button';
+
 import {
   Button,
   ButtonBack,
@@ -28,9 +34,21 @@ import {
   SwitchStatusTrx,
   SwitchDefault,
   ProductWeight,
+  VirtualKeyboard,
 } from './views/component';
+Vue.use(
+  VueFab /* {
+  ----------------------
+  // opitons Optional Alibaba iconfont icon or MaterialIcons
+  iconType: 'MaterialDesign'
+  // iconType: 'iconfont'
+} */
+);
 Vue.use(VueCustomTooltip);
 Vue.use(loading);
+Vue.use(vmodal);
+Vue.use(VueTouchKeyboard);
+Vue.component('VirtualKeyboard', VirtualKeyboard);
 Vue.component('v-icon', Icon);
 Vue.component('MasterPid', MasterPid);
 Vue.component('Button', Button);

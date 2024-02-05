@@ -17,6 +17,8 @@
                   placeholder="Username"
                   autocomplete="username email"
                   v-model="email"
+                  data-layout="normal"
+                  @focus="showKeyboard = $event"
                 >
                   <template #prepend-content
                     ><CIcon name="cil-user"
@@ -28,6 +30,7 @@
                   autocomplete="curent-password"
                   v-model="password"
                   @keyup="loginEnter"
+                  @focus="showKeyboard = $event"
                 >
                   <template #prepend-content
                     ><CIcon name="cil-lock-locked"
@@ -95,6 +98,18 @@
         </CCardGroup>
       </CCol>
     </CRow>
+    <VirtualKeyboard :visible="showKeyboard" />
+    <!-- <vue-fab
+      size="small"
+      :mainBtnColor="useKeyboard ? '#ff9900' : '#b5adac'"
+      :icon="useKeyboard ? 'keyboard_hide' : 'keyboard'"
+      @clickMainBtn="clickMainBtn"
+      :menu="[]"
+      style="right: 99%; top: 95%"
+    >
+    </vue-fab> 
+    Ini adalah floating button untuk menampilkan virtual keyboard
+    -->
   </CContainer>
 </template>
 
@@ -115,17 +130,28 @@ import {
 import { logoMertrack } from '../../constants';
 import { getSysConfig } from '../../resource/SysConfig';
 import { authLogin } from '../../resource/SysAuth';
+
 export default {
   name: 'Login',
 
   data() {
     return {
+      showKeyboard: false,
       copyright: logoMertrack,
       message: null,
       email: null,
       password: null,
       loginLogo: null,
       showPassword: false,
+      useKeyboard: false,
+
+      // visible: false,
+      layout: 'normal',
+      input: null,
+      options: {
+        useKbEvents: false,
+        preventClickEvent: false,
+      },
     };
   },
   mounted() {
@@ -149,6 +175,17 @@ export default {
   },
 
   methods: {
+    clickMainBtn() {
+      this.useKeyboard = !this.useKeyboard;
+      localStorage.setItem('use_keyboard', this.useKeyboard.toString());
+      window.dispatchEvent(
+        new CustomEvent('use_keyboard', {
+          detail: {
+            storage: localStorage.getItem('use_keyboard'),
+          },
+        })
+      );
+    },
     redirectReload() {
       if (localStorage.getItem('current_url')) {
         this.$router

@@ -18,8 +18,10 @@ import SwitchStatusTrx from './SwitchStatusTrx';
 import SwitchDefault from './SwitchDefault';
 import ButtonBack from './ButtonBack';
 import ProductWeight from './ProductWeight';
+import VirtualKeyboard from './VirtualKeyboard';
 
 export {
+  VirtualKeyboard,
   ProductWeight,
   ButtonPermission,
   Button,
