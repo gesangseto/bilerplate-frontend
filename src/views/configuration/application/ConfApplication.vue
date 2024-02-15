@@ -937,6 +937,7 @@ export default {
             duration: 5000,
           });
           if (!res.error) {
+            delete this.data.password_pattern;
             setConfig(this.data);
             this.$router.back();
           }
