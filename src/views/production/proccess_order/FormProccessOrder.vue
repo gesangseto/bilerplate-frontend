@@ -113,38 +113,67 @@
                 </template>
               </CInput>
               <CInput
-                :disabled="action != 'Create'"
+                :disabled="action != 'Create' && formData.status !== 0"
                 label="MFG Date *"
                 horizontal
                 type="date"
-                placeholder="Enter MFG Date"
                 v-model="formData.mfg_date"
                 :is-valid="
-                  initialLoad ? null : !formData.mfg_date ? false : true
+                  action === 'Update'
+                    ? initialLoad
+                      ? null
+                      : !formData.mfg_date
+                      ? false
+                      : true
+                    : null
                 "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
                     MFG Date
-                    <span class="text-danger"> * </span>
+                    <span class="text-danger" v-if="formData.status == 0">
+                      *
+                    </span>
                   </p>
+                </template>
+                <template #append>
+                  <CInput
+                    :disabled="action != 'Create' && formData.status !== 0"
+                    type="number"
+                    v-model="formData.shelf_life"
+                    placeholder="Shelf Life"
+                  >
+                    <template #append>
+                      <CButton color="secondary">Month</CButton>
+                    </template>
+                  </CInput>
                 </template>
               </CInput>
               <CInput
-                :disabled="action != 'Create'"
+                :disabled="
+                  (action != 'Create' || formData.shelf_life > 0) &&
+                  formData.status !== 0
+                "
                 label="EXP Date *"
                 horizontal
                 type="date"
-                placeholder="Enter EXP Date"
                 v-model="formData.exp_date"
                 :is-valid="
-                  initialLoad ? null : !formData.exp_date ? false : true
+                  action === 'Update'
+                    ? initialLoad
+                      ? null
+                      : !formData.exp_date
+                      ? false
+                      : true
+                    : null
                 "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
                     EXP Date
-                    <span class="text-danger"> * </span>
+                    <span v-if="formData.status == 0" class="text-danger">
+                      *
+                    </span>
                   </p>
                 </template>
               </CInput>
@@ -474,6 +503,18 @@ import { capitalizeFirstLetter, getConfig, onlyNumber } from '../../../utils';
 export default {
   name: 'FormPacking',
   watch: {
+    'formData.shelf_life': {
+      deep: true,
+      handler(item) {
+        this.reformatExp();
+      },
+    },
+    'formData.mfg_date': {
+      deep: true,
+      handler(item) {
+        this.reformatExp();
+      },
+    },
     viewModalSerial: {
       deep: true,
       async handler(item) {
@@ -657,6 +698,20 @@ export default {
     }
   },
   methods: {
+    reformatExp() {
+      let add = this.formData.shelf_life;
+      if (add && this.formData.mfg_date) {
+        let mfg = moment(this.formData.mfg_date);
+        let date = mfg.date();
+        if (date < 15) {
+          add = add - 1;
+        }
+        this.formData.exp_date = mfg
+          .add(add, 'months')
+          .endOf('month')
+          .format('YYYY-MM-DD');
+      }
+    },
     async loadData() {
       let _res = await getProccessOrder({ id: this.$route.params.id });
       if (_res && !_res.error) {
@@ -719,6 +774,8 @@ export default {
       let res = await generateProccessOrder({
         id: this.formData.id,
         approve: true,
+        mfg_date: this.formData.mfg_date,
+        exp_date: this.formData.exp_date,
       });
       this.$isLoading(false);
       this.$toast.open({
@@ -774,8 +831,8 @@ export default {
         'lot_no',
         'batch_no',
         'product_id',
-        'exp_date',
-        'mfg_date',
+        // 'exp_date',
+        // 'mfg_date',
       ];
       for (const key of required) {
         if (!this.formData[key]) {

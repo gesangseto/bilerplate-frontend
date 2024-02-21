@@ -46,7 +46,7 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
-                      v-if="item.status == 0"
+                      v-if="[0, 3].includes(item.status)"
                       :permission="'delete'"
                       @click="deleteRow(item, index)"
                     />
