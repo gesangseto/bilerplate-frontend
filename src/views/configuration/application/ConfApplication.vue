@@ -166,6 +166,33 @@
 
               <CCard>
                 <CCardHeader style="font-weight: bold">
+                  List Android ID
+                </CCardHeader>
+                <CCardBody>
+                  <div
+                    v-for="(item, index) in parseInt(data.total_device)"
+                    :key="item"
+                    class="form-group row"
+                  >
+                    <CCol sm="10">
+                      <CInput
+                        :label="'Android ID ' + (index + 1)"
+                        horizontal
+                        v-model="data.list_device[index]"
+                        :is-valid="
+                          initialLoad
+                            ? null
+                            : !data.list_device[index]
+                            ? false
+                            : true
+                        "
+                      />
+                    </CCol>
+                  </div>
+                </CCardBody>
+              </CCard>
+              <CCard>
+                <CCardHeader style="font-weight: bold">
                   Password Validation
                 </CCardHeader>
                 <CCardBody>
@@ -278,33 +305,6 @@
                       </CRow>
                     </CCol>
                   </CRow>
-                </CCardBody>
-              </CCard>
-              <CCard>
-                <CCardHeader style="font-weight: bold">
-                  List Android ID
-                </CCardHeader>
-                <CCardBody>
-                  <div
-                    v-for="(item, index) in parseInt(data.total_device)"
-                    :key="item"
-                    class="form-group row"
-                  >
-                    <CCol sm="10">
-                      <CInput
-                        :label="'Android ID ' + (index + 1)"
-                        horizontal
-                        v-model="data.list_device[index]"
-                        :is-valid="
-                          initialLoad
-                            ? null
-                            : !data.list_device[index]
-                            ? false
-                            : true
-                        "
-                      />
-                    </CCol>
-                  </div>
                 </CCardBody>
               </CCard>
 

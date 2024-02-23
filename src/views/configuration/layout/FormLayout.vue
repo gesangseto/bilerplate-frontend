@@ -195,6 +195,7 @@
                   </td>
                   <td>
                     <CInputCheckbox
+                      v-if="item.layout_generate_type === 'AI'"
                       :disabled="action === 'Read'"
                       :checked.sync="item.set_bpom_barcode_format"
                       size="sm"
@@ -608,6 +609,10 @@ export default {
       this.formData.items[index].field_associated = [];
       let layout_selected = this.formData.items[index];
       this.getIdentifier(layout_selected.layout_generate_type_id);
+      let type = this.listType.find(
+        (it) => it.value == layout_selected.layout_generate_type_id
+      );
+      this.formData.items[index].layout_generate_type = type.code;
     },
     /*
     END
@@ -802,10 +807,7 @@ export default {
       let _res = await getLayoutType();
       if (_res) {
         for (const it of _res.data) {
-          this.listType.push({
-            value: `${it.id}`,
-            label: it.name,
-          });
+          this.listType.push({ ...it, value: `${it.id}`, label: it.name });
         }
       }
     },
