@@ -48,7 +48,7 @@
                     <ButtonPermission
                       v-if="[0, 3].includes(item.status)"
                       :permission="'delete'"
-                      @click="deleteRow(item, index)"
+                      @click="handleClickDelete(item, index)"
                     />
                     <ButtonPermission
                       v-if="item.status == 0"
@@ -90,6 +90,12 @@
         </CCardBody>
       </CCard>
     </CCol>
+    <!-- START DELETE MODAL -->
+    <CancelModal
+      type="cancel"
+      :property="rejectProperty"
+      v-on:handleSubmit="deleteRow()"
+    />
   </CRow>
 </template>
 
@@ -110,6 +116,12 @@ export default {
   },
   data() {
     return {
+      rejectProperty: {
+        title: 'Proccess Order',
+        modal: false,
+        id: null,
+        reason: '',
+      },
       filter: {
         page: 1,
         limit: 10,
@@ -165,6 +177,7 @@ export default {
   methods: {
     async loadData() {
       let res = await getProccessOrder(this.filter);
+      this.items = [];
       if (!res.error) {
         this.items = res.data;
         this.filter = calculatePaginationV3({
@@ -196,24 +209,31 @@ export default {
     rowUpdate() {},
     rowRead() {},
     addNew() {},
-    async deleteRow(item) {
-      let message = `You are about to delete to this data (Batch No: ${item.batch_no}).\nThis operation cannot be undone. Would you like to continue?`;
-      if (confirm(message)) {
-        this.$isLoading(true);
-        let param = { id: item.id };
-        let _res = await deleteProccessOrder(param);
-        this.$isLoading(false);
-        this.$toast.open({
-          message: _res.error
-            ? `${_res.message}`
-            : 'Data has been canceled succesfully',
-          type: _res.error ? 'error' : 'success',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-        if (!_res.error) this.loadData();
-      }
+    handleClickDelete(item) {
+      this.rejectProperty.modal = true;
+      this.rejectProperty.id = item.id;
+    },
+    async deleteRow() {
+      this.$isLoading(true);
+      let param = {
+        id: this.rejectProperty.id,
+        approved: false,
+        reason: this.rejectProperty.reason,
+      };
+      let _res = await deleteProccessOrder(param);
+      this.rejectProperty.id = null;
+      this.rejectProperty.reason = null;
+      this.$isLoading(false);
+      this.$toast.open({
+        message: _res.error
+          ? `${_res.message}`
+          : 'Data has been canceled succesfully',
+        type: _res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!_res.error) this.loadData();
     },
   },
   computed: {

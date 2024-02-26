@@ -184,6 +184,20 @@
                 horizontal
                 v-model="formData.status_name"
               />
+              <CTextarea
+                disabled
+                v-if="formData.reason"
+                label="Reason"
+                horizontal
+                v-model="formData.reason"
+              />
+              <CTextarea
+                disabled
+                v-if="formData.system_remark"
+                label="System Remark"
+                horizontal
+                v-model="formData.system_remark"
+              />
             </CCol>
             <CCol sm="6" md="6" lg="6">
               <CInput
@@ -781,7 +795,7 @@ export default {
       this.$toast.open({
         message: res['error']
           ? `${res['message']}`
-          : 'Data has been saved succesfully ',
+          : 'Request is successful, we will immediately process the serial number for use',
         type: res.error ? 'error' : 'success',
         dissmissible: true,
         position: 'top-right',
