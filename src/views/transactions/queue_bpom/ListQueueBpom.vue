@@ -285,12 +285,13 @@ export default {
   computed: {
     dataTableItem() {
       return this.items.map((item) => {
+        let lastUpdate = moment
+          .utc(item.modified_date)
+          .format('YYYY-MM-DD HH:mm');
         return {
           ...item,
           // transaction_desc: item.transaction_desc.charAt(0).toUpperCase(),
-          modified_date: moment(item.modified_date).format(
-            'YYYY-MM-DD HH:mm:ss'
-          ),
+          modified_date: lastUpdate,
           status: humanize(item.status),
         };
       });

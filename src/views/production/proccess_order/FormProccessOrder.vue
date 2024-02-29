@@ -790,6 +790,7 @@ export default {
         approve: true,
         mfg_date: this.formData.mfg_date,
         exp_date: this.formData.exp_date,
+        shelf_life: this.formData.shelf_life,
       });
       this.$isLoading(false);
       this.$toast.open({

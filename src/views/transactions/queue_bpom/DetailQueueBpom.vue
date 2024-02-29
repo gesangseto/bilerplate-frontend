@@ -424,9 +424,9 @@ export default {
           status_code: item.status_code || '',
           message: item.message || '',
           parent: item.parent || '',
-          modified_date: moment(item.modified_date).format(
-            'YYYY-MM-DD HH:mm:ss'
-          ),
+          modified_date: moment
+            .utc(item.modified_date)
+            .format('YYYY-MM-DD HH:mm'),
         };
       });
     },
