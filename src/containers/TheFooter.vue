@@ -33,14 +33,14 @@
                 <td colspan="3"><strong>System Version</strong></td>
               </tr>
               <tr>
-                <td>Core</td>
+                <td>Mertrack Core</td>
                 <td>:</td>
-                <td>3.0.0</td>
+                <td>3.0</td>
               </tr>
               <tr>
-                <td>DB</td>
+                <td>Mobile</td>
                 <td>:</td>
-                <td>3.0.0</td>
+                <td>3.0</td>
               </tr>
             </table>
           </CCol>
@@ -50,19 +50,19 @@
                 <td colspan="3">&nbsp;</td>
               </tr>
               <tr>
-                <td>BPOM Report</td>
+              <tr>
+                <td>Connector EPCIS OSM</td>
                 <td>:</td>
-                <td>3.0</td>
+                <td>1.0</td>
               </tr>
               <tr>
-                <td>Web</td>
+                <td>Connector EPCIS EML</td>
                 <td>:</td>
-                <td>3.0.0</td>
+                <td>1.0</td>
               </tr>
-              <tr>
-                <td>Mobile</td>
+                <td>Connector BPOM</td>
                 <td>:</td>
-                <td>3.0.0</td>
+                <td>3.01</td>
               </tr>
             </table>
           </CCol>
