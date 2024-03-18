@@ -78,7 +78,7 @@
                 <table style="width: 100%">
                   <thead>
                     <th style="text-align: center; width: 30%">
-                      Name Parameter
+                      Parameter Name
                     </th>
                     <th style="text-align: center; width: 30%">Source</th>
                     <th style="text-align: center; width: 5%">Required</th>
@@ -143,33 +143,33 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
+import { capitalizeFirstLetter } from '../../../utils';
+import $axiosMertrack from '../../../apiMertrack';
 
 export default {
-  name: "Connector",
+  name: 'Connector',
   data() {
     return {
-      route_action: "",
+      route_action: '',
       // category: '',
-      action: "Edit",
+      action: 'Edit',
       connector: { params: [] },
       listSource: [
         {
-          label: "Database",
-          value: "database",
+          label: 'Database',
+          value: 'database',
         },
         {
-          label: "File Content",
-          value: "file_content",
+          label: 'File Content',
+          value: 'file_content',
         },
         {
-          label: "File Name",
-          value: "file_name",
+          label: 'File Name',
+          value: 'file_name',
         },
         {
-          label: "String",
-          value: "string",
+          label: 'String',
+          value: 'string',
         },
       ],
     };
@@ -177,7 +177,7 @@ export default {
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }

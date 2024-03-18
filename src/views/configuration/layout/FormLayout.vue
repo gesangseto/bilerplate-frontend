@@ -120,7 +120,7 @@
           <template>
             <table style="width: 100%">
               <thead>
-                <th style="text-align: center; width: 30%">Name Parameter</th>
+                <th style="text-align: center; width: 30%">Parameter Name</th>
                 <th style="text-align: center; width: 15%">Type</th>
                 <th style="text-align: center; width: 40%">Associated Field</th>
                 <th style="text-align: center; width: 15%">As Barcode</th>
