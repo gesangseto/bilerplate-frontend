@@ -178,7 +178,7 @@
                 <CInput
                   :disabled="true"
                   label="L1 GTIN "
-                  description="Can only be changed by changing Company Prefix and Item Reference and make sure there has been no transaction for this product."
+                  description="Can only be changed by modifying Company Prefix and Item Reference and make sure there has been no transaction for this product."
                   horizontal
                   v-model="product.gtin"
                   @keyup="validationNieOrGtin('gtin')"
@@ -258,8 +258,8 @@
                       v-on:onChange="product.generate_bpom_report = $event"
                       description="
                     This value affects the product report that will be generated for BPOM
-                    purposes. This value cannot change if there is already a
-                    transaction in the bpom Queue"
+                    reporting. This value cannot change if there is already a
+                    transaction in the BPOM Queue"
                     />
                   </CCol>
                 </CRow>

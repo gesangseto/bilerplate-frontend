@@ -76,12 +76,12 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportData } from "../../../utils";
-import { deleteConfDate, getConfDate } from "../../../resource/ConfDate";
-import moment from "moment";
+import { calculatePaginationV3, exportData } from '../../../utils';
+import { deleteConfDate, getConfDate } from '../../../resource/ConfDate';
+import moment from 'moment';
 
 export default {
-  name: "Date_Configuration",
+  name: 'Date_Configuration',
   mounted() {
     this.loadData();
   },
@@ -95,36 +95,37 @@ export default {
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "name",
-          label: "Format",
-          _classes: "font-weight-bold",
+          key: 'name',
+          label: 'Format',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "overwrite",
-          label: "Overwrite",
+          key: 'overwrite',
+          label: 'Overwrite',
         },
         {
-          key: "result_date",
-          label: "Result",
+          key: 'result_date',
+          label: 'Result',
         },
         {
-          key: "used_in_layout",
-          label: "Used In Layout",
+          key: 'used_in_layout',
+          label: 'Used In Layout',
+          _style: 'width:30%',
         },
         {
-          key: "status",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'status',
+          label: 'Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -188,10 +189,10 @@ export default {
         this.$toast.open({
           message: _res.error
             ? `${_res.message}`
-            : "Data has been deleted succesfully",
-          type: _res.error ? "error" : "success",
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         if (!_res.error) this.loadData();
@@ -201,11 +202,11 @@ export default {
   computed: {
     list_item() {
       return this.items.map((item) => {
-        let result = "";
-        if (item.overwrite === "last_day_of_month") {
-          result = moment().endOf("month").format(item.name);
-        } else if (item.overwrite === "first_day_of_month") {
-          result = moment().startOf("month").format(item.name);
+        let result = '';
+        if (item.overwrite === 'last_day_of_month') {
+          result = moment().endOf('month').format(item.name);
+        } else if (item.overwrite === 'first_day_of_month') {
+          result = moment().startOf('month').format(item.name);
         } else {
           result = moment().format(item.name);
         }
@@ -213,7 +214,7 @@ export default {
         return {
           ...item,
           result_date: result,
-          used_in_layout: item.used_in_layout || "",
+          used_in_layout: item.used_in_layout || '',
         };
       });
     },

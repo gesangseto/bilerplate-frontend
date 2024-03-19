@@ -350,6 +350,19 @@
                         </template>
                       </CInput>
                     </CCol>
+
+                    <CCol sm="10">
+                      <CInput
+                        label="ID Location"
+                        horizontal
+                        type="number"
+                        v-model="data.gln"
+                      >
+                        <template #label>
+                          <p class="col-form-label col-sm-3">GLN</p>
+                        </template>
+                      </CInput>
+                    </CCol>
                     <CCol sm="10">
                       <CInput
                         label="ID Location"
@@ -371,6 +384,7 @@
                         </template>
                       </CInput>
                     </CCol>
+
                     <CCol sm="10">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="3" class="col-form-label">

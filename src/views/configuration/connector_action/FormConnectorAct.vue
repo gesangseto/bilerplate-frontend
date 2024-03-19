@@ -56,7 +56,7 @@
                 v-model="form.folder_backup"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">Backup Folder Path</p>
+                  <p class="col-form-label col-sm-3">Archive Folder Path</p>
                 </template>
               </CInput>
               <CInput
