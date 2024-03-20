@@ -66,6 +66,24 @@
                   </template>
                 </CInput>
               </CCol>
+
+              <CCol sm="10">
+                <CInput
+                  label="ID Location"
+                  horizontal
+                  type="number"
+                  v-model="data.gln"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      GLN
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
               <!-- IDENTITY PATH LOGO -->
               <CCol sm="10" lg="10">
                 <CInputFile
@@ -351,18 +369,6 @@
                       </CInput>
                     </CCol>
 
-                    <CCol sm="10">
-                      <CInput
-                        label="ID Location"
-                        horizontal
-                        type="number"
-                        v-model="data.gln"
-                      >
-                        <template #label>
-                          <p class="col-form-label col-sm-3">GLN</p>
-                        </template>
-                      </CInput>
-                    </CCol>
                     <CCol sm="10">
                       <CInput
                         label="ID Location"
