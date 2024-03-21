@@ -157,7 +157,7 @@ export function buttonPermission({ path }) {
   };
   let role = getRole();
   for (const it of role) {
-    if (path.includes(it.link)) {
+    if (path == it.link) {
       action.can_create = strToBool(it.can_create) ? true : false;
       action.can_read = strToBool(it.can_read) ? true : false;
       action.can_update = strToBool(it.can_update) ? true : false;
