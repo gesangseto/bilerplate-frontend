@@ -62,7 +62,7 @@
               </tr>
                 <td>Connector BPOM</td>
                 <td>:</td>
-                <td>3.01</td>
+                <td>3.0.1</td>
               </tr>
             </table>
           </CCol>
