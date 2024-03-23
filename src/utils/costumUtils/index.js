@@ -155,6 +155,10 @@ export function buttonPermission({ path }) {
     can_print: false,
     can_approve: false,
   };
+  const patterns = ['/create', '/read', '/update', '/delete'];
+  const pattern = patterns.find((p) => path.includes(p));
+  path = pattern ? path.split(pattern)[0] : path;
+  console.log(path);
   let role = getRole();
   for (const it of role) {
     if (path == it.link) {
