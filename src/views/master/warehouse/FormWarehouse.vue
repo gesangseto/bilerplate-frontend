@@ -239,11 +239,11 @@ export default {
       },
       temperaturOptions: [
         {
-          value: true,
+          value: 1,
           label: 'Suhu',
         },
         {
-          value: false,
+          value: 0,
           label: 'Non Suhu',
         },
       ],

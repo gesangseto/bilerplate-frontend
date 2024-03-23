@@ -201,18 +201,13 @@
 
               <CInput
                 :disabled="action == 'Read' ? true : false"
-                placeholder=""
                 horizontal
                 v-model="customer.id_sarana"
-                :invalid-feedback="required.id_sarana.message"
-                :add-input-classes="{
-                  'is-invalid': required.id_sarana.error,
-                }"
                 @keypress="
                   limitPhone({
                     event: $event,
                     data: customer.id_sarana,
-                    max: 12,
+                    max: 6,
                   })
                 "
               >
@@ -220,8 +215,19 @@
                   <p class="col-form-label col-sm-3">
                     ID Sarana (BPOM)
                     <span class="text-danger">
-                      <strong>*</strong>
+                      <strong>***</strong>
                     </span>
+                  </p>
+                </template>
+                <template #description>
+                  <p style="font-size: x-small">
+                    <span>
+                      <strong>WARNING: </strong>
+                    </span>
+                    If the ID Sarana (BPOM) is blank, system will not generate
+                    distribution BPOM report (Queue BPOM) in both .xlsx file
+                    format nor reporting to BPOM TTAC server via API for any
+                    completed Picking List transaction involving this customer.
                   </p>
                 </template>
               </CInput>
@@ -300,7 +306,7 @@ export default {
         name: { error: false, message: 'Name is required' },
         pic: { error: false, message: 'PIC is required' },
         email: { error: false, message: 'Please provide valid email address' },
-        id_sarana: { error: false, message: 'Please provide id sarana' },
+        // id_sarana: { error: false, message: 'Please provide id sarana' },
         address: { error: false, message: 'Address is required' },
         tlp_code: { error: false, message: 'Country code is required' },
         tlp: {
