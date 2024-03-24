@@ -95,12 +95,15 @@
                   </CCol>
                   <CCol sm="9">
                     <CInputRadioGroup
-                      v-if="action != 'Read'"
+                      v-if="product.flag_upd_del"
                       :options="productTypeOption"
                       :inline="true"
                       :checked.sync="product.product_type"
                     />
-                    <p class="col-form-label col-sm-3" v-if="action == 'Read'">
+                    <p
+                      class="col-form-label col-sm-3"
+                      v-if="!product.flag_upd_del"
+                    >
                       {{
                         product.product_type == '0' ? 'Serial' : 'Non-Serial'
                       }}
@@ -161,7 +164,7 @@
 
               <CCol sm="12">
                 <CInput
-                  :disabled="action == 'Read'"
+                  :disabled="!product.flag_upd_del"
                   label="NIE Packaging (Kemasan NIE) *"
                   placeholder="Enter packaging description registered at BPOM"
                   horizontal
@@ -194,6 +197,7 @@
 
               <CCol sm="12">
                 <CInput
+                  :disabled="!product.flag_upd_del"
                   label="Company Prefix"
                   horizontal
                   v-model="product.company_prefix"
@@ -221,6 +225,7 @@
                 >
                   <template #append>
                     <CInput
+                      :disabled="!product.flag_upd_del"
                       prepend="Item Reference"
                       class="ml-1"
                       horizontal
@@ -253,7 +258,7 @@
                   <CCol sm="3"> Generate BPOM Report </CCol>
                   <CCol sm="9">
                     <SwitchDefault
-                      :disabled="action == 'Read'"
+                      :disabled="!product.flag_upd_del"
                       :default_value="product.generate_bpom_report"
                       v-on:onChange="product.generate_bpom_report = $event"
                       description="

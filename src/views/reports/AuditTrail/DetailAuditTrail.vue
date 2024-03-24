@@ -23,7 +23,7 @@
               </CInput>
               <CInput :disabled="true" horizontal v-model="data.created_date">
                 <template #label>
-                  <p class="col-form-label col-sm-3">Date</p>
+                  <p class="col-form-label col-sm-3">Date & Time</p>
                 </template>
               </CInput>
               <CInput
@@ -32,7 +32,7 @@
                 v-model="data.created_full_name"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">Access By</p>
+                  <p class="col-form-label col-sm-3">User (Fullname)</p>
                 </template>
               </CInput>
               <CInput :disabled="true" horizontal v-model="data.path">

@@ -59,18 +59,18 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
 import {
   capitalizeFirstLetter,
   exportDataReport,
   calculatePagination,
   calculatePaginationV3,
-} from "../../../utils";
-import { dateFilter } from "../../../constants";
-import { get_log } from "../../../dummy_data";
+} from '../../../utils';
+import { dateFilter } from '../../../constants';
+import { get_log } from '../../../dummy_data';
 
 export default {
-  name: "ListAuditTrail",
+  name: 'ListAuditTrail',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -87,43 +87,43 @@ export default {
       items: [],
       fields: [
         {
-          key: "no",
-          label: "No",
+          key: 'id',
+          label: 'ID',
         },
         {
-          key: "created_date",
-          label: "Created",
-          _classes: "font-weight-bold",
+          key: 'created_date',
+          label: 'Date & Time',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_full_name",
-          label: "Access By",
-          _classes: "font-weight-bold",
+          key: 'created_full_name',
+          label: 'User',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "_action",
-          label: "Method",
-          _classes: "font-weight-bold",
+          key: '_action',
+          label: 'Method',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "path",
-          label: "Path",
-          _classes: "font-weight-bold",
+          key: 'path',
+          label: 'Path',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "ip_address",
-          label: "IP",
-          _classes: "font-weight-bold",
+          key: 'ip_address',
+          label: 'IP Address',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "user_agent",
-          label: "Agent",
-          _classes: "font-weight-bold",
+          key: 'user_agent',
+          label: 'User Agent',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
           sorter: false,
           filter: false,
         },
@@ -174,7 +174,7 @@ export default {
           _action: item.action,
           no: this.getNumber(index + 1),
           type: capitalizeFirstLetter(item.type),
-          dep_sec: item.department_name + " - " + item.section_name,
+          dep_sec: item.department_name + ' - ' + item.section_name,
         };
       });
     },
