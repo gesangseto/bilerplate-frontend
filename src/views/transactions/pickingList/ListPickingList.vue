@@ -234,7 +234,7 @@ export default {
       let data = {
         id: this.cancelProperty.id,
         approved: false,
-        reason: this.cancelProperty.reason,
+        reason: `[CANCEL] ${this.cancelProperty.reason}`,
       };
       this.$isLoading(true);
       $axiosMertrack

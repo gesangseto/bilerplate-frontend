@@ -94,7 +94,7 @@
     <CancelModal
       type="cancel"
       :property="rejectProperty"
-      v-on:handleSubmit="deleteRow()"
+      v-on:handleSubmit="handleCancel()"
     />
   </CRow>
 </template>
@@ -213,12 +213,12 @@ export default {
       this.rejectProperty.modal = true;
       this.rejectProperty.id = item.id;
     },
-    async deleteRow() {
+    async handleCancel() {
       this.$isLoading(true);
       let param = {
         id: this.rejectProperty.id,
         approved: false,
-        reason: this.rejectProperty.reason,
+        reason: `[CANCEL] ${this.rejectProperty.reason}`,
       };
       let _res = await deleteProccessOrder(param);
       this.rejectProperty.id = null;

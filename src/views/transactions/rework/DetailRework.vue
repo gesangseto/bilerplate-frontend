@@ -379,7 +379,7 @@ export default {
       let data = {
         id: this.rework.wrk_id,
         approved: false,
-        reason: this.rejectProperty.reason,
+        reason: `[REJECT] ${this.rejectProperty.reason}`,
       };
       this.$isLoading(true);
       let url = `/v3/transaction/approval/rework`;

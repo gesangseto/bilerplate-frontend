@@ -87,11 +87,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportDataV3 } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListStockTransfer",
+  name: 'ListStockTransfer',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -99,18 +99,18 @@ export default {
   data() {
     return {
       cancelProperty: {
-        title: "Stock Transfer",
+        title: 'Stock Transfer',
         modal: false,
         id: null,
-        reason: "",
+        reason: '',
       },
       btn_deleteProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        text: "",
-        tooltip: "Cancel",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'window-close',
+        text: '',
+        tooltip: 'Cancel',
       },
       path: this.$route.path,
       filter: {
@@ -125,22 +125,22 @@ export default {
       tempItems: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
-        { key: "created_date", label: "Trx Date" },
+        { key: 'created_date', label: 'Trx Date' },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
-        { key: "from_warehouse_name", label: "Source WH" },
-        { key: "to_warehouse_name", label: "Destination WH" },
-        { key: "status_desc", label: "Status", _classes: "font-weight-bold" },
+        { key: 'from_warehouse_name', label: 'Source WH' },
+        { key: 'to_warehouse_name', label: 'Destination WH' },
+        { key: 'status_desc', label: 'Status', _classes: 'font-weight-bold' },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
         },
       ],
     };
@@ -166,7 +166,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/transfer",
+        url: '/v3/transaction/transfer',
       });
     },
     pageChange(page) {
@@ -193,7 +193,7 @@ export default {
       let data = {
         id: this.cancelProperty.id,
         approved: false,
-        reason: this.cancelProperty.reason,
+        reason: `[CANCEL] ${this.cancelProperty.reason}`,
       };
 
       let url = `/v3/transaction/transfer`;
@@ -205,10 +205,10 @@ export default {
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
-              : "Transaction has been canceled succesfully",
-            type: result.data.error ? "error" : "success",
+              : 'Transaction has been canceled succesfully',
+            type: result.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         })
@@ -216,14 +216,14 @@ export default {
           this.$isLoading(false);
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       this.cancelProperty.id = null;
-      this.cancelProperty.reason = "";
+      this.cancelProperty.reason = '';
       this.cancelProperty.modal = false;
     },
   },

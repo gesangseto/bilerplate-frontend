@@ -78,12 +78,12 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportDataV3 } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
 
 export default {
-  name: "ListStockOpname",
+  name: 'ListStockOpname',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -99,28 +99,28 @@ export default {
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_deleteProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        text: "",
-        tooltip: "Cancel",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'window-close',
+        text: '',
+        tooltip: 'Cancel',
       },
       cancelProperty: {
-        title: "Stock Opname",
+        title: 'Stock Opname',
         modal: false,
         id: null,
-        reason: "",
+        reason: '',
       },
       items: [],
       listProvince: [],
       listEntity: [],
       fields: [
-        { key: "id", label: "ID", _classes: "font-weight-bold" },
-        { key: "created_date", label: "Stock Opname Date" },
-        { key: "warehouse_name", label: "Warehouse Name" },
-        { key: "status_desc", label: "Status", _classes: "font-weight-bold" },
-        { key: "action", label: "Action" },
+        { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
+        { key: 'created_date', label: 'Stock Opname Date' },
+        { key: 'warehouse_name', label: 'Warehouse Name' },
+        { key: 'status_desc', label: 'Status', _classes: 'font-weight-bold' },
+        { key: 'action', label: 'Action' },
       ],
     };
   },
@@ -132,8 +132,8 @@ export default {
     handleCancel() {
       let body = {
         id: this.cancelProperty.id,
-        reason: this.cancelProperty.reason,
         approved: false,
+        reason: `[CANCEL] ${this.cancelProperty.reason}`,
       };
       $axiosMertrack
         .post(`/v3/transaction/stock-opname`, body)
@@ -143,23 +143,23 @@ export default {
             message: result.data.error
               ? result.data.message
               : `Transaction has been canceled succesfully`,
-            type: result.data.error == true ? "error" : "success",
+            type: result.data.error == true ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         })
         .catch((err) => {
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       this.cancelProperty.id = null;
-      this.cancelProperty.reason = "";
+      this.cancelProperty.reason = '';
       this.cancelProperty.modal = false;
     },
 
@@ -183,7 +183,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/stock-opname",
+        url: '/v3/transaction/stock-opname',
       });
     },
     pageChange(page) {
@@ -205,11 +205,11 @@ export default {
   computed: {
     listOpname() {
       return this.items.map((item) => {
-        let status = "Pending";
+        let status = 'Pending';
         if (item.status == 1) {
-          status = "Done";
+          status = 'Done';
         } else if (item.status == 2) {
-          status = "Canceled";
+          status = 'Canceled';
         }
         return {
           ...item,

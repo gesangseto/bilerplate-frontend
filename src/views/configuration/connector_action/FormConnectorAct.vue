@@ -50,7 +50,11 @@
                 horizontal
                 :placeholder="
                   form.folder_sftp
-                    ? 'Default: ' + form.folder_sftp + '/Archive'
+                    ? 'Default: ' +
+                      form.folder_sftp +
+                      form.folder_sftp.includes('/')
+                      ? '/Archive'
+                      : '\\Archive'
                     : ''
                 "
                 v-model="form.folder_backup"

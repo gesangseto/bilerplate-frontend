@@ -167,13 +167,13 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePaginationV3 } from "../../../utils";
-import { dateFilter } from "../../../constants";
-import Datepicker from "vuejs-datepicker";
-import moment from "moment";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportData, calculatePaginationV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
+import Datepicker from 'vuejs-datepicker';
+import moment from 'moment';
 export default {
-  name: "ListUploadXML",
+  name: 'ListUploadXML',
   components: {
     Datepicker,
   },
@@ -193,28 +193,28 @@ export default {
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_deleteProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        text: "",
-        tooltip: "Cancel",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'window-close',
+        text: '',
+        tooltip: 'Cancel',
       },
       btn_updateProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "success",
-        icon: "edit",
-        text: "Mfg",
-        tooltip: "Input Mfg",
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'edit',
+        text: 'Mfg',
+        tooltip: 'Input Mfg',
       },
       cancelProperty: {
-        title: "Upload XML",
+        title: 'Upload XML',
         modal: false,
         id: null,
-        reason: "",
+        reason: '',
       },
-      reason: "",
+      reason: '',
       cancelModal: false,
       cancelId: null,
       warningModal: false,
@@ -229,39 +229,39 @@ export default {
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Upload Date",
+          key: 'created_date',
+          label: 'Upload Date',
         },
         {
-          key: "file_name",
-          label: "File Name",
+          key: 'file_name',
+          label: 'File Name',
         },
         // {
         //   key: "quantity_lvl_1",
         //   label: "Quantity L1",
         // },
         {
-          key: "source_name",
-          label: "Source Type",
-          _classes: "font-weight-bold",
+          key: 'source_name',
+          label: 'Source Type',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "supplier_name",
-          label: "Supplier Name",
+          key: 'supplier_name',
+          label: 'Supplier Name',
         },
         {
-          key: "status_desc",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'status_desc',
+          label: 'Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           // _style: "width:20%",
         },
       ],
@@ -269,7 +269,7 @@ export default {
   },
   methods: {
     initial_required() {
-      let data = { mfgDate: { error: false, message: "Mfg date is required" } };
+      let data = { mfgDate: { error: false, message: 'Mfg date is required' } };
       return data;
     },
     loadData() {
@@ -315,13 +315,13 @@ export default {
       this.MfgPostfix.item = item;
       this.MfgPostfix.id = item.id;
       this.MfgPostfix.mfg_date = new Date();
-      this.MfgPostfix.het = "";
+      this.MfgPostfix.het = '';
       this.warningModal = true;
     },
 
     getDifferentDays(date) {
-      date = moment(new Date(date), "YYYY-MM-DD");
-      var date_now = moment(new Date(), "YYYY-MM-DD");
+      date = moment(new Date(date), 'YYYY-MM-DD');
+      var date_now = moment(new Date(), 'YYYY-MM-DD');
       let sisa = Math.ceil(moment.duration(date.diff(date_now)).asDays());
       return sisa;
     },
@@ -343,26 +343,26 @@ export default {
       let message = `You are about to submit the Mfg Date information of this Upload XML data. Once submitted, the Mfg Date information cannot be modified. Would you like to continue?`;
       if (confirm(message)) {
         $axiosMertrack
-          .post("/v3/transaction/upload-xml", this.MfgPostfix)
+          .post('/v3/transaction/upload-xml', this.MfgPostfix)
           .then((result) => {
             this.items = [];
             this.loadData();
             this.$toast.open({
               message: result.data.error
                 ? result.data.message
-                : "Data has been saved succesfully",
-              type: result.data.error ? "error" : "success",
+                : 'Data has been saved succesfully',
+              type: result.data.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
           })
           .catch((err) => {
             this.$toast.open({
               message: `Error : ${err}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
           });
@@ -375,7 +375,7 @@ export default {
       let body = {
         id: this.cancelProperty.id,
         approved: false,
-        reason: this.cancelProperty.reason,
+        reason: `[CANCEL] ${this.cancelProperty.reason}`,
       };
       $axiosMertrack
         .post(`/v3/transaction/upload-xml/process`, body)
@@ -384,24 +384,24 @@ export default {
           this.$toast.open({
             message: result.data.error
               ? result.data.message
-              : "Transaction has been canceled succesfully",
-            type: result.data.error ? "error" : "success",
+              : 'Transaction has been canceled succesfully',
+            type: result.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         })
         .catch((err) => {
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       this.cancelProperty.id = null;
-      this.cancelProperty.reason = "";
+      this.cancelProperty.reason = '';
       this.cancelProperty.modal = false;
     },
 
@@ -411,7 +411,7 @@ export default {
       return;
     },
     formatDate(date) {
-      return moment(date).format("DD-MMM-YYYY");
+      return moment(date).format('DD-MMM-YYYY');
     },
   },
   computed: {

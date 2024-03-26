@@ -29,6 +29,9 @@
           v-model="formData.batch_no"
           @input="handleChangeBatch()"
         >
+          <template #no-options="{ search, searching, loading }">
+            Sorry, no matching item.
+          </template>
         </v-select>
         <label v-if="alertExpired" style="color: red">{{ alertExpired }}</label>
       </div>

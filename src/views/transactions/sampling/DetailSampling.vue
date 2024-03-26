@@ -380,7 +380,7 @@ export default {
       let data = {
         id: this.sampling.wrk_id,
         approved: false,
-        reason: this.rejectProperty.reason,
+        reason: `[REJECT] ${this.rejectProperty.reason}`,
       };
       this.$isLoading(false);
       let url = `/v3/transaction/approval/sampling`;

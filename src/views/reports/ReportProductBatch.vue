@@ -49,17 +49,13 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import {
-  exportDataReport,
-  calculatePagination,
-  calculatePaginationV3,
-  exportDataV3,
-} from "../../utils";
-import { dateFilter } from "../../constants";
+import $axiosMertrack from '../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../utils';
+import { dateFilter } from '../../constants';
+import moment from 'moment';
 
 export default {
-  name: "ReportProductBatch",
+  name: 'ReportProductBatch',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -76,48 +72,48 @@ export default {
       items: [],
       fields: [
         {
-          key: "number",
-          label: "No",
+          key: 'number',
+          label: 'No',
         },
         {
-          key: "created_date",
-          label: "Inbound Date",
+          key: 'created_date',
+          label: 'Inbound Date',
         },
         {
-          key: "product_no",
-          label: "Item No",
-          _classes: "font-weight-bold",
+          key: 'product_no',
+          label: 'Item No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "product_name",
-          label: "Product Name",
-          _classes: "font-weight-bold",
+          key: 'product_name',
+          label: 'Product Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
-          _classes: "font-weight-bold",
+          key: 'batch_no',
+          label: 'Batch No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "mfg_date",
-          label: "Mfg Date",
+          key: 'mfg_date',
+          label: 'Mfg Date',
         },
         {
-          key: "product_nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "product_gtin",
-          label: "L1 GTIN",
+          key: 'product_gtin',
+          label: 'L1 GTIN',
           // _classes: "font-weight-bold",
         },
         {
-          key: "quantity_l1",
-          label: "L1 Qty",
+          key: 'quantity_l1',
+          label: 'L1 Qty',
         },
       ],
     };
@@ -142,7 +138,7 @@ export default {
       exportDataV3({
         param: this.filter,
         exportType: type,
-        url: "/v3/report/batch",
+        url: '/v3/report/batch',
       });
     },
     pageChange(page) {

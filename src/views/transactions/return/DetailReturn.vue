@@ -399,7 +399,7 @@ export default {
       let param = {
         id: this.returnDetail.wrk_id,
         approved: false,
-        reason: this.rejectProperty.reason,
+        reason: `[REJECT] ${this.rejectProperty.reason}`,
       };
       let url = `/v3/transaction/approval/return`;
       $axiosMertrack

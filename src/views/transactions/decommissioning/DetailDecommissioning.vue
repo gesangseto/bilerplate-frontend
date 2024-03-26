@@ -390,7 +390,7 @@ export default {
       let data = {
         id: this.decomissioning.wrk_id,
         approved: false,
-        reason: this.rejectProperty.reason,
+        reason: `[REJECT] ${this.rejectProperty.reason}`,
       };
       let url = `/v3/transaction/approval/comm-decomm`;
       this.$isLoading(true);
