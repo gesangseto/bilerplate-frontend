@@ -32,7 +32,7 @@
                 v-model="data.created_full_name"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">User (Fullname)</p>
+                  <p class="col-form-label col-sm-3">User (Full Name)</p>
                 </template>
               </CInput>
               <CInput :disabled="true" horizontal v-model="data.path">

@@ -97,7 +97,7 @@ export default {
         },
         {
           key: 'created_full_name',
-          label: 'User',
+          label: 'User (Full Name)',
           _classes: 'font-weight-bold',
         },
         {
