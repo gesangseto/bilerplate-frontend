@@ -153,7 +153,9 @@
         <CButton @click="sendMfgHet()" color="primary">
           <CIcon name="cil-check-circle" /> Submit</CButton
         >
-        <ButtonBack />
+        <CButton @click="warningModal = false" color="danger">
+          <CIcon name="cil-ban" /> Cancel</CButton
+        >
       </template>
     </CModal>
     <!-- START REJECT MODAL -->
