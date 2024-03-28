@@ -57,6 +57,10 @@ export default {
   },
   methods: {
     async logOut() {
+      let message = `Are you sure you want to logout?`;
+      if (!confirm(message)) {
+        return;
+      }
       let _res = await authLogout();
       if (_res) {
         this.$toast.open({
