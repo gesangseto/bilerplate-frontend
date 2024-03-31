@@ -133,25 +133,25 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import DateRangePicker from "vue2-daterange-picker";
-import "vue2-daterange-picker/dist/vue2-daterange-picker.css";
-import "vue-search-select/dist/VueSearchSelect.css";
-import { ModelSelect } from "vue-search-select";
-import moment from "moment";
-import { dateFilter } from "../../constants";
-import { getStatusDesc } from "../../resource/StatusDesc";
+import $axiosMertrack from '../../apiMertrack';
+import DateRangePicker from 'vue2-daterange-picker';
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
+import 'vue-search-select/dist/VueSearchSelect.css';
+import { ModelSelect } from 'vue-search-select';
+import moment from 'moment';
+import { dateFilter } from '../../constants';
+import { getStatusDesc } from '../../resource/StatusDesc';
 
 export default {
-  name: "HeaderFilterTransactionV3",
+  name: 'HeaderFilterTransactionV3',
   props: [
-    "filter",
-    "status_code",
-    "status_code_default",
-    "remove_all_status_code",
-    "costume_filter",
-    "removeTrxDate",
-    "order",
+    'filter',
+    'status_code',
+    'status_code_default',
+    'remove_all_status_code',
+    'costume_filter',
+    'removeTrxDate',
+    'order',
   ],
   components: { ModelSelect, DateRangePicker },
   mounted() {
@@ -180,12 +180,12 @@ export default {
       }
     }
     if (this.removeTrxDate) {
-      this.result.StartDate = "";
-      this.result.EndDate = "";
+      this.result.StartDate = '';
+      this.result.EndDate = '';
       this.useTransactionDate = false;
     }
     if (!this.title) {
-      this.title = "Report";
+      this.title = 'Report';
     }
     if (this.order && this.order.constructor === Array) {
       let temp_arr = this.listFilter;
@@ -204,31 +204,31 @@ export default {
           new Date(dateFilter.today.start),
           new Date(dateFilter.today.end),
         ],
-        "This week": [
+        'This week': [
           new Date(dateFilter.this_week.start),
           new Date(dateFilter.this_week.end),
         ],
-        "This month": [
+        'This month': [
           new Date(dateFilter.this_month.start),
           new Date(dateFilter.this_month.end),
         ],
-        "Last month": [
+        'Last month': [
           new Date(dateFilter.last_month.start),
           new Date(dateFilter.last_month.end),
         ],
-        "Last 3 month": [
+        'Last 3 month': [
           new Date(dateFilter.last_3_month.start),
           new Date(dateFilter.last_3_month.end),
         ],
-        "Last 6 month": [
+        'Last 6 month': [
           new Date(dateFilter.last_6_month.start),
           new Date(dateFilter.last_6_month.end),
         ],
-        "This year": [
+        'This year': [
           new Date(dateFilter.this_year.start),
           new Date(dateFilter.this_year.end),
         ],
-        All: ["", ""],
+        All: ['', ''],
       },
       useTransactionDate: true,
       result: this.initial_result(),
@@ -239,100 +239,100 @@ export default {
       is_visible: false,
       pages: [10, 20, 50, 100],
       extendFilter: false,
-      extendFilterTitle: "",
+      extendFilterTitle: '',
       listExtendFilter: [],
       listFilterStatusCode: [],
       listFilter: [
         {
-          value: "All",
-          code: "All",
-          label: "All",
+          value: 'All',
+          code: 'All',
+          label: 'All',
         },
         // V3 MULAI
         {
-          value: "source_id",
-          code: "source_id",
-          label: "Source",
+          value: 'source_id',
+          code: 'source_id',
+          label: 'Source',
         },
         {
-          value: "id",
-          code: "id",
-          label: "ID",
+          value: 'id',
+          code: 'id',
+          label: 'ID',
         },
         {
-          value: "supplier_id",
-          code: "supplier_id",
-          label: "Supplier",
+          value: 'supplier_id',
+          code: 'supplier_id',
+          label: 'Supplier',
         },
         {
-          value: "product_id",
-          code: "product_id",
-          label: "Product",
+          value: 'product_id',
+          code: 'product_id',
+          label: 'Product',
         },
         {
-          value: "warehouse_id",
-          code: "warehouse_id",
-          label: "Warehouse",
+          value: 'warehouse_id',
+          code: 'warehouse_id',
+          label: 'Warehouse',
         },
         {
-          value: "customer_id",
-          code: "customer_id",
-          label: "Customer",
+          value: 'customer_id',
+          code: 'customer_id',
+          label: 'Customer',
         },
         {
-          value: "from_supplier",
-          code: "from_supplier",
-          label: "From Supplier",
+          value: 'from_supplier',
+          code: 'from_supplier',
+          label: 'From Supplier',
         },
         {
-          value: "from_warehouse",
-          code: "from_warehouse",
-          label: "From Warehouse",
+          value: 'from_warehouse',
+          code: 'from_warehouse',
+          label: 'From Warehouse',
         },
         {
-          value: "from_customer",
-          code: "from_customer",
-          label: "From Customer",
+          value: 'from_customer',
+          code: 'from_customer',
+          label: 'From Customer',
         },
         {
-          value: "to_warehouse",
-          code: "to_warehouse",
-          label: "To Warehouse",
+          value: 'to_warehouse',
+          code: 'to_warehouse',
+          label: 'To Warehouse',
         },
         {
-          value: "to_customer",
-          code: "to_customer",
-          label: "To Customer",
+          value: 'to_customer',
+          code: 'to_customer',
+          label: 'To Customer',
         },
         {
-          value: "created_by",
-          code: "created_by",
-          label: "Created By",
+          value: 'created_by',
+          code: 'created_by',
+          label: 'Created By',
         },
         {
-          value: "approval_id",
-          code: "approval_id",
-          label: "Next Approval",
+          value: 'approval_id',
+          code: 'approval_id',
+          label: 'Next Approval',
         },
         {
-          value: "mfg_date",
-          code: "mfg_date",
-          label: "MFG Date",
+          value: 'mfg_date',
+          code: 'mfg_date',
+          label: 'MFG Date',
         },
         {
-          value: "expired_date",
-          code: "expired_date",
-          label: "EXP Date",
+          value: 'expired_date',
+          code: 'expired_date',
+          label: 'EXP Date',
         },
         {
-          value: "minimum",
-          code: "minimum",
-          label: "Minimum Stock",
+          value: 'minimum',
+          code: 'minimum',
+          label: 'Minimum Stock',
         },
         {
-          value: "maximum",
-          code: "maximum",
-          label: "Maximum Stock",
+          value: 'maximum',
+          code: 'maximum',
+          label: 'Maximum Stock',
         },
         // {
         //   value: "Product",
@@ -442,17 +442,17 @@ export default {
       let initial = {
         page: 1,
         limit: 10,
-        StatusCode: this.status_code_default ?? "",
-        StatusCodeText: "All",
-        SearchType: "All",
-        SearchTypeText: "All",
+        StatusCode: this.status_code_default ?? '',
+        StatusCodeText: 'All',
+        SearchType: 'All',
+        SearchTypeText: 'All',
         StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
-        searchText: "",
-        SearchVal1: "",
-        SearchVal2: "",
-        SearchVal1Text: "",
-        SearchVal2Text: "",
+        searchText: '',
+        SearchVal1: '',
+        SearchVal2: '',
+        SearchVal1Text: '',
+        SearchVal2Text: '',
       };
       return initial;
     },
@@ -466,8 +466,8 @@ export default {
     handleResetFilter() {
       this.result = this.initial_result();
       if (!this.useTransactionDate) {
-        this.result.StartDate = "";
-        this.result.EndDate = "";
+        this.result.StartDate = '';
+        this.result.EndDate = '';
       }
       this.default_date = this.initial_date();
       this.extendFilter = false;
@@ -476,14 +476,14 @@ export default {
       this.handleClickFilter();
     },
     handleChangeDate() {
-      this.result.StartDate = "";
-      this.result.EndDate = "";
+      this.result.StartDate = '';
+      this.result.EndDate = '';
       if (this.default_date.startDate && this.default_date.endDate) {
         this.result.StartDate = moment(this.default_date.startDate).format(
-          "YYYY-MM-DD"
+          'YYYY-MM-DD'
         );
         this.result.EndDate = moment(this.default_date.endDate).format(
-          "YYYY-MM-DD"
+          'YYYY-MM-DD'
         );
       }
 
@@ -494,17 +494,17 @@ export default {
       this.handleChangeFilter();
     },
     set_extend_date() {
-      let start_date = "";
-      let end_date = "";
+      let start_date = '';
+      let end_date = '';
       if (
         this.extend_default_date.startDate &&
         this.extend_default_date.endDate
       ) {
         start_date = moment(this.extend_default_date.startDate).format(
-          "YYYY-MM-DD"
+          'YYYY-MM-DD'
         );
         end_date = moment(this.extend_default_date.endDate).format(
-          "YYYY-MM-DD"
+          'YYYY-MM-DD'
         );
       }
       this.result.SearchVal1 = start_date;
@@ -513,66 +513,66 @@ export default {
       this.result.SearchVal2Text = end_date;
     },
     handleChangeType() {
-      this.result.SearchVal1 = "";
-      this.result.SearchVal2 = "";
+      this.result.SearchVal1 = '';
+      this.result.SearchVal2 = '';
       let idx = this.listFilter.findIndex(
         (i) => i.value === this.result.SearchType.toLowerCase()
       );
       if (~idx) this.result.SearchTypeText = this.listFilter[idx].label;
-      else this.result.SearchTypeText = "All";
+      else this.result.SearchTypeText = 'All';
       if (this.result.SearchType) {
         this.use_type_date = false;
         this.use_normal_form = false;
         this.listExtendFilter = [];
         this.extendFilterTitle = this.result.SearchType;
-        if (this.result.SearchType.toLowerCase() == "all") {
+        if (this.result.SearchType.toLowerCase() == 'all') {
           this.extendFilter = false;
-          this.result.SearchVal1 = "";
-          this.result.SearchVal1Text = "All";
-        } else if (this.result.SearchType.toLowerCase() == "id") {
+          this.result.SearchVal1 = '';
+          this.result.SearchVal1Text = 'All';
+        } else if (this.result.SearchType.toLowerCase() == 'id') {
           this.use_normal_form = true;
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "source_id") {
+        } else if (this.result.SearchType.toLowerCase() == 'source_id') {
           this.getSource();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "supplier_id") {
+        } else if (this.result.SearchType.toLowerCase() == 'supplier_id') {
           this.getSupplier();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "product_id") {
+        } else if (this.result.SearchType.toLowerCase() == 'product_id') {
           this.getProduct();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "warehouse_id") {
+        } else if (this.result.SearchType.toLowerCase() == 'warehouse_id') {
           this.getWarehouse();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "customer_id") {
+        } else if (this.result.SearchType.toLowerCase() == 'customer_id') {
           this.getCustomer();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "from_supplier") {
+        } else if (this.result.SearchType.toLowerCase() == 'from_supplier') {
           this.getSupplier();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "from_warehouse") {
+        } else if (this.result.SearchType.toLowerCase() == 'from_warehouse') {
           this.getWarehouse();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "from_customer") {
+        } else if (this.result.SearchType.toLowerCase() == 'from_customer') {
           this.getCustomer();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "to_warehouse") {
+        } else if (this.result.SearchType.toLowerCase() == 'to_warehouse') {
           this.getWarehouse();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "to_customer") {
+        } else if (this.result.SearchType.toLowerCase() == 'to_customer') {
           this.getCustomer();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "created_by") {
+        } else if (this.result.SearchType.toLowerCase() == 'created_by') {
           this.getUser();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "approval_id") {
+        } else if (this.result.SearchType.toLowerCase() == 'approval_id') {
           this.getUser();
           this.extendFilter = true;
-        } else if (this.result.SearchType.toLowerCase() == "mfg_date") {
+        } else if (this.result.SearchType.toLowerCase() == 'mfg_date') {
           this.use_type_date = true;
           this.extendFilter = false;
           this.set_extend_date();
-        } else if (this.result.SearchType.toLowerCase() == "expired_date") {
+        } else if (this.result.SearchType.toLowerCase() == 'expired_date') {
           this.use_type_date = true;
           this.extendFilter = false;
           this.set_extend_date();
@@ -641,7 +641,7 @@ export default {
       }
     },
     handleChangeSize() {
-      this.$emit("handleChangeSize", this.result.limit);
+      this.$emit('handleChangeSize', this.result.limit);
     },
     handleEnterSearchText() {
       this.handleClickFilter();
@@ -651,7 +651,8 @@ export default {
         if (this.result.SearchVal1 == it.value)
           this.result.SearchVal1Text = it.label;
       }
-      this.$emit("handleChangeFilter", this.result);
+      console.log(this.result);
+      this.$emit('handleChangeFilter', this.result);
     },
     handleTextInput(val) {
       this.result.SearchVal1Text = val;
@@ -666,24 +667,25 @@ export default {
       if (this.extendFilter && !this.result.SearchVal1) {
         this.$toast.open({
           message: `Please input ${this.result.SearchTypeText} to filter the data`,
-          type: "info",
+          type: 'info',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
       }
-      this.$emit("handleClickFilter", this.result);
+      this.$emit('handleClickFilter', this.result);
     },
     getProduct() {
       let url = `/v3/master/product`;
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
-          let ext = it.delete_flag == 1 ? "(X)" : "";
+          console.log(it);
+          let ext = it.delete_flag == 1 ? '(X)' : '';
           let tmp = it;
           tmp.value = it.id;
-          tmp.label = `(X)[${it.no}] ${it.name}`;
+          tmp.label = `${ext} [${it.no}] ${it.name}`;
           tmp.text = `${ext} [${it.no}] ${it.name}`;
           this.listExtendFilter.push(tmp);
         }
@@ -704,14 +706,14 @@ export default {
     },
     getWarehouse(type = null) {
       let param = {};
-      if (type == "qa") param.category_id = 1;
-      if (type == "rts") param.category_id = 3;
+      if (type == 'qa') param.category_id = 1;
+      if (type == 'rts') param.category_id = 3;
       param = new URLSearchParams(param).toString();
       let url = `/v3/master/warehouse?${param}`;
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
-          let ext = it.delete_flag == 1 ? "(X)" : "";
+          let ext = it.delete_flag == 1 ? '(X)' : '';
           let tmp = it;
           tmp.value = it.id;
           tmp.label = `${ext} ${it.name}`;
@@ -725,7 +727,7 @@ export default {
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
-          let ext = it.delete_flag == 1 ? "(X)" : "";
+          let ext = it.delete_flag == 1 ? '(X)' : '';
           let tmp = it;
           tmp.value = it.id;
           tmp.label = `${ext} ${it.name}`;
@@ -739,7 +741,7 @@ export default {
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
-          let ext = it.delete_flag == 1 ? "(X)" : "";
+          let ext = it.delete_flag == 1 ? '(X)' : '';
           let tmp = it;
           tmp.value = it.id;
           tmp.label = `${ext} ${it.name}`;
@@ -753,11 +755,11 @@ export default {
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
-          let ext = it.delete_flag == 1 ? "(X)" : "";
+          let ext = it.delete_flag == 1 ? '(X)' : '';
           let tmp = it;
           tmp.value = it.id;
-          tmp.label = `${ext} ${it.full_name} (${it["department_name"]} - ${it["section_name"]})`;
-          tmp.text = `${ext} ${it.full_name} (${it["department_name"]} - ${it["section_name"]})`;
+          tmp.label = `${ext} ${it.full_name} (${it['department_name']} - ${it['section_name']})`;
+          tmp.text = `${ext} ${it.full_name} (${it['department_name']} - ${it['section_name']})`;
           this.listExtendFilter.push(tmp);
         }
       });
@@ -773,16 +775,16 @@ export default {
     },
     getSourceType() {
       let source = [
-        { value: 1, label: "Production", text: "Production" },
-        { value: 2, label: "Import", text: "Import" },
-        { value: 3, label: "Toll Manufacturing", text: "Toll Manufacturing" },
+        { value: 1, label: 'Production', text: 'Production' },
+        { value: 2, label: 'Import', text: 'Import' },
+        { value: 3, label: 'Toll Manufacturing', text: 'Toll Manufacturing' },
       ];
       this.listExtendFilter = source;
     },
     async getSatusCode() {
       this.listFilterStatusCode = [];
       if (!this.remove_all_status_code) {
-        this.listFilterStatusCode = [{ value: "", label: "All" }];
+        this.listFilterStatusCode = [{ value: '', label: 'All' }];
       }
       if (!this.status_code) {
         return;
@@ -802,16 +804,16 @@ export default {
     humanizeText(str) {
       var i;
       if (!str) return;
-      var frags = str.split("_");
+      var frags = str.split('_');
       for (i = 0; i < frags.length; i++) {
         frags[i] = frags[i].charAt(0).toUpperCase() + frags[i].slice(1);
       }
-      return frags.join(" ");
+      return frags.join(' ');
     },
   },
   filters: {
     date(val) {
-      return val ? moment(val).format("DD-MMM-YYYY") : "";
+      return val ? moment(val).format('DD-MMM-YYYY') : '';
     },
   },
 };

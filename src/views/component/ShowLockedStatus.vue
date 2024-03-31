@@ -30,7 +30,7 @@
           <CInput
             horizontal
             v-model="property.item.gtin_cp"
-            label="GTIN / CP"
+            label="EPC Key"
             readonly
           />
         </CCol>
@@ -63,7 +63,7 @@
       </CRow>
       <hr />
       <CAlert color="danger">
-        Status {{ property.item["status_name"] }}
+        Status {{ property.item['status_name'] }}
       </CAlert>
       <CRow>
         <CCol md="12">
@@ -89,11 +89,11 @@
 </template>
 
 <script>
-import { convertTableName } from "../../utils";
-import Table from "../base/Table.vue";
+import { convertTableName } from '../../utils';
+import Table from '../base/Table.vue';
 export default {
   components: { Table },
-  name: "ShowLockedStatus",
+  name: 'ShowLockedStatus',
   props: { property: Object },
   watch: {
     property: {
@@ -102,9 +102,9 @@ export default {
         this.locked_item = [];
         this.item = n;
         this.locked_item.push({
-          lock_trx_id: n.item["lock_trx_id"],
-          lock_trx_name: n.item["lock_trx_name"],
-          quantity: n.item["quantity"],
+          lock_trx_id: n.item['lock_trx_id'],
+          lock_trx_name: n.item['lock_trx_name'],
+          quantity: n.item['quantity'],
         });
       },
     },
@@ -115,9 +115,9 @@ export default {
       result: this.resetForm(),
       locked_item: [],
       locked_field: [
-        { key: "lock_trx_id", label: "Trx ID" },
-        { key: "lock_trx_name", label: "Locking Pending Transaction" },
-        { key: "quantity", label: "L1 Qty" },
+        { key: 'lock_trx_id', label: 'Trx ID' },
+        { key: 'lock_trx_name', label: 'Locking Pending Transaction' },
+        { key: 'quantity', label: 'L1 Qty' },
       ],
       item: {},
     };

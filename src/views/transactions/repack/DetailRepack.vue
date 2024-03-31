@@ -76,7 +76,7 @@
                 <CCol md="6">
                   <table style="width: 100%">
                     <tr style="height: 50px">
-                      <td>GTIN / CP</td>
+                      <td>EPC Key</td>
                       <td>
                         <input
                           class="form-control"

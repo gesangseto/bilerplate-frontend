@@ -56,7 +56,7 @@
                     /> -->
                     &nbsp;
                     <ButtonPermission
-                      :buttonProperty="btn_printProp2"
+                      :buttonProperty="btn_printProp"
                       :permission="'print'"
                       @click="selected_data = item"
                     />
@@ -130,7 +130,7 @@ export default {
       btn_printProp: {
         size: 'sm',
         class: 'float-right',
-        color: 'secondary',
+        color: 'danger',
         icon: 'print',
         text: '',
         tooltip: 'Print this label',

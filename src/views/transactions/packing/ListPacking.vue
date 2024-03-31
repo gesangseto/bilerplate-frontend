@@ -85,11 +85,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportDataV3 } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListPacking",
+  name: 'ListPacking',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -107,49 +107,49 @@ export default {
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
         {
-          key: "_warehouse.name",
-          label: "Warehouse",
+          key: '_warehouse.name',
+          label: 'Warehouse',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'gtin_cp',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "Packing SN",
+          key: 'serial',
+          label: 'Packing SN',
         },
         {
-          key: "quantity_lvl_1",
-          label: "L1 Qty",
+          key: 'quantity_lvl_1',
+          label: 'L1 Qty',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "_created.full_name",
-          label: "Created By",
+          key: '_created.full_name',
+          label: 'Created By',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -177,7 +177,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/packing",
+        url: '/v3/transaction/packing',
       });
     },
     pageChange(page) {
@@ -201,18 +201,18 @@ export default {
     repack() {
       return this.items.map((item) => {
         // END OF EDITED BY GESANG
-        let gtin_cp = "<view for detail>";
-        let serial = "<view for detail>";
+        let gtin_cp = '<view for detail>';
+        let serial = '<view for detail>';
         if (item.child_count == 1) {
           gtin_cp =
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc;
+            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc;
           serial = item.serial;
         }
         return {
           ...item,
           gtin_cp: gtin_cp,
           serial: serial,
-          ["_created.full_name"]: item["_created.full_name"] || "-",
+          ['_created.full_name']: item['_created.full_name'] || '-',
         };
       });
     },

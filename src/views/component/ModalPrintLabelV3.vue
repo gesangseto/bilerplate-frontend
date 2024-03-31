@@ -13,7 +13,7 @@
         :options="printers"
         placeholder="Please select"
       />
-      <CInput horizontal v-model="formData.reason" label="Reson" />
+      <CInput horizontal v-model="formData.reason" label="Reason" />
       <!-- <label for="installedPrinterName">Select an installed Printer: </label>
       <select name="printer" id="printer" v-model="selected_printer">
         <option disabled n-bind:key="undefined">Select printer</option>
@@ -22,7 +22,6 @@
         </option>
       </select> -->
     </div>
-    <p>Visit : <CLink>https://www.neodynamic.com/downloads/jspm/</CLink></p>
 
     <template #footer>
       <CButton

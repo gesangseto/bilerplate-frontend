@@ -258,7 +258,7 @@ export default {
       detailItemsFields: [
         {
           key: 'gtin_cp',
-          label: 'GTIN / CP',
+          label: 'EPC Key',
         },
         {
           key: 'serial',
@@ -314,7 +314,7 @@ export default {
         },
         {
           key: 'gtin_cp',
-          label: 'GTIN / CP',
+          label: 'EPC Key',
         },
         {
           key: 'serial',

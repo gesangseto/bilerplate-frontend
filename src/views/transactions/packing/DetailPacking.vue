@@ -81,9 +81,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="
-                            repack[`name_packaging_l${repack.packaging_level}`]
-                          "
+                          v-model="repack.packaging_name"
                         />
                       </td>
                     </tr>
@@ -110,12 +108,12 @@
               </CRow>
               <CRow>
                 <CCol sm="12" md="12" lg="12">
-                  <ButtonPermission
+                  <!-- <ButtonPermission
                     v-if="can_print_all == true"
                     :permission="'print'"
                     :buttonProperty="print_buttonProperty"
                     @click="printAllV3()"
-                  />
+                  /> -->
                   &nbsp;
 
                   <ButtonPermission
@@ -140,13 +138,13 @@
               >
                 <template #action="{ item, index }">
                   <td>
-                    <ButtonPermission
+                    <!-- <ButtonPermission
                       :buttonProperty="btn_printProp"
                       v-if="item.trx_pack_epc_key"
                       :permission="'print'"
                       @click="printV3(item, index)"
-                    />
-                    &nbsp;
+                    /> -->
+
                     <ButtonPermission
                       :buttonProperty="btn_printProp2"
                       :permission="'print'"
