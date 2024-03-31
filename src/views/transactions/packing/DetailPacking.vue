@@ -366,7 +366,11 @@ export default {
         return;
       }
       $axiosMertrack
-        .post(`/v3/helper/print-layout/pdf`, { validate: true, items: _body })
+        .post(`/v3/helper/print-layout/pdf`, {
+          update_count: true,
+          validate: true,
+          items: _body,
+        })
         .then((response) => {
           if (response.data.error) {
             this.$toast.open({

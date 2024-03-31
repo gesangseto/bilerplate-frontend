@@ -305,8 +305,6 @@ export default {
         return {
           ...item,
           ['_created.full_name']: item['_created.full_name'] || '-',
-          gtin_cp:
-            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

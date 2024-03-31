@@ -163,7 +163,7 @@ export default {
         reason: this.formData?.reason || '-',
       };
       if (this.formData?.items && this.formData?.items.length > 0) {
-        _body.update_count = false;
+        _body.update_count = true;
         _body.items = this.formData?.items;
       } else {
         let serial = this.formData?.trx_pack_serial || this.formData?.serial;

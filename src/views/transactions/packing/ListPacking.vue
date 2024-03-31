@@ -124,7 +124,7 @@ export default {
           label: 'Warehouse',
         },
         {
-          key: 'gtin_cp',
+          key: 'epc_key',
           label: 'EPC Key',
         },
         {
@@ -201,16 +201,15 @@ export default {
     repack() {
       return this.items.map((item) => {
         // END OF EDITED BY GESANG
-        let gtin_cp = '<view for detail>';
+        let epc_key = '<view for detail>';
         let serial = '<view for detail>';
         if (item.child_count == 1) {
-          gtin_cp =
-            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc;
+          epc_key = item.epc_key;
           serial = item.serial;
         }
         return {
           ...item,
-          gtin_cp: gtin_cp,
+          epc_key: epc_key,
           serial: serial,
           ['_created.full_name']: item['_created.full_name'] || '-',
         };
