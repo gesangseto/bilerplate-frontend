@@ -48,21 +48,19 @@
                       :permission="'read'"
                       @click="rowClicked(item, index)"
                     />
-                    <!-- &nbsp;
-                    <ButtonPermission
-                      :buttonProperty="btn_printProp"
-                      :permission="'print'"
-                      @click="printV3(item, index)"
-                    /> -->
                     &nbsp;
                     <ButtonPermission
-                      :buttonProperty="btn_printProp"
+                      :buttonProperty="{
+                        ...btn_printProp,
+                        color: item.allow_print ? 'warning' : 'danger',
+                      }"
                       :permission="'print'"
                       @click="selected_data = item"
                     />
                     &nbsp;
-                    <Button
-                      :type="'barcode'"
+                    <ButtonPermission
+                      :buttonProperty="btn_showBarcode"
+                      :permission="'print'"
                       @click="selected_barcode = item"
                     />
                   </td>
@@ -130,10 +128,18 @@ export default {
       btn_printProp: {
         size: 'sm',
         class: 'float-right',
-        color: 'danger',
+        color: 'secondary',
         icon: 'print',
         text: '',
-        tooltip: 'Print this label',
+        tooltip: 'Print Label',
+      },
+      btn_showBarcode: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'barcode',
+        text: '',
+        tooltip: 'Show Barcode',
       },
       selected_barcode: {},
       selected_data: {},
@@ -188,7 +194,7 @@ export default {
         {
           key: 'action',
           label: 'Action',
-          _style: 'width:10%',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },

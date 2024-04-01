@@ -138,21 +138,15 @@
               >
                 <template #action="{ item, index }">
                   <td>
-                    <!-- <ButtonPermission
-                      :buttonProperty="btn_printProp"
-                      v-if="item.trx_pack_epc_key"
-                      :permission="'print'"
-                      @click="printV3(item, index)"
-                    /> -->
-
                     <ButtonPermission
-                      :buttonProperty="btn_printProp2"
+                      :buttonProperty="btn_printProp"
                       :permission="'print'"
                       @click="selected_data = item"
                     />
                     &nbsp;
-                    <Button
-                      :type="'barcode'"
+                    <ButtonPermission
+                      :buttonProperty="btn_showBarcode"
+                      :permission="'print'"
                       @click="selected_barcode = item"
                     />
                   </td>
@@ -235,26 +229,26 @@ export default {
       print_buttonProperty2: {
         size: 'sm',
         class: 'float-right',
-        color: 'danger',
+        color: 'warning',
         icon: 'print',
         text: 'Print All',
-        tooltip: 'Print all label',
+        tooltip: 'Print All Label',
       },
       btn_printProp: {
         size: 'sm',
         class: 'float-right',
-        color: 'secondary',
+        color: 'warning',
         icon: 'print',
         text: '',
-        tooltip: 'Print this label',
+        tooltip: 'Print Label',
       },
-      btn_printProp2: {
+      btn_showBarcode: {
         size: 'sm',
         class: 'float-right',
-        color: 'danger',
-        icon: 'print',
+        color: 'success',
+        icon: 'barcode',
         text: '',
-        tooltip: 'Print this data',
+        tooltip: 'Show Barcode',
       },
       selected_barcode: {},
       selected_data: {},
@@ -334,7 +328,13 @@ export default {
           key: 'quantity',
           label: 'L1 Qty',
         },
-        { key: 'action', label: 'Print', sorter: false, filter: false },
+        {
+          key: 'action',
+          _style: 'width:10%',
+          label: 'Print',
+          sorter: false,
+          filter: false,
+        },
       ],
     };
   },

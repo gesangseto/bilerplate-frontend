@@ -57,15 +57,16 @@
                     &nbsp;
                     <ButtonPermission
                       :buttonProperty="{
-                        ...btn_printProp2,
-                        color: item.allow_print ? 'warning' : 'secondary',
+                        ...btn_printProp,
+                        color: item.allow_print ? 'warning' : 'danger',
                       }"
                       :permission="'print'"
                       @click="selected_data = item"
                     />
                     &nbsp;
-                    <Button
-                      :type="'barcode'"
+                    <ButtonPermission
+                      :buttonProperty="btn_showBarcode"
+                      :permission="'read'"
                       @click="selected_barcode = item"
                     />
                   </td>
@@ -138,15 +139,15 @@ export default {
         color: 'secondary',
         icon: 'print',
         text: '',
-        tooltip: 'Print this label',
+        tooltip: 'Print Label',
       },
-      btn_printProp2: {
+      btn_showBarcode: {
         size: 'sm',
         class: 'float-right',
-        color: 'danger',
-        icon: 'print',
+        color: 'success',
+        icon: 'barcode',
         text: '',
-        tooltip: 'Print this data',
+        tooltip: 'Show Barcode',
       },
       selected_barcode: {},
       selected_data: {},
