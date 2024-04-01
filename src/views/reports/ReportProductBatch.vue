@@ -139,6 +139,7 @@ export default {
         param: this.filter,
         exportType: type,
         url: '/v3/report/batch',
+        alert: true,
       });
     },
     pageChange(page) {
