@@ -181,7 +181,7 @@ export default {
         },
         {
           key: 'serial',
-          label: 'Re-Aggregation SN',
+          label: 'Aggregation SN',
         },
         {
           key: 'quantity_lvl_1',

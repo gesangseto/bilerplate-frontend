@@ -86,12 +86,22 @@
                       </td>
                     </tr>
                     <tr style="height: 50px">
-                      <td>Re-Packing SN</td>
+                      <td>Packing SN</td>
                       <td>
                         <input
                           class="form-control"
                           readonly
                           v-model="unpack.serial"
+                        />
+                      </td>
+                    </tr>
+                    <tr style="height: 50px">
+                      <td>Old Packing EPC</td>
+                      <td>
+                        <input
+                          class="form-control"
+                          readonly
+                          v-model="unpack.old_epc"
                         />
                       </td>
                     </tr>

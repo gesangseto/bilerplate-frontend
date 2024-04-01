@@ -173,7 +173,7 @@ export default {
         },
         {
           key: 'serial',
-          label: 'Re-Packing SN',
+          label: 'Packing SN',
         },
         {
           key: 'quantity_lvl_1',

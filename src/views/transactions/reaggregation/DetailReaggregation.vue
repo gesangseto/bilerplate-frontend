@@ -86,7 +86,7 @@
                       </td>
                     </tr>
                     <tr style="height: 50px">
-                      <td>Re-Aggregation SN</td>
+                      <td>Aggregation SN</td>
                       <td>
                         <input
                           class="form-control"
@@ -95,6 +95,17 @@
                         />
                       </td>
                     </tr>
+                    <tr style="height: 50px">
+                      <td style="width: 40%">Old Aggregation EPC</td>
+                      <td style="width: 60%">
+                        <input
+                          class="form-control"
+                          readonly
+                          v-model="reaggregation.old_epc"
+                        />
+                      </td>
+                    </tr>
+
                     <tr style="height: 50px">
                       <td>Packaging Level</td>
                       <td>
