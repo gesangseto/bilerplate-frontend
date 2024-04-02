@@ -81,7 +81,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack.gtin_cp"
+                          v-model="unpack.epc_key"
                         />
                       </td>
                     </tr>
