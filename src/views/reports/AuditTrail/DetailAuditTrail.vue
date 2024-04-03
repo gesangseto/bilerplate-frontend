@@ -55,6 +55,16 @@
                   <p class="col-form-label col-sm-3">User Agent</p>
                 </template>
               </CInput>
+              <CInput :disabled="true" horizontal v-model="data.status_desc">
+                <template #label>
+                  <p class="col-form-label col-sm-3">Status</p>
+                </template>
+              </CInput>
+              <CInput :disabled="true" horizontal v-model="data.message">
+                <template #label>
+                  <p class="col-form-label col-sm-3">Message</p>
+                </template>
+              </CInput>
               <div v-if="Object.keys(oldDataBody).length > 0">
                 <hr />
                 <hr />

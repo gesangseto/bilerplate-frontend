@@ -8,6 +8,7 @@
         <CCardBody>
           <HeaderFilterTransactionV3
             :filter="['All', 'created_by']"
+            status_code="sys_audit_trail"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
@@ -118,6 +119,11 @@ export default {
         {
           key: 'user_agent',
           label: 'User Agent',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'status_desc',
+          label: 'Status',
           _classes: 'font-weight-bold',
         },
         {
