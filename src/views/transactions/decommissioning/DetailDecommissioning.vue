@@ -350,6 +350,7 @@ export default {
       if (confirm(message)) {
         let data = {
           id: this.decomissioning.wrk_id,
+          trx_ref_id: this.decomissioning.id,
           approved: true,
           reason: '',
         };
@@ -389,6 +390,7 @@ export default {
     handleSubmitReject() {
       let data = {
         id: this.decomissioning.wrk_id,
+        trx_ref_id: this.decomissioning.id,
         approved: false,
         reason: `[REJECT] ${this.rejectProperty.reason}`,
       };

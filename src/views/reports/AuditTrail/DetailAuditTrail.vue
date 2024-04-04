@@ -143,7 +143,7 @@
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
+                        {{ name.replace(/_/g, ' ').replace(/\bid\b/gi, 'ID') }}
                       </p>
                     </template>
                   </CInput>

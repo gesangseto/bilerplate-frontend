@@ -339,6 +339,7 @@ export default {
       if (confirm(message)) {
         let data = {
           id: this.rework.wrk_id,
+          trx_ref_id: this.rework.id,
           approved: true,
           reason: '',
         };
@@ -378,6 +379,7 @@ export default {
     handleSubmitReject() {
       let data = {
         id: this.rework.wrk_id,
+        trx_ref_id: this.rework.id,
         approved: false,
         reason: `[REJECT] ${this.rejectProperty.reason}`,
       };

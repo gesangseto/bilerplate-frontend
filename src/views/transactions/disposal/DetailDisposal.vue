@@ -335,6 +335,7 @@ export default {
       if (confirm(message)) {
         let data = {
           id: this.disposal.wrk_id,
+          trx_ref_id: this.disposal.id,
           approved: true,
           reason: '',
         };
@@ -374,6 +375,7 @@ export default {
     handleSubmitReject() {
       let data = {
         id: this.disposal.wrk_id,
+        trx_ref_id: this.disposal.id,
         approved: false,
         reason: `[REJECT] ${this.rejectProperty.reason}`,
       };

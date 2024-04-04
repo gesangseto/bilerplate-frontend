@@ -47,9 +47,23 @@
     <CModal centered="centered" :show.sync="notifModal" title="Notification">
       <template #header>
         <h5 class="modal-title">Notification</h5>
-        Click icon bell to remove notification
+        <CButton
+          v-if="notif.length > 0"
+          type="submit"
+          size="sm"
+          color="danger"
+          @click="readNotifAll()"
+        >
+          Clear All
+        </CButton>
       </template>
 
+      <a
+        v-if="notif.length > 0"
+        style="background-color: yellow; font-size: x-small"
+      >
+        Click icon bell to remove notification
+      </a>
       <CRow v-for="item in notif" :key="item.id">
         <CCol key="item.id" sm="11" md="11">
           <CButton @click="readNotif(item)"><CIcon name="cil-bell" /></CButton>
@@ -224,6 +238,7 @@ export default {
     },
 
     handleClickClose() {
+      this.timeout = 9999;
       this.timeoutModal = false;
       this.getNotif();
     },
@@ -250,6 +265,21 @@ export default {
     },
     async readNotif(item) {
       let _res = await updateMstNotification({ id: [item.id] });
+      this.$toast.open({
+        message: _res.error ? _res.message : 'Data has been saved succesfully ',
+        type: _res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      this.getNotif();
+    },
+    async readNotifAll() {
+      let message = `You are about to clear all existing notifications. All cleared notifications cannot be restored.\nAre you sure you want to continue?`;
+      if (!confirm(message)) {
+        return;
+      }
+      let _res = await updateMstNotification({ id: 'all' });
       this.$toast.open({
         message: _res.error ? _res.message : 'Data has been saved succesfully ',
         type: _res.error ? 'error' : 'success',

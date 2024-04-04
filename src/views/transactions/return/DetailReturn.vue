@@ -359,6 +359,7 @@ export default {
         this.$isLoading(true);
         let param = {
           id: this.returnDetail.wrk_id,
+          trx_ref_id: this.returnDetail.id,
           approved: true,
           reason: '',
         };
@@ -398,6 +399,7 @@ export default {
       this.$isLoading(true);
       let param = {
         id: this.returnDetail.wrk_id,
+        trx_ref_id: this.returnDetail.id,
         approved: false,
         reason: `[REJECT] ${this.rejectProperty.reason}`,
       };
