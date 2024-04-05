@@ -29,7 +29,7 @@
                   'id',
                   'product_id',
                   'warehouse_id',
-                  'created_by',
+                  'requested_by',
                   'approval_id',
                 ]"
                 status_code="trx_rework"
@@ -94,11 +94,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePaginationV3, exportDataV3, getUserId } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3, getUserId } from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListRework",
+  name: 'ListRework',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -117,40 +117,40 @@ export default {
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: 'warehouse_name',
+          label: 'Warehouse',
         },
         {
-          key: "created_full_name",
-          label: "Requested By",
+          key: 'created_full_name',
+          label: 'Requested By',
         },
         {
-          key: "status_desc",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'status_desc',
+          label: 'Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "next_approval",
-          label: "Next Approval",
+          key: 'next_approval',
+          label: 'Next Approval',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
-          _style: "width:10%",
+          _style: 'width:10%',
           filter: false,
         },
       ],
@@ -177,7 +177,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/rework",
+        url: '/v3/transaction/rework',
       });
     },
     pageChange(page) {
@@ -201,8 +201,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          created_full_name: item.created_full_name || "-",
-          next_approval: item.status !== 0 ? "" : item.approval_full_name,
+          created_full_name: item.created_full_name || '-',
+          next_approval: item.status !== 0 ? '' : item.approval_full_name,
         };
       });
     },

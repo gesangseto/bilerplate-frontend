@@ -40,7 +40,7 @@
                   'id',
                   'product_id',
                   'to_warehouse',
-                  'created_by',
+                  'requested_by',
                   'from_customer',
                   'from_warehouse',
                   'approval_id',
@@ -53,7 +53,7 @@
                   'from_customer',
                   'from_warehouse',
                   'to_warehouse',
-                  'created_by',
+                  'requested_by',
                   'approval_id',
                 ]"
                 status_code="trx_return"

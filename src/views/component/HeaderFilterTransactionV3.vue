@@ -310,6 +310,11 @@ export default {
           label: 'Created By',
         },
         {
+          value: 'created_by',
+          code: 'requested_by',
+          label: 'Requested By',
+        },
+        {
           value: 'approval_id',
           code: 'approval_id',
           label: 'Next Approval',

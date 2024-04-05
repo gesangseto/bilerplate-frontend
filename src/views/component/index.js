@@ -19,6 +19,7 @@ import SwitchDefault from './SwitchDefault';
 import ButtonBack from './ButtonBack';
 import ProductWeight from './ProductWeight';
 import VirtualKeyboard from './VirtualKeyboard';
+import SelectOption from './SelectOption';
 
 export {
   VirtualKeyboard,
@@ -42,4 +43,5 @@ export {
   SwitchStatusMaster,
   SwitchStatusTrx,
   SwitchDefault,
+  SelectOption,
 };

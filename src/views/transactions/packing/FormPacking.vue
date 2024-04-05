@@ -8,64 +8,56 @@
         <CCardBody>
           <CRow>
             <CCol sm="6" md="6" lg="6">
-              <CSelect
-                placeholder="-Select-"
+              <SelectOption
+                title="Warehouse"
+                :required="true"
                 :options="warehouseOptions"
-                horizontal
-                :value.sync="formData.warehouse_id"
-                :is-valid="
+                :is_valid="
                   initialLoad ? null : !formData.warehouse_id ? false : true
                 "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Warehouse
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
-
-              <CSelect
-                placeholder="-Select-"
+                v-on:onchange="formData.warehouse_id = $event"
+              />
+              <SelectOption
+                title="Product Name"
+                :required="true"
                 :options="productOptions"
-                horizontal
-                :value.sync="formData.product_id"
-                :is-valid="
+                :is_valid="
                   initialLoad ? null : !formData.product_id ? false : true
                 "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Product Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
-
-              <CSelect
-                placeholder="-Select-"
+                v-on:onchange="formData.product_id = $event"
+              />
+              <SelectOption
+                title="Batch No"
+                :required="true"
                 :options="batchNumberOptions"
-                horizontal
-                :value.sync="formData.batch_no"
-                @change="getSerialNumber"
-                :is-valid="
+                :is_valid="
                   initialLoad ? null : !formData.batch_no ? false : true
                 "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Batch No
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
+                v-on:onchange="formData.batch_no = $event"
+              />
+            </CCol>
+            <CCol sm="6" md="6" lg="6">
               <div class="form-group row mb-2">
+                <label
+                  for="batch-number"
+                  class="col-sm-4 col-md-4 col-lg-24 form-label"
+                >
+                  Trx Date
+                </label>
+                <div class="col-sm-8 col-md-8 col-lg-8">
+                  <input
+                    type="text"
+                    class="form-control"
+                    readonly
+                    v-model="today"
+                  />
+                </div>
+              </div>
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol sm="6" md="6" lg="6">
+              <div class="form-group row mb-3">
                 <label
                   for="batch-number"
                   class="col-sm-4 col-md-4 col-lg-24 form-label"
@@ -85,24 +77,6 @@
                 </label>
                 <div class="col-sm-8 col-md-8 col-lg-8">
                   {{ last_stock }}
-                </div>
-              </div>
-            </CCol>
-            <CCol sm="6" md="6" lg="6">
-              <div class="form-group row mb-2">
-                <label
-                  for="batch-number"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  Trx Date
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  <input
-                    type="text"
-                    class="form-control"
-                    readonly
-                    v-model="today"
-                  />
                 </div>
               </div>
             </CCol>
@@ -200,6 +174,7 @@ export default {
           this.formData.batch_detail = batch;
           this.full_box = batch.qty_packagingl2;
           this.last_stock = batch.quantity;
+        } else if (!item.batch_no) {
         }
       },
     },
