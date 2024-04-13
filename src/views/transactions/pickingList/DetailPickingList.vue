@@ -456,17 +456,18 @@ export default {
         $axiosMertrack
           .post(_url, param)
           .then((result) => {
+            let res = result.data;
             this.$isLoading(false);
             this.$toast.open({
-              message: result.data.error
-                ? result.data.message
+              message: res.error
+                ? res.message
                 : 'Data has been saved succesfully ',
-              type: result.data.error ? 'error' : 'success',
+              type: res.error ? 'error' : 'success',
               dissmissible: true,
               position: 'top-right',
               duration: 5000,
             });
-            if (!result.data.error) {
+            if (!res.error) {
               // this.generateCsv();
               this.$router.back();
             }

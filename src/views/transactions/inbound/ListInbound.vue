@@ -15,9 +15,9 @@
                     code: 'source',
                     label: 'Type',
                     data: [
-                      { value: 'Transfer', label: 'Transfer ' },
-                      { value: 'Return-Internal', label: 'Return ' },
-                      { value: 'Return-EXTERNAL', label: 'Return-External' },
+                      // { value: 'Transfer', label: 'Transfer ' },
+                      // { value: 'Return-Internal', label: 'Return ' },
+                      // { value: 'Return-EXTERNAL', label: 'Return-External' },
                       { value: 'Production', label: 'Production ' },
                       { value: 'Import', label: 'Import ' },
                       {
@@ -31,20 +31,16 @@
                   'All',
                   'id',
                   'product_id',
-                  'from_supplier',
-                  'from_warehouse',
-                  'from_customer',
-                  'to_warehouse',
+                  'source_supplier',
+                  'destination_warehouse',
                 ]"
                 :order="[
                   'All',
                   'id',
                   'product_id',
                   'source',
-                  'from_supplier',
-                  'from_warehouse',
-                  'from_customer',
-                  'to_warehouse',
+                  'source_supplier',
+                  'destination_warehouse',
                 ]"
                 status_code="trx_inbound"
                 v-on:handleClickFilter="handleClickFilter($event)"

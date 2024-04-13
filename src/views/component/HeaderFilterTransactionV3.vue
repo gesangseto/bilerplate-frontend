@@ -285,6 +285,11 @@ export default {
           label: 'From Supplier',
         },
         {
+          value: 'from_supplier',
+          code: 'source_supplier',
+          label: 'Source',
+        },
+        {
           value: 'from_warehouse',
           code: 'from_warehouse',
           label: 'From Warehouse',
@@ -298,6 +303,11 @@ export default {
           value: 'to_warehouse',
           code: 'to_warehouse',
           label: 'To Warehouse',
+        },
+        {
+          value: 'to_warehouse',
+          code: 'destination_warehouse',
+          label: 'Destination',
         },
         {
           value: 'to_customer',

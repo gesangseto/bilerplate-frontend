@@ -15,9 +15,9 @@
                     code: 'Type',
                     label: 'Type',
                     data: [
-                      { value: 'Transfer', label: 'Transfer' },
+                      // { value: 'Transfer', label: 'Transfer' },
                       { value: 'Picking', label: 'Picking' },
-                      { value: 'Return', label: 'Return' },
+                      // { value: 'Return', label: 'Return' },
                     ],
                   },
                 ]"
@@ -26,7 +26,6 @@
                   'id',
                   'product_id',
                   'from_warehouse',
-                  'to_warehouse',
                   'to_customer',
                 ]"
                 :order="[
@@ -35,7 +34,6 @@
                   'product_id',
                   'Type',
                   'from_warehouse',
-                  'to_warehouse',
                   'to_customer',
                 ]"
                 status_code="trx_outbound"
@@ -92,15 +90,15 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
 import {
   toTitleCase,
   calculatePaginationV3,
   exportDataV3,
-} from "../../../utils";
-import { dateFilter } from "../../../constants";
+} from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListOutbound",
+  name: 'ListOutbound',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -118,43 +116,43 @@ export default {
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No, L1 Qty]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No, L1 Qty]',
         },
         {
-          key: "type",
-          label: "Type",
-          _classes: "font-weight-bold",
+          key: 'type',
+          label: 'Type',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "trx_ref_id",
-          label: "Trx Ref ID",
-          _classes: "font-weight-bold",
+          key: 'trx_ref_id',
+          label: 'Trx Ref ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "from",
-          label: "Source",
+          key: 'from',
+          label: 'Source',
         },
         {
-          key: "to",
-          label: "Destination",
+          key: 'to',
+          label: 'Destination',
         },
         {
-          key: "created_full_name",
-          label: "Created By",
+          key: 'created_full_name',
+          label: 'Created By',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -184,7 +182,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/outbound",
+        url: '/v3/transaction/outbound',
       });
     },
     pageChange(page) {
@@ -212,7 +210,7 @@ export default {
         let type = toTitleCase(item.type);
         return {
           ...item,
-          created_full_name: item.created_full_name || "-",
+          created_full_name: item.created_full_name || '-',
           type: type,
         };
       });

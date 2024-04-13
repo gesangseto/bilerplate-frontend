@@ -261,6 +261,11 @@ export default {
       warehouseError: false,
       fields: [
         {
+          key: 'no',
+          label: 'No',
+          sorter: false,
+        },
+        {
           key: 'product_no',
           label: 'Item No',
           sorter: false,
@@ -503,8 +508,10 @@ export default {
   },
   computed: {
     renderItems() {
+      let no = 0;
       return this.items.map((item) => {
         return {
+          no: (no += 1),
           ...item,
         };
       });

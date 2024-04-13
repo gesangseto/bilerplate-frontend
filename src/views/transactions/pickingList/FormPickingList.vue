@@ -257,7 +257,7 @@ export default {
       },
       detailItemsFields: [
         {
-          key: 'gtin_cp',
+          key: 'ecp_key',
           label: 'EPC Key',
         },
         {
@@ -292,6 +292,10 @@ export default {
       temp_items: [],
       fields: [
         {
+          key: 'no',
+          label: 'No',
+        },
+        {
           key: 'product_no',
           label: 'Item No',
         },
@@ -313,7 +317,7 @@ export default {
           label: 'NIE',
         },
         {
-          key: 'gtin_cp',
+          key: 'epc_key',
           label: 'EPC Key',
         },
         {
@@ -625,9 +629,11 @@ export default {
   },
   computed: {
     renderItems() {
+      let no = 0;
       return this.items.map((item) => {
         return {
           ...item,
+          no: (no += 1),
           gtin_cp:
             item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };

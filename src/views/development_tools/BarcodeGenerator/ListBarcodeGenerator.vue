@@ -3,7 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>Barcode Generator</h5>
+          <h5>Stock Data Barcode Generator</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>
