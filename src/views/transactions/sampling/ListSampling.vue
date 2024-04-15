@@ -95,7 +95,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { calculatePagination, exportDataV3, getUserId } from '../../../utils';
+import { calculatePaginationV3, exportDataV3, getUserId } from '../../../utils';
 import { dateFilter } from '../../../constants';
 export default {
   name: 'Sampling',
@@ -163,7 +163,7 @@ export default {
 
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });

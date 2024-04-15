@@ -61,17 +61,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import {
-  exportDataReport,
-  calculatePagination,
-  calculatePaginationV3,
-  exportDataV3,
-} from "../../utils";
-import { dateFilter } from "../../constants";
+import $axiosMertrack from '../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../utils';
 
 export default {
-  name: "ReportStock",
+  name: 'ReportStock',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -83,60 +77,60 @@ export default {
         limit: 10,
         totalPages: 1,
         totalData: 0,
-        StatusCode: "include_pending",
-        StatusCodeText: "Include Pending",
-        StartDate: "",
-        EndDate: "",
+        StatusCode: 'include_pending',
+        StatusCodeText: 'Include Pending',
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
         {
-          key: "no",
-          label: "No",
+          key: 'no',
+          label: 'No',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: 'warehouse_name',
+          label: 'Warehouse',
         },
         {
-          key: "sn_non_sn",
-          label: "SN / NON-SN",
+          key: 'sn_non_sn',
+          label: 'SN / NON-SN',
         },
         {
-          key: "product_no",
-          label: "Item No",
-          _classes: "font-weight-bold",
+          key: 'product_no',
+          label: 'Item No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "product_name",
-          label: "Product Name",
-          _classes: "font-weight-bold",
+          key: 'product_name',
+          label: 'Product Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
-          _classes: "font-weight-bold",
+          key: 'batch_no',
+          label: 'Batch No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "mfg_date",
-          label: "Mfg Date",
+          key: 'mfg_date',
+          label: 'Mfg Date',
         },
         {
-          key: "product_nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "product_gtin",
-          label: "L1 GTIN",
+          key: 'product_gtin',
+          label: 'L1 GTIN',
           // _classes: "font-weight-bold",
         },
         {
-          key: "quantity_l1",
-          label: "L1 Qty",
+          key: 'quantity_l1',
+          label: 'L1 Qty',
         },
       ],
     };
@@ -155,8 +149,8 @@ export default {
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
-      this.filter.StartDate = "";
-      this.filter.EndDate = "";
+      this.filter.StartDate = '';
+      this.filter.EndDate = '';
       this.loadData();
     },
     handleClickExport(type) {
@@ -164,7 +158,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/report/stock",
+        url: '/v3/report/stock',
       });
     },
     pageChange(page) {

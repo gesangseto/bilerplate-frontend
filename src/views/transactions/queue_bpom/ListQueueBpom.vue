@@ -19,6 +19,11 @@
                       { value: 'Re-Aggregation', label: 'Re-Aggregation ' },
                       { value: 'Aggregation', label: 'Aggregation ' },
                       { value: 'Picking', label: 'Picking ' },
+                      { value: 'Indirect-Request', label: 'Indirect-Request ' },
+                      { value: 'Rework', label: 'Rework ' },
+                      { value: 'Disposal', label: 'Disposal ' },
+                      { value: 'Retur-Internal', label: 'Retur-Internal ' },
+                      { value: 'Return-External', label: 'Return-External ' },
                     ],
                   },
                 ]"

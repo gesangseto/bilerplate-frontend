@@ -64,11 +64,8 @@ import $axiosMertrack from '../../../apiMertrack';
 import {
   capitalizeFirstLetter,
   exportDataReport,
-  calculatePagination,
   calculatePaginationV3,
 } from '../../../utils';
-import { dateFilter } from '../../../constants';
-import { get_log } from '../../../dummy_data';
 
 export default {
   name: 'ListAuditTrail',

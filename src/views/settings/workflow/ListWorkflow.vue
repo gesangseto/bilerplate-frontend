@@ -56,15 +56,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import {
-  exportData,
-  calculatePagination,
-  calculatePaginationV3,
-} from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportData, calculatePaginationV3 } from '../../../utils';
 
 export default {
-  name: "ListWorkflow",
+  name: 'ListWorkflow',
 
   mounted() {
     this.page = 1;
@@ -76,25 +72,25 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
         {
-          key: "transaction_label",
-          label: "Transaction",
-          _classes: "font-weight-bold",
+          key: 'transaction_label',
+          label: 'Transaction',
+          _classes: 'font-weight-bold',
         },
-        { key: "approval_1_full_name", label: "Approval 1" },
-        { key: "approval_2_full_name", label: "Approval 2" },
-        { key: "approval_3_full_name", label: "Approval 3" },
-        { key: "approval_4_full_name", label: "Approval 4" },
+        { key: 'approval_1_full_name', label: 'Approval 1' },
+        { key: 'approval_2_full_name', label: 'Approval 2' },
+        { key: 'approval_3_full_name', label: 'Approval 3' },
+        { key: 'approval_4_full_name', label: 'Approval 4' },
         {
-          key: "action",
-          label: "Action",
-          _classes: "font-weight-bold",
-          _style: "width:12%",
+          key: 'action',
+          label: 'Action',
+          _classes: 'font-weight-bold',
+          _style: 'width:12%',
           sorter: false,
           filter: false,
         },
@@ -146,10 +142,10 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          ["approval_1_full_name"]: item["approval_1_full_name"] ?? "-",
-          ["approval_2_full_name"]: item["approval_2_full_name"] ?? "-",
-          ["approval_3_full_name"]: item["approval_3_full_name"] ?? "-",
-          ["approval_4_full_name"]: item["approval_4_full_name"] ?? "-",
+          ['approval_1_full_name']: item['approval_1_full_name'] ?? '-',
+          ['approval_2_full_name']: item['approval_2_full_name'] ?? '-',
+          ['approval_3_full_name']: item['approval_3_full_name'] ?? '-',
+          ['approval_4_full_name']: item['approval_4_full_name'] ?? '-',
           nomor: (no += 1),
         };
       });

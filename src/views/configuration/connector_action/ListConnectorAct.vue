@@ -77,7 +77,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { calculatePagination, exportData } from '../../../utils';
+import { calculatePaginationV3, exportData } from '../../../utils';
 
 export default {
   name: 'ListConnectorAction',
@@ -164,7 +164,7 @@ export default {
         .get(`/v3/connector/connector-action?${param}`)
         .then((res) => {
           this.items = res.data.data;
-          this.filter = calculatePagination({
+          this.filter = calculatePaginationV3({
             filter: this.filter,
             item: res,
           });
