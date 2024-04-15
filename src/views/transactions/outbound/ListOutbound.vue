@@ -25,16 +25,16 @@
                   'All',
                   'id',
                   'product_id',
-                  'from_warehouse',
-                  'to_customer',
+                  'source_warehouse',
+                  'destination_customer',
                 ]"
                 :order="[
                   'All',
                   'id',
                   'product_id',
                   'Type',
-                  'from_warehouse',
-                  'to_customer',
+                  'source_warehouse',
+                  'destination_customer',
                 ]"
                 status_code="trx_outbound"
                 v-on:handleClickFilter="handleClickFilter($event)"

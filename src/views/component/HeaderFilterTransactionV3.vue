@@ -295,9 +295,19 @@ export default {
           label: 'From Warehouse',
         },
         {
+          value: 'from_warehouse',
+          code: 'source_warehouse',
+          label: 'Source',
+        },
+        {
           value: 'from_customer',
           code: 'from_customer',
           label: 'From Customer',
+        },
+        {
+          value: 'from_customer',
+          code: 'destination_customer',
+          label: 'Destination',
         },
         {
           value: 'to_warehouse',
