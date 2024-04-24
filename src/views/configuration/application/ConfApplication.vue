@@ -442,6 +442,17 @@
                         </CCol>
                       </CRow>
                     </CCol>
+                    <CCol sm="10">
+                      <SelectOption
+                        title="Return External Status"
+                        :options="epcStatusOptions"
+                        v-on:onchange="data.return_ext_status = $event"
+                        :defaultValue="data.return_ext_status"
+                        col_title="3"
+                        col_option="9"
+                        description="Leave blank if status set to active"
+                      />
+                    </CCol>
                   </CRow>
                 </CCardBody>
               </CCard>
@@ -787,6 +798,7 @@ const reader = new FileReader();
 import 'vue2-datepicker/index.css';
 import $axiosMertrack from '../../../apiMertrack';
 import moment from 'moment';
+import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
 import { getSysConfig } from '../../../resource/SysConfig';
 import { setConfig } from '../../../utils';
 export default {
@@ -801,6 +813,7 @@ export default {
         login: 'Choose file...',
         home: 'Choose file...',
       },
+      epcStatusOptions: [],
       password_pattern: {
         min: null,
         max: null,
@@ -875,6 +888,7 @@ export default {
   methods: {
     async loadConfig() {
       let _res = await getSysConfig();
+      let epcStatus = await getMstEpcStatus({ is_final_status: true });
       if (_res) {
         let data = _res.data[0];
         this.data = {
@@ -885,6 +899,11 @@ export default {
         };
         this.devicesLooping = data.total_device;
         console.log(this.data);
+      }
+      if (epcStatus) {
+        this.epcStatusOptions = epcStatus.data.map((it) => {
+          return { value: parseInt(it.id), label: it.name };
+        });
       }
       return;
     },
