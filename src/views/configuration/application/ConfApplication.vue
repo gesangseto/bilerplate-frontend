@@ -419,6 +419,29 @@
                         </CCol>
                       </CRow>
                     </CCol>
+                    <CCol sm="10">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="3" class="col-form-label">
+                          Return External Validation
+                        </CCol>
+                        <CCol sm="9">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.bpom_return_validation"
+                          />
+                          <p
+                            style="
+                              font-size: smaller;
+                              color: rgb(143, 143, 143);
+                            "
+                          >
+                            This function is still beta for validation
+                            return-external
+                          </p>
+                        </CCol>
+                      </CRow>
+                    </CCol>
                   </CRow>
                 </CCardBody>
               </CCard>
