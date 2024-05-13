@@ -171,6 +171,9 @@ const ReportShowStatus = () => import('@/views/reports/ReportShowStatus');
 // ========================CONFIGURATION========================
 const ConfApplication = () =>
   import('@/views/configuration/application/ConfApplication');
+// Station
+const ListStation = () => import('@/views/configuration/station/ListStation');
+const FormStation = () => import('@/views/configuration/station/FormStation');
 // Conf Date
 const ListDate = () => import('@/views/configuration/date/ListDate');
 const FormDate = () => import('@/views/configuration/date/FormDate');
@@ -853,6 +856,25 @@ function configRoutes() {
           name: 'Config Date',
           meta: { login: true },
           component: ListDate,
+        },
+        // STATION
+        {
+          path: 'station/:type/:id',
+          name: 'Station',
+          component: FormStation,
+          meta: { login: true },
+        },
+        {
+          path: 'station/:type',
+          name: 'Add Station',
+          component: FormStation,
+          meta: { login: true },
+        },
+        {
+          path: 'station',
+          name: 'Station',
+          meta: { login: true },
+          component: ListStation,
         },
         // CONF LAYOUT
         {
