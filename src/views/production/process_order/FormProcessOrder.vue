@@ -3,7 +3,7 @@
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
       <CCard>
         <CCardHeader>
-          <h5>Proccess Order [{{ route_action }}]</h5>
+          <h5>Process Order [{{ route_action }}]</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -11,11 +11,11 @@
               <CInput
                 :disabled="action != 'Create'"
                 horizontal
-                :value.sync="formData.procces_order_erp"
+                :value.sync="formData.process_order_erp"
                 :is-valid="
                   initialLoad
                     ? null
-                    : !formData.procces_order_erp
+                    : !formData.process_order_erp
                     ? false
                     : true
                 "
@@ -300,33 +300,18 @@
               >
             </CCol>
           </CRow>
-          <!-- DATA TABLE untuk menampilkan semua data yang sudah berhasil di production - aggregatio oleh pihak ke 3 -->
+          <!-- DATA TABLE untuk menampilkan semua HISTORY-->
           <CDataTable
             hover
             striped
             sorter
             tableFilter
-            border
             :pagination="true"
             :items-per-page="50"
-            :items="detailItems"
-            :fields="fieldItems"
+            :items="detailHistory"
+            :fields="fieldHistory"
             style="font-size: 12px"
           >
-            <template #action="{ item, index }">
-              <td>
-                <CButton
-                  v-if="item.packaging_level > 1 && item.quantity != '-'"
-                  size="sm"
-                  color="info"
-                  style="font-size: 12px"
-                  class="px-2 my-2"
-                  @click="rowClicked(item, index)"
-                >
-                  <v-icon name="eye" />
-                </CButton>
-              </td>
-            </template>
           </CDataTable>
         </CCardBody>
         <CCardFooter>
@@ -507,12 +492,12 @@ import 'vue-select/dist/vue-select.css';
 import moment from 'moment';
 import { getMstProduct } from '../../../resource/MstProduct';
 import {
-  generateProccessOrder,
+  generateProcessOrder,
   getAvalaibleSerial,
-  getProccessOrder,
-  insertProccessOrder,
+  getProcessOrder,
+  insertProcessOrder,
   requestAdditionalSerial,
-} from '../../../resource/ProccessOrder';
+} from '../../../resource/ProcessOrder';
 import { capitalizeFirstLetter, getConfig, onlyNumber } from '../../../utils';
 export default {
   name: 'FormPacking',
@@ -598,13 +583,14 @@ export default {
         exp_date: null,
         mfg_date: null,
         het: null,
-        procces_order_erp: '',
+        process_order_erp: '',
         buff: null,
         generate_count_level_1: null,
         generate_count_level_2: null,
         generate_count_level_3: null,
         generate_count_level_4: null,
         min_count_generated_serial: getConfig().min_count_generated_serial || 0,
+        history: [],
       },
       initial_load: true,
       today: moment().format('DD-MMM-YYYY'),
@@ -630,32 +616,23 @@ export default {
           label: 'Count',
         },
       ],
-      fieldItems: [
+      fieldHistory: [
         {
-          key: 'epc_key',
-          label: 'EPC Key',
+          key: 'conf_station_name',
+          label: 'Station Name',
         },
         {
-          key: 'serial',
-          label: 'SN',
+          key: 'transaction',
+          label: 'Transaction',
         },
         {
-          key: 'packaging_level',
-          label: 'Pkg Level',
-        },
-        {
-          key: 'packaging_name',
-          label: 'Pkg Name',
-        },
-        {
-          key: 'quantity',
-          label: 'L1 Qty',
+          key: 'created_date',
+          label: 'Created Date',
         },
         {
           key: 'status_name',
           label: 'Status',
         },
-        { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
       fieldSerial: [
         {
@@ -727,7 +704,7 @@ export default {
       }
     },
     async loadData() {
-      let _res = await getProccessOrder({ id: this.$route.params.id });
+      let _res = await getProcessOrder({ id: this.$route.params.id });
       if (_res && !_res.error) {
         this.formData = _res.data[0];
         this.formData.min_count_generated_serial =
@@ -780,12 +757,12 @@ export default {
       this.checkedSerials.splice(index, 1);
       this.chekcedBatch.splice(index, 1);
       if (this.items.length == 0) {
-        this.can_proccess = false;
+        this.can_process = false;
       }
     },
     async generate_serial() {
       this.$isLoading(true);
-      let res = await generateProccessOrder({
+      let res = await generateProcessOrder({
         id: this.formData.id,
         approve: true,
         mfg_date: this.formData.mfg_date,
@@ -841,7 +818,7 @@ export default {
       this.initialLoad = false;
       // // cek semua input yang mandatory
       let required = [
-        'procces_order_erp',
+        'process_order_erp',
         'generate_count_level_1',
         'lot_no',
         'batch_no',
@@ -863,7 +840,7 @@ export default {
       }
 
       this.$isLoading(true);
-      let res = await insertProccessOrder(this.formData);
+      let res = await insertProcessOrder(this.formData);
       this.$isLoading(false);
       this.$toast.open({
         message: res['error']
@@ -917,6 +894,16 @@ export default {
       return this.serials.map((item) => {
         return {
           ...item,
+        };
+      });
+    },
+    detailHistory() {
+      return this.formData.history.map((item) => {
+        return {
+          ...item,
+          created_date: moment
+            .parseZone(item.created_date)
+            .format('YYYY-MM-DD HH:mm'),
         };
       });
     },

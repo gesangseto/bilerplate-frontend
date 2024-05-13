@@ -7,6 +7,16 @@
             <h5>Station [{{ route_action }}]</h5>
           </CCardHeader>
           <CCardBody>
+            <strong
+              v-if="formData.production_batch_list_id"
+              style="color: red; font-size: x-small"
+            >
+              Station {{ formData.station_status_name }} by Process Order ID [{{
+                formData.production_batch_list_id
+              }}]
+              </br>
+              </br>
+            </strong>
             <CForm novalidate>
               <CInput
                 :disabled="action == 'Read' ? true : false"
@@ -69,6 +79,7 @@
                 </template>
               </CInput>
               <CSelect
+                :disabled="action == 'Read'"
                 placeholder="-Select-"
                 :options="listStation"
                 horizontal
@@ -117,7 +128,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, humanize } from '../../../utils';
 import {
   getConfStation,
   updateConfStation,
@@ -167,6 +178,7 @@ export default {
       let _res = await getConfStation({ id: this.$route.params.id });
       if (_res) {
         this.formData = _res.data[0];
+        if (this.formData.production_batch_list_id) this.action = 'Read';
       }
     },
     validation() {

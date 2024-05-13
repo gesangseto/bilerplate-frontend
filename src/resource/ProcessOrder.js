@@ -1,8 +1,8 @@
 import $axiosMertrack from '../apiMertrack';
 
-let url = `/v3/production/proccess-order`;
+let url = `/v4/production/process-order`;
 
-export const getProccessOrder = async (param = Object) => {
+export const getProcessOrder = async (param = Object) => {
   var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
@@ -40,7 +40,7 @@ export const getAvalaibleSerial = async (param = Object) => {
   });
 };
 
-export const insertProccessOrder = async (param = Object) => {
+export const insertProcessOrder = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -58,7 +58,7 @@ export const insertProccessOrder = async (param = Object) => {
   });
 };
 
-export const generateProccessOrder = async (param = Object) => {
+export const generateProcessOrder = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -95,7 +95,7 @@ export const requestAdditionalSerial = async (param = Object) => {
   });
 };
 
-export const deleteProccessOrder = async (param = Object) => {
+export const deleteProcessOrder = async (param = Object) => {
   if (!param.id) return false;
   param = { data: { ...param } };
   return new Promise((resolve) => {

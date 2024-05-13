@@ -66,12 +66,12 @@ const FormSection = () => import('@/views/settings/section/FormSection ');
 // ========================SETTING========================
 
 // ========================PRODUCTION========================
-// Proccess Order
-const ListProccessOrder = () =>
-  import('@/views/production/proccess_order/ListProccessOrder');
+// Process Order
+const ListProcessOrder = () =>
+  import('@/views/production/process_order/ListProcessOrder');
 // Picking List
-const FormProccessOrder = () =>
-  import('@/views/production/proccess_order/FormProccessOrder');
+const FormProcessOrder = () =>
+  import('@/views/production/process_order/FormProcessOrder');
 // ========================TRANSACTION========================
 // Picking List
 const ListPickingList = () =>
@@ -974,23 +974,23 @@ function configRoutes() {
         },
       },
       children: [
-        // Proccess Order
+        // Process Order
         {
-          path: 'proccess-order/:type/:id',
-          name: 'Proccess Order (Details) ',
-          component: FormProccessOrder,
+          path: 'process-order/:type/:id',
+          name: 'Process Order (Details) ',
+          component: FormProcessOrder,
           meta: { login: true },
         },
         {
-          path: 'proccess-order/:type',
-          name: 'Proccess Order (Details)',
-          component: FormProccessOrder,
+          path: 'process-order/:type',
+          name: 'Process Order (Details)',
+          component: FormProcessOrder,
           meta: { login: true },
         },
         {
-          path: 'proccess-order',
-          name: 'Proccess Order (Home)',
-          component: ListProccessOrder,
+          path: 'process-order',
+          name: 'Process Order (Home)',
+          component: ListProcessOrder,
           meta: { login: true },
         },
       ],

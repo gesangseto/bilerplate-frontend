@@ -8,7 +8,7 @@
             @click="addNew()"
             :useHref="true"
           />
-          <h5>Proccess Order</h5>
+          <h5>Process Order</h5>
         </CCardHeader>
         <CCardBody>
           <!-- :filter="[
@@ -102,9 +102,9 @@
 <script>
 import moment from 'moment';
 import {
-  deleteProccessOrder,
-  getProccessOrder,
-} from '../../../resource/ProccessOrder';
+  deleteProcessOrder,
+  getProcessOrder,
+} from '../../../resource/ProcessOrder';
 import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 
 export default {
@@ -117,7 +117,7 @@ export default {
   data() {
     return {
       rejectProperty: {
-        title: 'Proccess Order',
+        title: 'Process Order',
         modal: false,
         id: null,
         reason: '',
@@ -144,7 +144,7 @@ export default {
           label: 'Batch No',
         },
         {
-          key: 'procces_order_erp',
+          key: 'process_order_erp',
           label: 'ERP No',
         },
         {
@@ -176,7 +176,7 @@ export default {
   },
   methods: {
     async loadData() {
-      let res = await getProccessOrder(this.filter);
+      let res = await getProcessOrder(this.filter);
       this.items = [];
       if (!res.error) {
         this.items = res.data;
@@ -194,7 +194,7 @@ export default {
       exportDataV3({
         param: this.filter,
         exportType: type,
-        url: '/v3/production/proccess-order',
+        url: '/v3/production/process-order',
       });
     },
     pageChange(page) {
@@ -220,7 +220,7 @@ export default {
         approved: false,
         reason: `[CANCEL] ${this.rejectProperty.reason}`,
       };
-      let _res = await deleteProccessOrder(param);
+      let _res = await deleteProcessOrder(param);
       this.rejectProperty.id = null;
       this.rejectProperty.reason = null;
       this.$isLoading(false);
