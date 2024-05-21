@@ -3,12 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ButtonPermission
-            :permission="'create'"
-            @click="addNew()"
-            :useHref="true"
-          />
-          <h5>Station</h5>
+          <h5>Metadata</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
@@ -30,22 +25,7 @@
             >
               <template #action="{ item, index }">
                 <td>
-                  <ButtonPermission
-                    :permission="'delete'"
-                    @click="deleteRow(item, index)"
-                  />
-                  <ButtonPermission
-                    :id="item.id"
-                    :useHref="true"
-                    :permission="'update'"
-                    @click="rowUpdate(item, index)"
-                  />
-                  <ButtonPermission
-                    :id="item.id"
-                    :useHref="true"
-                    :permission="'read'"
-                    @click="rowRead(item, index)"
-                  />
+                  <Button :id="item.id" :useHref="true" :type="'update'" />
                 </td>
               </template>
             </CDataTable>
@@ -76,14 +56,11 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportData, humanize } from '../../../utils';
-import {
-  deleteConfStation,
-  getConfStation,
-} from '../../../resource/ConfStation';
+import { calculatePaginationV3, exportData } from '../../../utils';
+import { getConfMetadata } from '../../../resource/ConfMetadata';
 
 export default {
-  name: 'ListStation',
+  name: 'ListMetadata',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -108,21 +85,12 @@ export default {
           _classes: 'font-weight-bold',
         },
         {
-          key: 'description',
-          label: 'Desc',
+          key: 'model',
+          label: 'Model',
         },
         {
-          key: 'code',
-          label: 'Code',
-        },
-        {
-          key: 'station_type',
-          label: 'Station Type',
-        },
-        {
-          key: 'status',
-          label: 'Status',
-          _classes: 'font-weight-bold',
+          key: 'total_metadata',
+          label: 'Total Metadata',
         },
         {
           key: 'action',
@@ -146,7 +114,7 @@ export default {
   },
   methods: {
     async loadData() {
-      let _res = await getConfStation(this.filter);
+      let _res = await getConfMetadata(this.filter);
       if (_res) {
         this.items = _res.data;
         this.filter = calculatePaginationV3({
@@ -197,7 +165,7 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let _param = { id: item.id };
-        let res = await deleteConfStation(_param);
+        let res = await deleteConfMetadata(_param);
         this.$isLoading(false);
         this.$toast.open({
           message: res.error
@@ -217,7 +185,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          station_type: humanize(item.station_type),
         };
       });
     },

@@ -174,6 +174,14 @@ const ConfApplication = () =>
 // Station
 const ListStation = () => import('@/views/configuration/station/ListStation');
 const FormStation = () => import('@/views/configuration/station/FormStation');
+// Pattern
+const ListPattern = () => import('@/views/configuration/pattern/ListPattern');
+const FormPattern = () => import('@/views/configuration/pattern/FormPattern');
+// Metadata
+const ListMetadata = () =>
+  import('@/views/configuration/metadata/ListMetadata');
+const FormMetadata = () =>
+  import('@/views/configuration/metadata/FormMetadata');
 // Conf Date
 const ListDate = () => import('@/views/configuration/date/ListDate');
 const FormDate = () => import('@/views/configuration/date/FormDate');
@@ -875,6 +883,44 @@ function configRoutes() {
           name: 'Station',
           meta: { login: true },
           component: ListStation,
+        },
+        // PATTERN
+        {
+          path: 'pattern/:type/:id',
+          name: 'Pattern',
+          component: FormPattern,
+          meta: { login: true },
+        },
+        {
+          path: 'pattern/:type',
+          name: 'Add Pattern',
+          component: FormPattern,
+          meta: { login: true },
+        },
+        {
+          path: 'pattern',
+          name: 'Pattern',
+          meta: { login: true },
+          component: ListPattern,
+        },
+        // METADATA
+        {
+          path: 'metadata/:type/:id',
+          name: 'Metadata',
+          component: FormMetadata,
+          meta: { login: true },
+        },
+        {
+          path: 'metadata/:type',
+          name: 'Metadata',
+          component: FormMetadata,
+          meta: { login: true },
+        },
+        {
+          path: 'metadata',
+          name: 'Metadata',
+          meta: { login: true },
+          component: ListMetadata,
         },
         // CONF LAYOUT
         {

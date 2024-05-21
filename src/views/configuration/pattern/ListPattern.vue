@@ -8,7 +8,7 @@
             @click="addNew()"
             :useHref="true"
           />
-          <h5>Station</h5>
+          <h5>Pattern</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
@@ -76,14 +76,14 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportData, humanize } from '../../../utils';
+import { calculatePaginationV3, exportData } from '../../../utils';
 import {
-  deleteConfStation,
-  getConfStation,
-} from '../../../resource/ConfStation';
+  getConfPattern,
+  deleteConfPattern,
+} from '../../../resource/ConfPattern';
 
 export default {
-  name: 'ListStation',
+  name: 'Pattern',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -112,14 +112,6 @@ export default {
           label: 'Desc',
         },
         {
-          key: 'code',
-          label: 'Code',
-        },
-        {
-          key: 'station_type',
-          label: 'Station Type',
-        },
-        {
           key: 'status',
           label: 'Status',
           _classes: 'font-weight-bold',
@@ -146,7 +138,7 @@ export default {
   },
   methods: {
     async loadData() {
-      let _res = await getConfStation(this.filter);
+      let _res = await getConfPattern(this.filter);
       if (_res) {
         this.items = _res.data;
         this.filter = calculatePaginationV3({
@@ -197,7 +189,7 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let _param = { id: item.id };
-        let res = await deleteConfStation(_param);
+        let res = await deleteConfPattern(_param);
         this.$isLoading(false);
         this.$toast.open({
           message: res.error
@@ -217,7 +209,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          station_type: humanize(item.station_type),
         };
       });
     },
