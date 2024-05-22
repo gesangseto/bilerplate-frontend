@@ -410,6 +410,9 @@ export default {
     this.page = 1;
     this.getGenerateType();
     this.getDateFromat();
+    if (this.action == 'Create' && this.$route.params.id) {
+      this.is_copy = true;
+    }
     // if (this.action != "Create") this.loadData();
     if (this.$route.params.id !== undefined) this.loadData();
   },
@@ -424,6 +427,7 @@ export default {
         StartDate: '',
         EndDate: '',
       },
+      is_copy: false,
       pages: null,
       page: null,
       totalPages: 0,
@@ -554,13 +558,11 @@ export default {
     handleUploadFile(event) {
       let isiFile = event[0];
       if (isiFile != undefined) {
-        let fileName = isiFile.name;
-        let ekstensiFile = fileName.split('.').reverse()[0];
+        let ekstensiFile = isiFile.name.split('.').reverse()[0];
+        let fileName = isiFile.name.replace(`.${ekstensiFile}`, '');
         reader.onload = (e) => {
-          this.formData.name = fileName.replace('.itf', '');
-          this.formData.itf_name = fileName;
-          this.formData.itf_content = e.target.result;
-          this.generateField(e.target.result, ekstensiFile);
+          let content = e.target.result;
+          this.generateField(content, ekstensiFile, fileName);
         };
         reader.readAsText(isiFile);
       } else {
@@ -568,9 +570,14 @@ export default {
       }
     },
 
-    generateField(string, extensi) {
-      let arr_str = string.split(/\r?\n/);
-      this.formData.items = [];
+    generateField(content, extensi, fileName) {
+      let oldData = JSON.parse(JSON.stringify(this.formData));
+
+      this.formData.name = fileName;
+      this.formData.itf_name = `${fileName}.${extensi}`;
+      this.formData.itf_content = content;
+
+      let arr_str = content.split(/\r?\n/);
       let listLayout = [];
       if (extensi === 'itf') {
         for (const it of arr_str) {
@@ -594,6 +601,25 @@ export default {
         listLayout.sort(dynamicSort('itf_var_name'));
         this.formData.items = listLayout;
       }
+
+      if (this.is_copy) {
+        let itf_var_name = listLayout.map((it) => it.itf_var_name);
+        let sama = oldData.items.filter((it) =>
+          itf_var_name.includes(it.itf_var_name)
+        );
+        if (sama.length !== oldData.items.length) {
+          var message = `Your itf file does not match the current parameters. This will replace the parameters with new ones. Would you like to continue?`;
+          if (confirm(message)) {
+            this.formData.items = listLayout;
+          } else {
+            this.formData.items = oldData.items;
+            this.formData.itf_content = oldData.itf_content;
+            this.formData.itf_name = oldData.itf_name;
+            this.formData.name = oldData.name;
+          }
+        }
+      }
+      return;
     },
     /*
     END

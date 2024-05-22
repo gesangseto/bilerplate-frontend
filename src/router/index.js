@@ -217,43 +217,6 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
   return next();
-  // menuToRouter(localStorage.getItem("menu"));
-  // return next("/dashboard");
-  //   if (to.meta.login) {
-  //     if (localStorage.hasOwnProperty("is_login")) {
-  //       // if (to.meta.check) return next()
-  //       if (localStorage.getItem("super_admin") == "true") {
-  //         return next();
-  //       } else {
-  //         if (to.path == "/setting/configuration") {
-  //           return next("/dashboard");
-  //         }
-  //       }
-  // let getChildMenu = JSON.parse(localStorage.getItem("userRole"));
-  //       let findMenu = getChildMenu.find((el) => el.linkNew == to.path);
-  //       if (findMenu != undefined) {
-  //         if (findMenu.canView == "true") {
-  //           return next();
-  //         } else {
-  //           if (to.path == "/dashboard") return next("/oops");
-  //           return next("/dashboard");
-  //         }
-  //       } else {
-  //         // let explodeLink = to.path.split('/')
-  //         // let makeNewLink = `/${explodeLink[1]}/${explodeLink[2]}`
-  //         // let findMenu = getChildMenu.filter((e) => to.path.split(e.linkNew) > 1)
-  //         // return next('/dashboard');
-  //         return next();
-  //       }
-  //     } else {
-  //       return next("/login");
-  //     }
-  //   } else {
-  //     if (localStorage.hasOwnProperty("token")) {
-  //       if (to.path == "/oops") return next();
-  //       return next("/dashboard");
-  //     }
-  //   }
 });
 
 export default router;
