@@ -290,10 +290,10 @@
                 ><CIcon name="cil-check-circle" /> View History</CButton
               >
               <CButton
-                v-if="[3, 4].includes(formData.status)"
+                v-if="[1, 3, 4, 10].includes(formData.status)"
                 type="submit"
                 size="sm"
-                @click="viewModalSerial = true"
+                @click="handleViewSerial"
                 class="mr-2"
                 color="primary"
                 ><CIcon name="cil-check-circle" /> View Serial</CButton
@@ -450,13 +450,26 @@
             </CButton>
           </template>
         </CModal>
-        <!-- Modal untuk melihat semua serial yang tersedia-->
         <CModal
-          title="View Generated Serial"
+          title="View Serial"
           color="warning"
           :show.sync="viewModalSerial"
           size="lg"
         >
+          <CRow>
+            <CCol md="10">
+              <CTabs :active-tab.sync="activeTab">
+                <CTab title="Available" active> </CTab>
+                <CTab title="Booking"> </CTab>
+                <CTab title="Production"> </CTab> </CTabs
+            ></CCol>
+            <CCol md="2">
+              <p class="float-right">
+                Quantity L1: {{ tabData.quantity_l1 }}<br />
+              </p>
+            </CCol>
+          </CRow>
+
           <CDataTable
             hover
             striped
@@ -493,7 +506,7 @@ import moment from 'moment';
 import { getMstProduct } from '../../../resource/MstProduct';
 import {
   generateProcessOrder,
-  getAvalaibleSerial,
+  getAllSerials,
   getProcessOrder,
   insertProcessOrder,
   requestAdditionalSerial,
@@ -502,6 +515,12 @@ import { capitalizeFirstLetter, getConfig, onlyNumber } from '../../../utils';
 export default {
   name: 'FormPacking',
   watch: {
+    activeTab: {
+      deep: true,
+      handler(item) {
+        this.filterSerials();
+      },
+    },
     'formData.shelf_life': {
       deep: true,
       handler(item) {
@@ -512,19 +531,6 @@ export default {
       deep: true,
       handler(item) {
         this.reformatExp();
-      },
-    },
-    viewModalSerial: {
-      deep: true,
-      async handler(item) {
-        if (item && this.serials.length == 0) {
-          let _serials = await getAvalaibleSerial({
-            id: this.$route.params.id,
-          });
-          if (_serials && !_serials.error) {
-            this.serials = _serials.data[0].items;
-          }
-        }
       },
     },
     additionalSerial: {
@@ -566,6 +572,7 @@ export default {
   },
   data() {
     return {
+      activeTab: 0,
       initialLoad: true,
       additionalSerial: {
         id: this.$route.params.id,
@@ -651,8 +658,20 @@ export default {
           key: 'epc_type',
           label: 'Epc Type',
         },
+        {
+          key: 'status_name',
+          label: 'Status',
+        },
       ],
       serials: [],
+      selectedSerials: [],
+      tabData: {
+        quantity_l1: 0,
+        quantity_l2: 0,
+        quantity_l3: 0,
+        quantity_l4: 0,
+        serials: [],
+      },
       itemGenerateCount: [],
       detail_item: {},
       viewModal: false,
@@ -702,6 +721,65 @@ export default {
           .endOf('month')
           .format('YYYY-MM-DD');
       }
+    },
+    filterSerials() {
+      let status = {
+        active: 1,
+        inactive: 5,
+        in_progress: 6,
+        disposal: 3,
+        sampling: 15,
+        destroy_number: 201,
+        rework: 202,
+        picking_done: 203,
+        sold: 204,
+        available: 25,
+        reserved: 12,
+        used: 205,
+        destroy_return: 206,
+        active_preinbound: 207,
+        unused: 26,
+      };
+      this.tabData.serials = [];
+      if (this.activeTab == 0) {
+        // AVAILABLE
+        this.tabData.serials = this.serials.filter(
+          (it) => it.status == status.available
+        );
+      } else if (this.activeTab == 1) {
+        // RESERVED
+        this.tabData.serials = this.serials.filter(
+          (it) => it.status == status.reserved
+        );
+      } else if (this.activeTab == 2) {
+        this.tabData.serials = this.serials.filter(
+          (it) => it.status != status.available && it.status != status.reserved
+        );
+      }
+      this.tabData.quantity_l1 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 1
+      ).length;
+      this.tabData.quantity_l2 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 2
+      ).length;
+      this.tabData.quantity_l3 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 3
+      ).length;
+      this.tabData.quantity_l4 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 4
+      ).length;
+    },
+    async handleViewSerial() {
+      if (this.serials.length == 0) {
+        let _serials = await getAllSerials({
+          id: this.$route.params.id,
+        });
+        if (_serials && !_serials.error) {
+          this.serials = _serials.data;
+        }
+        this.filterSerials();
+      }
+      this.viewModalSerial = true;
     },
     async loadData() {
       let _res = await getProcessOrder({ id: this.$route.params.id });
@@ -891,7 +969,7 @@ export default {
       });
     },
     detailSerial() {
-      return this.serials.map((item) => {
+      return this.tabData.serials.map((item) => {
         return {
           ...item,
         };

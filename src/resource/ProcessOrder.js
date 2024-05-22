@@ -39,6 +39,24 @@ export const getAvalaibleSerial = async (param = Object) => {
       });
   });
 };
+export const getAllSerials = async (param = Object) => {
+  var query_string = '';
+  if (param) {
+    query_string = new URLSearchParams(param).toString();
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .get(`${url}/serials?${query_string}`)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
 
 export const insertProcessOrder = async (param = Object) => {
   if (!param) {
