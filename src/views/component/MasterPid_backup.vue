@@ -442,7 +442,6 @@ export default {
           this.list_layout.push(it);
         }
         this.backup_list_layout = this.list_layout;
-        console.log(this.backup_list_layout);
       }
     },
 

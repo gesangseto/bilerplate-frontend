@@ -269,9 +269,7 @@ export default {
   name: 'Connector',
   watch: {
     form: {
-      handler(item) {
-        console.log(item);
-      },
+      handler(item) {},
       deep: true,
     },
   },
@@ -317,7 +315,6 @@ export default {
         .get(`/v3/connector/connector-action?id=${this.$route.params.id}`)
         .then((response) => {
           let data = response.data.data[0];
-          console.log(data);
           this.form = data;
           if (this.form.using_connection)
             this.connection = this.form.connection;

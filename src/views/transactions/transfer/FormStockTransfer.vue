@@ -164,7 +164,6 @@ export default {
     formData: {
       deep: true,
       handler(data) {
-        console.log(data);
         if (!this.initial_load) {
           this.checkValidation();
         }

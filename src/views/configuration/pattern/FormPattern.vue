@@ -91,14 +91,7 @@ import {
 
 export default {
   name: 'FormPattern',
-  watch: {
-    form: {
-      handler(item) {
-        console.log(item);
-      },
-      deep: true,
-    },
-  },
+  watch: {},
   data() {
     return {
       initialLoad: true,

@@ -693,7 +693,6 @@ export default {
       this.associated_content = content;
       text = text.trim();
       this.formData.items[i].associated_field = text.replace('-', '');
-      // console.log(text);
       // this.formData.bpom_barcode_format = text.replace('-', '');
     },
     /*

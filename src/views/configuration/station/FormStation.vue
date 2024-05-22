@@ -138,12 +138,6 @@ import {
 export default {
   name: 'FormStation',
   watch: {
-    form: {
-      handler(item) {
-        console.log(item);
-      },
-      deep: true,
-    },
   },
   data() {
     return {

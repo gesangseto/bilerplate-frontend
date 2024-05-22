@@ -116,9 +116,7 @@ export default {
     //   deep: true,
     // },
     'formData.stock': {
-      handler(arr) {
-        console.log(arr);
-      },
+      handler(arr) {},
       deep: true,
     },
     'filter.from_warehouse': {

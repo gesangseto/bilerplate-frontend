@@ -216,6 +216,7 @@ let router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  return next();
   // menuToRouter(localStorage.getItem("menu"));
   // return next("/dashboard");
   //   if (to.meta.login) {
@@ -253,7 +254,6 @@ router.beforeEach((to, from, next) => {
   //       return next("/dashboard");
   //     }
   //   }
-  return next();
 });
 
 export default router;
