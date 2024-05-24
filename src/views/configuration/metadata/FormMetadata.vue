@@ -171,7 +171,7 @@ export default {
       route_action: '',
       // category: '',
       action: 'Edit',
-      formData: {},
+      formData: { metadata: [] },
       connection: { ip: null, username: null, password: null, port: null },
       detailConnector: { params: [] },
       listOption: [],
@@ -304,12 +304,13 @@ export default {
   computed: {
     reformat() {
       return this.formData.metadata.map((item) => {
-        let pattern = item.conf_pattern;
+        let pattern = null;
+        if (item.conf_pattern) pattern = item.conf_pattern;
         return {
           ...item,
           description: item.description || '',
           mandatory: item.mandatory ? 'true' : 'false',
-          pattern: pattern.name || '[No Pattern]',
+          pattern: pattern ? pattern.name : '[No Pattern]',
         };
       });
     },

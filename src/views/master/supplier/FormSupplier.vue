@@ -9,7 +9,7 @@
 
           <CCardBody>
             <CForm>
-              <CInput :disabled="true" horizontal v-model="supplier.id">
+              <CInput :disabled="true" horizontal v-model="formData.id">
                 <template #label>
                   <p class="col-form-label col-sm-3">ID</p>
                 </template>
@@ -18,7 +18,7 @@
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Enter supplier name"
-                v-model="supplier.name"
+                v-model="formData.name"
                 :invalid-feedback="required.name.message"
                 :add-input-classes="{
                   'is-invalid': required.name.error,
@@ -39,7 +39,7 @@
                 label="Pic *"
                 placeholder="Enter supplier PIC name"
                 horizontal
-                v-model="supplier.pic"
+                v-model="formData.pic"
                 :invalid-feedback="required.pic.message"
                 :add-input-classes="{
                   'is-invalid': required.pic.error,
@@ -59,7 +59,7 @@
                 :disabled="action == 'Read' ? true : false"
                 placeholder="Enter supplier address"
                 horizontal
-                v-model="supplier.address"
+                v-model="formData.address"
                 :invalid-feedback="required.address.message"
                 :add-input-classes="{
                   'is-invalid': required.address.error,
@@ -110,7 +110,7 @@
                               :disabled="action == 'Read' ? true : false"
                               placeholder="Enter phone number (Example : 81211223344)"
                               horizontal
-                              v-model="supplier.tlp"
+                              v-model="formData.tlp"
                               :invalid-feedback="required.tlp.message"
                               :add-input-classes="{
                                 'is-invalid': required.tlp.error,
@@ -118,7 +118,7 @@
                               @keypress="
                                 limitPhone({
                                   event: $event,
-                                  data: supplier.tlp,
+                                  data: formData.tlp,
                                   max: 12,
                                 })
                               "
@@ -167,7 +167,7 @@
                               :options="CountryCode"
                               placeholder="- Country -"
                               horizontal
-                              :value.sync="supplier.tlp_alt_code"
+                              :value.sync="formData.tlp_alt_code"
                             >
                             </CSelect>
                           </td> -->
@@ -176,11 +176,11 @@
                               :disabled="action == 'Read' ? true : false"
                               placeholder="Enter alternative phone number (Example : 81211223344)"
                               horizontal
-                              v-model="supplier.tlp_alt"
+                              v-model="formData.tlp_alt"
                               @keypress="
                                 limitPhone({
                                   event: $event,
-                                  data: supplier.tlp_alt,
+                                  data: formData.tlp_alt,
                                   max: 12,
                                 })
                               "
@@ -197,7 +197,7 @@
                 :disabled="action == 'Read' ? true : false"
                 placeholder="email.address@email.com"
                 horizontal
-                v-model="supplier.email"
+                v-model="formData.email"
                 :invalid-feedback="required.email.message"
                 :add-input-classes="{
                   'is-invalid': required.email.error,
@@ -218,11 +218,19 @@
                 <SwitchStatusMaster
                   :disabled="action == 'Read'"
                   :show_label="true"
-                  :default_value="supplier.status"
-                  v-on:onChange="supplier.status = $event"
+                  :default_value="formData.status"
+                  v-on:onChange="formData.status = $event"
                 />
               </CRow>
             </CForm>
+            <Metadata
+              :defaultMetadata="formData.metadata"
+              v-on:handleChange="
+                (formData.metadata = $event.result),
+                  (formData.error = $event.error)
+              "
+              model="mst_supplier"
+            />
           </CCardBody>
 
           <CCardFooter>
@@ -257,7 +265,7 @@ import {
 export default {
   name: 'Forms',
   watch: {
-    supplier: {
+    formData: {
       deep: true,
       handler() {
         if (!this.initial_load) {
@@ -280,7 +288,7 @@ export default {
       initial_load: true,
       route_action: '',
       action: 'Edit',
-      supplier: {
+      formData: {
         status: 'Active',
         tlpAlt: '',
       },
@@ -305,7 +313,7 @@ export default {
     };
   },
   validations: {
-    supplier: {
+    formData: {
       name: { required },
       address: { required },
       pic: { required },
@@ -324,29 +332,29 @@ export default {
     handleChangeInput($value, code) {
       if (code == 'alt_code') {
         this.temp_data.tlp_alt_code = $value;
-        this.supplier.tlp_alt_code = $value;
+        this.formData.tlp_alt_code = $value;
       } else {
         this.temp_data.tlp_code = $value;
-        this.supplier.tlp_code = $value;
+        this.formData.tlp_code = $value;
       }
     },
     async loadData() {
       let res = await getMstSupplier({ id: this.$route.params.id });
       if (res) {
         let data = res.data[0];
-        this.supplier = data;
+        this.formData = data;
         let tlp = '';
         if (data.tlp) {
           tlp = data.tlp.split('-');
           this.temp_data.tlp_code = tlp[0];
-          this.supplier.tlp_code = tlp[0];
-          this.supplier.tlp = tlp[1];
+          this.formData.tlp_code = tlp[0];
+          this.formData.tlp = tlp[1];
         }
         if (data.tlp_alt) {
           tlp = data.tlp_alt.split('-');
           this.temp_data.tlp_alt_code = tlp[0];
-          this.supplier.tlp_alt_code = tlp[0];
-          this.supplier.tlp_alt = tlp[1];
+          this.formData.tlp_alt_code = tlp[0];
+          this.formData.tlp_alt = tlp[1];
         }
       }
     },
@@ -370,7 +378,7 @@ export default {
     checkValidation() {
       let have_error = false;
       for (const rq in this.required) {
-        if (!this.supplier[rq]) {
+        if (!this.formData[rq]) {
           this.required[rq].error = true;
           have_error = true;
         } else {
@@ -378,33 +386,33 @@ export default {
         }
       }
       // Check Phone Number
-      if (!isPhone(this.supplier.tlp)) {
+      if (!isPhone(this.formData.tlp)) {
         have_error = true;
         this.required.tlp.error = true;
       }
 
       // Check Email
-      if (!isEmail(this.supplier.email)) {
+      if (!isEmail(this.formData.email)) {
         have_error = true;
         this.required.email.error = true;
       }
       // If any error
       if (have_error) {
-        this.supplier.have_error = true;
+        this.formData.have_error = true;
       } else {
-        this.supplier.have_error = false;
+        this.formData.have_error = false;
       }
       return;
     },
     async save() {
       this.initial_load = false;
       this.checkValidation();
-      if (this.supplier.have_error) {
+      if (this.formData.have_error) {
         return;
       }
-      let _form_data = JSON.parse(JSON.stringify(this.supplier));
+      let _form_data = JSON.parse(JSON.stringify(this.formData));
 
-      let dataPost = JSON.parse(JSON.stringify(this.supplier));
+      let dataPost = JSON.parse(JSON.stringify(this.formData));
 
       if (_form_data.tlp && _form_data.tlp_code) {
         dataPost.tlp = `${_form_data.tlp_code.toString()}-${_form_data.tlp.toString()}`;
