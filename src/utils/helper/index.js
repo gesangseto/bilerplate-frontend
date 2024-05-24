@@ -208,3 +208,13 @@ export function validationPassword(input) {
   }
   return;
 }
+
+export function isJsonString(item) {
+  item = typeof item !== 'string' ? JSON.stringify(item) : item;
+  try {
+    item = JSON.parse(item);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

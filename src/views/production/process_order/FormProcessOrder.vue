@@ -287,7 +287,8 @@
                 @click="viewModalHistory = true"
                 class="mr-2"
                 color="info"
-                ><CIcon name="cil-check-circle" /> View History</CButton
+              >
+                <CIcon name="cil-check-circle" /> View History</CButton
               >
               <CButton
                 v-if="[1, 3, 4, 10].includes(formData.status)"
@@ -296,11 +297,22 @@
                 @click="handleViewSerial"
                 class="mr-2"
                 color="primary"
-                ><CIcon name="cil-check-circle" /> View Serial</CButton
+              >
+                <CIcon name="cil-check-circle" /> View Serial</CButton
+              >
+              <CButton
+                v-if="[1, 3, 4, 10].includes(formData.status)"
+                type="submit"
+                size="sm"
+                @click="viewModalWeight = true"
+                class="mr-2"
+                color="warning"
+              >
+                <CIcon name="cil-check-circle" /> Weight Config</CButton
               >
             </CCol>
           </CRow>
-          <!-- DATA TABLE untuk menampilkan semua HISTORY-->
+          <!-- DATA TABLE untuk menampilkan semua HISTORY Station-->
           <CDataTable
             hover
             striped
@@ -309,7 +321,7 @@
             :pagination="true"
             :items-per-page="50"
             :items="detailHistory"
-            :fields="fieldHistory"
+            :fields="fieldStationHistory"
             style="font-size: 12px"
           >
           </CDataTable>
@@ -338,164 +350,159 @@
           <!-- Buton Cancel-->
           <ButtonBack />
         </CCardFooter>
-        <!-- Modal untuk menambahkan data Request Additional Serial-->
-        <CModal
-          title="Request Additional Serial"
-          color="warning"
-          :show.sync="viewModalRequestSerial"
-        >
-          <CRow>
-            <CCol sm="12" md="12" lg="12">
-              <div v-for="(item, index) in itemGenerateCount" :key="index">
-                <CInput
-                  v-if="product[`qty_packagingl${index + 1}`] || index == 0"
-                  :disabled="additionalSerial.all && index >= 1"
-                  horizontal
-                  :value.sync="
-                    additionalSerial[`generate_count_level_${index + 1}`]
-                  "
-                  type="number"
-                  @keypress="limitNumber({ event: $event, max: 7 })"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Pack Level {{ index + 1 }}
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInput>
-              </div>
-              <CRow form class="form-group">
-                <CCol tag="label" sm="3" class="col-form-label"> All </CCol>
-                <CCol sm="9">
-                  <CSwitch
-                    class="mr-1"
-                    color="success"
-                    :checked.sync="additionalSerial.all"
-                  />
-                </CCol>
-              </CRow>
-            </CCol>
-          </CRow>
-          <template #footer>
-            <CButton
-              size="sm"
-              color="success"
-              type="button"
-              @click="submitAdditionSerial()"
-            >
-              <CIcon name="cil-check-circle" /> Request
-            </CButton>
-            <CButton
-              size="sm"
-              color="danger"
-              type="button"
-              @click="closeModal()"
-            >
-              <CIcon name="cil-x-circle" /> Close
-            </CButton>
-          </template>
-        </CModal>
-
-        <!-- Modal untuk melihat detail aggregasi item stock setelah berhasil di closed / partial closed-->
-        <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
-          <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
-          <template #footer>
-            <CButton
-              size="sm"
-              color="danger"
-              type="button"
-              @click="closeModal()"
-            >
-              <CIcon name="cil-x-circle" /> Close
-            </CButton>
-          </template>
-        </CModal>
-
-        <!-- Modal untuk melihat view history dari request additional serial-->
-        <CModal
-          title="History Request Serial"
-          color="warning"
-          :show.sync="viewModalHistory"
-        >
-          <table style="width: 100%">
-            <tr>
-              <td><strong>Request Time</strong></td>
-              <td><strong>Level 1</strong></td>
-              <td><strong>Level 2</strong></td>
-              <td><strong>Level 3</strong></td>
-              <td><strong>Level 4</strong></td>
-            </tr>
-            <tr
-              v-for="(item, index) in formData.generate_count_additional"
-              :key="index"
-            >
-              <td>{{ item.modified_date }}</td>
-              <td>{{ item.generate_count_level_1 }}</td>
-              <td>{{ item.generate_count_level_2 }}</td>
-              <td>{{ item.generate_count_level_3 }}</td>
-              <td>{{ item.generate_count_level_4 }}</td>
-            </tr>
-          </table>
-          <template #footer>
-            <CButton
-              size="sm"
-              color="danger"
-              type="button"
-              @click="viewModalHistory = false"
-            >
-              <CIcon name="cil-x-circle" /> Close
-            </CButton>
-          </template>
-        </CModal>
-        <CModal
-          title="View Serial"
-          color="warning"
-          :show.sync="viewModalSerial"
-          size="lg"
-        >
-          <CRow>
-            <CCol md="10">
-              <CTabs :active-tab.sync="activeTab">
-                <CTab title="Available" active> </CTab>
-                <CTab title="Booking"> </CTab>
-                <CTab title="Production"> </CTab> </CTabs
-            ></CCol>
-            <CCol md="2">
-              <p class="float-right">
-                Quantity L1: {{ tabData.quantity_l1 }}<br />
-              </p>
-            </CCol>
-          </CRow>
-
-          <CDataTable
-            hover
-            striped
-            sorter
-            tableFilter
-            border
-            :pagination="true"
-            :items-per-page="10"
-            :items="detailSerial"
-            :fields="fieldSerial"
-            style="font-size: 12px"
-          />
-
-          <template #footer>
-            <CButton
-              size="sm"
-              color="danger"
-              type="button"
-              @click="viewModalSerial = false"
-            >
-              <CIcon name="cil-x-circle" /> Close
-            </CButton>
-          </template>
-        </CModal>
       </CCard>
     </div>
+
+    <!-- KUMPULAN MODAL DIDALAM FORMS PROCESS ORDER -->
+
+    <!-- MODAL UNTUK MELIHAT WEIGHT -->
+    <ProductWeight
+      :readonly="true"
+      :product="formData"
+      :showModal="viewModalWeight"
+      v-on:onCloseModal="viewModalWeight = false"
+    />
+    <!-- Modal untuk menambahkan data Request Additional Serial-->
+    <CModal
+      title="Request Additional Serial"
+      color="warning"
+      :show.sync="viewModalRequestSerial"
+    >
+      <CRow>
+        <CCol sm="12" md="12" lg="12">
+          <div v-for="(item, index) in itemGenerateCount" :key="index">
+            <CInput
+              v-if="product[`qty_packagingl${index + 1}`] || index == 0"
+              :disabled="additionalSerial.all && index >= 1"
+              horizontal
+              :value.sync="
+                additionalSerial[`generate_count_level_${index + 1}`]
+              "
+              type="number"
+              @keypress="limitNumber({ event: $event, max: 7 })"
+            >
+              <template #label>
+                <p class="col-form-label col-sm-3">
+                  Pack Level {{ index + 1 }}
+                  <span class="text-danger">
+                    <strong>*</strong>
+                  </span>
+                </p>
+              </template>
+            </CInput>
+          </div>
+          <CRow form class="form-group">
+            <CCol tag="label" sm="3" class="col-form-label"> All </CCol>
+            <CCol sm="9">
+              <CSwitch
+                class="mr-1"
+                color="success"
+                :checked.sync="additionalSerial.all"
+              />
+            </CCol>
+          </CRow>
+        </CCol>
+      </CRow>
+      <template #footer>
+        <CButton
+          size="sm"
+          color="success"
+          type="button"
+          @click="submitAdditionSerial()"
+        >
+          <CIcon name="cil-check-circle" /> Request
+        </CButton>
+        <CButton size="sm" color="danger" type="button" @click="closeModal()">
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
+
+    <!-- Modal untuk melihat detail aggregasi item stock setelah berhasil di closed / partial closed-->
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
+      <template #footer>
+        <CButton size="sm" color="danger" type="button" @click="closeModal()">
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
+
+    <!-- Modal untuk melihat view history dari request additional serial-->
+    <CModal
+      title="History Request Serial"
+      color="warning"
+      :show.sync="viewModalHistory"
+    >
+      <CDataTable
+        hover
+        striped
+        sorter
+        tableFilter
+        border
+        :pagination="true"
+        :items-per-page="10"
+        :items="dataFieldHistory"
+        :fields="fieldHistory"
+        style="font-size: 12px"
+      />
+
+      <template #footer>
+        <CButton
+          size="sm"
+          color="danger"
+          type="button"
+          @click="viewModalHistory = false"
+        >
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
+
+    <!-- MODAL VIEW SERIAL -->
+    <CModal
+      title="View Serial"
+      color="warning"
+      :show.sync="viewModalSerial"
+      size="lg"
+    >
+      <CRow>
+        <CCol md="10">
+          <CTabs :active-tab.sync="activeTab">
+            <CTab title="Available" active> </CTab>
+            <CTab title="Booking"> </CTab>
+            <CTab title="Production"> </CTab>
+          </CTabs>
+        </CCol>
+        <CCol md="2">
+          <p class="float-right">
+            Quantity L1: {{ tabData.quantity_l1 }}<br />
+          </p>
+        </CCol>
+      </CRow>
+      <CDataTable
+        hover
+        striped
+        sorter
+        tableFilter
+        border
+        :pagination="true"
+        :items-per-page="10"
+        :items="detailSerial"
+        :fields="fieldSerial"
+        style="font-size: 12px"
+      />
+      <template #footer>
+        <CButton
+          size="sm"
+          color="danger"
+          type="button"
+          @click="viewModalSerial = false"
+        >
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
   </div>
 </template>
 
@@ -591,12 +598,13 @@ export default {
         mfg_date: null,
         het: null,
         process_order_erp: '',
-        buff: null,
+        buff: 0,
         generate_count_level_1: null,
         generate_count_level_2: null,
         generate_count_level_3: null,
         generate_count_level_4: null,
         min_count_generated_serial: getConfig().min_count_generated_serial || 0,
+        generate_count_additional: [],
         history: [],
       },
       initial_load: true,
@@ -623,7 +631,7 @@ export default {
           label: 'Count',
         },
       ],
-      fieldHistory: [
+      fieldStationHistory: [
         {
           key: 'conf_station_name',
           label: 'Station Name',
@@ -663,6 +671,28 @@ export default {
           label: 'Status',
         },
       ],
+      fieldHistory: [
+        {
+          key: 'modified_date',
+          label: 'Request Time',
+        },
+        {
+          key: 'generate_count_level_1',
+          label: 'Level 1',
+        },
+        {
+          key: 'generate_count_level_2',
+          label: 'Level 2',
+        },
+        {
+          key: 'generate_count_level_3',
+          label: 'Level 3',
+        },
+        {
+          key: 'generate_count_level_4',
+          label: 'Level 4',
+        },
+      ],
       serials: [],
       selectedSerials: [],
       tabData: {
@@ -678,6 +708,7 @@ export default {
       viewModalRequestSerial: false,
       viewModalHistory: false,
       viewModalSerial: false,
+      viewModalWeight: false,
     };
   },
   async mounted() {
@@ -960,6 +991,17 @@ export default {
     },
   },
   computed: {
+    dataFieldHistory() {
+      return this.formData.generate_count_additional.map((item) => {
+        return {
+          ...item,
+          generate_count_level_1: item.generate_count_level_1 || 0,
+          generate_count_level_2: item.generate_count_level_2 || 0,
+          generate_count_level_3: item.generate_count_level_3 || 0,
+          generate_count_level_4: item.generate_count_level_4 || 0,
+        };
+      });
+    },
     detailItems() {
       return this.formData.items.map((item) => {
         return {
