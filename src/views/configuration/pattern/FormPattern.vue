@@ -4,21 +4,16 @@
       <CCol md="12">
         <CCard>
           <CCardHeader>
-            <h5>Product Category [{{ route_action }}]</h5>
+            <h5>Pattern [{{ route_action }}]</h5>
           </CCardHeader>
           <CCardBody>
-            <CForm>
-              <CInput :disabled="true" horizontal v-model="formData.id">
-                <template #label>
-                  <p class="col-form-label col-sm-3">ID</p>
-                </template>
-              </CInput>
+            <CForm novalidate>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
-                placeholder="Enter product category name"
+                placeholder="Enter station name"
                 v-model="formData.name"
-                :is-valid="initial_load ? null : formData.name ? true : false"
+                :is-valid="initialLoad ? null : !formData.name ? false : true"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -31,14 +26,32 @@
               </CInput>
               <CTextarea
                 :disabled="action == 'Read' ? true : false"
+                placeholder="Enter connector description"
                 horizontal
-                placeholder="Enter product category description"
                 v-model="formData.description"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">Description</p>
                 </template>
               </CTextarea>
+              <CInput
+                :disabled="action == 'Read' ? true : false"
+                horizontal
+                placeholder="Pattern"
+                v-model="formData.pattern"
+                :is-valid="
+                  initialLoad ? null : !formData.pattern ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Pattern
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template>
+              </CInput>
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
                 <SwitchStatusMaster
@@ -49,14 +62,6 @@
                 />
               </CRow>
             </CForm>
-            <Metadata
-              :defaultMetadata="formData.metadata"
-              v-on:handleChange="
-                (formData.metadata = $event.result),
-                  (formData.error_metadata = $event.error_metadata)
-              "
-              model="mst_product_category"
-            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -66,8 +71,7 @@
               color="primary"
               @click="save()"
             >
-              <CIcon name="cil-check-circle" />
-              Submit
+              <CIcon name="cil-check-circle" /> Submit
             </CButton>
             <ButtonBack />
           </CCardFooter>
@@ -80,19 +84,32 @@
 <script>
 import { capitalizeFirstLetter } from '../../../utils';
 import {
-  getMstProductCategory,
-  insertMstProductCategory,
-  updateMstProductCategory,
-} from '../../../resource/MstProductCategory';
+  getConfPattern,
+  insertConfPattern,
+  updateConfPattern,
+} from '../../../resource/ConfPattern';
 
 export default {
-  name: 'ProductCategory',
+  name: 'FormPattern',
+  watch: {},
   data() {
     return {
-      initial_load: true,
-      action: '',
+      initialLoad: true,
       route_action: '',
-      formData: { id: null, status: 'Active', metadata: null },
+      // category: '',
+      action: 'Edit',
+      formData: {},
+      connection: { ip: null, username: null, password: null, port: null },
+      detailConnector: { params: [] },
+      listStation: [
+        { label: 'Serialization', value: 'serialization' },
+        { label: 'Aggregation', value: 'aggregation' },
+        { label: 'Online', value: 'online' },
+      ],
+      statusOptions: [
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
+      ],
     };
   },
   mounted() {
@@ -105,23 +122,24 @@ export default {
   },
   methods: {
     async loadData() {
-      let _res = await getMstProductCategory({ id: this.$route.params.id });
-      if (_res) this.formData = _res.data[0];
+      let _res = await getConfPattern({ id: this.$route.params.id });
+      if (_res) {
+        this.formData = _res.data[0];
+      }
     },
-    valid() {
-      if (this.formData.error_metadata) {
+    validation() {
+      if (!this.formData.name) {
         return false;
-      } else if (!this.formData.name) {
+      } else if (!this.formData.pattern) {
         return false;
       }
       return true;
     },
-
     async save() {
-      this.initial_load = false;
-      if (!this.valid()) {
+      this.initialLoad = false;
+      if (!this.validation()) {
         this.$toast.open({
-          message: 'Please input all the required data',
+          message: 'Please input all the required data.',
           type: 'error',
           dissmissible: true,
           position: 'top-right',
@@ -132,15 +150,17 @@ export default {
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
-
       if (confirm(message)) {
-        this.$isLoading(true);
         let dataPost = this.formData;
+        this.$isLoading(true);
         let res = {};
+        if (this.action === 'Create' && dataPost.id) {
+          delete dataPost.id;
+        }
         if (dataPost.id) {
-          res = await updateMstProductCategory(dataPost);
+          res = await updateConfPattern(dataPost);
         } else {
-          res = await insertMstProductCategory(dataPost);
+          res = await insertConfPattern(dataPost);
         }
         this.$isLoading(false);
         this.$toast.open({

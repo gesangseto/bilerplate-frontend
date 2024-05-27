@@ -4,37 +4,26 @@
       <CCol md="12">
         <CCard>
           <CCardHeader>
-            <h5>Packaging [{{ route_action }}]</h5>
+            <h5>Station [{{ route_action }}]</h5>
           </CCardHeader>
           <CCardBody>
-            <CForm>
-              <CInput :disabled="true" horizontal v-model="formData.id">
-                <template #label>
-                  <p class="col-form-label col-sm-3">ID</p>
-                </template>
-              </CInput>
+            <strong
+              v-if="formData.production_batch_list_id"
+              style="color: red; font-size: x-small"
+            >
+              Station {{ formData.station_status_name }} by Process Order ID [{{
+                formData.production_batch_list_id
+              }}]
+              </br>
+              </br>
+            </strong>
+            <CForm novalidate>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
-                placeholder="Enter packaging name"
-                v-model="formData.name"
-                :is-valid="initial_load ? null : formData.name ? true : false"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter Code name"
+                placeholder="Enter station code"
                 v-model="formData.code"
-                :is-valid="initial_load ? null : formData.code ? true : false"
+                :is-valid="initialLoad ? null : !formData.code ? false : true"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -45,24 +34,70 @@
                   </p>
                 </template>
               </CInput>
-              <CTextarea
+              <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
-                placeholder="Enter packaging description"
-                v-model="formData.description"
-                :is-valid="
-                  initial_load ? null : formData.description ? true : false
-                "
+                placeholder="Enter station name"
+                v-model="formData.name"
+                :is-valid="initialLoad ? null : !formData.name ? false : true"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
-                    Description
+                    Name
                     <span class="text-danger">
                       <strong>*</strong>
                     </span>
                   </p>
                 </template>
+              </CInput>
+              <CTextarea
+                :disabled="action == 'Read' ? true : false"
+                placeholder="Enter connector description"
+                horizontal
+                v-model="formData.description"
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">Description</p>
+                </template>
               </CTextarea>
+              <CInput
+                :disabled="action == 'Read' ? true : false"
+                horizontal
+                placeholder="Device ID"
+                v-model="formData.device_id"
+                :is-valid="
+                  initialLoad ? null : !formData.device_id ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Device ID
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template>
+              </CInput>
+              <CSelect
+                :disabled="action == 'Read'"
+                placeholder="-Select-"
+                :options="listStation"
+                horizontal
+                :value.sync="formData.station_type"
+                @change="handleChangeConnector()"
+                :is-valid="
+                  initialLoad ? null : !formData.station_type ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Station Type
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template>
+              </CSelect>
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
                 <SwitchStatusMaster
@@ -73,15 +108,6 @@
                 />
               </CRow>
             </CForm>
-
-            <Metadata
-              :defaultMetadata="formData.metadata"
-              v-on:handleChange="
-                (formData.metadata = $event.result),
-                  (formData.error_metadata = $event.error_metadata)
-              "
-              model="mst_packaging"
-            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -102,63 +128,70 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators';
+import { capitalizeFirstLetter, humanize } from '../../../utils';
 import {
-  getMstPackaging,
-  insertMstPackaging,
-  updateMstPackaging,
-} from '../../../resource/MstPackaging';
-import { capitalizeFirstLetter } from '../../../utils';
+  getConfStation,
+  updateConfStation,
+  insertConfStation,
+} from '../../../resource/ConfStation';
+
 export default {
-  name: 'PackageForm',
+  name: 'FormStation',
+  watch: {
+  },
   data() {
     return {
-      initial_load: true,
+      initialLoad: true,
       route_action: '',
+      // category: '',
       action: 'Edit',
-      formData: { id: null, have_error: false, metadata: null },
+      formData: {},
+      connection: { ip: null, username: null, password: null, port: null },
+      detailConnector: { params: [] },
+      listStation: [
+        { label: 'Serialization', value: 'serialization' },
+        { label: 'Aggregation', value: 'aggregation' },
+        { label: 'Online', value: 'online' },
+      ],
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
       ],
     };
   },
-  validations: {
-    packaging: {
-      name: { required },
-      description: { required },
-    },
-  },
-  async mounted() {
+  mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
-      let param = `id=${this.$route.params.id}`;
-      let _res = await getMstPackaging(param);
-      this.formData = _res.data[0];
+      this.loadData();
     }
   },
   methods: {
-    checkValidation() {
-      this.formData.have_error = false;
-      if (this.formData.error_metadata) {
-        this.formData.have_error = true;
-      } else if (!this.formData.name) {
-        this.formData.have_error = true;
-      } else if (!this.formData.code) {
-        this.formData.have_error = true;
-      } else if (!this.formData.description) {
-        this.formData.have_error = true;
+    async loadData() {
+      let _res = await getConfStation({ id: this.$route.params.id });
+      if (_res) {
+        this.formData = _res.data[0];
+        if (this.formData.production_batch_list_id) this.action = 'Read';
       }
-      return;
+    },
+    validation() {
+      if (!this.formData.code) {
+        return false;
+      } else if (!this.formData.name) {
+        return false;
+      } else if (!this.formData.device_id) {
+        return false;
+      } else if (!this.formData.station_type) {
+        return false;
+      }
+      return true;
     },
     async save() {
-      this.initial_load = false;
-      this.checkValidation();
-      if (this.formData.have_error) {
+      this.initialLoad = false;
+      if (!this.validation()) {
         this.$toast.open({
-          message: 'Please input all the required data',
+          message: 'Please input all the required data.',
           type: 'error',
           dissmissible: true,
           position: 'top-right',
@@ -169,15 +202,17 @@ export default {
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
-
       if (confirm(message)) {
-        this.$isLoading(true);
         let dataPost = this.formData;
+        this.$isLoading(true);
         let res = {};
+        if (this.action === 'Create' && dataPost.id) {
+          delete dataPost.id;
+        }
         if (dataPost.id) {
-          res = await updateMstPackaging(dataPost);
+          res = await updateConfStation(dataPost);
         } else {
-          res = await insertMstPackaging(dataPost);
+          res = await insertConfStation(dataPost);
         }
         this.$isLoading(false);
         this.$toast.open({

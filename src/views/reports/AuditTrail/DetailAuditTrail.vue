@@ -246,7 +246,6 @@ export default {
         this.data = data;
         this.dataBody = JSON.parse(this.data['data']);
         this.oldDataBody = JSON.parse(this.data['old_data']) || {};
-        console.log(this.dataBody);
       });
     },
     isJsonString(str) {

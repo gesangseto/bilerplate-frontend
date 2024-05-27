@@ -9,7 +9,7 @@
 
           <CCardBody>
             <CForm>
-              <CInput :disabled="true" horizontal v-model="customer.id">
+              <CInput :disabled="true" horizontal v-model="formData.id">
                 <template #label>
                   <p class="col-form-label col-sm-3">ID</p>
                 </template>
@@ -18,11 +18,8 @@
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Enter customer name"
-                v-model="customer.name"
-                :invalid-feedback="required.name.message"
-                :add-input-classes="{
-                  'is-invalid': required.name.error,
-                }"
+                v-model="formData.name"
+                :is-valid="initial_load ? null : formData.name ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -37,11 +34,8 @@
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Enter customer PIC name"
-                v-model="customer.pic"
-                :invalid-feedback="required.pic.message"
-                :add-input-classes="{
-                  'is-invalid': required.pic.error,
-                }"
+                v-model="formData.pic"
+                :is-valid="initial_load ? null : formData.pic ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -56,11 +50,10 @@
                 :disabled="action == 'Read' ? true : false"
                 placeholder="Enter customer address"
                 horizontal
-                v-model="customer.address"
-                :invalid-feedback="required.address.message"
-                :add-input-classes="{
-                  'is-invalid': required.address.error,
-                }"
+                v-model="formData.address"
+                :is-valid="
+                  initial_load ? null : formData.address ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -94,7 +87,7 @@
                             >
                             </v-select>
                             <small
-                              v-if="required.tlp_code.error"
+                              v-if="!initial_load && !formData.tlp_code"
                               style="color: red"
                             >
                               {{ required.tlp_code.message }}
@@ -108,15 +101,18 @@
                               @keypress="
                                 limitPhone({
                                   event: $event,
-                                  data: customer.tlp,
+                                  data: formData.tlp,
                                   max: 12,
                                 })
                               "
-                              v-model="customer.tlp"
-                              :invalid-feedback="required.tlp.message"
-                              :add-input-classes="{
-                                'is-invalid': required.tlp.error,
-                              }"
+                              v-model="formData.tlp"
+                              :is-valid="
+                                initial_load
+                                  ? null
+                                  : formData.tlp
+                                  ? true
+                                  : false
+                              "
                             >
                             </CInput>
                           </td>
@@ -161,11 +157,11 @@
                               :disabled="action == 'Read' ? true : false"
                               placeholder="Enter alternative phone number (Example : 81211223344)"
                               horizontal
-                              v-model="customer.tlp_alt"
+                              v-model="formData.tlp_alt"
                               @keypress="
                                 limitPhone({
                                   event: $event,
-                                  data: customer.tlp_alt,
+                                  data: formData.tlp_alt,
                                   max: 12,
                                 })
                               "
@@ -183,11 +179,8 @@
                 :disabled="action == 'Read' ? true : false"
                 placeholder="email.address@email.com"
                 horizontal
-                v-model="customer.email"
-                :invalid-feedback="required.email.message"
-                :add-input-classes="{
-                  'is-invalid': required.email.error,
-                }"
+                v-model="formData.email"
+                :is-valid="initial_load ? null : formData.email ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -202,11 +195,11 @@
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
-                v-model="customer.id_sarana"
+                v-model="formData.id_sarana"
                 @keypress="
                   limitPhone({
                     event: $event,
-                    data: customer.id_sarana,
+                    data: formData.id_sarana,
                     max: 6,
                   })
                 "
@@ -236,11 +229,19 @@
                 <SwitchStatusMaster
                   :disabled="action == 'Read'"
                   :show_label="true"
-                  :default_value="customer.status"
-                  v-on:onChange="customer.status = $event"
+                  :default_value="formData.status"
+                  v-on:onChange="formData.status = $event"
                 />
               </CRow>
             </CForm>
+            <Metadata
+              :defaultMetadata="formData.metadata"
+              v-on:handleChange="
+                (formData.metadata = $event.result),
+                  (formData.error_metadata = $event.error_metadata)
+              "
+              model="mst_customer"
+            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -279,7 +280,7 @@ import {
 export default {
   name: 'Forms',
   watch: {
-    customer: {
+    formData: {
       deep: true,
       handler() {
         if (!this.initial_load) {
@@ -293,7 +294,7 @@ export default {
       initial_load: true,
       action: '',
       route_action: '',
-      customer: { status: 'Active', tlp_alt: '', tlp: '' },
+      formData: { status: 'Active', tlp_alt: '', tlp: '', metadata: null },
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
@@ -326,7 +327,7 @@ export default {
     }
   },
   validations: {
-    customer: {
+    formData: {
       name: { required },
       address: { required },
       pic: { required },
@@ -340,10 +341,10 @@ export default {
     handleChangeInput($value, code) {
       if (code == 'alt_code') {
         this.temp_data.tlp_alt_code = $value;
-        this.customer.tlp_alt_code = $value;
+        this.formData.tlp_alt_code = $value;
       } else {
         this.temp_data.tlp_code = $value;
-        this.customer.tlp_code = $value;
+        this.formData.tlp_code = $value;
       }
     },
     limitPhone({ event, data, max }) {
@@ -353,18 +354,18 @@ export default {
       let _res = await getMstCustomer({ id: this.$route.params.id });
       if (_res) {
         let data = _res.data[0];
-        this.customer = data;
+        this.formData = data;
         if (data.tlp) {
           let tlp = data.tlp.split('-');
           this.temp_data.tlp_code = tlp[0];
-          this.customer.tlp_code = tlp[0];
-          this.customer.tlp = tlp[1];
+          this.formData.tlp_code = tlp[0];
+          this.formData.tlp = tlp[1];
         }
         if (data.tlp_alt) {
           let tlp = data.tlp_alt.split('-');
           this.temp_data.tlp_alt_code = tlp[0];
-          this.customer.tlp_alt_code = tlp[0];
-          this.customer.tlp_alt = tlp[1];
+          this.formData.tlp_alt_code = tlp[0];
+          this.formData.tlp_alt = tlp[1];
         }
       }
     },
@@ -390,7 +391,7 @@ export default {
     checkValidation() {
       let have_error = false;
       for (const rq in this.required) {
-        if (!this.customer[rq]) {
+        if (!this.formData[rq]) {
           this.required[rq].error = true;
           have_error = true;
         } else {
@@ -398,33 +399,56 @@ export default {
         }
       }
       // Check Phone Number
-      if (!isPhone(this.customer.tlp)) {
+      if (!isPhone(this.formData.tlp)) {
         have_error = true;
         this.required.tlp.error = true;
       }
       // Check Email
-      if (!isEmail(this.customer.email)) {
+      if (!isEmail(this.formData.email)) {
         have_error = true;
         this.required.email.error = true;
       }
       // If any error
+      if (this.formData.error_metadata) {
+        have_error = true;
+      }
+      // If any error
       if (have_error) {
-        this.customer.have_error = true;
+        this.formData.have_error = true;
       } else {
-        this.customer.have_error = false;
+        this.formData.have_error = false;
       }
       return;
+    },
+    valid() {
+      console.log(this.formData);
+      if (!this.formData.name) {
+        return false;
+      } else if (!this.formData.pic) {
+        return false;
+      } else if (!this.formData.address) {
+        return false;
+      } else if (!this.formData.email) {
+        return false;
+      }
+      return true;
     },
     handleChangePhone() {},
     async save() {
       this.initial_load = false;
-      this.checkValidation();
-      if (this.customer.have_error) {
+      if (!this.valid()) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
 
-      let _form_data = JSON.parse(JSON.stringify(this.customer));
-      let dataPost = JSON.parse(JSON.stringify(this.customer));
+      let _form_data = JSON.parse(JSON.stringify(this.formData));
+      let dataPost = JSON.parse(JSON.stringify(this.formData));
 
       if (_form_data.tlp && _form_data.tlp_code) {
         dataPost.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;

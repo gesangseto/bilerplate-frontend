@@ -269,7 +269,6 @@ export default {
       return moment.utc(item).calendar();
     },
     getData() {
-      console.log(this.result);
       let param = `${new URLSearchParams(this.result).toString()}`;
       let url = `/v3/helper/detail-item/stock?show_barcode=true&show_history=true&${param}`;
       $axiosMertrack.get(url).then((res) => {

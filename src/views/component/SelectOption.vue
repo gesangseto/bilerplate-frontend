@@ -71,7 +71,6 @@ export default {
   methods: {
     handleChange() {
       this.$emit('onchange', this.formData);
-      console.log(this.formData);
     },
   },
 };

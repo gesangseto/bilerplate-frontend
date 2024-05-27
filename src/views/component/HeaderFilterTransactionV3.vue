@@ -676,7 +676,6 @@ export default {
         if (this.result.SearchVal1 == it.value)
           this.result.SearchVal1Text = it.label;
       }
-      console.log(this.result);
       this.$emit('handleChangeFilter', this.result);
     },
     handleTextInput(val) {
@@ -706,7 +705,6 @@ export default {
       $axiosMertrack.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
-          console.log(it);
           let ext = it.delete_flag == 1 ? '(X)' : '';
           let tmp = it;
           tmp.value = it.id;

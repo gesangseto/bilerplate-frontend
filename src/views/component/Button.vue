@@ -1,32 +1,47 @@
 <template>
-  <CButton
-    :class="property.class"
-    v-c-tooltip="property.tooltip"
-    style="margin: 2px; text-align: center"
-    size="sm"
-    :color="property.color"
-    v-on:click="$emit('click', $event.target.value)"
-  >
-    <v-icon
-      style="margin-bottom: -1px"
-      v-if="property.icon"
-      :name="property.icon"
-    />
-    {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
-  </CButton>
+  <a :href="href ? href : null">
+    <CButton
+      :class="property.class"
+      v-c-tooltip="property.tooltip"
+      style="margin: 2px; text-align: center"
+      size="sm"
+      :color="property.color"
+      v-on:click="!useHref ? $emit('click', $event.target.value) : null"
+    >
+      <v-icon
+        style="margin-bottom: -1px"
+        v-if="property.icon"
+        :name="property.icon"
+      />
+      {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
+    </CButton>
+  </a>
 </template>
 
 <script>
 export default {
   name: 'Button',
-  props: ['type', 'buttonProperty'],
+  props: ['type', 'buttonProperty', 'useHref', 'id'],
   watch: {
+    id: {
+      deep: true,
+      handler(n) {
+        if (this.useHref) {
+          this.href = `#${this.$route.path}/${this.type}`;
+          if (n) this.href += `/${n}`;
+        }
+      },
+    },
     buttonProperty: {
       handler(n, o) {},
       deep: true,
     },
   },
   mounted() {
+    if (this.useHref) {
+      this.href = `#${this.$route.path}/${this.type}`;
+      if (this.id) this.href += `/${this.id}`;
+    }
     if (this.type == 'create') {
       this.property.color = 'success';
       this.property.icon = 'plus';
@@ -70,6 +85,7 @@ export default {
         text: '',
         tooltip: '',
       },
+      href: null,
     };
   },
   methods: {},
