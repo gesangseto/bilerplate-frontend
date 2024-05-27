@@ -31,7 +31,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.full_name"
+                      v-model="upload['created_full_name']"
                     />
                   </td>
                 </tr>
@@ -51,7 +51,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.type_desc"
+                      v-model="upload['source_name']"
                     />
                   </td>
                 </tr>
@@ -61,7 +61,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.supplier_name"
+                      v-model="upload['supplier_name']"
                     />
                   </td>
                 </tr>
@@ -85,7 +85,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.modified_by_full_name"
+                      v-model="upload.modified_full_name"
                     />
                   </td>
                 </tr>
@@ -95,7 +95,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="upload.update_date"
+                      v-model="upload.modified_date"
                     />
                   </td>
                 </tr>
@@ -115,7 +115,7 @@
                   v-bind:key="value.id"
                 >
                   <td style="width: 40%">
-                    {{ index.replace("_", "") }} Quantity ({{ value.name }})
+                    {{ index.replace('_', '') }} Quantity ({{ value.name }})
                   </td>
                   <td style="width: 60%">
                     <input
@@ -135,6 +135,8 @@
               striped
               sorter
               border
+              :pagination="true"
+              :items-per-page="10"
               :items="uploadItems"
               :fields="fields"
               class="text-left"
@@ -144,15 +146,7 @@
           </div>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            type="reset"
-            size="sm"
-            class="m-1 float-right"
-            color="primary"
-            @click="back()"
-          >
-            <CIcon name="cil-arrow-left" /> Back
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -160,26 +154,22 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
 export default {
-  name: "DetailUploadXML",
+  name: 'DetailUploadXML',
   mounted() {
     if (this.$route.params.id != undefined) {
       this.$isLoading(true);
-      let param = `ApiName=ListUploadXml&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
+      let param = `id=${this.$route.params.id}`;
       $axiosMertrack
-        .get(`/general/web?${param}`)
+        .get(`/v3/transaction/upload-xml?${param}&raw=true`)
         .then((res) => {
           this.$isLoading(false);
           this.upload = res.data.data[0];
-          let i = 0;
           for (const it of res.data.data[0].items) {
-            this.total[`L_${it.packaging_level}`].name =
-              it[`name_packaging_l${it.packaging_level}`];
-            this.total[`L_${it.packaging_level}`].quantity += 1;
-            this.upload.items[i].packaging_name =
-              it[`name_packaging_l${it.packaging_level}`];
-            i += 1;
+            let lvl = it.packaging_level;
+            this.total[`L_${lvl}`].name = it[`packaging_name`];
+            this.total[`L_${lvl}`].quantity += 1;
           }
 
           for (const it in this.total) {
@@ -192,9 +182,9 @@ export default {
           this.$isLoading(false);
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
@@ -206,72 +196,72 @@ export default {
       total: {
         L_1: {
           id: 1,
-          name: "",
+          name: '',
           quantity: 0,
         },
         L_2: {
           id: 2,
-          name: "",
+          name: '',
           quantity: 0,
         },
         L_3: {
           id: 3,
-          name: "",
+          name: '',
           quantity: 0,
         },
         L_4: {
           id: 4,
-          name: "",
+          name: '',
           quantity: 0,
         },
       },
       fields: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'product_no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
       ],
       upload: {
-        id: "",
-        suppplier_name: "",
-        type: "",
-        fileName: "",
-        fileContent: "",
-        createdBy: "",
-        createdDate: "",
-        status: "",
+        id: '',
+        suppplier_name: '',
+        type: '',
+        fileName: '',
+        fileContent: '',
+        createdBy: '',
+        createdDate: '',
+        status: '',
         items: [],
       },
     };
@@ -284,9 +274,10 @@ export default {
   computed: {
     uploadItems() {
       return this.upload.items.map((item) => {
+        let type = item.epc_type ? item.epc_type.toLowerCase() : null;
         return {
           ...item,
-          gtin_cp: item.epc_type == "sscc" ? item.comp_prefix : item.gtin_sscc,
+          gtin_cp: type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

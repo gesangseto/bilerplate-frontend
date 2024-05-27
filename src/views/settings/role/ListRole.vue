@@ -27,10 +27,14 @@
             <template #action="{ item, index }">
               <td>
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'update'"
                   @click="rowUpdate(item, index)"
                 />
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'read'"
                   @click="rowRead(item, index)"
                 />
@@ -54,7 +58,7 @@
 
 <script>
 import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import { exportData, calculatePaginationV3 } from "../../../utils";
 
 export default {
   name: "ListRole",
@@ -69,7 +73,6 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "RoleList",
         StartDate: "",
         EndDate: "",
       },
@@ -80,7 +83,11 @@ export default {
           key: "department_name",
           label: "Department",
         },
-        { key: "status", _classes: "font-weight-bold" },
+        {
+          key: "status",
+          label: "Section Status",
+          _classes: "font-weight-bold",
+        },
         {
           key: "action",
           label: "Action",
@@ -92,9 +99,9 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(`/v3/master/section-role?${param}`).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });

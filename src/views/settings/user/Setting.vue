@@ -37,18 +37,18 @@
     </CRow>
 
     <CRow>
-      <CCol col="12" xl="12">
+      <CCol col="6" xl="6">
         <CCard>
           <CCardHeader>
-            <strong>Setting</strong>
+            <strong>Update Password</strong>
           </CCardHeader>
           <CCardBody>
-            <CRow class="mt-3"
-              ><CCol md="3"> Old Password </CCol>
-              <CCol md="3">
+            <CRow class="mt-3">
+              <CCol md="6"> Old Password </CCol>
+              <CCol md="6">
                 <CInput
                   placeholder="Old Password"
-                  type="password"
+                  :type="showPassword == false ? 'password' : 'text'"
                   autocomplete="old-password"
                   v-model="form_data.oldPassword"
                   :invalid-feedback="required.oldPassword.message"
@@ -58,25 +58,26 @@
                 /> </CCol
             ></CRow>
             <CRow
-              ><CCol md="3"> New Password </CCol>
-              <CCol md="3">
+              ><CCol md="6"> New Password </CCol>
+              <CCol md="6">
                 <CInput
                   placeholder="New Password"
-                  type="password"
+                  :type="showPassword == false ? 'password' : 'text'"
                   autocomplete="bew-password"
                   v-model="form_data.newPassword"
                   :invalid-feedback="required.newPassword.message"
-                  :add-input-classes="{
-                    'is-invalid': required.newPassword.error,
-                  }"
-                /> </CCol
-            ></CRow>
-            <CRow
-              ><CCol md="3"> Confirm New Password </CCol>
-              <CCol md="3">
+                  :is-valid="
+                    !form_data.newPassword ? null : !required.newPassword.error
+                  "
+                />
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md="6"> Confirm New Password </CCol>
+              <CCol md="6">
                 <CInput
                   placeholder="Confirm Password"
-                  type="password"
+                  :type="showPassword == false ? 'password' : 'text'"
                   autocomplete="confirm-password"
                   v-model="form_data.confirmPassword"
                   :invalid-feedback="
@@ -84,21 +85,61 @@
                       ? 'Confirm password is required'
                       : 'Confirmation password does not match'
                   "
-                  :add-input-classes="{
-                    'is-invalid':
-                      form_data.newPassword !== form_data.confirmPassword,
-                  }"
-                /> </CCol
-            ></CRow>
+                  :is-valid="
+                    !form_data.newPassword
+                      ? null
+                      : form_data.newPassword === form_data.confirmPassword
+                  "
+                />
+              </CCol>
+            </CRow>
           </CCardBody>
-          <CCardFooter
-            ><CButton
+          <CCardFooter>
+            <CButton
               size="sm"
               class="float-right ml-2"
               color="success"
               @click="changePassword"
-              >Submit</CButton
-            ></CCardFooter
+            >
+              Save
+            </CButton>
+
+            <CButton
+              size="sm"
+              class="float-right"
+              @click="showPassword = !showPassword"
+            >
+              <v-icon v-if="!showPassword" name="eye-slash" size="sm" />
+              <v-icon v-if="showPassword" name="eye" size="sm" />
+            </CButton>
+          </CCardFooter>
+        </CCard>
+      </CCol>
+      <CCol col="6" xl="6">
+        <CCard>
+          <CCardHeader>
+            <strong>Settings App</strong>
+          </CCardHeader>
+          <CCardBody>
+            <CRow class="mt-3">
+              <CCol md="6"> Accordion Effect </CCol>
+              <CCol md="6">
+                <SwitchDefault
+                  :default_value="conf_user_app.accordion"
+                  v-on:onChange="conf_user_app.accordion = $event"
+                />
+              </CCol>
+            </CRow>
+          </CCardBody>
+          <CCardFooter>
+            <CButton
+              size="sm"
+              class="float-right ml-2"
+              color="success"
+              @click="changeConf"
+            >
+              Save
+            </CButton></CCardFooter
           >
         </CCard>
       </CCol>
@@ -107,9 +148,17 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import { updateMstUser } from '../../../resource/MstUser';
+import { authChangePwd } from '../../../resource/SysAuth';
+import {
+  getConfUserApp,
+  getProfile,
+  getUserId,
+  setProfile,
+  validationPassword,
+} from '../../../utils';
 export default {
-  name: "UserSetting",
+  name: 'UserSetting',
   components: {},
   watch: {
     form_data: {
@@ -120,28 +169,43 @@ export default {
         }
       },
     },
+    'form_data.newPassword': {
+      deep: true,
+      handler(data) {
+        this.required.newPassword.message = 'New password is required';
+        this.required.newPassword.error = false;
+        let check = validationPassword(data);
+        if (check) {
+          this.required.newPassword.error = true;
+          this.required.newPassword.message = check;
+        }
+      },
+    },
   },
   data() {
     return {
       initial_load: true,
       form_data: {
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: '',
       },
+      showPassword: false,
+      conf_user_app: {},
       profile: {},
       required: {
-        oldPassword: { error: false, message: "Old password is required" },
-        newPassword: { error: false, message: "New password is required" },
+        oldPassword: { error: false, message: 'Old password is required' },
+        newPassword: { error: false, message: 'New password is required' },
         confirmPassword: {
           error: false,
-          message: "Confirm new password required",
+          message: 'Confirm new password required',
         },
       },
     };
   },
   mounted() {
-    this.profile = JSON.parse(localStorage.getItem("profile"));
+    this.profile = getProfile();
+    this.conf_user_app = getConfUserApp();
   },
   methods: {
     checkValidation() {
@@ -162,38 +226,50 @@ export default {
       }
       return;
     },
-    changePassword() {
+    async changePassword() {
       this.initial_load = false;
       this.checkValidation();
       if (this.form_data.have_error) {
         return;
-      }
-      if (this.form_data.newPassword !== this.form_data.confirmPassword) {
+      } else if (
+        this.form_data.newPassword !== this.form_data.confirmPassword
+      ) {
+        return;
+      } else if (validationPassword(this.form_data.newPassword)) {
+        this.required.newPassword.error = true;
+        this.required.newPassword.message = validationPassword(
+          this.form_data.newPassword
+        );
         return;
       }
+      this.$isLoading(true);
       var body = {
-        ApiName: "ChangePwd",
-        Params: {
-          old_pwd: this.form_data.oldPassword,
-          new_pwd: this.form_data.newPassword,
-        },
+        old_password: this.form_data.oldPassword,
+        new_password: this.form_data.newPassword,
       };
-      $axiosMertrack.post(`/general/web`, body).then((res) => {
-        this.$toast.open({
-          message: res.data.error
-            ? res.data.message
-            : "Password has been changed successfully ",
-          type: res.data.error ? "error" : "success",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
-        if (!res.data.error) {
-          this.$router.push({
-            path: `/dashboard`,
-          });
-        }
+      let res = await authChangePwd(body);
+
+      this.$isLoading(false);
+      this.$toast.open({
+        message: res['error']
+          ? `${res['message']}`
+          : 'Data has been saved succesfully ',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
       });
+      if (!res['error']) this.$router.back();
+    },
+    async changeConf() {
+      let profile = getProfile();
+      profile.conf_app = this.conf_user_app;
+      setProfile(profile);
+      let params = {
+        id: getUserId(),
+        conf_app: this.conf_user_app,
+      };
+      await updateMstUser(params);
     },
   },
 };

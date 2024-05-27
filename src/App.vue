@@ -3,51 +3,81 @@
 </template>
 
 <script>
-import Vue from "vue";
-import loading from "vuejs-loading-screen";
-import "vue-awesome/icons";
-import Icon from "vue-awesome/components/Icon";
-import VueCustomTooltip from "@adamdehaven/vue-custom-tooltip";
+import Vue from 'vue';
+import loading from 'vuejs-loading-screen';
+import 'vue-awesome/icons';
+import Icon from 'vue-awesome/components/Icon';
+import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip';
+import VueTouchKeyboard from 'vue-touch-keyboard';
+import 'vue-touch-keyboard/dist/vue-touch-keyboard.css'; // load default style
+import 'vue-js-modal/dist/styles.css';
+import vmodal from 'vue-js-modal';
+import VueFab from 'vue-float-action-button';
+
 import {
   Button,
+  ButtonBack,
   ButtonPermission,
-  DetailTransaction,
-  HeaderFilterTransaction,
-  DetailStockSerial,
-  DetailShowStatus,
   HeaderFilterDefault,
   MasterPid,
   HeaderShowStatus,
-  FormAddItem,
   CancelModal,
   ShowLockedStatus,
   DetailBarcodeGenerator,
-  ModalPrintLabel,
-} from "./views/component";
+  ModalBarcodeGenerator,
+  ModalPrintLabelV3,
+  FormAddItemV3,
+  DetailTransactionV3,
+  HeaderFilterTransactionV3,
+  HeaderShowStatusV3,
+  SwitchStatusMaster,
+  SwitchStatusTrx,
+  SwitchDefault,
+  ProductWeight,
+  VirtualKeyboard,
+  SelectOption,
+} from './views/component';
+Vue.use(
+  VueFab /* {
+  ----------------------
+  // opitons Optional Alibaba iconfont icon or MaterialIcons
+  iconType: 'MaterialDesign'
+  // iconType: 'iconfont'
+} */
+);
 Vue.use(VueCustomTooltip);
 Vue.use(loading);
-Vue.component("v-icon", Icon);
-Vue.component("MasterPid", MasterPid);
-Vue.component("Button", Button);
-Vue.component("ButtonPermission", ButtonPermission);
-Vue.component("HeaderFilterTransaction", HeaderFilterTransaction);
-Vue.component("DetailTransaction", DetailTransaction);
-Vue.component("DetailShowStatus", DetailShowStatus);
-Vue.component("HeaderShowStatus", HeaderShowStatus);
-Vue.component("DetailStockSerial", DetailStockSerial);
-Vue.component("HeaderFilterDefault", HeaderFilterDefault);
-Vue.component("FormAddItem", FormAddItem);
-Vue.component("CancelModal", CancelModal);
-Vue.component("ShowLockedStatus", ShowLockedStatus);
-Vue.component("DetailBarcodeGenerator", DetailBarcodeGenerator);
-Vue.component("ModalPrintLabel", ModalPrintLabel);
+Vue.use(vmodal);
+Vue.use(VueTouchKeyboard);
+Vue.component('VirtualKeyboard', VirtualKeyboard);
+Vue.component('v-icon', Icon);
+Vue.component('MasterPid', MasterPid);
+Vue.component('Button', Button);
+Vue.component('ButtonBack', ButtonBack);
+Vue.component('ButtonPermission', ButtonPermission);
+Vue.component('HeaderShowStatus', HeaderShowStatus);
+Vue.component('HeaderFilterDefault', HeaderFilterDefault);
+Vue.component('CancelModal', CancelModal);
+Vue.component('ShowLockedStatus', ShowLockedStatus);
+Vue.component('DetailBarcodeGenerator', DetailBarcodeGenerator);
+Vue.component('ModalBarcodeGenerator', ModalBarcodeGenerator);
+Vue.component('ModalPrintLabelV3', ModalPrintLabelV3);
+Vue.component('FormAddItemV3', FormAddItemV3);
+Vue.component('HeaderFilterTransactionV3', HeaderFilterTransactionV3);
+Vue.component('DetailTransactionV3', DetailTransactionV3);
+Vue.component('HeaderShowStatusV3', HeaderShowStatusV3);
+Vue.component('SwitchStatusMaster', SwitchStatusMaster);
+Vue.component('SwitchStatusTrx', SwitchStatusTrx);
+Vue.component('SwitchDefault', SwitchDefault);
+Vue.component('ProductWeight', ProductWeight);
+Vue.component('SelectOption', SelectOption);
 
 export default {
-  name: "App",
+  name: 'App',
 };
 </script>
 
 <style lang="scss">
 // Import Main styles for this application
-@import "assets/scss/style";
+@import 'assets/scss/style';
 </style>

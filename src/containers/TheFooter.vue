@@ -1,7 +1,7 @@
 <template>
   <CFooter fixed light style="background-color: white">
     <div>
-      <span class="mr-1">Copyright &copy; 2022</span>
+      <span class="mr-1">Copyright &copy; {{ new Date().getFullYear() }}</span>
       <a href="http://merindo.co.id/" target="_blank"> PT Merindo Makmur</a>
     </div>
     <div class="ml-auto">
@@ -33,19 +33,14 @@
                 <td colspan="3"><strong>System Version</strong></td>
               </tr>
               <tr>
-                <td>Core</td>
+                <td>Mertrack Core</td>
                 <td>:</td>
-                <td>2.0.1</td>
+                <td>3.0</td>
               </tr>
               <tr>
-                <td>DB</td>
+                <td>Mobile</td>
                 <td>:</td>
-                <td>2.0.1</td>
-              </tr>
-              <tr>
-                <td>Report</td>
-                <td>:</td>
-                <td>2.0.1</td>
+                <td>3.0</td>
               </tr>
             </table>
           </CCol>
@@ -55,19 +50,19 @@
                 <td colspan="3">&nbsp;</td>
               </tr>
               <tr>
-                <td>BPOM Report</td>
+              <tr>
+                <td>Connector EPCIS OSM</td>
                 <td>:</td>
-                <td>2.0</td>
+                <td>1.0</td>
               </tr>
               <tr>
-                <td>Web</td>
+                <td>Connector EPCIS EML</td>
                 <td>:</td>
-                <td>2.0.1</td>
+                <td>1.0</td>
               </tr>
-              <tr>
-                <td>Mobile</td>
+                <td>Connector BPOM</td>
                 <td>:</td>
-                <td>2.0.1</td>
+                <td>3.0.1</td>
               </tr>
             </table>
           </CCol>
@@ -84,7 +79,7 @@
         </div>
         <div style="display: block; margin-left: auto; margin-right: auto">
           <span class="mr-1">Copyright</span>
-          <span class="ml-1">&copy; 2022</span>
+          <span class="ml-1">&copy; {{ new Date().getFullYear() }}</span>
           <span class="ml-1"
             ><a href="http://merindo.co.id/" target="_blank">
               PT.Merindo Makmur</a
@@ -116,7 +111,8 @@
 }
 </style>
 <script>
-import { logoMertrack, logoMerindo } from "../constants";
+import { logoMertrack, logoMerindo } from '../constants';
+import { getConfig } from '../utils';
 export default {
   data() {
     return {
@@ -132,9 +128,9 @@ export default {
       },
     };
   },
-  name: "TheFooter",
+  name: 'TheFooter',
   mounted() {
-    this.data = JSON.parse(localStorage.getItem("configuration"));
+    this.data = getConfig();
     this.data.about = `
     This copy of <strong>Mertrack® Warehouse</strong> is licensed to:
     <br/>
@@ -156,14 +152,14 @@ export default {
     <br/>
     <strong>Warning</strong>
     <br/>
-This computer program is protected by copyright and international treaties. Unauthorized use or reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible under the law. 
+This computer program is protected by copyright and international treaties. Unauthorized use or reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible under the law.
     <br/>
 Any modification to this program or any portion of it without approval from PT Merindo Makmur shall be considered as illegal act and could be prosecuted under the law, therefore any valid warranty will be terminated immediately and PT Merindo Makmur will be released from any responsibility and obligation to anything happened due to the illegal modification of the program or any portion of the program.
     <br/>
     <br/>
     <strong>Warranty</strong>
     <br/>
-The program warranty period is indicated in the quotation / PO / project agreement. 
+The program warranty period is indicated in the quotation / PO / project agreement.
 The program warranty will begin on the date of the software handover document (unless a different start date is specified in the quotation / PO / project agreement).
 During the warranty period, licensed customer is entitled for limited free of charge support, maintenance, and program update, unless it is terminated earlier in accordance with the valid warranty period.
     <br/>
@@ -175,7 +171,7 @@ Any program modification requested by customer which is outside the scope of Fun
 Licensed customer can purchase support and service package or on demand support and service from PT Merindo Makmur after the warranty period ends. Both support and service package and on demand support and service is subject to then-current rates. Terms and condition of support and service after valid warranty ends will be subject to the terms and condition of purchased support and service (package or on demand).
     <br/>
     <br/>
-Copyright © 2022 PT Merindo Makmur. All rights reserved.
+Copyright © ${new Date().getFullYear()} PT Merindo Makmur. All rights reserved.
 `;
   },
   computed: {

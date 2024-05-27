@@ -9,6 +9,11 @@
 
           <CCardBody>
             <CForm>
+              <CInput :disabled="true" horizontal v-model="customer.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
@@ -193,28 +198,47 @@
                   </p>
                 </template>
               </CInput>
+
+              <CInput
+                :disabled="action == 'Read' ? true : false"
+                horizontal
+                v-model="customer.id_sarana"
+                @keypress="
+                  limitPhone({
+                    event: $event,
+                    data: customer.id_sarana,
+                    max: 6,
+                  })
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    ID Sarana (BPOM)
+                    <span class="text-danger">
+                      <strong>***</strong>
+                    </span>
+                  </p>
+                </template>
+                <template #description>
+                  <p style="font-size: x-small">
+                    <span>
+                      <strong>WARNING: </strong>
+                    </span>
+                    If the ID Sarana (BPOM) is blank, system will not generate
+                    distribution BPOM report (Queue BPOM) in both .xlsx file
+                    format nor reporting to BPOM TTAC server via API for any
+                    completed Picking List transaction involving this customer.
+                  </p>
+                </template>
+              </CInput>
               <CRow form class="form-group">
-                <CCol sm="3">
-                  Status
-                  <span class="text-danger">*</span>
-                </CCol>
-                {{ action == "Read" ? customer.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :inline="true"
-                  :checked.sync="customer.status"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Department
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInputRadioGroup>
+                <CCol sm="3"> Status </CCol>
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="customer.status"
+                  v-on:onChange="customer.status = $event"
+                />
               </CRow>
             </CForm>
           </CCardBody>
@@ -228,15 +252,7 @@
             >
               <CIcon name="cil-check-circle" /> Submit
             </CButton>
-            <CButton
-              type="reset"
-              size="sm"
-              class="m-1"
-              color="danger"
-              @click="cancel()"
-            >
-              <CIcon name="cil-ban" /> Cancel
-            </CButton>
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>
@@ -251,17 +267,21 @@ import {
   capitalizeFirstLetter,
   onlyNumber,
   isEmail,
-} from "../../../utils";
-import { notEmail } from "../../../validator";
-import { required } from "vuelidate/lib/validators";
-import $axiosMertrack from "../../../apiMertrack";
+} from '../../../utils';
+import { notEmail } from '../../../validator';
+import { required } from 'vuelidate/lib/validators';
+import {
+  getMstCustomer,
+  insertMstCustomer,
+  updateMstCustomer,
+} from '../../../resource/MstCustomer';
 
 export default {
-  name: "Forms",
+  name: 'Forms',
   watch: {
     customer: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -271,26 +291,27 @@ export default {
   data() {
     return {
       initial_load: true,
-      action: "",
-      route_action: "",
-      customer: { status: "Active", tlp_alt: "", tlp: "" },
+      action: '',
+      route_action: '',
+      customer: { status: 'Active', tlp_alt: '', tlp: '' },
       statusOptions: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
       items: [],
       CountryCode: coutryCode(),
 
-      temp_data: { tlp_code: "", tlp_code: "" },
+      temp_data: { tlp_code: '' },
       required: {
-        name: { error: false, message: "Name is required" },
-        pic: { error: false, message: "PIC is required" },
-        email: { error: false, message: "Please provide valid email address" },
-        address: { error: false, message: "Address is required" },
-        tlp_code: { error: false, message: "Country code is required" },
+        name: { error: false, message: 'Name is required' },
+        pic: { error: false, message: 'PIC is required' },
+        email: { error: false, message: 'Please provide valid email address' },
+        // id_sarana: { error: false, message: 'Please provide id sarana' },
+        address: { error: false, message: 'Address is required' },
+        tlp_code: { error: false, message: 'Country code is required' },
         tlp: {
           error: false,
-          message: "Please provide 7-12 digits phone number",
+          message: 'Please provide 7-12 digits phone number',
         },
       },
     };
@@ -299,7 +320,7 @@ export default {
     this.reformatCountryCode();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -317,7 +338,7 @@ export default {
   },
   methods: {
     handleChangeInput($value, code) {
-      if (code == "alt_code") {
+      if (code == 'alt_code') {
         this.temp_data.tlp_alt_code = $value;
         this.customer.tlp_alt_code = $value;
       } else {
@@ -328,25 +349,24 @@ export default {
     limitPhone({ event, data, max }) {
       onlyNumber({ event, data, max });
     },
-    loadData() {
-      let param = `ApiName=CustomerList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
+    async loadData() {
+      let _res = await getMstCustomer({ id: this.$route.params.id });
+      if (_res) {
+        let data = _res.data[0];
         this.customer = data;
-        let tlp = "";
         if (data.tlp) {
-          tlp = data.tlp.split("-");
+          let tlp = data.tlp.split('-');
           this.temp_data.tlp_code = tlp[0];
           this.customer.tlp_code = tlp[0];
           this.customer.tlp = tlp[1];
         }
         if (data.tlp_alt) {
-          tlp = data.tlp_alt.split("-");
+          let tlp = data.tlp_alt.split('-');
           this.temp_data.tlp_alt_code = tlp[0];
           this.customer.tlp_alt_code = tlp[0];
           this.customer.tlp_alt = tlp[1];
         }
-      });
+      }
     },
 
     reformatCountryCode() {
@@ -396,7 +416,7 @@ export default {
       return;
     },
     handleChangePhone() {},
-    save() {
+    async save() {
       this.initial_load = false;
       this.checkValidation();
       if (this.customer.have_error) {
@@ -404,40 +424,36 @@ export default {
       }
 
       let _form_data = JSON.parse(JSON.stringify(this.customer));
-      let dataPost = {
-        ApiName: this.$route.params.id ? "UpdateCustomer" : "InsertCustomer",
-        Params: _form_data,
-      };
+      let dataPost = JSON.parse(JSON.stringify(this.customer));
 
       if (_form_data.tlp && _form_data.tlp_code) {
-        dataPost.Params.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
+        dataPost.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
       }
       if (_form_data.tlp_alt && _form_data.tlp_alt_code) {
-        dataPost.Params.tlp_alt = `${_form_data.tlp_alt_code}-${_form_data.tlp_alt}`;
+        dataPost.tlp_alt = `${_form_data.tlp_alt_code}-${_form_data.tlp_alt}`;
       }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstCustomer(dataPost);
+        } else {
+          res = await insertMstCustomer(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
         });
+        if (!res['error']) this.$router.back();
       }
       return;
     },

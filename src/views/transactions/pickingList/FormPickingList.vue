@@ -6,147 +6,110 @@
           <h5>Picking List [{{ action }}]</h5>
         </CCardHeader>
         <CCardBody>
-          <div class="mb-5">
-            <div class="form-group row mb-2">
-              <label for="so" class="col-sm-2 col-md-2 col-lg-2 form-label">
-                SO No <strong class="text-danger">*</strong>
-              </label>
-              <div class="col-sm-5 col-md-5 col-lg-5">
-                <input
-                  type="text"
-                  id="so"
-                  class="form-control"
-                  v-model="picking.soNumber"
-                />
-                <p style="color: red" v-if="required.soNumber.error">
-                  {{ required.soNumber.message }}
-                </p>
-              </div>
-              <label
-                for="refFile1"
-                class="col-sm-2 col-md-2 col-lg-2 col form-label"
+          <CRow>
+            <CCol class="md-5">
+              <CInput
+                label="SO No *"
+                horizontal
+                placeholder="Enter SO Number"
+                v-model="formData.so_number"
+                :is-valid="
+                  initial_load ? null : !formData.so_number ? false : true
+                "
               >
-                SO Ref
-              </label>
-              <div class="col-sm-2 col-md-2 col-lg-2">
-                <input
-                  type="file"
-                  class="custom-file-input"
-                  @change="uploadRef1"
-                  id="refFile1"
-                />
-                <label
-                  class="custom-file-label"
-                  id="label-ref1"
-                  for="refFile1"
-                  >{{ file.ref1 }}</label
-                >
-                <span
-                  ><strong class="text-danger" style="font-size: 11px">{{
-                    error.ref1
-                  }}</strong></span
-                >
-              </div>
-              <div class="col-sm-1 col-md-1 col-lg-1"></div>
-            </div>
-
-            <div class="form-group row mb-2">
-              <label
-                for="so-date"
-                class="col-sm-2 col-md-2 col-lg-2 form-label"
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    SO No
+                    <span class="text-danger"> * </span>
+                  </p>
+                </template>
+              </CInput>
+              <CInput
+                label="SO Date *"
+                horizontal
+                type="date"
+                placeholder="Enter SO Date"
+                v-model="formData.so_date"
               >
-                SO Date <strong class="text-danger">*</strong>
-              </label>
-              <div class="col-sm-8 col-md-8 col-lg-8">
-                <datepicker
-                  :format="formatDate"
-                  v-model="picking.soDate"
-                ></datepicker>
-              </div>
-            </div>
-
-            <div class="form-group row mb-2">
-              <label for="erp" class="col-sm-2 col-md-2 col-lg-2 form-label">
-                ERP Picking List No
-              </label>
-              <div class="col-sm-5 col-md-5 col-lg-5">
-                <input
-                  type="text"
-                  id="erp"
-                  class="form-control"
-                  v-model="picking.erpNumber"
-                />
-              </div>
-              <label
-                for="refFile2"
-                class="col-sm-2 col-md-2 col-lg-2 col form-label"
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    SO Date
+                    <span class="text-danger"> * </span>
+                  </p>
+                </template>
+              </CInput>
+              <CInput
+                label="ERP Picking List No"
+                horizontal
+                placeholder="Enter ERP Picking List No"
+                v-model="formData.erp_number"
+              ></CInput>
+              <CSelect
+                label="Warehouse *"
+                placeholder="Select Warehouse..."
+                horizontal
+                :options="warehouseOptions"
+                :value.sync="formData.warehouse_id"
+                :is-valid="
+                  initial_load ? null : !formData.warehouse_id ? false : true
+                "
+                :disabled="items.length > 0 ? true : false"
+                :description="
+                  items.length > 0
+                    ? 'Cannot change warehouse as long as there are still items in the list'
+                    : ''
+                "
               >
-                ERP PL Ref
-              </label>
-              <div class="col-sm-2 col-md-2 col-lg-2">
-                <input
-                  type="file"
-                  class="custom-file-input"
-                  @change="uploadRef2"
-                  id="refFile2"
-                />
-                <label
-                  class="custom-file-label"
-                  id="label-ref2"
-                  for="refFile2"
-                  >{{ file.ref2 }}</label
-                >
-                <span
-                  ><strong class="text-danger" style="font-size: 11px">{{
-                    error.ref2
-                  }}</strong></span
-                >
-              </div>
-              <div class="col-sm-1 col-md-1 col-lg-1"></div>
-            </div>
-
-            <div class="form-group row mb-2">
-              <label
-                for="from-warehouse"
-                class="col-sm-2 col-md-2 col-lg-2 form-label"
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Warehouse
+                    <span class="text-danger"> * </span>
+                  </p>
+                </template>
+              </CSelect>
+              <CSelect
+                label="Customer *"
+                placeholder="Select Customer..."
+                horizontal
+                :options="customerOptions"
+                :value.sync="formData.customer_id"
+                :is-valid="
+                  initial_load ? null : !formData.customer_id ? false : true
+                "
               >
-                Warehouse <strong class="text-danger">*</strong>
-              </label>
-              <div class="col-sm-5 col-md-5 col-lg-5">
-                <v-select
-                  :disabled="items.length != 0 ? true : false"
-                  :options="warehouseOptions"
-                  :reduce="(opt) => opt.value"
-                  v-model="picking.warehouse_id"
-                >
-                </v-select>
-                <p style="color: red" v-if="required.warehouse_id.error">
-                  {{ required.warehouse_id.message }}
-                </p>
-              </div>
-            </div>
-
-            <div class="form-group row mb-2">
-              <label
-                for="to-warehouse"
-                class="col-sm-2 col-md-2 col-lg-2 form-label"
+                <template #label>
+                  <p class="col-form-label col-sm-3">
+                    Customer
+                    <span class="text-danger"> * </span>
+                  </p>
+                </template>
+              </CSelect>
+            </CCol>
+            <CCol class="md-5">
+              <CInputFile
+                :placeholder="formData.file_1_name"
+                horizontal
+                custom
+                class="input-form-upload"
+                @change="uploadFile($event, 1)"
               >
-                Customer <strong class="text-danger">*</strong>
-              </label>
-              <div class="col-sm-5 col-md-5 col-lg-5">
-                <v-select
-                  :options="customerOptions"
-                  :reduce="(opt) => opt.value"
-                  v-model="picking.customer_id"
-                >
-                </v-select>
-                <p style="color: red" v-if="required.customer_id.error">
-                  {{ required.customer_id.message }}
-                </p>
-              </div>
-            </div>
-          </div>
-
+                <template #label>
+                  <p class="col-form-label col-sm-3">SO Ref</p>
+                </template>
+              </CInputFile>
+              <CInputFile
+                :placeholder="formData.file_2_name"
+                horizontal
+                custom
+                class="input-form-upload"
+                @change="uploadFile($event, 2)"
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-3">ERP PL Ref</p>
+                </template>
+              </CInputFile>
+            </CCol>
+          </CRow>
           <div class="clearfix">
             <CButton
               type="button"
@@ -191,15 +154,7 @@
           <CButton type="button" size="sm" color="primary" @click="save()">
             <CIcon name="cil-check-circle" /> Submit
           </CButton>
-          <CButton
-            type="button"
-            size="sm"
-            class="m-1"
-            color="danger"
-            @click="cancel()"
-          >
-            <CIcon name="cil-ban" /> Cancel
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
 
         <CModal
@@ -208,10 +163,10 @@
           :show.sync="modalAdd"
           size="xl"
         >
-          <FormAddItem
+          <FormAddItemV3
             :useDeliveryDayLimit="true"
             :currentItem="items"
-            :filter="picking"
+            :filter="formData"
             v-on:handleResult="handleResult($event)"
           />
           <template #footer>
@@ -233,9 +188,9 @@
           title="Detail"
           color="warning"
           :show.sync="detailModal"
-          size="lg"
+          size="xl"
         >
-          <DetailStockSerial v-if="detailModal == true" :item="detail_item" />
+          <DetailTransactionV3 v-if="detailModal == true" :item="detail_item" />
           <template #footer>
             <CButton
               size="sm"
@@ -256,26 +211,15 @@
 </template>
 
 <script>
-const ekstensiFileValid = ["pdf", "doc", "docx", "xls", "xlsx"];
-import $axiosMertrack from "../../../apiMertrack";
-import { parsingBarcode } from "../../../utils";
-let fileRef1;
-let fileRef2;
-let ekstensiFileRef1;
-let ekstensiFileRef2;
-let sizeFileRef1, sizeFileRef2;
+const ekstensiFileValid = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+import $axiosMertrack from '../../../apiMertrack';
 const reader = new FileReader();
-import Datepicker from "vuejs-datepicker";
-import moment from "moment";
 export default {
-  name: "FormPickingList",
-  components: {
-    Datepicker,
-  },
+  name: 'FormPickingList',
   watch: {
-    picking: {
+    formData: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -291,10 +235,10 @@ export default {
       checkedSerials: [],
       checked: [],
       val: [],
-      packingL1: "",
-      packingL2: "",
-      packingL3: "",
-      packingL4: "",
+      packingL1: '',
+      packingL2: '',
+      packingL3: '',
+      packingL4: '',
       qty: 0,
       manyProductId: [],
       manyExpired: [],
@@ -303,142 +247,146 @@ export default {
       datas: [],
       detailModal: false,
       detailSerialOrAggregation: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       detailItemsFields: [
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'ecp_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
         },
       ],
       detail_item: {},
       item: [],
       customerOptions: [],
       warehouseError: false,
-      productName: "",
+      productName: '',
       productOptions: [],
       batchNumberOptions: [],
       items: [],
       temp_items: [],
       fields: [
         {
-          key: "product_no",
-          label: "Item No",
+          key: 'no',
+          label: 'No',
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_no',
+          label: 'Item No',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
-          _classes: "font-weight-bold",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'batch_no',
+          label: 'Batch No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "product_nie",
-          label: "NIE",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'quantity',
+          label: 'L1 Qty',
+        },
+        {
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
-          _style: "width:12%",
+          _style: 'width:12%',
         },
       ],
       modalAdd: false,
       warehouseOptions: [],
-      picking: {
-        soNumber: "",
-        soDate: "",
-        fileName1: "",
-        fileContent1: "",
-        fileName2: "",
-        fileContent2: "",
-        erpNumber: "",
-        warehouse_id: null,
+      formData: {
+        so_date: new Date().toISOString().slice(0, 10),
+        so_number: '',
+        erp_number: '',
+        file_1_name: null,
+        file_1_content: null,
+        file_2_name: null,
+        file_2_content: null,
         customer_id: null,
+        warehouse_id: null,
         items: [],
       },
       detail: {
         product: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
         batch: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
-        serial: "",
+        serial: '',
       },
       error: {
-        soNumber: "",
-        ref1: "",
-        ref2: "",
-        warehouseId: "",
-        customerId: "",
+        soNumber: '',
+        ref1: '',
+        ref2: '',
+        warehouseId: '',
+        customerId: '',
       },
       inputError: false,
       file: {
-        ref1: "Choose file...",
-        ref2: "Choose file...",
+        ref1: 'Choose file...',
+        ref2: 'Choose file...',
       },
-      action: "",
+      action: '',
       newPickingData: {},
       required: {
-        warehouse_id: { error: false, message: "Warehouse is required" },
-        customer_id: { error: false, message: "Customer is required" },
-        soNumber: { error: false, message: "SO No is required" },
+        warehouse_id: { error: false, message: 'Warehouse is required' },
+        customer_id: { error: false, message: 'Customer is required' },
+        soNumber: { error: false, message: 'SO No is required' },
       },
     };
   },
@@ -447,14 +395,14 @@ export default {
     this.loadListWarehouse();
     this.loadListCustomer();
     // cek parameter url
-    this.action = this.$route.params.id === undefined ? "ADD" : "Edit";
-    this.picking.soDate = new Date();
-    this.formatDate(this.picking.soDate);
+    this.action = this.$route.params.id === undefined ? 'ADD' : 'Edit';
   },
   methods: {
     loadListWarehouse() {
-      let param = `ApiName=ListWarehouse&Params={"category_id":3,"status":"Active"}&StatusCode=Active `;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((result) => {
+      var param = { status: 'Active', category_id: 3 };
+      param = new URLSearchParams(param).toString();
+      var _url = `/v3/master/warehouse?${param}`;
+      $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.warehouseOptions.push({
@@ -466,8 +414,10 @@ export default {
       return;
     },
     loadListCustomer() {
-      let param = `ApiName=ListCustomer&Params{"status":"Active"}&StatusCode=Active`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((result) => {
+      var param = { status: 'Active' };
+      param = new URLSearchParams(param).toString();
+      var _url = `/v3/master/customer?${param}`;
+      $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.customerOptions.push({
@@ -491,7 +441,13 @@ export default {
     removeDuplicateData(data) {
       data = data.filter(
         (value, index, self) =>
-          index === self.findIndex((t) => t.barcode_2d === value.barcode_2d)
+          index ===
+          self.findIndex(
+            (t) =>
+              t.gtin_sscc === value.gtin_sscc &&
+              t.serial === value.serial &&
+              t.batch_id === value.batch_id
+          )
       );
       return data;
     },
@@ -499,14 +455,15 @@ export default {
     handleResult(data) {
       // this.temp_items = this.temp_items.concat(data);
       this.temp_items = this.removeDuplicateData(data);
+      return;
     },
     setData() {
       if (this.temp_items.length == 0) {
         this.$toast.open({
           message: `No data to be set`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -519,8 +476,8 @@ export default {
     closeModalAdd() {
       this.checked = [];
       this.item = [];
-      this.detail.batch.name = "";
-      this.detail.product.name = "";
+      this.detail.batch.name = '';
+      this.detail.product.name = '';
       this.modalAdd = false;
     },
     deleteRow(item, index) {
@@ -528,187 +485,128 @@ export default {
     },
     addProduct() {
       if (!this.checkValidation()) {
+        this.$toast.open({
+          message: `Please input all the required data.`,
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
       this.modalAdd = true;
       return;
     },
-    formatDate(date) {
-      return moment(date).format("DD-MMM-YYYY");
-    },
-    uploadRef1(event) {
-      fileRef1 = event.target.files[0];
-      if (fileRef1 != undefined || fileRef1 != null) {
-        this.file.ref1 = event.target.files[0].name;
-        sizeFileRef1 = event.target.files[0].size;
-        this.picking.fileName1 = event.target.files[0].name;
-        let pecah = this.picking.fileName1.split(".").reverse();
-        ekstensiFileRef1 = pecah[0];
-        if (!ekstensiFileValid.includes(ekstensiFileRef1)) {
+    uploadFile(event, index) {
+      let fileRef = event[0];
+      let fileName = event[0].name;
+      let fileExt = event[0].name.split('.').reverse()[0];
+      let fileSize = event[0].size;
+      this.formData[`file_${index}_name`] = 'Choose file...';
+      if (fileRef) {
+        if (!ekstensiFileValid.includes(fileExt)) {
           this.$toast.open({
             message: `You have selected an unsupported Ref 1 file type. Please select the following supported file types (pdf, doc, docx, xls, xlsx)`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
-          this.file.ref1 = "Choose file...";
-          this.errors = true;
           return false;
-        }
-        if (sizeFileRef1 > this.maxFileSize * 1000) {
-          this.$toast.open({
-            message: `The Ref 1 file you have selected exceed the maximum supported file size of ${this.maxFileSize} KB`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          this.file.ref1 = "Choose file...";
-          this.errors = true;
-          return false;
-        }
-        this.errors = false;
-        this.convertBase64(fileRef1);
-      } else {
-        this.file.ref1 = "Choose file...";
-        this.errors = false;
-      }
-    },
-    uploadRef2(event) {
-      fileRef2 = event.target.files[0];
-      if (fileRef2) {
-        this.file.ref2 = event.target.files[0].name;
-        sizeFileRef2 = event.target.files[0].size;
-        this.picking.fileName2 = event.target.files[0].name;
-        let pecah = this.picking.fileName2.split(".").reverse();
-        ekstensiFileRef2 = pecah[0];
-        if (!ekstensiFileValid.includes(ekstensiFileRef2)) {
-          this.$toast.open({
-            message: `You have selected an unsupported Ref 2 file type. Please select the following supported file types (pdf, doc, docx, xls, xlsx)`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          this.file.ref2 = "Choose file...";
-          this.errors = true;
-          return false;
-        }
-        if (sizeFileRef2 > this.maxFileSize * 1000) {
+        } else if (fileSize > this.maxFileSize * 1000) {
           this.$toast.open({
             message: `The Ref 2 file you have selected exceed the maximum supported file size of ${this.maxFileSize} KB`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
-          this.file.ref2 = "Choose file...";
-          this.errors = true;
           return false;
         }
-        this.errors = false;
-        this.convertBase64Ref2(fileRef2);
-      } else {
-        this.file.ref2 = "Choose file...";
-        this.errors = false;
+        this.convertBase64(fileRef, index);
+        this.formData[`file_${index}_name`] = fileName;
+        return;
       }
+      return;
     },
-    convertBase64(file) {
+    convertBase64(file, index) {
       reader.onload = (e) => {
-        this.picking.fileContent1 = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    },
-    convertBase64Ref2(file) {
-      reader.onload = (e) => {
-        this.picking.fileContent2 = e.target.result;
+        this.formData[`file_${index}_content`] = e.target.result;
       };
       reader.readAsDataURL(file);
     },
     checkValidation() {
       this.initial_load = false;
-      let have_error = false;
-      for (const rq in this.required) {
-        if (!this.picking[rq]) {
-          this.required[rq].error = true;
-          have_error = true;
-        } else {
-          this.required[rq].error = false;
-        }
-      }
-      // If any error
-      if (have_error) {
+      let data = this.formData;
+
+      if (
+        !data.warehouse_id ||
+        !data.customer_id ||
+        !data.so_number ||
+        !data.so_date
+      ) {
         return false;
-      } else {
-        return true;
       }
+      return true;
     },
     save() {
       // // cek semua input yang mandatory
       if (!this.checkValidation()) {
+        this.$toast.open({
+          message: `Please input all the required data.`,
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
       if (this.items.length == 0) {
         this.$toast.open({
           message: `Please add at least 1 product item to continue`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
       }
       let items = [];
       for (const it of this.items) {
-        if (it.barcode_2d && it.serial != "0000000000") {
-          items.push(parsingBarcode(it.barcode_2d));
-        } else {
-          items.push({
-            batch_no: it.batch_no,
-            exp: it.expired_date,
-            serial: it.serial,
-            quantity: it.quantity,
-            remark: "",
-            warehouse: this.picking.warehouse_id,
-          });
+        let field = {
+          epc_key: it.epc_key,
+          serial: it.serial,
+        };
+        if (it.serial == '0000000000') {
+          field['epc_key'] = it.epc_key;
+          field['product_id'] = it.product_id;
+          field['batch_no'] = it.batch_no;
+          field['expired_date'] = it.expired_date;
+          field['quantity'] = it.quantity;
         }
+        items.push(field);
       }
-      let dataPost = {
-        ApiName: "PickingInput",
-        Params: {
-          warehouseId: this.picking.warehouse_id,
-          customerId: this.picking.customer_id,
-          soDate: this.picking.soDate,
-          soNumber: this.picking.soNumber,
-          erpNumber: this.picking.erpNumber,
-          fileName1: this.picking.fileName1,
-          fileContent1: this.picking.fileContent1,
-          fileName2: this.picking.fileName2,
-          fileContent2: this.picking.fileContent2,
-          items: items,
-        },
-      };
+      let param = this.formData;
+      param.items = items;
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
         $axiosMertrack
-          .post("/general/web", dataPost)
+          .put('/v3/transaction/picking', param)
           .then((result) => {
             this.$isLoading(false);
             let res = result.data;
             this.$toast.open({
               message: res.error
                 ? res.message
-                : "Data has been saved succesfully ",
-              type: res.error ? "error" : "success",
+                : 'Data has been saved succesfully ',
+              type: res.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             if (!res.error) {
               this.items = [];
-              dataPost = [];
               this.$router.back();
             }
           })
@@ -716,9 +614,9 @@ export default {
             this.$isLoading(false);
             this.$toast.open({
               message: `${err}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
           });
@@ -731,12 +629,13 @@ export default {
   },
   computed: {
     renderItems() {
+      let no = 0;
       return this.items.map((item) => {
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
+          no: (no += 1),
           gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
+            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

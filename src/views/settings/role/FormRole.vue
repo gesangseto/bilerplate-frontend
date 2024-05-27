@@ -254,15 +254,7 @@
           >
             <CIcon name="cil-check-circle" /> Submit
           </CButton>
-          <CButton
-            type="reset"
-            size="sm"
-            class="m-1"
-            color="danger"
-            @click="cancel()"
-          >
-            <CIcon name="cil-ban" /> Cancel
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -347,16 +339,16 @@ export default {
       }
     },
     loadData() {
-      let param = `ApiName=RoleList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack.get(`v3/master/section-role?${param}`).then((response) => {
         let data = response.data.data[0];
         this.role = data;
         let nestedMenu = [];
         let start_menu_count = 0;
-        for (const parent of data.menu) {
-          let count = parent.items.length;
+        for (const parent of data.role_menu) {
+          let count = parent.children.length;
           if (!parent.link) {
-            for (const child of parent.items) {
+            for (const child of parent.children) {
               let temp = child;
               temp.can_add = child.can_add == "true" ? true : false;
               temp.can_view = child.can_view == "true" ? true : false;
@@ -521,36 +513,32 @@ export default {
         newMenu.push(temp);
       }
 
-      let dataPost = {
-        ApiName: "UpdateRole",
-        Params: {
-          id: 10019,
-          menu: newMenu,
-        },
-      };
+      let dataPost = { ...this.role, role_menu: newMenu };
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
+        $axiosMertrack
+          .post(`v3/master/section-role`, dataPost)
+          .then((result) => {
+            this.$isLoading(false);
+            let res = result.data;
+            this.$toast.open({
+              message: res.error
+                ? `${res.message}`
+                : "Data has been saved succesfully ",
+              type: res.error ? "error" : "success",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            if (!res.error) {
+              this.items = [];
+              dataPost = [];
+              this.$router.back();
+            }
           });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
-        });
       }
       return;
     },

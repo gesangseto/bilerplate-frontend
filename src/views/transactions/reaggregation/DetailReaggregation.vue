@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation.full_name"
+                          v-model="reaggregation['_created.full_name']"
                         />
                       </td>
                     </tr>
@@ -57,7 +57,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation.warehouse_name"
+                          v-model="reaggregation['_warehouse.name']"
                         />
                       </td>
                     </tr>
@@ -76,25 +76,36 @@
                 <CCol md="6">
                   <table style="width: 100%">
                     <tr style="height: 50px">
-                      <td style="width: 40%">GTIN / CP</td>
+                      <td style="width: 40%">EPC Key</td>
                       <td style="width: 60%">
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation.gtin_cp"
+                          v-model="reaggregation.epc_key"
                         />
                       </td>
                     </tr>
                     <tr style="height: 50px">
-                      <td>Re-Aggregation SN</td>
+                      <td>Aggregation SN</td>
                       <td>
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation.serial_no"
+                          v-model="reaggregation.serial"
                         />
                       </td>
                     </tr>
+                    <tr style="height: 50px">
+                      <td style="width: 40%">Old Aggregation EPC</td>
+                      <td style="width: 60%">
+                        <input
+                          class="form-control"
+                          readonly
+                          v-model="reaggregation.old_epc"
+                        />
+                      </td>
+                    </tr>
+
                     <tr style="height: 50px">
                       <td>Packaging Level</td>
                       <td>
@@ -111,11 +122,25 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="
-                            reaggregation[
-                              `name_packaging_l${reaggregation.packaging_level}`
-                            ]
-                          "
+                          v-model="reaggregation.packaging_name"
+                        />
+                      </td>
+                    </tr>
+                    <tr style="height: 50px" v-for="index in 1" :key="index">
+                      <td
+                        style="width: 40%"
+                        v-if="reaggregation[`quantity_lvl_${index}`] > 0"
+                      >
+                        {{ 'L' + index }} Quantity
+                      </td>
+                      <td
+                        style="width: 60%"
+                        v-if="reaggregation[`quantity_lvl_${index}`] > 0"
+                      >
+                        <input
+                          class="form-control"
+                          readonly
+                          v-model="reaggregation[`quantity_lvl_${index}`]"
                         />
                       </td>
                     </tr>
@@ -151,21 +176,23 @@
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            type="reset"
-            size="sm"
-            class="m-1 float-right"
-            color="primary"
-            @click="cancel()"
-          >
-            <CIcon name="cil-arrow-left" /> Back
-          </CButton>
+          <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
     <!-- Modal Detail Barang Dipilih  -->
     <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -176,29 +203,27 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3 } from '../../../utils';
 
 export default {
-  name: "DetailReaggregation",
+  name: 'DetailReaggregation',
   mounted() {
-    this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
-    let param = `ApiName=ReAggregationList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-    $axiosMertrack.get(`general/web?${param}`).then((response) => {
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
+    let param = { id: this.$route.params.id, raw: true };
+    let url = `/v3/transaction/re-aggregation?${new URLSearchParams(param)}`;
+    $axiosMertrack.get(url).then((response) => {
       let data = response.data.data[0];
       //
       this.reaggregation = data;
-      this.reaggregation.gtin_cp =
-        data.epc_type == "sscc" || data.epc_type == "SSCC"
-          ? data.company_prefix
-          : data.gtin_sscc;
       if (data.items.length > 0) {
         this.items = data.items;
       } else {
         this.$toast.open({
           message: `No data to be viewed`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }
@@ -206,80 +231,80 @@ export default {
   },
   data() {
     return {
-      action: "",
+      action: '',
       detail_item: {},
       datas: [],
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       sn: false,
       test: null,
-      status: "",
+      status: '',
       reaggregation: {
-        id: "",
-        add: "",
-        serial: "",
+        id: '',
+        add: '',
+        serial: '',
         warehouse: {},
-        packaging_level: "",
+        packaging_level: '',
       },
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       items: [],
       fields: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial_id",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -305,9 +330,9 @@ export default {
       if (item.packaging_level == 1) {
         this.$toast.open({
           message: `No detail SN data to be viewed, SN [${item.serial_id}] is Packaging L1`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -320,15 +345,22 @@ export default {
       this.datas = [];
       this.viewModal = false;
     },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+        },
+        exportType: type,
+        url: '/v3/transaction/re-aggregation',
+      });
+    },
   },
   computed: {
     detailReaggregation() {
       return this.items.map((item) => {
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

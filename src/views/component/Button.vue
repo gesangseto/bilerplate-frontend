@@ -18,8 +18,8 @@
 
 <script>
 export default {
-  name: "Button",
-  props: ["type", "buttonProperty"],
+  name: 'Button',
+  props: ['type', 'buttonProperty'],
   watch: {
     buttonProperty: {
       handler(n, o) {},
@@ -27,29 +27,33 @@ export default {
     },
   },
   mounted() {
-    if (this.type == "create") {
-      this.property.color = "success";
-      this.property.icon = "plus";
-      this.property.text = " Add";
-    } else if (this.type == "read") {
-      this.property.icon = "eye";
-      this.property.color = "info";
-      this.property.tooltip = "View";
-    } else if (this.type == "update") {
-      this.property.color = "warning";
-      this.property.icon = "pencil-alt";
-      this.property.tooltip = "Edit";
-    } else if (this.type == "delete") {
-      this.property.color = "danger";
-      this.property.icon = "trash-alt";
-      this.property.tooltip = "Delete";
-    } else if (this.type == "print") {
-      this.property.color = "secondary";
-      this.property.icon = "print";
-    } else if (this.type == "approve") {
-      this.property.icon = "clipboard-check";
-      this.property.color = "success";
-      this.property.tooltip = "Approve / Reject";
+    if (this.type == 'create') {
+      this.property.color = 'success';
+      this.property.icon = 'plus';
+      this.property.text = ' Add';
+    } else if (this.type == 'read') {
+      this.property.icon = 'eye';
+      this.property.color = 'info';
+      this.property.tooltip = 'View';
+    } else if (this.type == 'update') {
+      this.property.color = 'warning';
+      this.property.icon = 'pencil-alt';
+      this.property.tooltip = 'Edit';
+    } else if (this.type == 'delete') {
+      this.property.color = 'danger';
+      this.property.icon = 'trash-alt';
+      this.property.tooltip = 'Delete';
+    } else if (this.type == 'print') {
+      this.property.color = 'secondary';
+      this.property.icon = 'print';
+    } else if (this.type == 'approve') {
+      this.property.icon = 'clipboard-check';
+      this.property.color = 'success';
+      this.property.tooltip = 'Approve / Reject';
+    } else if (this.type == 'barcode') {
+      this.property.icon = 'barcode';
+      this.property.color = 'success';
+      this.property.tooltip = 'Show Barcode';
     }
     if (this.buttonProperty) {
       this.property = this.buttonProperty;
@@ -59,12 +63,12 @@ export default {
     return {
       is_visible: false,
       property: {
-        size: "sm",
-        class: "float-right",
-        color: "success",
-        icon: "",
-        text: "",
-        tooltip: "",
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: '',
+        text: '',
+        tooltip: '',
       },
     };
   },

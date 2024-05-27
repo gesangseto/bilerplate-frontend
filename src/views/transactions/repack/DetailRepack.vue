@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack.full_name"
+                          v-model="unpack['_created.full_name']"
                         />
                       </td>
                     </tr>
@@ -57,7 +57,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack.warehouse_name"
+                          v-model="unpack['_warehouse.name']"
                         />
                       </td>
                     </tr>
@@ -76,22 +76,32 @@
                 <CCol md="6">
                   <table style="width: 100%">
                     <tr style="height: 50px">
-                      <td>GTIN / CP</td>
+                      <td>EPC Key</td>
                       <td>
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack.gtin_cp"
+                          v-model="unpack.epc_key"
                         />
                       </td>
                     </tr>
                     <tr style="height: 50px">
-                      <td>Re-Packing SN</td>
+                      <td>Packing SN</td>
                       <td>
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack.serial_no"
+                          v-model="unpack.serial"
+                        />
+                      </td>
+                    </tr>
+                    <tr style="height: 50px">
+                      <td>Old Packing EPC</td>
+                      <td>
+                        <input
+                          class="form-control"
+                          readonly
+                          v-model="unpack.old_epc"
                         />
                       </td>
                     </tr>
@@ -111,9 +121,25 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="
-                            unpack[`name_packaging_l${unpack.packaging_level}`]
-                          "
+                          v-model="unpack.packaging_name"
+                        />
+                      </td>
+                    </tr>
+                    <tr style="height: 50px" v-for="index in 1" :key="index">
+                      <td
+                        style="width: 40%"
+                        v-if="unpack[`quantity_lvl_${index}`] > 0"
+                      >
+                        {{ 'L' + index }} Quantity
+                      </td>
+                      <td
+                        style="width: 60%"
+                        v-if="unpack[`quantity_lvl_${index}`] > 0"
+                      >
+                        <input
+                          class="form-control"
+                          readonly
+                          v-model="unpack[`quantity_lvl_${index}`]"
                         />
                       </td>
                     </tr>
@@ -136,15 +162,17 @@
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            type="reset"
-            size="sm"
-            class="m-1 float-right"
-            color="primary"
-            @click="cancel()"
-          >
-            <CIcon name="cil-arrow-left" /> Back
-          </CButton>
+          <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -152,19 +180,21 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3 } from '../../../utils';
 
 export default {
-  name: "DetailRepack",
+  name: 'DetailRepack',
   mounted() {
-    let param = `ApiName=UnPackList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-    $axiosMertrack.get(`general/web?${param}`).then((response) => {
+    let url = `/v3/transaction/re-packing?id=${this.$route.params.id}`;
+    $axiosMertrack.get(url).then((response) => {
       let data = response.data.data[0];
+
       //
       this.unpack = data;
       this.unpack.packaging_level = 2;
       this.unpack.gtin_cp =
-        data.epc_type == "sscc" || data.epc_type == "SSCC"
+        data.epc_type == 'sscc' || data.epc_type == 'SSCC'
           ? data.company_prefix
           : data.gtin_sscc;
       if (data.items.length > 0) {
@@ -172,9 +202,9 @@ export default {
       } else {
         this.$toast.open({
           message: `No data to be viewed`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }
@@ -184,53 +214,53 @@ export default {
     return {
       sn: false,
       test: null,
-      status: "",
+      status: '',
       unpack: {},
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       items: [],
       item: [],
       darkModal: false,
       fields: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         {
-          key: "gtin",
-          label: "GTIN",
+          key: 'gtin',
+          label: 'GTIN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
       ],
     };
@@ -249,14 +279,23 @@ export default {
     cancel() {
       this.$router.back();
     },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+        },
+        exportType: type,
+        url: '/v3/transaction/re-packing',
+      });
+    },
   },
   computed: {
     unpackDetail() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
+          gtin: item.gtin ? item.gtin : '',
         };
       });
     },

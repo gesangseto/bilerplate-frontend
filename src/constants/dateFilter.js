@@ -10,39 +10,27 @@ export const dateFilter = {
     end: moment().format("YYYY-MM-DD"),
   },
   this_month: {
-    start: moment()
-      .startOf("month")
-      .format("YYYY-MM-DD"),
+    start: moment().startOf("month").format("YYYY-MM-DD"),
     end: moment().format("YYYY-MM-DD"),
   },
   last_month: {
-    start: moment()
-      .add(-1, "month")
-      .startOf("month")
-      .format("YYYY-MM-DD"),
-    end: moment()
-      .add(-1, "month")
-      .endOf("month")
-      .format("YYYY-MM-DD"),
+    start: moment().add(-1, "month").startOf("month").format("YYYY-MM-DD"),
+    end: moment().add(-1, "month").endOf("month").format("YYYY-MM-DD"),
   },
   last_3_month: {
-    start: moment()
-      .add(-2, "month")
-      .startOf("month")
-      .format("YYYY-MM-DD"),
+    start: moment().add(-2, "month").startOf("month").format("YYYY-MM-DD"),
     end: moment().format("YYYY-MM-DD"),
   },
   last_6_month: {
-    start: moment()
-      .add(-5, "month")
-      .startOf("month")
-      .format("YYYY-MM-DD"),
+    start: moment().add(-5, "month").startOf("month").format("YYYY-MM-DD"),
     end: moment().format("YYYY-MM-DD"),
   },
   this_year: {
-    start: moment()
-      .startOf("year")
-      .format("YYYY-MM-DD"),
+    start: moment().startOf("year").format("YYYY-MM-DD"),
     end: moment().format("YYYY-MM-DD"),
+  },
+  all: {
+    start: "",
+    end: "",
   },
 };

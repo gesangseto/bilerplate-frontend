@@ -8,34 +8,32 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
                     value: 'Type',
                     code: 'Type',
                     label: 'Type',
                     data: [
-                      { value: 'TRANSFER', label: 'Transfer' },
-                      { value: 'PICKING', label: 'Picking' },
-                      { value: 'RETURN', label: 'Return' },
+                      // { value: 'Transfer', label: 'Transfer' },
+                      { value: 'Picking', label: 'Picking' },
+                      // { value: 'Return', label: 'Return' },
                     ],
                   },
                 ]"
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'source_wh',
-                  'destination_wh',
+                  'id',
+                  'product_id',
+                  'source_warehouse',
                   'destination_customer',
                 ]"
                 :order="[
                   'All',
-                  'ID',
-                  'Product',
+                  'id',
+                  'product_id',
                   'Type',
-                  'source_wh',
-                  'destination_wh',
+                  'source_warehouse',
                   'destination_customer',
                 ]"
                 status_code="trx_outbound"
@@ -56,6 +54,8 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowClicked(item, index)"
                     />
@@ -90,11 +90,15 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, toTitleCase, calculatePagination } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import {
+  toTitleCase,
+  calculatePaginationV3,
+  exportDataV3,
+} from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListOutbound",
+  name: 'ListOutbound',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -105,50 +109,50 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "OutboundList",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No, L1 Qty]',
         },
         {
-          key: "type",
-          label: "Type",
-          _classes: "font-weight-bold",
+          key: 'type',
+          label: 'Type',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "trx_id",
-          label: "Trx Ref ID",
-          _classes: "font-weight-bold",
+          key: 'trx_ref_id',
+          label: 'Trx Ref ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "from",
-          label: "Source",
+          key: 'from',
+          label: 'Source',
         },
         {
-          key: "to",
-          label: "Destination",
+          key: 'to',
+          label: 'Destination',
         },
         {
-          key: "full_name",
-          label: "Created By",
+          key: 'created_full_name',
+          label: 'Created By',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -158,10 +162,12 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
+      let url = `/v3/transaction/outbound?raw=true&${param}`;
 
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(url).then((res) => {
+        let data = res.data.data;
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -172,7 +178,12 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/transaction/outbound',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -196,13 +207,10 @@ export default {
   computed: {
     dataOutbound() {
       return this.items.map((item) => {
-        let from = item.from_warehouse_name;
-        let to = item.to_warehouse_name ?? item.customer_to_name;
         let type = toTitleCase(item.type);
         return {
           ...item,
-          from: from,
-          to: to,
+          created_full_name: item.created_full_name || '-',
           type: type,
         };
       });

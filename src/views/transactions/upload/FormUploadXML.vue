@@ -9,6 +9,7 @@
           <CRow>
             <CCol sm="10" lg="10">
               <CInputFile
+                accept=".xml"
                 :placeholder="form.data.file_name"
                 horizontal
                 custom
@@ -28,7 +29,7 @@
                 </template>
               </CInputFile>
             </CCol>
-            <CCol sm="10" lg="10">
+            <!-- <CCol sm="10" lg="10">
               <CSelect
                 placeholder="-Select-"
                 :options="typeXmlOptions"
@@ -45,7 +46,7 @@
                   </p>
                 </template>
               </CSelect>
-            </CCol>
+            </CCol> -->
             <CCol sm="10" lg="10">
               <CSelect
                 placeholder="-Select-"
@@ -73,15 +74,7 @@
           <CButton @click="save()" type="submit" size="sm" color="primary">
             <CIcon name="cil-check-circle" /> Submit
           </CButton>
-          <CButton
-            @click="cancel()"
-            class="m-1"
-            color="danger"
-            size="sm"
-            type="button"
-          >
-            <CIcon name="cil-ban" /> Cancel
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </div>
@@ -95,12 +88,12 @@ const reader = new FileReader();
 import $axiosMertrack from "../../../apiMertrack";
 import "vue-select/dist/vue-select.css";
 import $ from "jquery";
+import { getMstSupplier } from "../../../resource/MstSupplier";
 export default {
   name: "FormUploadXML",
   watch: {
     // form: {
     //   handler(n, o) {
-    //     console.log(n, "================");
     //   },
     //   deep: true,
     // },
@@ -127,18 +120,14 @@ export default {
       ],
     };
   },
-  mounted() {
-    //   get nama supplier
-    $axiosMertrack
-      .get(
-        `/general/mobile?ApiName=ListSupplier&Params{"status":"Active"}&StatusCode=Active`
-      )
-      .then((result) => {
-        let data = result.data.data;
-        for (const it of data) {
-          this.supplierOptions.push({ value: it.id, label: it.name });
-        }
-      });
+  async mounted() {
+    let _res = await getMstSupplier({ status: "Active" });
+    if (_res) {
+      let data = _res.data;
+      for (const it of data) {
+        this.supplierOptions.push({ value: `${it.id}`, label: it.name });
+      }
+    }
   },
   methods: {
     uploadFile(event) {
@@ -167,7 +156,30 @@ export default {
           let data = result.data;
           if (data.error || data.data.length === 0) {
             this.$toast.open({
-              message: `Sorry, this supplier dont have any connector`,
+              message: `The Supplier you have selected is not assigned to any Connector Action.`,
+              type: "error",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            this.form.connector_action_id = null;
+            return;
+          } else if (data.data[0].status !== "Active") {
+            this.$toast.open({
+              message: `The Supplier you have selected is not assigned to Active Connector Action.`,
+              type: "error",
+              dissmissible: true,
+              position: "top-right",
+              duration: 5000,
+            });
+            this.form.connector_action_id = null;
+            return;
+          }
+          let params = data.data[0].params;
+          let idx = params.findIndex((it) => it.variable_name === "type");
+          if (!~idx || !params[idx].variable_value) {
+            this.$toast.open({
+              message: `The supplier you selected has not completed the Connector Action configuration.`,
               type: "error",
               dissmissible: true,
               position: "top-right",
@@ -177,6 +189,7 @@ export default {
             return;
           }
           this.form.connector_action_id = data.data[0].id;
+          this.form.data.type = params[idx].variable_value;
         })
         .catch((e) => {
           this.$toast.open({
@@ -203,7 +216,13 @@ export default {
     save() {
       this.initialLoad = false;
       if (!this.validation()) {
-        return;
+        return this.$toast.open({
+          message: `Please input all the required data.`,
+          type: "error",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
+        });
       }
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
@@ -215,7 +234,7 @@ export default {
             this.$toast.open({
               message: result.data.error
                 ? `${result.data.message}`
-                : "Data Saved",
+                : "Data has been saved successfully.",
               type: result.data.error ? "error" : "success",
               dissmissible: true,
               position: "top-right",

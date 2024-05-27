@@ -8,16 +8,16 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
-                    value: 'Type',
-                    code: 'Type',
+                    value: 'source',
+                    code: 'source',
                     label: 'Type',
                     data: [
-                      { value: 'TRANSFER', label: 'Transfer ' },
-                      { value: 'RETURN', label: 'Return ' },
-                      { value: 'RETURN-EXTERNAL', label: 'Return-External' },
+                      // { value: 'Transfer', label: 'Transfer ' },
+                      // { value: 'Return-Internal', label: 'Return ' },
+                      // { value: 'Return-EXTERNAL', label: 'Return-External' },
                       { value: 'Production', label: 'Production ' },
                       { value: 'Import', label: 'Import ' },
                       {
@@ -29,20 +29,18 @@
                 ]"
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Source Supplier',
-                  'source_wh',
-                  'destination_wh',
+                  'id',
+                  'product_id',
+                  'source_supplier',
+                  'destination_warehouse',
                 ]"
                 :order="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Type',
-                  'Source Supplier',
-                  'source_wh',
-                  'destination_wh',
+                  'id',
+                  'product_id',
+                  'source',
+                  'source_supplier',
+                  'destination_warehouse',
                 ]"
                 status_code="trx_inbound"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -62,6 +60,8 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowClicked(item, index)"
                     />
@@ -96,11 +96,15 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, toTitleCase, calculatePagination } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import {
+  toTitleCase,
+  calculatePaginationV3,
+  exportDataV3,
+} from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListInbound",
+  name: 'ListInbound',
   mounted() {
     this.pages = [10, 20, 50, 100];
     this.page = 1;
@@ -113,50 +117,62 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "InboundList",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "source",
-          label: "Type",
-          _classes: "font-weight-bold",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "trx_id",
-          label: "Trx Ref ID",
-          _classes: "font-weight-bold",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "from",
-          label: "Source",
+          key: 'quantity_lvl_1',
+          label: 'L1 Qty',
         },
         {
-          key: "to",
-          label: "Destination",
+          key: 'source',
+          label: 'Type',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "full_name",
-          label: "Created By",
+          key: 'trx_ref_id',
+          label: 'Trx Ref ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'from',
+          label: 'Source',
+        },
+        {
+          key: 'to',
+          label: 'Destination',
+        },
+        {
+          key: '_created.full_name',
+          label: 'Created By',
+        },
+        {
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -166,20 +182,27 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePagination({
-          filter: this.filter,
-          item: res,
+      $axiosMertrack
+        .get(`/v3/transaction/inbound?${param}&raw=true`)
+        .then((res) => {
+          this.items = res.data.data;
+          this.filter = calculatePaginationV3({
+            filter: this.filter,
+            item: res,
+          });
         });
-      });
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/transaction/inbound',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -207,18 +230,13 @@ export default {
   computed: {
     inbound() {
       return this.items.map((item) => {
-        let from =
-          item.from_warehouse_name ?? item.supplier_name ?? item.customer_name;
-        let to = item.to_warehouse_name;
-        let source = item.source;
-        let trx_id = item.trx_id ?? item.trx_transfer_id ?? "-";
-
+        let created_by = item['_created.full_name'];
+        let source = toTitleCase(item.source);
         return {
           ...item,
-          trx_id: trx_id,
-          from: from,
-          to: to,
+          trx_ref_id: item.trx_ref_id || '-',
           source: source,
+          '_created.full_name': created_by || '-',
         };
       });
     },

@@ -23,8 +23,8 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
-                :filter="['All', 'ID', 'Product', 'Warehouse']"
+              <HeaderFilterTransactionV3
+                :filter="['All', 'id', 'product_id', 'warehouse_id']"
                 status_code="trx_aggregation"
                 v-on:handleClickFilter="handleClickFilter($event)"
                 v-on:handleChangeSize="handleChangeSize($event)"
@@ -43,21 +43,31 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowClicked(item, index)"
                     />
-                    &nbsp;
+                    <!-- &nbsp;
                     <ButtonPermission
                       :buttonProperty="btn_printProp"
                       :permission="'print'"
                       @click="printV3(item, index)"
+                    /> -->
+                    &nbsp;
+                    <ButtonPermission
+                      :buttonProperty="{
+                        ...btn_printProp,
+                        color: item.allow_print ? 'warning' : 'danger',
+                      }"
+                      :permission="'print'"
+                      @click="selected_data = item"
                     />
                     &nbsp;
                     <ButtonPermission
-                      v-if="user_id == 0"
-                      :buttonProperty="btn_printProp2"
-                      :permission="'print'"
-                      @click="selected_data = item"
+                      :buttonProperty="btn_showBarcode"
+                      :permission="'read'"
+                      @click="selected_barcode = item"
                     />
                   </td>
                 </template>
@@ -86,108 +96,125 @@
         </CCardBody>
       </CCard>
     </CCol>
-    <ModalPrintLabel :item="selected_data" v-on:onClose="selected_data = {}" />
+    <ModalBarcodeGenerator
+      :property="selected_barcode"
+      v-on:onClose="selected_barcode = {}"
+    />
+    <ModalPrintLabelV3
+      :item="selected_data"
+      v-on:onClose="selected_data = {}"
+    />
   </CRow>
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination, printLabelV3 } from "../../../utils";
-import { dateFilter } from "../../../constants";
-import $axiosSupport from "../../../apiSupport";
+import $axiosMertrack from '../../../apiMertrack';
+import {
+  printLabelV3,
+  calculatePaginationV3,
+  exportDataV3,
+  getUserId,
+} from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListReaggregation",
+  name: 'ListReaggregation',
   mounted() {
     this.page = 1;
     this.loadData();
   },
   data() {
     return {
-      user_id: localStorage.getItem("user_id"),
+      user_id: getUserId(),
       filter: {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ReAggregationList",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_printProp: {
-        size: "sm",
-        class: "float-right",
-        color: "secondary",
-        icon: "print",
-        text: "",
-        tooltip: "Print this label",
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'print',
+        text: '',
+        tooltip: 'Print Label',
       },
-      btn_printProp2: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "print",
-        text: "",
-        tooltip: "Print V2",
+      btn_showBarcode: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'barcode',
+        text: '',
+        tooltip: 'Show Barcode',
       },
+      selected_barcode: {},
       selected_data: {},
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: '_warehouse.name',
+          label: 'Warehouse',
         },
         {
-          key: "add_item_desc",
-          label: "Process",
-          _classes: "font-weight-bold",
+          key: 'add_item_desc',
+          label: 'Process',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial_no",
-          label: "Re-Aggregation SN",
+          key: 'serial',
+          label: 'Aggregation SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'quantity_lvl_1',
+          label: 'L1 Qty',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "full_name",
-          label: "Created By",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: '_created.full_name',
+          label: 'Created By',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
         },
       ],
     };
   },
   methods: {
     loadData() {
+      this.items = [];
       let param = `${new URLSearchParams(this.filter).toString()}`;
-
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/re-aggregation?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -198,7 +225,12 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/transaction/re-aggregation',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -250,20 +282,19 @@ export default {
 
     printV3(item) {
       let _body = {
-        id: item.stock_serial_id,
-        serial: item.serial_no,
-        gtin_sscc: item.gtin_sscc,
+        serial: item.serial,
+        epc_key: item.epc_key,
         validate: true,
       };
       var _url = new URLSearchParams(_body).toString();
-      $axiosSupport
-        .get(`helper/print-layout/pdf?${_url}`)
+      $axiosMertrack
+        .get(`/v3/helper/print-layout/pdf?${_url}`)
         .then((response) => {
           this.$toast.open({
-            message: `${response.data.message ?? "Success validate"}`,
-            type: response.data.error ? "error" : "success",
+            message: `${response.data.message ?? 'Success validate'}`,
+            type: response.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 3000,
           });
           if (response.data.error) {
@@ -272,15 +303,15 @@ export default {
           let _data = [_body];
           printLabelV3({
             data: _data,
-            link: `${process.env.VUE_APP_URL_API_SUPPORT}/api/v3/helper/print-layout/pdf`,
+            link: `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/helper/print-layout/pdf`,
           });
         })
         .catch((error) => {
           this.$toast.open({
             message: `${error}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 3000,
           });
         });
@@ -292,9 +323,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
+          ['_created.full_name']: item['_created.full_name'] || '-',
         };
       });
     },

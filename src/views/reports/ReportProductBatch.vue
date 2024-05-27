@@ -6,8 +6,8 @@
           <h5>Product Batch Report</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransaction
-            :filter="['All', 'Product', 'Exp Date', 'Mfg Date']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'product_id', 'expired_date', 'mfg_date']"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
@@ -49,12 +49,13 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import { exportDataReport, calculatePagination } from "../../utils";
-import { dateFilter } from "../../constants";
+import $axiosMertrack from '../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../utils';
+import { dateFilter } from '../../constants';
+import moment from 'moment';
 
 export default {
-  name: "ReportProductBatch",
+  name: 'ReportProductBatch',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -65,55 +66,54 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "Report_ProductBatch",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       items: [],
       fields: [
         {
-          key: "number",
-          label: "No",
+          key: 'number',
+          label: 'No',
         },
         {
-          key: "created_date",
-          label: "Inbound Date",
+          key: 'created_date',
+          label: 'Inbound Date',
         },
         {
-          key: "no",
-          label: "Item No",
-          _classes: "font-weight-bold",
+          key: 'product_no',
+          label: 'Item No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "name",
-          label: "Product Name",
-          _classes: "font-weight-bold",
+          key: 'product_name',
+          label: 'Product Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "id",
-          label: "Batch No",
-          _classes: "font-weight-bold",
+          key: 'batch_no',
+          label: 'Batch No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "mfg_date",
-          label: "Mfg Date",
+          key: 'mfg_date',
+          label: 'Mfg Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "gtin",
-          label: "L1 GTIN",
+          key: 'product_gtin',
+          label: 'L1 GTIN',
           // _classes: "font-weight-bold",
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity_l1',
+          label: 'L1 Qty',
         },
       ],
     };
@@ -121,9 +121,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/report?${param}`).then((res) => {
+      let url = `/v3/report/batch?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -134,7 +135,12 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportDataReport({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: '/v3/report/batch',
+        alert: true,
+      });
     },
     pageChange(page) {
       this.filter.page = page;

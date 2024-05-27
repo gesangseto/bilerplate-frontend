@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="repack.full_name"
+                          v-model="repack.created_full_name"
                         />
                       </td>
                     </tr>
@@ -81,9 +81,25 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="
-                            repack[`name_packaging_l${repack.packaging_level}`]
-                          "
+                          v-model="repack.packaging_name"
+                        />
+                      </td>
+                    </tr>
+                    <tr style="height: 50px" v-for="index in 1" :key="index">
+                      <td
+                        style="width: 40%"
+                        v-if="repack[`quantity_lvl_${index}`] > 0"
+                      >
+                        {{ 'L' + index }} Quantity
+                      </td>
+                      <td
+                        style="width: 60%"
+                        v-if="repack[`quantity_lvl_${index}`] > 0"
+                      >
+                        <input
+                          class="form-control"
+                          readonly
+                          v-model="repack[`quantity_lvl_${index}`]"
                         />
                       </td>
                     </tr>
@@ -92,12 +108,12 @@
               </CRow>
               <CRow>
                 <CCol sm="12" md="12" lg="12">
-                  <ButtonPermission
+                  <!-- <ButtonPermission
                     v-if="can_print_all == true"
                     :permission="'print'"
                     :buttonProperty="print_buttonProperty"
                     @click="printAllV3()"
-                  />
+                  /> -->
                   &nbsp;
 
                   <ButtonPermission
@@ -124,16 +140,14 @@
                   <td>
                     <ButtonPermission
                       :buttonProperty="btn_printProp"
-                      v-if="item.trx_pack_stock_serial_id"
                       :permission="'print'"
-                      @click="printV3(item, index)"
+                      @click="selected_data = item"
                     />
                     &nbsp;
                     <ButtonPermission
-                      v-if="user_id == 0"
-                      :buttonProperty="btn_printProp2"
+                      :buttonProperty="btn_showBarcode"
                       :permission="'print'"
-                      @click="selected_data = item"
+                      @click="selected_barcode = item"
                     />
                   </td>
                 </template>
@@ -142,50 +156,58 @@
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            type="reset"
-            size="sm"
-            class="m-1 float-right"
-            color="primary"
-            @click="cancel()"
-          >
-            <CIcon name="cil-arrow-left" /> Back
-          </CButton>
+          <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
-    <ModalPrintLabel :item="selected_data" v-on:onClose="selected_data = {}" />
+    <ModalBarcodeGenerator
+      :property="selected_barcode"
+      v-on:onClose="selected_barcode = {}"
+    />
+    <ModalPrintLabelV3
+      :item="selected_data"
+      v-on:onClose="selected_data = {}"
+    />
   </CRow>
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import $axiosSupport from "../../../apiSupport";
-import { printLabelV3 } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3, getUserId, printLabelV3 } from '../../../utils';
 
 export default {
-  name: "DetailPacking",
+  name: 'DetailPacking',
   mounted() {
-    this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=PackList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = { id: this.$route.params.id, raw: true };
+      let url = `/v3/transaction/packing?${new URLSearchParams(param)}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
-        //
         this.repack = data;
         if (data.items.length > 0) {
           this.items = data.items;
           for (const it of data.items) {
-            if (!it.trx_pack_stock_serial_id) {
+            if (!it.trx_pack_epc_key) {
               this.can_print_all = false;
             }
           }
         } else {
           this.$toast.open({
             message: `No data to be viewed`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         }
@@ -194,118 +216,125 @@ export default {
   },
   data() {
     return {
-      user_id: localStorage.getItem("user_id"),
-      action: "",
+      user_id: getUserId(),
+      action: '',
       print_buttonProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "success",
-        icon: "print",
-        text: "Print All",
-        tooltip: "Print all label",
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'print',
+        text: 'Print All',
+        tooltip: 'Print all label',
       },
       print_buttonProperty2: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "print",
-        text: "Print All",
-        tooltip: "Print all label",
+        size: 'sm',
+        class: 'float-right',
+        color: 'warning',
+        icon: 'print',
+        text: 'Print All',
+        tooltip: 'Print All Label',
       },
       btn_printProp: {
-        size: "sm",
-        class: "float-right",
-        color: "secondary",
-        icon: "print",
-        text: "",
-        tooltip: "Print this label",
+        size: 'sm',
+        class: 'float-right',
+        color: 'warning',
+        icon: 'print',
+        text: '',
+        tooltip: 'Print Label',
       },
-      btn_printProp2: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "print",
-        text: "",
-        tooltip: "Print V2",
+      btn_showBarcode: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'barcode',
+        text: '',
+        tooltip: 'Show Barcode',
       },
+      selected_barcode: {},
       selected_data: {},
       can_print_all: true,
       datas: [],
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       sn: false,
       test: null,
-      status: "",
+      status: '',
       repack: {
-        id: "",
-        warehouse: "",
-        remark: "",
-        reason: "",
-        date: "",
-        serialNo: "",
+        id: '',
+        warehouse: '',
+        remark: '',
+        reason: '',
+        date: '',
+        serialNo: '',
       },
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       items: [],
       darkModal: false,
       fieldItem: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
           sorter: false,
           filter: false,
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
           sorter: false,
           filter: false,
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'trx_pack_epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "trx_pack_serial_no",
-          label: "Packing SN",
+          key: 'trx_pack_serial',
+          label: 'Packing SN',
         },
         {
-          key: "packaging_level",
-          label: "Child Pkg Level",
+          key: 'packaging_level',
+          label: 'Child Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Child Pkg Name",
+          key: 'packaging_name',
+          label: 'Child Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
-        { key: "action", label: "Print", sorter: false, filter: false },
+        {
+          key: 'action',
+          _style: 'width:10%',
+          label: 'Print',
+          sorter: false,
+          filter: false,
+        },
       ],
     };
   },
@@ -323,51 +352,12 @@ export default {
     cancel() {
       this.$router.back();
     },
-    // printNew(item) {
-    //   let items = [];
-    //   if (!item) {
-    //     for (const it of this.repack.items) {
-    //       items.push({
-    //         stock_serial_id: it.trx_pack_stock_serial_id,
-    //       });
-    //     }
-    //   } else {
-    //     items = [{ stock_serial_id: item.trx_pack_stock_serial_id }];
-    //   }
-    //   $axios2
-    //     .post("reprint/validate/v2", items)
-    //     .then((response) => {
-    //       this.$toast.open({
-    //         message: `${response.data.message}`,
-    //         type: response.data.status == 0 ? "error" : "success",
-    //         dissmissible: true,
-    //         position: "top-right",
-    //         duration: 3000,
-    //       });
-    //       if (response.data.status == 0) {
-    //         return;
-    //       }
-    //       let _data = response.data.data;
-    //       printLabel({ data: _data.items, link: _data.link });
-    //     })
-    //     .catch((error) => {
-    //       this.$toast.open({
-    //         message: `${error}`,
-    //         type: "error",
-    //         dissmissible: true,
-    //         position: "top-right",
-    //         duration: 3000,
-    //       });
-    //     });
-    //   return;
-    // },
     printAllV3(zpl_mode = false) {
       let _body = [];
       for (const it of this.items) {
         let itm = {
-          id: it.trx_pack_stock_serial_id,
-          serial: it.trx_pack_serial_no,
-          gtin_sscc: it.gtin_sscc_trx_pack,
+          serial: it.trx_pack_serial,
+          epc_key: it.trx_pack_epc_key,
         };
         _body.push(itm);
       }
@@ -375,41 +365,44 @@ export default {
         this.selected_data = { items: _body };
         return;
       }
-      $axiosSupport
-        .post(`helper/print-layout/pdf`, { validate: true, items: _body })
+      $axiosMertrack
+        .post(`/v3/helper/print-layout/pdf`, {
+          update_count: true,
+          validate: true,
+          items: _body,
+        })
         .then((response) => {
           if (response.data.error) {
             this.$toast.open({
-              message: `${response.data.message ?? "Success validate"}`,
-              type: response.data.error ? "error" : "success",
+              message: `${response.data.message ?? 'Success validate'}`,
+              type: response.data.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 3000,
             });
           } else {
             printLabelV3({
               data: _body,
-              link: `${process.env.VUE_APP_URL_API_SUPPORT}/api/v3/helper/print-layout/pdf`,
+              link: `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/helper/print-layout/pdf`,
             });
           }
         });
     },
     printV3(item) {
       let _body = {
-        id: item.trx_pack_stock_serial_id,
-        serial: item.trx_pack_serial_no,
-        gtin_sscc: item.gtin_sscc_trx_pack,
+        serial: item.trx_pack_serial,
+        epc_key: item.trx_pack_epc_key,
         validate: true,
       };
       var _url = new URLSearchParams(_body).toString();
-      $axiosSupport
-        .get(`helper/print-layout/pdf?${_url}`)
+      $axiosMertrack
+        .get(`/v3/helper/print-layout/pdf?${_url}`)
         .then((response) => {
           this.$toast.open({
-            message: `${response.data.message ?? "Success validate"}`,
-            type: response.data.error ? "error" : "success",
+            message: `${response.data.message ?? 'Success validate'}`,
+            type: response.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 3000,
           });
           if (response.data.error) {
@@ -418,33 +411,36 @@ export default {
           let _data = [_body];
           printLabelV3({
             data: _data,
-            link: `${process.env.VUE_APP_URL_API_SUPPORT}/api/v3/helper/print-layout/pdf`,
+            link: `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/helper/print-layout/pdf`,
           });
         })
         .catch((error) => {
           this.$toast.open({
             message: `${error}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 3000,
           });
         });
       return;
     },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+        },
+        exportType: type,
+        url: '/v3/transaction/packing',
+      });
+    },
   },
   computed: {
     detailRepack() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
-
         return {
           ...item,
-          packaging_name: packaging_name,
-          gtin_cp:
-            item.epc_type_trx_pack == "sscc"
-              ? item.company_prefix
-              : item.gtin_sscc_trx_pack,
         };
       });
     },

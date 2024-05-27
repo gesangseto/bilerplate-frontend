@@ -1,0 +1,264 @@
+<template>
+  <CRow>
+    <CCol col="12" xl="12">
+      <CCard>
+        <CCardHeader>
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
+          <h5>Proccess Order</h5>
+        </CCardHeader>
+        <CCardBody>
+          <!-- :filter="[
+              'All',
+              'Product',
+              'Warehouse',
+              'Supplier',
+              'Customer',
+              'User',
+              'Approval',
+              'Exp Date',
+              'Min Stock',
+              'Max Stock',
+              'Production',
+              'Distribution',
+              'Release',
+            ]" -->
+          <HeaderFilterDefault
+            status_code="mst_supplier"
+            v-on:handleClickFilter="handleClickFilter($event)"
+            v-on:handleChangeSize="handleChangeSize($event)"
+          />
+          <!-- INI BATAS HEADER TABLE -->
+          <CRow>
+            <CCol sm="12" md="12" lg="12">
+              <CDataTable
+                hover
+                striped
+                sorter
+                border
+                :items="reformat"
+                :fields="fields"
+                style="font-size: 12px"
+              >
+                <template #action="{ item, index }">
+                  <td>
+                    <ButtonPermission
+                      v-if="[0, 3].includes(item.status)"
+                      :permission="'delete'"
+                      @click="handleClickDelete(item, index)"
+                    />
+                    <ButtonPermission
+                      v-if="item.status == 0"
+                      :id="item.id"
+                      :useHref="true"
+                      :permission="'update'"
+                      @click="rowUpdate(item, index)"
+                    />
+                    <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
+                      :permission="'read'"
+                      @click="rowRead(item, index)"
+                    />
+                  </td>
+                </template>
+              </CDataTable>
+            </CCol>
+          </CRow>
+          <template>
+            <CPagination
+              :activePage.sync="filter.page"
+              :pages="filter.totalPages"
+              size="sm"
+              align="center"
+              @update:activePage="pageChange"
+            />
+          </template>
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
+        </CCardBody>
+      </CCard>
+    </CCol>
+    <!-- START DELETE MODAL -->
+    <CancelModal
+      type="cancel"
+      :property="rejectProperty"
+      v-on:handleSubmit="handleCancel()"
+    />
+  </CRow>
+</template>
+
+<script>
+import moment from 'moment';
+import {
+  deleteProccessOrder,
+  getProccessOrder,
+} from '../../../resource/ProccessOrder';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+
+export default {
+  name: 'ListSupplier',
+
+  mounted() {
+    this.page = 1;
+    this.loadData();
+  },
+  data() {
+    return {
+      rejectProperty: {
+        title: 'Proccess Order',
+        modal: false,
+        id: null,
+        reason: '',
+      },
+      filter: {
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+        StartDate: '',
+        EndDate: '',
+      },
+      items: [],
+      fields: [
+        {
+          key: 'id',
+          label: 'ID',
+        },
+        {
+          key: 'created_date',
+          label: 'Trx Date',
+        },
+        {
+          key: 'batch_no',
+          label: 'Batch No',
+        },
+        {
+          key: 'procces_order_erp',
+          label: 'ERP No',
+        },
+        {
+          key: 'product_name',
+          label: 'Product Name',
+        },
+        {
+          key: 'product_gtin',
+          label: 'GTIN',
+        },
+        {
+          key: 'generate_count_level_1',
+          label: 'Total Serial',
+        },
+        {
+          key: 'status_name',
+          label: 'Status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
+          sorter: false,
+          filter: false,
+        },
+      ],
+    };
+  },
+  methods: {
+    async loadData() {
+      let res = await getProccessOrder(this.filter);
+      this.items = [];
+      if (!res.error) {
+        this.items = res.data;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
+        });
+      }
+    },
+    handleClickFilter(val) {
+      this.filter = Object.assign(this.filter, val);
+      this.loadData();
+    },
+    handleClickExport(type) {
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: '/v3/production/proccess-order',
+      });
+    },
+    pageChange(page) {
+      this.filter.page = page;
+      this.loadData();
+    },
+    handleChangeSize($event) {
+      this.filter.limit = $event;
+      this.filter.page = 1;
+      this.loadData();
+    },
+    rowUpdate() {},
+    rowRead() {},
+    addNew() {},
+    handleClickDelete(item) {
+      this.rejectProperty.modal = true;
+      this.rejectProperty.id = item.id;
+    },
+    async handleCancel() {
+      this.$isLoading(true);
+      let param = {
+        id: this.rejectProperty.id,
+        approved: false,
+        reason: `[CANCEL] ${this.rejectProperty.reason}`,
+      };
+      let _res = await deleteProccessOrder(param);
+      this.rejectProperty.id = null;
+      this.rejectProperty.reason = null;
+      this.$isLoading(false);
+      this.$toast.open({
+        message: _res.error
+          ? `${_res.message}`
+          : 'Data has been canceled succesfully',
+        type: _res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!_res.error) this.loadData();
+    },
+  },
+  computed: {
+    reformat() {
+      return this.items.map((item) => {
+        return {
+          ...item,
+          created_date: moment(item.created_date).format('YYYY-MM-DD HH:mm'),
+        };
+      });
+    },
+  },
+};
+</script>
+
+<style scoped>
+#printMe {
+  visibility: hidden;
+  position: fixed;
+}
+
+@media print {
+  #printMe {
+    visibility: visible;
+    position: fixed;
+  }
+}
+</style>

@@ -1,5 +1,60 @@
 <template>
   <div>
+    <CRow v-if="!disable_header">
+      <CCol md="6">
+        <CInput
+          horizontal
+          v-model="detail_product.product_no"
+          label="Item No"
+          readonly
+        />
+        <CInput
+          horizontal
+          v-model="detail_product.batch_no"
+          label="Batch No"
+          readonly
+        />
+        <CInput
+          horizontal
+          v-model="detail_product.product_nie"
+          label="NIE"
+          readonly
+        />
+        <CInput
+          horizontal
+          v-model="detail_product.epc_key"
+          label="EPC Key"
+          readonly
+        />
+      </CCol>
+      <CCol md="6">
+        <CInput
+          horizontal
+          v-model="detail_product.product_name"
+          label="Product"
+          readonly
+        />
+        <CInput
+          horizontal
+          v-model="detail_product.expired_date"
+          label="Exp Date"
+          readonly
+        />
+        <CInput
+          horizontal
+          v-model="detail_product.mfg_date"
+          label="Mfg Date"
+          readonly
+        />
+        <CInput
+          horizontal
+          v-model="detail_product.serial"
+          label="SN"
+          readonly
+        />
+      </CCol>
+    </CRow>
+
     <CRow>
       <CCol md="12">
         <CCardGroup style="border: 0">
@@ -15,7 +70,7 @@
               >
                 Packaging Level {{ total_child + 1 - idx }}
                 <CBadge color="primary" shape="pill">
-                  {{ list_data[`quantity_level_${total_child + 1 - idx}`] }}
+                  {{ qty_data[`level_${total_child + 1 - idx}`] }}
                 </CBadge>
 
                 <CButton
@@ -54,15 +109,11 @@
                     :key="item.value"
                     @click="handleClickSerial(item, total_child + 1 - idx)"
                   >
-                    [{{
-                      item.epc_type == "sscc"
-                        ? item.company_prefix
-                        : item.gtin_sscc
-                    }}] {{ item.serial }}
+                    [{{ item.epc_key }}] {{ item.serial }}
                     {{
                       total_child + 1 - idx != 1
-                        ? ` &emsp; - &emsp; [${item.quantity}]`
-                        : ""
+                        ? ` - [${item.quantity_child}]`
+                        : ''
                     }}
                   </option>
                 </select>
@@ -82,14 +133,16 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
+import $axiosMertrack from '../../apiMertrack';
 export default {
-  name: "DetailShowStatus",
-  props: { item: Object },
+  name: 'DetailTransactionV3',
+  props: { item: Object, disable_header: Boolean },
   mounted() {
     if (this.item) {
       const _it = JSON.parse(JSON.stringify(this.item));
+      this.trx_detail_id = _it.id;
       this.detail_product = _it;
+      this.detail_product.expired_date = _it.expired_date || _it.exp_date;
       this.total_child = _it.packaging_level - 1 ?? 1;
       this.getDetailItem(_it, _it.packaging_level);
     }
@@ -104,11 +157,13 @@ export default {
         level_3: [],
         level_4: [],
         level_5: [],
-        quantity_level_1: 0,
-        quantity_level_2: 0,
-        quantity_level_3: 0,
-        quantity_level_4: 0,
-        quantity_level_5: 0,
+      },
+      qty_data: {
+        level_1: 0,
+        level_2: 0,
+        level_3: 0,
+        level_4: 0,
+        level_5: 0,
       },
       loading: {
         level_1: false,
@@ -147,23 +202,35 @@ export default {
       // this.getDetailItem(it, pack_level);
     },
     getDetailItem(item, pack_level) {
-      if (item && (item.id || item.stock_serial_id)) {
-        let id = item.id;
-        if (item.stock_serial_id) {
-          id = item.stock_serial_id;
-        }
+      if (item && item.serial && item.id) {
         // for Loading button
         if (this.initial_load) {
           this.loading[`level_${pack_level - 1}`] = true;
         } else {
           this.loading[`level_${pack_level}`] = true;
         }
-        let param = item;
-        param.packaging_level = pack_level - 1;
-        param.from_stock = 1;
-        let url = `/general/web?ApiName=DetailItem&Params=${JSON.stringify(
-          param
-        )}&Id=${id}`;
+        let param = {};
+        let url = `/v3/helper/detail-item/transaction?${param}`;
+        if (item.pss_id && item.id) {
+          param = { pss_id_parent: item.pss_id, item_id: item.id };
+          param = new URLSearchParams(param).toString();
+          url = `/v3/helper/detail-item/transaction?raw=true&${param}`;
+        } else if (item.batch_list_id) {
+          param = { parent: item.id };
+          param = new URLSearchParams(param).toString();
+          url = `/v3/helper/detail-item/production?raw=true&${param}`;
+        } else if (item.pre_inbound_id) {
+          param = {
+            psl_id_parent: item.psl_id,
+            pre_inbound_id: item.pre_inbound_id,
+          };
+          param = new URLSearchParams(param).toString();
+          url = `/v3/helper/detail-item/pre-inbound?raw=true&${param}`;
+        } else {
+          param = { parent: item.id };
+          param = new URLSearchParams(param).toString();
+          url = `/v3/helper/detail-item/stock?raw=true&${param}`;
+        }
         $axiosMertrack.get(url).then((result) => {
           // for Loading button
           if (this.initial_load) {
@@ -173,13 +240,24 @@ export default {
             this.loading[`level_${pack_level}`] = false;
           }
           let data = result.data.data;
-          if (data.length == 1 && data[0].serial === "0000000000") {
-            this.list_data[`quantity_level_${pack_level - 1}`] =
-              data[0].quantity;
+          if (!this.detail_product.name && !this.detail_product.no) {
+            this.detail_product.no = data[0]['no'];
+            this.detail_product.name = data[0]['name'];
+            this.detail_product.nie = data[0]['nie'];
+            this.detail_product.expired_date = data[0]['expired_date'];
+            this.detail_product.mfg_date = data[0]['mfg_date'];
+          }
+          let qty = 0;
+          if (
+            (data && data[0].serial == '0000000000') ||
+            data[0].serial == '0000000000'
+          ) {
+            qty = data[0].quantity;
           } else {
-            this.list_data[`quantity_level_${pack_level - 1}`] = data.length;
+            qty = data.length;
           }
           this.list_data[`level_${pack_level - 1}`] = data;
+          this.qty_data[`level_${pack_level - 1}`] = qty;
         });
       }
     },

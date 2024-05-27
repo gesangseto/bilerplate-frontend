@@ -8,7 +8,7 @@
     :show="show"
     @update:show="(value) => $store.commit('set', ['sidebarShow', value])"
   >
-    <CSidebarBrand to="/">
+    <CSidebarBrand to="/home">
       <div
         class="col-sm-12"
         style="background-color: #000060"
@@ -89,7 +89,8 @@
 </template>
 
 <script>
-import nav from "./_nav";
+import { getConfUserApp, getLogo, getMenu } from '../utils';
+import nav from './_nav';
 
 export default {
   data() {
@@ -101,13 +102,19 @@ export default {
       backupNavMenu: [],
       full_path: null,
       part_path: [],
+      conf_user_app: null,
     };
   },
-  name: "TheSidebar",
+  name: 'TheSidebar',
+  beforeCreate() {
+    let navmenu = nav;
+    navmenu[0]._children = getMenu();
+    this.nav = navmenu;
+  },
   mounted() {
-    console.log("%cWhat are You looking for?", "color:red;font-size:24pt");
+    console.log('%cWhat are You looking for?', 'color:red;font-size:24pt');
     this.navMenu = this.renderMenu();
-    this.entityLogo = localStorage.getItem("app_image");
+    this.entityLogo = getLogo();
   },
   computed: {
     show() {
@@ -123,12 +130,8 @@ export default {
       handler(route) {
         // this.full_path = route.matched[1];
         this.full_path = route.path;
-        this.part_path = this.full_path.split("/");
+        this.part_path = this.full_path.split('/');
       },
-    },
-    show: {
-      immediate: true,
-      handler(n, o) {},
     },
   },
   methods: {
@@ -148,11 +151,14 @@ export default {
       return JSON.parse(menus);
     },
     getExpandMenu(index) {
+      let conf_app = getConfUserApp();
       if (this.navMenu[index].expand == true) {
         this.navMenu[index].expand = false;
         return;
       }
-      this.navMenu = this.renderMenu();
+      if (conf_app.accordion) {
+        this.navMenu = this.renderMenu();
+      }
       setTimeout(() => {
         this.navMenu[index].expand = !this.navMenu[index].expand;
       }, 100);

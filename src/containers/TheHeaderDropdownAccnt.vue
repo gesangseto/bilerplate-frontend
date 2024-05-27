@@ -7,7 +7,7 @@
   >
     <template #toggler>
       <CHeaderNavLink style="border: 1px">
-        <div style="padding-right: 10px">{{ full_name }} {{ " " }}</div>
+        <div style="padding-right: 10px">{{ full_name }} {{ ' ' }}</div>
         <div class="c-avatar">
           <img
             v-bind:src="avatar_path"
@@ -34,55 +34,60 @@
 </template>
 
 <script>
-import $axiosMertrack from "../apiMertrack";
+import { authLogout } from '../resource/SysAuth';
+import { clearStorage, getLogo, getProfile } from '../utils';
 
 export default {
-  name: "TheHeaderDropdownAccnt",
+  name: 'TheHeaderDropdownAccnt',
   data() {
     return {
       itemsCount: 0,
-      full_name: "",
-      avatar_path: "",
-      email: "",
+      full_name: '',
+      avatar_path: '',
+      email: '',
     };
   },
   mounted() {
-    this.profile = JSON.parse(localStorage.getItem("profile"));
+    this.profile = getProfile();
     this.full_name = this.profile.full_name;
     this.email = this.profile.email;
     this.avatar_path = this.profile.path
       ? `img/avatars/${this.profile.path}`
-      : localStorage.getItem("app_image");
+      : getLogo();
   },
   methods: {
-    logOut() {
-      $axiosMertrack.get(`general/web?ApiName=UserLogout`).then((res) => {
+    async logOut() {
+      let message = `Are you sure you want to logout?`;
+      if (!confirm(message)) {
+        return;
+      }
+      let _res = await authLogout();
+      if (_res) {
         this.$toast.open({
-          message: res.data.error
-            ? res.data.message
-            : "You have been logged out successfully",
-          type: res.data.error ? "error" : "success",
+          message: _res.error
+            ? _res.message
+            : 'You have been logged out successfully',
+          type: _res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res.data.error) {
-          localStorage.clear();
-          this.$router.push({ path: "/login" });
-          // window.location.reload();
+        if (!_res.error) {
+          clearStorage();
+          this.$router.go({ path: '/login' });
         }
-      });
+      }
     },
     // toProfile() {
     //   this.$router.push({ path: "/setting/user-profile" });
     // },
     toSetting() {
-      this.profile = JSON.parse(localStorage.getItem("profile"));
+      this.profile = getProfile();
       // let section = this.profile.mst_section_id;
       // if (section == 0) {
       // this.$router.push({ path: "/setting/configuration" });
       // } else {
-      this.$router.push({ path: "/setting/user-setting" });
+      this.$router.push({ path: '/setting/user-setting' });
       // }
     },
   },

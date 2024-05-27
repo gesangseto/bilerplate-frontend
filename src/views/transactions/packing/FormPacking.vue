@@ -8,97 +8,33 @@
         <CCardBody>
           <CRow>
             <CCol sm="6" md="6" lg="6">
-              <div class="form-group row mb-2">
-                <label
-                  for="from-warehouse"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  Warehouse <strong class="text-danger">*</strong>
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  <v-select
-                    :options="warehouseOptions"
-                    v-model="data_header.warehouse"
-                    :value.sync="data_header.warehouse"
-                    @input="getBatch"
-                  >
-                  </v-select>
-                  <p style="color: red" v-if="required.warehouse.error">
-                    {{ required.warehouse.message }}
-                  </p>
-                </div>
-              </div>
-
-              <div class="form-group row mb-2">
-                <label
-                  for="product-name"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  Product Name <strong class="text-danger">*</strong>
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  <v-select
-                    :options="productOptions"
-                    v-model="data_header.product"
-                    :value.sync="data_header.product"
-                    @input="getBatch"
-                  >
-                  </v-select>
-                  <p style="color: red" v-if="required.product.error">
-                    {{ required.product.message }}
-                  </p>
-                </div>
-              </div>
-
-              <div class="form-group row mb-2">
-                <label
-                  for="batch-number"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  Batch No <strong class="text-danger">*</strong>
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  <v-select
-                    :options="batchNumberOptions"
-                    v-model="data_header.batch"
-                    :value.sync="data_header.batch"
-                    @input="getSerialNumber"
-                  >
-                  </v-select>
-                  <p style="color: red" v-if="required.batch.error">
-                    {{ required.batch.message }}
-                  </p>
-                </div>
-              </div>
-
-              <div class="form-group row mb-2">
-                <label
-                  for="batch-number"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  L2 Full Qty
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  {{ full_box }} {{ full_box && "Sack" }}
-                </div>
-              </div>
-
-              <div class="form-group row mb-2">
-                <label
-                  for="batch-number"
-                  class="col-sm-4 col-md-4 col-lg-24 form-label"
-                >
-                  Available L1 Qty
-                </label>
-                <div class="col-sm-8 col-md-8 col-lg-8">
-                  <input
-                    type="text"
-                    class="form-control"
-                    readonly
-                    v-model="last_stock"
-                  />
-                </div>
-              </div>
+              <SelectOption
+                title="Warehouse"
+                :required="true"
+                :options="warehouseOptions"
+                :is_valid="
+                  initialLoad ? null : !formData.warehouse_id ? false : true
+                "
+                v-on:onchange="formData.warehouse_id = $event"
+              />
+              <SelectOption
+                title="Product Name"
+                :required="true"
+                :options="productOptions"
+                :is_valid="
+                  initialLoad ? null : !formData.product_id ? false : true
+                "
+                v-on:onchange="formData.product_id = $event"
+              />
+              <SelectOption
+                title="Batch No"
+                :required="true"
+                :options="batchNumberOptions"
+                :is_valid="
+                  initialLoad ? null : !formData.batch_no ? false : true
+                "
+                v-on:onchange="formData.batch_no = $event"
+              />
             </CCol>
             <CCol sm="6" md="6" lg="6">
               <div class="form-group row mb-2">
@@ -115,6 +51,32 @@
                     readonly
                     v-model="today"
                   />
+                </div>
+              </div>
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol sm="6" md="6" lg="6">
+              <div class="form-group row mb-3">
+                <label
+                  for="batch-number"
+                  class="col-sm-4 col-md-4 col-lg-24 form-label"
+                >
+                  L2 Full Qty
+                </label>
+                <div class="col-sm-8 col-md-8 col-lg-8">
+                  {{ full_box }} {{ full_box && 'Sack' }}
+                </div>
+              </div>
+              <div class="form-group row mb-2">
+                <label
+                  for="batch-number"
+                  class="col-sm-4 col-md-4 col-lg-24 form-label"
+                >
+                  Available L1 Qty
+                </label>
+                <div class="col-sm-8 col-md-8 col-lg-8">
+                  {{ last_stock }}
                 </div>
               </div>
             </CCol>
@@ -169,9 +131,7 @@
             color="primary"
             ><CIcon name="cil-check-circle" /> Submit</CButton
           >
-          <CButton type="reset" size="sm" @click="cancel()" color="danger"
-            ><CIcon name="cil-ban" /> Cancel</CButton
-          >
+          <ButtonBack />
           <!-- <CButton
             v-if="can_print == true"
             type="button"
@@ -192,15 +152,35 @@
 
 <script>
 let dataPost = [];
-import $axiosMertrack from "../../../apiMertrack";
-import "vue-select/dist/vue-select.css";
-import moment from "moment";
+import $axiosMertrack from '../../../apiMertrack';
+import 'vue-select/dist/vue-select.css';
+import moment from 'moment';
+import { getMstProduct } from '../../../resource/MstProduct';
+import { getMstWarehouse } from '../../../resource/MstWarehouse';
 export default {
-  name: "FormPacking",
+  name: 'FormPacking',
   watch: {
+    formData: {
+      deep: true,
+      handler(item) {
+        if (item.warehouse_id && item.product_id) {
+          this.getBatch();
+        }
+        if (item.batch_no) {
+          let idx = this.batchNumberOptions.findIndex(
+            (o) => o.value == item.batch_no
+          );
+          let batch = this.batchNumberOptions[idx];
+          this.formData.batch_detail = batch;
+          this.full_box = batch.qty_packagingl2;
+          this.last_stock = batch.quantity;
+        } else if (!item.batch_no) {
+        }
+      },
+    },
     data_header: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -209,8 +189,17 @@ export default {
   },
   data() {
     return {
+      initialLoad: true,
+      formData: {
+        warehouse_id: null,
+        product_id: null,
+        batch_no: null,
+        remark: null,
+        batch_detail: {},
+        items: [],
+      },
       initial_load: true,
-      today: moment().format("DD-MMM-YYYY"),
+      today: moment().format('DD-MMM-YYYY'),
       data_header: {
         warehouse: null,
         product: null,
@@ -226,73 +215,73 @@ export default {
       checked: [],
       val: [],
       last_stock: 0,
-      full_box: "",
-      serialNumber: "",
+      full_box: '',
+      serialNumber: '',
       temp_item: [],
-      productId: "",
+      productId: '',
       items: [],
       datas: [],
       detailModal: false,
       detailSerialOrAggregation: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       item: [],
       customerOptions: [],
       warehouseError: false,
-      productName: "",
+      productName: '',
       productOptions: [],
       batchNumberOptions: [],
       fields: [
         {
-          key: "no",
-          label: "No",
+          key: 'no',
+          label: 'No',
           sorter: false,
         },
         {
-          key: "product_no",
-          label: "Item No",
+          key: 'product_no',
+          label: 'Item No',
           sorter: false,
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
           sorter: false,
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
           sorter: false,
         },
         {
-          key: "exp",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
           sorter: false,
         },
         {
-          key: "remark",
-          label: "Remark",
+          key: 'remark',
+          label: 'Remark',
           sorter: false,
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
           sorter: false,
         },
         {
-          key: "type",
-          label: "Type",
-          _classes: "font-weight-bold",
+          key: 'type',
+          label: 'Type',
+          _classes: 'font-weight-bold',
           sorter: false,
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
           // _style: "width:15%",
@@ -302,49 +291,47 @@ export default {
       warehouseOptions: [],
       detail: {
         product: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
         batch: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
-        serial: "",
+        serial: '',
       },
       error: {
-        so: "",
-        ref1: "",
-        ref2: "",
-        from: "",
-        to: "",
+        so: '',
+        ref1: '',
+        ref2: '',
+        from: '',
+        to: '',
       },
-      action: "",
+      action: '',
       required: {
-        warehouse: { error: false, message: "Warehouse is required" },
-        product: { error: false, message: "Customer is required" },
-        batch: { error: false, message: "Batch No is required" },
+        warehouse: { error: false, message: 'Warehouse is required' },
+        product: { error: false, message: 'Customer is required' },
+        batch: { error: false, message: 'Batch No is required' },
       },
     };
   },
-  mounted() {
+  async mounted() {
     // cek parameter url
-    this.action = this.$route.params.type == "read" ? "VIEW" : "ADD";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'ADD';
     // get from warehouse
-    let param_warehouse = `ApiName=ListWarehouse&Params={"status":"Active"}&StatusCode=Active`;
-    $axiosMertrack.get(`/general/mobile?${param_warehouse}`).then((result) => {
-      let data = result.data.data;
-      for (const it of data) {
+    let _wh = await getMstWarehouse({ status: 'Active' });
+    if (_wh) {
+      for (const it of _wh.data) {
         this.warehouseOptions.push({
-          value: it.id,
+          value: `${it.id}`,
           label: it.name,
         });
       }
-    });
+    }
     // get product
-    let param_product = `ApiName=ListProduct&Params={product_type:1}&StatusCode=Active`;
-    $axiosMertrack.get(`/general/mobile?${param_product}`).then((result) => {
-      var temp = result.data.data;
-      for (const it of temp) {
+    let _product = await getMstProduct({ product_type: 1, show_status: true });
+    if (_product) {
+      for (const it of _product.data) {
         this.productOptions.push({
           value: it.id,
           name: it.name,
@@ -352,63 +339,37 @@ export default {
           no: it.no,
         });
       }
-    });
+    }
   },
   methods: {
     getSerialNumber() {
-      this.item = [];
-      // this.bacthNumber_=""
-      let param = `ApiName=GetStock&Params={date_format:"web",serial:"0000000000",product_id:${this.data_header.product.value},batch_no:"${this.data_header.batch.value}",warehouse_id:${this.data_header.warehouse.value}}&Id= `;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((result) => {
-        this.error.batch = "";
-        var temp = result.data.data[0];
-        this.detail = temp;
-        if (result.data.data.length > 0) {
-          if (temp.stocks.length != 1) {
-            this.$toast.open({
-              message: `Product Batch cannot be found`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
+      return;
+    },
+    getBatch() {
+      let param = {
+        product_id: this.formData.product_id,
+        warehouse_id: this.formData.warehouse_id,
+        parent: null,
+        packaging_level: 1,
+      };
+      param = new URLSearchParams(param).toString();
+      let _url = `/v3/helper/detail-item/batch?${param}`;
+      $axiosMertrack.get(_url).then((result) => {
+        let _data = result.data.data;
+        this.batchNumberOptions = [];
+        if (_data.length > 0) {
+          var temp = result.data.data;
+          for (const it of temp) {
+            this.batchNumberOptions.push({
+              ...it,
+              value: it.batch_no,
+              label: `${it.batch_no} <=> ${it.expired_date}`,
             });
-            return;
           }
-          this.full_box = temp.qty_packagingl2;
-          this.last_stock = temp.stocks[0].quantity;
         } else {
-          this.last_stock = "0";
-          this.error.batch =
-            "This batch dont have any stocks on that warehouse";
+          this.last_stock = '0';
         }
       });
-    },
-    // checklist product before set data
-    checkSerial(checked) {},
-    getBatch() {
-      if (this.data_header.warehouse && this.data_header.product) {
-        this.batchNumberOptions = [];
-        this.error.product = "";
-        this.data_header.batch = null;
-        let param_product = `ApiName=GetProductBatch&Params={product_id:${this.data_header.product.value},warehouse_id:${this.data_header.warehouse.value}}&Id= `;
-        $axiosMertrack
-          .get(`/general/mobile?${param_product}`)
-          .then((result) => {
-            if (result.data.data.length > 0) {
-              var temp = result.data.data;
-              for (const it of temp) {
-                this.batchNumberOptions.push({
-                  value: it.id,
-                  label: `${it.id} <=> ${it.expired_date}`,
-                });
-              }
-            } else {
-              this.last_stock = "0";
-              this.error.product =
-                "This product dont have any batch on that warehouse";
-            }
-          });
-      }
     },
     deleteRow(item, index) {
       this.items.splice(index, 1);
@@ -424,33 +385,28 @@ export default {
       if (!this.checkValidation()) {
         return;
       }
-      let body = {
-        ApiName: "PackNS",
-        Params: {
-          remark: "",
-          items: this.items,
-        },
-      };
       // return;
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
+        this.formData.items = this.items;
         this.$isLoading(true);
-        $axiosMertrack.post(`/general/mobile`, body).then((result) => {
-          this.$toast.open({
-            message: result.data.error
-              ? result.data.message
-              : `Data has been saved succesfully `,
-            type: result.data.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
+        $axiosMertrack
+          .put(`/v3/transaction/packing`, this.formData)
+          .then((result) => {
+            this.$toast.open({
+              message: result.data.error
+                ? result.data.message
+                : `Data has been saved succesfully `,
+              type: result.data.error ? 'error' : 'success',
+              dissmissible: true,
+              position: 'top-right',
+              duration: 5000,
+            });
+            this.$isLoading(false);
+            if (!result.data.error) {
+              this.$router.back();
+            }
           });
-          let res = result.data.data;
-          this.$isLoading(false);
-          if (!result.data.error) {
-            this.$router.back();
-          }
-        });
       }
       return;
     },
@@ -458,30 +414,7 @@ export default {
       if (!this.checkValidation()) {
         return;
       }
-      let isError = false;
-      if (!this.data_header.warehouse) {
-        this.error.from = "Warehouse field is required";
-        isError = true;
-      } else {
-        this.error.from = "";
-      }
-      if (!this.data_header.product) {
-        this.error.product = "Product field is required";
-        isError = true;
-      } else {
-        this.error.product = "";
-      }
-      if (!this.data_header.batch) {
-        this.error.batch = "Batch field is required";
-        isError = true;
-      } else {
-        this.error.batch = "";
-      }
-      if (isError) {
-        return false;
-      }
 
-      var res = this.data_header.batch.label.split(" <=> ");
       this.items = [];
       let temp_item = {};
       var total_stock = this.last_stock;
@@ -490,32 +423,35 @@ export default {
       var incomplete_box = total_stock % full_box;
       for (var i = 0; i < parseInt(total_full_box); i++) {
         temp_item.no = i + 1;
-        temp_item.warehouse = this.data_header.warehouse.value;
-        temp_item.exp = res[1];
-        temp_item.serial = "0000000000";
-        temp_item.product_id = this.data_header.product.value;
-        temp_item.batch_no = this.data_header.batch.value;
+        temp_item.expired_date = this.formData.batch_detail['expired_date'];
+        temp_item.serial = '0000000000';
+        temp_item.product_id = this.formData.product_id;
+        temp_item.batch_no = this.formData.batch_no;
+        temp_item.epc_key = this.formData.batch_detail['epc_key'];
+        temp_item.epc_type = this.formData.batch_detail['epc_type'];
         temp_item.quantity = full_box;
-        temp_item.remark = "Generated on Web";
-        temp_item.product_no = this.data_header.product.no;
-        temp_item.product_name = this.data_header.product.name;
-        temp_item.type = "Full";
+        temp_item.remark = 'Generated on Web';
+        temp_item.product_no = this.formData.batch_detail['product_no'];
+        temp_item.product_name = this.formData.batch_detail['product_name'];
+        temp_item.type = 'Full';
         this.can_proccess = true;
         this.items.push(temp_item);
         temp_item = {};
       }
+
       if (incomplete_box != 0) {
         temp_item.no = i + 1;
-        temp_item.warehouse = this.data_header.warehouse.value;
-        temp_item.exp = res[1];
-        temp_item.serial = "0000000000";
-        temp_item.product_id = this.data_header.product.value;
-        temp_item.batch_no = this.data_header.batch.value;
+        temp_item.expired_date = this.formData.batch_detail['expired_date'];
+        temp_item.serial = '0000000000';
+        temp_item.product_id = this.formData.product_id;
+        temp_item.batch_no = this.formData.batch_no;
+        temp_item.epc_key = this.formData.batch_detail['epc_key'];
+        temp_item.epc_type = this.formData.batch_detail['epc_type'];
         temp_item.quantity = incomplete_box;
-        temp_item.remark = "Generated on Web";
-        temp_item.product_no = this.data_header.product.no;
-        temp_item.product_name = this.data_header.product.name;
-        temp_item.type = "Partial";
+        temp_item.remark = 'Generated on Web';
+        temp_item.product_no = this.formData.batch_detail['product_no'];
+        temp_item.product_name = this.formData.batch_detail['product_name'];
+        temp_item.type = 'Partial';
         this.items.push(temp_item);
         this.can_proccess = true;
         temp_item = {};
@@ -526,22 +462,22 @@ export default {
       }
     },
     checkValidation() {
-      this.initial_load = false;
-      let have_error = false;
-      for (const rq in this.required) {
-        if (!this.data_header[rq]) {
-          this.required[rq].error = true;
-          have_error = true;
-        } else {
-          this.required[rq].error = false;
-        }
-      }
-      // If any error
-      if (have_error) {
+      this.initialLoad = false;
+      if (
+        !this.formData.warehouse_id ||
+        !this.formData.product_id ||
+        !this.formData.batch_no
+      ) {
+        this.$toast.open({
+          message: `Please input all the required data.`,
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return false;
-      } else {
-        return true;
       }
+      return true;
     },
     save() {
       // // cek semua input yang mandatory
@@ -549,9 +485,9 @@ export default {
       if (this.items.length == 0) {
         this.$toast.open({
           message: `Please add at least 1 product item to continue`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;

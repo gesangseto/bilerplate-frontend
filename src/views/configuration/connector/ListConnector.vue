@@ -3,8 +3,12 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <strong>List Connector</strong>
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
+          <h5>Connector</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
@@ -19,7 +23,7 @@
               hover
               striped
               sorter
-              :items="items"
+              :items="renderList"
               :fields="fields"
               class="data-table"
               style="font-size: 12px"
@@ -31,10 +35,14 @@
                     @click="deleteRow(item, index)"
                   />
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'update'"
                     @click="rowUpdate(item, index)"
                   />
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'read'"
                     @click="rowRead(item, index)"
                   />
@@ -51,7 +59,7 @@
               @update:activePage="pageChange"
             />
           </template>
-          <ButtonPermission
+          <!-- <ButtonPermission
             exportType="excel"
             :permission="'print'"
             @click="handleClickExport('xls')"
@@ -60,7 +68,7 @@
             exportType="pdf"
             :permission="'print'"
             @click="handleClickExport('pdf')"
-          />
+          /> -->
         </CCardBody>
       </CCard>
     </CCol>
@@ -68,11 +76,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePagination, exportData } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportData } from '../../../utils';
 
 export default {
-  name: "ListConnector",
+  name: 'ListConnector',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -82,40 +90,40 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        search: "",
+        search: '',
         totalPages: 1,
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
+          key: 'id',
+          label: 'ID',
         },
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
+          key: 'name',
+          label: 'Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "description",
-          label: "Desc",
+          key: 'description',
+          label: 'Desc',
         },
         {
-          key: "connector_method",
-          label: "Method",
+          key: 'connector_method',
+          label: 'Method',
         },
         {
-          key: "connector_port",
-          label: "Port",
+          key: 'connector_port',
+          label: 'Port',
         },
         {
-          key: "connector_path",
-          label: "Path",
+          key: 'connector_path',
+          label: 'Path',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -139,7 +147,7 @@ export default {
         .get(`/v3/connector/connector-list?${param}`)
         .then((res) => {
           this.items = res.data.data;
-          this.filter = calculatePagination({
+          this.filter = calculatePaginationV3({
             filter: this.filter,
             item: res,
           });
@@ -185,15 +193,14 @@ export default {
     deleteRow(item) {},
   },
   computed: {
-    // customers() {
-    //   return this.items.map((item) => {
-    //     return {
-    //       ...item,
-    //       tlp: item.tlp ?? "",
-    //       tlp_alt: item.tlp_alt ?? "",
-    //     };
-    //   });
-    // },
+    renderList() {
+      return this.items.map((item) => {
+        return {
+          ...item,
+          connector_path: item.connector_path || '',
+        };
+      });
+    },
   },
 };
 </script>

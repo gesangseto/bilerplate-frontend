@@ -7,142 +7,154 @@
         </CCardHeader>
         <CCardBody>
           <CRow>
-            <CCol sm="12" md="12" lg="12">
-              <CRow>
-                <CCol md="12">
-                  <table style="width: 100%">
-                    <tr style="height: 50px">
-                      <td style="width: 20%">ID</td>
-                      <td style="width: 30%">
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.id"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Trx Date</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.created_date"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Created By</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.full_name"
-                        />
-                      </td>
-                    </tr>
-                    <tr
-                      style="height: 50px"
-                      v-if="
-                        inbound.source != 'Return' &&
-                        inbound.source != 'Transfer'
-                      "
-                    >
-                      <td>Remark</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.remark"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Type</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.source"
-                        />
-                      </td>
-                      <td style="width: 5%; text-align: left"></td>
-                      <td style="width: 15%; text-align: left">Trx Ref ID</td>
-                      <td style="width: 30%">
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.trx_id"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Source</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.from"
-                        />
-                      </td>
-                    </tr>
-                    <tr style="height: 50px">
-                      <td>Destination</td>
-                      <td>
-                        <input
-                          class="form-control"
-                          readonly
-                          v-model="inbound.to"
-                        />
-                      </td>
-                    </tr>
-                  </table>
-                </CCol>
-              </CRow>
-              <CDataTable
-                tableFilter
-                hover
-                striped
-                sorter
-                border
-                :items="detailInbound"
-                :fields="fields"
-                class="text-left"
-                style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td>
-                    <CButton
-                      v-if="item.packaging_level > 1"
-                      color="info"
-                      size="sm"
-                      @click="rowClicked(item, index)"
-                      class="px-2 mx-2"
-                    >
-                      <v-icon name="eye" />
-                    </CButton>
+            <CCol md="6">
+              <table style="width: 100%">
+                <tr style="height: 50px">
+                  <td style="width: 40%">ID</td>
+                  <td style="width: 60%">
+                    <input class="form-control" readonly v-model="inbound.id" />
                   </td>
-                </template>
-              </CDataTable>
-            </CCol>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Trx Date</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound.created_date"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Created By</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound['created_full_name']"
+                    />
+                  </td>
+                </tr>
+                <tr
+                  style="height: 50px"
+                  v-if="
+                    inbound.source.toLowerCase() != 'return' &&
+                    inbound.source.toLowerCase() != 'transfer'
+                  "
+                >
+                  <td>Remark</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound.remark"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Type</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound['source']"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Source</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound.from"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Destination</td>
+                  <td>
+                    <input class="form-control" readonly v-model="inbound.to" />
+                  </td>
+                </tr></table
+            ></CCol>
+            <CCol md="6">
+              <table style="width: 100%">
+                <tr style="height: 50px">
+                  <td style="width: 40%">Trx Ref ID</td>
+                  <td style="width: 60%">
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound.trx_ref_id"
+                    />
+                  </td>
+                </tr>
+
+                <tr style="height: 50px" v-for="index in 1" :key="index">
+                  <td
+                    style="width: 40%"
+                    v-if="inbound[`quantity_lvl_${index}`] > 0"
+                  >
+                    {{ 'L' + index }} Quantity
+                  </td>
+                  <td
+                    style="width: 60%"
+                    v-if="inbound[`quantity_lvl_${index}`] > 0"
+                  >
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="inbound[`quantity_lvl_${index}`]"
+                    />
+                  </td>
+                </tr></table
+            ></CCol>
           </CRow>
+          <CDataTable
+            tableFilter
+            hover
+            striped
+            sorter
+            border
+            :items="detailInbound"
+            :fields="fields"
+            class="text-left"
+            style="font-size: 12px"
+          >
+            <template #action="{ item, index }">
+              <td>
+                <CButton
+                  v-if="item.packaging_level > 1"
+                  color="info"
+                  size="sm"
+                  @click="rowClicked(item, index)"
+                  class="px-2 mx-2"
+                >
+                  <v-icon name="eye" />
+                </CButton>
+              </td>
+            </template>
+          </CDataTable>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            type="reset"
-            size="sm"
-            class="m-1 float-right"
-            color="primary"
-            @click="cancel()"
-          >
-            <CIcon name="cil-arrow-left" /> Back
-          </CButton>
+          <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -153,32 +165,32 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { toTitleCase } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3, toTitleCase } from '../../../utils';
 
 export default {
-  name: "DetailInbound",
+  name: 'DetailInbound',
   mounted() {
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=InboundList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.inbound = data;
-        this.inbound.from = data.from_warehouse_name ?? data.supplier_name;
-        this.inbound.to = data.to_warehouse_name;
-        this.inbound.source = toTitleCase(data.source);
-        if (data.items.length > 0) {
-          this.items = data.items;
-        } else {
-          this.$toast.open({
-            message: `No data to be viewed`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-        }
-      });
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack
+        .get(`/v3/transaction/inbound?${param}`)
+        .then((response) => {
+          let data = response.data.data[0];
+          this.inbound = data;
+          this.inbound.source = toTitleCase(data.source);
+          if (data.items.length > 0) {
+            this.items = data.items;
+          } else {
+            this.$toast.open({
+              message: `No data to be viewed`,
+              type: 'error',
+              dissmissible: true,
+              position: 'top-right',
+              duration: 5000,
+            });
+          }
+        });
     }
   },
   data() {
@@ -187,81 +199,81 @@ export default {
       datas: [],
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       sn: false,
       test: null,
-      status: "",
+      status: '',
       inbound: {
-        id: "",
-        source: "",
+        id: '',
+        source: '',
         toWarehouse: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
-        serial: "",
+        serial: '',
         fromWarehouse: {
-          id: "",
-          name: "",
+          id: '',
+          name: '',
         },
       },
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       items: [],
       fields: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'no',
+          label: 'Item No',
         },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial_id",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Action",
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -285,9 +297,9 @@ export default {
       if (item.packaging_level == 1) {
         this.$toast.open({
           message: `No detail SN data to be viewed, SN [${item.serial_id}] is Packaging L1`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -297,28 +309,36 @@ export default {
       return;
     },
     closeModal() {
-      this.view.productId = "";
-      this.view.productName = "";
-      this.view.batch = "";
-      this.view.gtin = "";
-      this.view.nie = "";
-      this.view.expiredDate = "";
+      this.view.productId = '';
+      this.view.productName = '';
+      this.view.batch = '';
+      this.view.gtin = '';
+      this.view.nie = '';
+      this.view.expiredDate = '';
       this.datas = [];
       this.viewModal = false;
     },
     cancel() {
       this.$router.back();
     },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+        },
+        exportType: type,
+        url: '/v3/transaction/inbound',
+      });
+    },
   },
   computed: {
     detailInbound() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
           gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
+            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

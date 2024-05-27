@@ -6,6 +6,7 @@
       </label>
       <div class="col-sm-5 col-md-5 col-lg-5">
         <v-select
+          key="value"
           placeholder="--Select--"
           :options="listProduct"
           :reduce="(opt) => opt.value"
@@ -25,16 +26,25 @@
           placeholder="--Select--"
           :options="listBatchNo"
           :reduce="(opt) => opt.value"
-          v-model="formData.batch_id"
+          v-model="formData.batch_no"
           @input="handleChangeBatch()"
         >
+          <template #no-options="{ search, searching, loading }">
+            Sorry, no matching item.
+          </template>
         </v-select>
         <label v-if="alertExpired" style="color: red">{{ alertExpired }}</label>
       </div>
     </div>
 
     <CRow>
-      <CCol sm="12" md="12" lg="12" xl="12">
+      <CCol md="10" lg="10" xl="10">
+        <div class="form-group form-check float-right">
+          Total Selected L1 Qty :
+          <a style="font-weight: bolder">{{ selected_quantity }}</a>
+        </div>
+      </CCol>
+      <CCol md="2" lg="2" xl="2">
         <div
           class="form-group form-check float-right"
           style="padding-right: 50px"
@@ -79,29 +89,55 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import "vue-select/dist/vue-select.css";
-import moment from "moment";
+import $axiosMertrack from '../../apiMertrack';
+import 'vue-select/dist/vue-select.css';
+import moment from 'moment';
+import { getConfig } from '../../utils';
 export default {
-  name: "FormAddItem",
+  name: 'FormAddItemV3',
   props: { currentItem: Array, filter: Object, useDeliveryDayLimit: Boolean },
   watch: {
     currentItem: {
-      handler(n, o) {
+      handler() {
         this.resetForm();
       },
       deep: true,
     },
-    filter: {
-      handler(n, o) {
-        if (n.hasOwnProperty("warehouse_id") && n.warehouse_id)
-          this.getProduct();
+    // filter: {
+    //   handler(n) {
+    //     if (n.hasOwnProperty('warehouse_id') && n.warehouse_id) {
+    //       this.resetForm();
+    //       this.getProduct();
+    //     } else if (n.hasOwnProperty('from_warehouse') && n.from_warehouse) {
+    //       this.resetForm();
+    //       this.getProduct();
+    //     }
+    //   },
+    //   deep: true,
+    // },
+    'formData.stock': {
+      handler(arr) {
+        console.log(arr);
+      },
+      deep: true,
+    },
+    'filter.from_warehouse': {
+      handler() {
+        this.resetForm();
+        this.getProduct();
+      },
+      deep: true,
+    },
+    'filter.warehouse_id': {
+      handler() {
+        this.resetForm();
+        this.getProduct();
       },
       deep: true,
     },
   },
   mounted() {
-    this.getProduct();
+    // this.getProduct();
   },
   data() {
     return {
@@ -109,46 +145,52 @@ export default {
       listProduct: [],
       listBatchNo: [],
       alertExpired: false,
+      selected_quantity: 0,
       formData: {
         product_id: null,
-        batch_id: null,
+        batch_no: null,
         stock: [],
       },
       result: [],
       stockField: [
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "action",
-          label: "Selection",
+          key: 'remark',
+          label: 'Remark',
+        },
+        {
+          key: 'action',
+          label: 'Selection',
         },
       ],
     };
   },
   methods: {
     resetForm() {
+      this.selected_quantity = 0;
       this.check_all = false;
       this.formData.stock = [];
       this.formData.product_id = null;
-      this.formData.batch_id = null;
+      this.formData.batch_no = null;
       this.alertExpired = false;
     },
     handleChangeProduct() {
@@ -157,27 +199,27 @@ export default {
     },
 
     getDifferentDays(exp_date) {
-      var date_exp = moment(new Date(exp_date), "YYYY-MM-DD");
-      var date_now = moment(new Date(), "YYYY-MM-DD");
+      var date_exp = moment(new Date(exp_date), 'YYYY-MM-DD');
+      var date_now = moment(new Date(), 'YYYY-MM-DD');
       let sisa = Math.ceil(moment.duration(date_exp.diff(date_now)).asDays());
       return sisa;
     },
     checkDeliveryLimit() {
       this.alertExpired = false;
       for (const it of this.listBatchNo) {
-        if (this.formData.batch_id == it.id) {
-          let day_limit = JSON.parse(localStorage.getItem("configuration"));
-          day_limit = day_limit.delivery_day_limit ?? 0;
-          let diff_day = this.getDifferentDays(it.expired_date);
-          if (diff_day < day_limit) {
-            let msg = `Cannot add item that will expire in less than ${day_limit} days. This item will expire in ${diff_day} days.`;
+        // if (this.formData.batch_no == it.batch_no) {
+        let day_limit = getConfig();
+        day_limit = day_limit.delivery_day_limit ?? 0;
+        let diff_day = this.getDifferentDays(it.expired_date);
+        if (diff_day < day_limit) {
+          let msg = `Cannot add item that will expire in less than ${day_limit} days. This item will expire in ${diff_day} days.`;
 
-            if (diff_day < 0) {
-              msg = `Cannot to add expired items.`;
-            }
-            this.alertExpired = msg;
+          if (diff_day < 0) {
+            msg = `Cannot to add expired items.`;
           }
+          this.alertExpired = msg;
         }
+        // }
       }
     },
     handleChangeBatch() {
@@ -187,11 +229,8 @@ export default {
       this.getProductStockSerial();
     },
     checkSerial(item, index) {
-      if (this.formData.stock[index].is_checked) {
-        this.formData.stock[index].is_checked = false;
-      } else {
-        this.formData.stock[index].is_checked = true;
-      }
+      let check = this.formData.stock[index].is_checked;
+      this.formData.stock[index].is_checked = !check;
       this.returnResult();
     },
     checkAll(check_all) {
@@ -207,96 +246,86 @@ export default {
       this.returnResult();
     },
     returnResult() {
-      let result = [];
-      for (const it of this.formData.stock) {
-        if (it.is_checked) {
-          result.push(it);
-        }
-      }
-      this.$emit("handleResult", result);
+      let result = this.formData.stock.filter((e) => e.is_checked);
+      this.selected_quantity = result.reduce(
+        (acc, o) => acc + parseInt(o.quantity),
+        0
+      );
+      this.$emit('handleResult', result);
     },
     getProduct() {
-      let param = { product_type: this.filter.product_type };
-      var defaultParam = {
-        ApiName: "ListProduct",
-        Params: JSON.stringify(param),
+      let param = {
+        show_status: true,
       };
-      var query_string = new URLSearchParams(defaultParam).toString();
-      let url = `/general/mobile?${query_string}`;
+      if (this.filter.product_type) {
+        param.product_type = this.filter.product_type;
+      }
+      param = new URLSearchParams(param).toString();
+      let _url = `/v3/master/product?${param}`;
       this.listProduct = [];
-      $axiosMertrack.get(url).then((result) => {
+      $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
+        let temps = [];
         for (const it of data) {
           let tmp = it;
           tmp.value = it.id;
           tmp.label = `[${it.no}] ${it.name}`;
-          this.listProduct.push(tmp);
+          tmp.item = it;
+          temps.push(tmp);
         }
+        this.listProduct = temps;
       });
     },
     getBatchNo() {
       this.check_all = false;
       this.formData.stock = [];
-      this.formData.batch_id = null;
-      if (!this.filter.warehouse_id) {
-        this.$toast.open({
-          message: `Please select Warehouse to continue`,
-          type: "error",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
-        return;
-      }
+      this.formData.batch_no = null;
       let param = {
-        warehouse_id: this.filter.warehouse_id ?? null,
-        product_id: this.formData.product_id ?? null,
+        product_id: this.formData.product_id,
+        warehouse_id: this.filter.warehouse_id || this.filter.from_warehouse,
+        parent: null,
       };
-      var defaultParam = {
-        ApiName: "GetProductBatch",
-        Params: JSON.stringify(param),
-      };
-      var query_string = new URLSearchParams(defaultParam).toString();
-      let url = `/general/mobile?${query_string}`;
+      param = new URLSearchParams(param).toString();
+      let _url = `/v3/helper/detail-item/batch?${param}`;
       this.listBatchNo = [];
-      $axiosMertrack.get(url).then((result) => {
+      $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let tmp = it;
-          tmp.value = it.id;
-          tmp.label = `${it.id} <=> ${it.expired_date}`;
+          tmp.value = it.batch_no;
+          tmp.label = `${it.batch_no} <=> ${it.expired_date}`;
           this.listBatchNo.push(tmp);
         }
       });
     },
     getProductStockSerial() {
-      let param = {
-        warehouse_id: this.filter.warehouse_id ?? null,
-        product_id: this.formData.product_id ?? null,
-        batch_no: this.formData.batch_id ?? null,
-        status: 1,
-        flag_parent: 1,
-        date_format: "web",
-      };
-      var defaultParam = {
-        ApiName: "GetStock",
-        Params: JSON.stringify(param),
-      };
-      var query_string = new URLSearchParams(defaultParam).toString();
       this.formData.stock = [];
-      $axiosMertrack.get(`/general/mobile?${query_string}`).then((result) => {
+      let param = {
+        warehouse_id:
+          this.filter.warehouse_id || this.filter.from_warehouse || null,
+        product_id: this.formData.product_id || null,
+        batch_no: this.formData.batch_no || null,
+        status: 1,
+        parent: null,
+        raw: true,
+        show_remark: true,
+      };
+      param = new URLSearchParams(param).toString();
+      let _url = `/v3/helper/detail-item/stock?${param}`;
+      $axiosMertrack.get(`${_url}`).then((result) => {
         let data = result.data.data;
-        if (data[0] && data[0].stocks) {
-          for (const it of data[0].stocks) {
-            let stock = it;
-            for (const cur of this.currentItem) {
-              if (it.barcode_2d == cur.barcode_2d) {
-                stock.is_checked = true;
-                stock.is_disabled = true;
-              }
-            }
-            this.formData.stock.push(stock);
+        for (const it of data) {
+          let idx = this.currentItem.findIndex(
+            (e) =>
+              e.gtin_sscc === it.gtin_sscc &&
+              e.serial === it.serial &&
+              e.batch_id === it.batch_id
+          );
+          if (idx >= 0) {
+            it.is_checked = true;
+            it.is_disabled = true;
           }
+          this.formData.stock.push(it);
         }
       });
     },
@@ -306,8 +335,7 @@ export default {
       return this.formData.stock.map((it) => {
         return {
           ...it,
-          packaging_name: it[`name_packaging_l${it.packaging_level}`],
-          gtin_cp: it.epc_type == "sscc" ? it.company_prefix : it.gtin_sscc,
+          gtin_cp: it.epc_type == 'sscc' ? it.company_prefix : it.gtin_sscc,
         };
       });
     },

@@ -21,36 +21,56 @@
                   <p class="col-form-label col-sm-3">ID</p>
                 </template>
               </CInput>
+              <CInput :disabled="true" horizontal v-model="data.created_date">
+                <template #label>
+                  <p class="col-form-label col-sm-3">Date & Time</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="true"
                 horizontal
-                v-model="data.created_at_string"
+                v-model="data.created_full_name"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">Date</p>
+                  <p class="col-form-label col-sm-3">User (Full Name)</p>
                 </template>
               </CInput>
-              <CInput :disabled="true" horizontal v-model="data.full_name">
+              <CInput :disabled="true" horizontal v-model="data.path">
                 <template #label>
-                  <p class="col-form-label col-sm-3">Access By</p>
+                  <p class="col-form-label col-sm-3">Path</p>
                 </template>
               </CInput>
-              <CInput :disabled="true" horizontal v-model="data.module">
+              <CInput :disabled="true" horizontal v-model="data.action">
                 <template #label>
-                  <p class="col-form-label col-sm-3">Module</p>
+                  <p class="col-form-label col-sm-3">Method</p>
                 </template>
               </CInput>
-              <CInput :disabled="true" horizontal v-model="data.type">
+              <CInput :disabled="true" horizontal v-model="data.ip_address">
                 <template #label>
-                  <p class="col-form-label col-sm-3">Type</p>
+                  <p class="col-form-label col-sm-3">IP Address</p>
                 </template>
               </CInput>
-              <div v-if="Object.keys(dataBody).length > 0">
+              <CInput :disabled="true" horizontal v-model="data.user_agent">
+                <template #label>
+                  <p class="col-form-label col-sm-3">User Agent</p>
+                </template>
+              </CInput>
+              <CInput :disabled="true" horizontal v-model="data.status_desc">
+                <template #label>
+                  <p class="col-form-label col-sm-3">Status</p>
+                </template>
+              </CInput>
+              <CInput :disabled="true" horizontal v-model="data.message">
+                <template #label>
+                  <p class="col-form-label col-sm-3">Message</p>
+                </template>
+              </CInput>
+              <div v-if="Object.keys(oldDataBody).length > 0">
                 <hr />
                 <hr />
-                <h5>Data</h5>
+                <h5>Old Data</h5>
                 <hr />
-                <div v-for="(value, name, index) in dataBody" :key="index">
+                <div v-for="(value, name, index) in oldDataBody" :key="index">
                   <!-- VIEW JIKA KARAKTERNYA NORMAL -->
                   <CInput
                     v-if="!Array.isArray(value) && value && value.length <= 100"
@@ -63,7 +83,7 @@
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === "id" ? "ID" : name.replace(/_/g, " ") }}
+                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
                       </p>
                     </template>
                   </CInput>
@@ -80,10 +100,12 @@
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === "id" ? "ID" : name.replace(/_/g, " ") }}
+                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
                       </p>
                     </template>
                   </CTextarea>
+
+                  <!-- JIKA VIEW BERUPA ARRAY -->
                   <p v-if="Array.isArray(value) && value.length > 0">Items</p>
                   <CDataTable
                     v-if="Array.isArray(value) && value.length > 0"
@@ -91,39 +113,80 @@
                     striped
                     sorter
                     border
-                    :items="re_renderItems"
-                    class="text-left"
+                    :items="value"
+                    class="data-table"
                     style="font-size: 12px"
                   />
                 </div>
               </div>
-              <div v-if="Object.keys(detail).length > 0">
+              <div v-if="Object.keys(dataBody).length > 0">
                 <hr />
                 <hr />
-                <h5>Updating details</h5>
-                <table width="100%" class="table table-hover">
-                  <thead style="font-weight: bold">
-                    <tr>
-                      <td>Name</td>
-                      <td>Before</td>
-                      <td>After</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(itm, name, index) in detail" :key="index">
-                      <td>{{ name }}</td>
-                      <td>{{ itm.old_value }}</td>
-                      <td>{{ itm.new_value }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <h5>
+                  {{ Object.keys(oldDataBody).length > 0 ? 'New' : '' }} Data
+                </h5>
+                <hr />
+                <div v-for="(value, name, index) in dataBody" :key="index">
+                  <!-- VIEW JIKA KARAKTERNYA NORMAL -->
+                  <CInput
+                    v-if="
+                      !Array.isArray(value) &&
+                      value &&
+                      value.toString().length <= 100
+                    "
+                    disabled
+                    horizontal
+                    :value="value.toString()"
+                  >
+                    <template #label>
+                      <p
+                        class="col-form-label col-sm-3"
+                        style="text-transform: capitalize"
+                      >
+                        {{ name.replace(/_/g, ' ').replace(/\bid\b/gi, 'ID') }}
+                      </p>
+                    </template>
+                  </CInput>
+                  <!-- VIEW JIKA KARAKTERNYA TERLALU BANYAK -->
+                  <CTextarea
+                    v-if="
+                      !Array.isArray(value) &&
+                      value &&
+                      value.toString().length > 100
+                    "
+                    disabled
+                    horizontal
+                    :value="value.toString()"
+                    rows="10"
+                  >
+                    <template #label>
+                      <p
+                        class="col-form-label col-sm-3"
+                        style="text-transform: capitalize"
+                      >
+                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
+                      </p>
+                    </template>
+                  </CTextarea>
+
+                  <!-- JIKA VIEW BERUPA ARRAY -->
+                  <p v-if="Array.isArray(value) && value.length > 0">Items</p>
+                  <CDataTable
+                    v-if="Array.isArray(value) && value.length > 0"
+                    hover
+                    striped
+                    sorter
+                    border
+                    :items="value"
+                    class="data-table"
+                    style="font-size: 12px"
+                  />
+                </div>
               </div>
             </CForm>
           </CCardBody>
           <CCardFooter>
-            <CButton size="sm" class="m-1" color="danger" @click="cancel()">
-              <CIcon name="cil-ban" /> Cancel
-            </CButton>
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>
@@ -132,18 +195,17 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
-import { get_log } from "../../../dummy_data";
-import jsPDF from "jspdf";
-import domtoimage from "dom-to-image";
+import { capitalizeFirstLetter } from '../../../utils';
+import $axiosMertrack from '../../../apiMertrack';
+import jsPDF from 'jspdf';
+import domtoimage from 'dom-to-image';
 
 export default {
-  name: "DetailAuditTrail",
+  name: 'DetailAuditTrail',
   watch: {
     customer: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
         }
@@ -153,19 +215,20 @@ export default {
   data() {
     return {
       initial_load: true,
-      action: "",
-      route_action: "",
-      customer: { status: "Active", tlp_alt: "", tlp: "" },
+      action: '',
+      route_action: '',
+      customer: { status: 'Active', tlp_alt: '', tlp: '' },
 
       data: {},
       detail: {},
       dataBody: {},
+      oldDataBody: {},
     };
   },
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -177,12 +240,13 @@ export default {
       // this.dataBody = this.data["val3"];
       // this.dataBody = JSON.parse(this.dataBody);
       // return;
-      let param = `ApiName=GetWeb_AuditTrail&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `/v3/system/audit-trail?id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.data = data;
-        this.dataBody = JSON.parse(this.data["val3"]);
-        this.detail = this.data["detail"];
+        this.dataBody = JSON.parse(this.data['data']);
+        this.oldDataBody = JSON.parse(this.data['old_data']) || {};
+        console.log(this.dataBody);
       });
     },
     isJsonString(str) {
@@ -199,28 +263,28 @@ export default {
           width: 3508,
           height: 2480,
           style: {
-            transform: "scale(0.6)",
-            "transform-origin": "top left",
+            transform: 'scale(0.6)',
+            'transform-origin': 'top left',
           },
         })
         .then(function (data) {
           var img = new Image();
           img.src = data;
           const doc = new jsPDF({
-            orientation: "portrait",
-            format: "a4",
+            orientation: 'portrait',
+            format: 'a4',
           });
-          doc.addImage(img, "JPEG", 2, 0);
+          doc.addImage(img, 'JPEG', 2, 0);
           const date = new Date();
           const filename =
-            "showstatus_" +
+            'showstatus_' +
             date.getFullYear() +
-            ("0" + (date.getMonth() + 1)).slice(-2) +
-            ("0" + date.getDate()).slice(-2) +
-            ("0" + date.getHours()).slice(-2) +
-            ("0" + date.getMinutes()).slice(-2) +
-            ("0" + date.getSeconds()).slice(-2) +
-            ".pdf";
+            ('0' + (date.getMonth() + 1)).slice(-2) +
+            ('0' + date.getDate()).slice(-2) +
+            ('0' + date.getHours()).slice(-2) +
+            ('0' + date.getMinutes()).slice(-2) +
+            ('0' + date.getSeconds()).slice(-2) +
+            '.pdf';
           doc.save(filename);
         });
     },

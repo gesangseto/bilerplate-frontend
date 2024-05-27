@@ -6,7 +6,7 @@
           <h5>Show EPC Status</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderShowStatus
+          <header-show-status-v-3
             v-on:handleClickSearch="handleClickSearch($event)"
             v-on:handleReset="handleReset($event)"
           />
@@ -57,9 +57,45 @@
                 <tr>
                   <td>Type</td>
                   <td>:</td>
-                  <td>{{ detailData.type == 1 ? "Non-Serial" : "Serial" }}</td>
+                  <td>{{ detailData.type == 1 ? 'Non-Serial' : 'Serial' }}</td>
                 </tr>
               </table>
+
+              <CCard>
+                <timeline>
+                  <timeline-title
+                    >History: {{ detailData.epc_key }} [{{
+                      detailData.serial
+                    }}]</timeline-title
+                  >
+                  <div v-for="item in detailData.history" :key="item">
+                    <timeline-item
+                      :bg-color="
+                        item['confirmed'] == 1
+                          ? '#42f56c'
+                          : item['confirmed'] == 0
+                          ? '#f54e42'
+                          : 'orange'
+                      "
+                    >
+                      {{ item['transaction'] }}
+                      <small style="color: gray">
+                        ({{
+                          item['confirmed'] == 1
+                            ? 'Done'
+                            : item['confirmed'] == 0
+                            ? 'Canceled'
+                            : 'Pending'
+                        }})
+                      </small>
+                      <br />
+                      <small style="color: gray">{{
+                        formatDate(item['created_date'])
+                      }}</small>
+                    </timeline-item>
+                  </div>
+                </timeline>
+              </CCard>
             </CCol>
             <CCol md="6">
               <h5>Item</h5>
@@ -86,13 +122,15 @@
                 <tr>
                   <td>Mfg Date</td>
                   <td>:</td>
-                  <td>{{ detailData.mfg_date }} {{ detailData.postfix }}</td>
+                  <td>
+                    {{ detailData.mfg_date }} {{ detailData.mfg_postfix }}
+                  </td>
                 </tr>
                 <tr>
                   <td>EPC Type</td>
                   <td>:</td>
-                  <td style="text-transform: capitalize">
-                    {{ detailData.epc_type }}
+                  <td>
+                    {{ detailData.epc_type.toUpperCase() }}
                   </td>
                 </tr>
                 <tr>
@@ -103,7 +141,7 @@
                 <tr>
                   <td>EPC HR</td>
                   <td>:</td>
-                  <td>{{ renderEpcHr(detailData.epc_hr) }}</td>
+                  <td>{{ detailData.epc_hr }}</td>
                 </tr>
                 <tr>
                   <td>L1 Qty</td>
@@ -127,19 +165,7 @@
                   <td>Status</td>
                   <td>:</td>
                   <td>
-                    {{
-                      detailData.status == 1 && detailData.warehouse_id
-                        ? "Active"
-                        : detailData.status == 1 && !detailData.warehouse_id
-                        ? "Sold"
-                        : detailData.status == 0
-                        ? "Inactive"
-                        : detailData.status == 10
-                        ? "Non sellable other"
-                        : detailData.status == 69
-                        ? "Pending process"
-                        : "Destroyed"
-                    }}
+                    {{ detailData.status_desc }}
                   </td>
                 </tr>
               </table>
@@ -180,7 +206,11 @@
               <CCard>
                 <CCardBody>
                   <h5>Child Details</h5>
-                  <DetailShowStatus v-if="showData" :item="detailData" />
+                  <detail-transaction-v-3
+                    v-if="showData"
+                    :item="detailData"
+                    :disable_header="true"
+                  />
                 </CCardBody>
               </CCard>
             </CCol>
@@ -192,12 +222,22 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import jsPDF from "jspdf";
-import domtoimage from "dom-to-image";
+import $axiosMertrack from '../../apiMertrack';
+import jsPDF from 'jspdf';
+import domtoimage from 'dom-to-image';
+import HeaderShowStatusV3 from '../component/HeaderShowStatusV3.vue';
+import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline';
+import 'vue-cute-timeline/dist/index.css';
+import moment from 'moment';
 
 export default {
-  name: "ReportShowStatus",
+  components: { HeaderShowStatusV3 },
+  name: 'ReportShowStatus',
+  components: {
+    timeline: Timeline,
+    'timeline-item': TimelineItem,
+    'timeline-title': TimelineTitle,
+  },
 
   mounted() {},
   data() {
@@ -225,83 +265,71 @@ export default {
     handleReset() {
       this.initial_data();
     },
+    formatDate(item) {
+      return moment.utc(item).calendar();
+    },
     getData() {
-      this.result.date_format = "web";
-      let param = `ApiName=GetStock&Params=${JSON.stringify(this.result)}`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((res) => {
+      console.log(this.result);
+      let param = `${new URLSearchParams(this.result).toString()}`;
+      let url = `/v3/helper/detail-item/stock?show_barcode=true&show_history=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
-        if (data.length != 1 || (data[0] && data[0].stocks.length != 1)) {
+        if (data.length != 1) {
           this.$toast.open({
             message: `Data cannot be found`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return;
         }
-        if (data[0] && data[0].stocks) {
-          this.showData = true;
-          this.detailData = data[0].stocks[0];
-          this.detailData.epc_type = this.detailData.epc_type.toUpperCase();
-          this.detailData.packaging_name =
-            data[0].stocks[0][
-              `name_packaging_l${this.detailData.packaging_level}`
-            ];
-          if (this.detailData.parent) {
-            this.getParent();
-          }
-        }
+        this.showData = true;
+        this.detailData = data[0];
+        this.getParent();
       });
     },
     getParent() {
-      let param = `ApiName=GetStock&Id=${this.detailData.parent}`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((res) => {
+      let url = `/v3/helper/detail-item/stock?id=${this.detailData['parent']}`;
+      $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
-        if (data[0] && data[0].stocks) {
-          data = data[0].stocks;
-          this.parentData = data;
-          this.parentData[0].packaging_name =
-            data[0][`name_packaging_l${data[0].packaging_level}`];
-
-          this.parentData[0].epc_type = data[0].epc_type.toUpperCase();
-        }
+        this.parentData = data;
       });
     },
-    testHandle() {},
     handleClickExport() {
       domtoimage
         .toPng(this.$refs.content, {
           width: 3508,
           height: 2480,
           style: {
-            transform: "scale(0.7)",
-            "transform-origin": "top left",
+            transform: 'scale(0.7)',
+            'transform-origin': 'top left',
           },
         })
         .then(function (data) {
           var img = new Image();
           img.src = data;
           const doc = new jsPDF({
-            orientation: "portrait",
-            format: "a4",
+            orientation: 'portrait',
+            format: 'a4',
           });
-          doc.addImage(img, "JPEG", 2, 0);
+          doc.addImage(img, 'JPEG', 2, 0);
           const date = new Date();
           const filename =
-            "showstatus_" +
+            'showstatus_' +
             date.getFullYear() +
-            ("0" + (date.getMonth() + 1)).slice(-2) +
-            ("0" + date.getDate()).slice(-2) +
-            ("0" + date.getHours()).slice(-2) +
-            ("0" + date.getMinutes()).slice(-2) +
-            ("0" + date.getSeconds()).slice(-2) +
-            ".pdf";
+            ('0' + (date.getMonth() + 1)).slice(-2) +
+            ('0' + date.getDate()).slice(-2) +
+            ('0' + date.getHours()).slice(-2) +
+            ('0' + date.getMinutes()).slice(-2) +
+            ('0' + date.getSeconds()).slice(-2) +
+            '.pdf';
           doc.save(filename);
         });
     },
     renderEpcHr(item) {
-      item = item.replace(/\(/g, " (");
+      if (!item) return '';
+      item = item.replace(/\(/g, ' (');
       item = item.trim();
       return item;
     },
@@ -311,7 +339,7 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
-          no: this.getNumber(index + 1),
+          no: index + 1,
         };
       });
     },

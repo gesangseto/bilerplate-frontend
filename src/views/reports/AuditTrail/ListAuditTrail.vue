@@ -6,8 +6,9 @@
           <h5>Audit Trail</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransaction
-            :filter="['All', 'User']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'created_by']"
+            status_code="sys_audit_trail"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
@@ -25,6 +26,8 @@
             <template #action="{ item, index }">
               <td>
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'read'"
                   @click="rowViewClicked(item, index)"
                 />
@@ -40,7 +43,7 @@
               @update:activePage="pageChange"
             />
           </template>
-          <ButtonPermission
+          <!-- <ButtonPermission
             exportType="excel"
             :permission="'print'"
             @click="handleClickExport('xls')"
@@ -49,7 +52,7 @@
             exportType="pdf"
             :permission="'print'"
             @click="handleClickExport('pdf')"
-          />
+          /> -->
         </CCardBody>
       </CCard>
     </CCol>
@@ -57,17 +60,15 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
 import {
   capitalizeFirstLetter,
   exportDataReport,
-  calculatePagination,
-} from "../../../utils";
-import { dateFilter } from "../../../constants";
-import { get_log } from "../../../dummy_data";
+  calculatePaginationV3,
+} from '../../../utils';
 
 export default {
-  name: "ListAuditTrail",
+  name: 'ListAuditTrail',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -78,45 +79,54 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "GetWeb_AuditTrail",
         // StartDate: dateFilter.last_3_month.start,
         // EndDate: dateFilter.last_3_month.end,
       },
       items: [],
       fields: [
         {
-          key: "no",
-          label: "No",
+          key: 'id',
+          label: 'ID',
         },
         {
-          key: "created_at",
-          label: "Created",
-          _classes: "font-weight-bold",
+          key: 'created_date',
+          label: 'Date & Time',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "full_name",
-          label: "Access By",
-          _classes: "font-weight-bold",
+          key: 'created_full_name',
+          label: 'User (Full Name)',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "module",
-          label: "Module",
-          _classes: "font-weight-bold",
+          key: '_action',
+          label: 'Method',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "type",
-          label: "Type",
-          _classes: "font-weight-bold",
+          key: 'path',
+          label: 'Path',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "val2",
-          label: "API",
-          _classes: "font-weight-bold",
+          key: 'ip_address',
+          label: 'IP Address',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'user_agent',
+          label: 'User Agent',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'status_desc',
+          label: 'Status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
           sorter: false,
           filter: false,
         },
@@ -126,9 +136,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/system/audit-trail?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -163,9 +174,10 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
+          _action: item.action,
           no: this.getNumber(index + 1),
           type: capitalizeFirstLetter(item.type),
-          dep_sec: item.department_name + " - " + item.section_name,
+          dep_sec: item.department_name + ' - ' + item.section_name,
         };
       });
     },

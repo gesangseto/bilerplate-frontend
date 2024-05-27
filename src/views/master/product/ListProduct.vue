@@ -3,7 +3,11 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader id="card-header">
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
           <h5>Product</h5>
         </CCardHeader>
         <CCardBody>
@@ -23,7 +27,7 @@
               'Release',
             ]" -->
           <HeaderFilterDefault
-            :filter="['All', 'Product Category']"
+            :filter="['All', 'mst_product_category_id']"
             status_code="mst_product"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -47,12 +51,23 @@
                       @click="deleteRow(item, index)"
                     />
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'update'"
                       @click="rowUpdate(item, index)"
                     />
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowRead(item, index)"
+                    />
+                    <ButtonPermission
+                      :buttonProperty="btn_copyProp"
+                      :permission="'create'"
+                      @click="addNew()"
+                      :id="item.id"
+                      :useHref="true"
                     />
                   </td>
                 </template>
@@ -85,12 +100,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData } from "../../../utils";
-import { calculatePagination } from "../../../utils";
+import { deleteMstProduct, getMstProduct } from '../../../resource/MstProduct';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 
 export default {
-  name: "ListProduct",
+  name: 'ListProduct',
 
   mounted() {
     this.page = 1;
@@ -98,69 +112,79 @@ export default {
   },
   data() {
     return {
+      btn_copyProp: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'copy',
+        text: '',
+        tooltip: 'Copy data',
+      },
       filter: {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ProductList",
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
         {
-          key: "itemNo",
-          label: "Item No",
-          sorter: false,
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "name",
-          label: "Product Name",
-          _classes: "font-weight-bold",
+          key: 'itemNo',
+          label: 'Item No',
         },
         {
-          key: "gtin",
-          label: "L1 GTIN",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'gtin',
+          label: 'L1 GTIN',
+        },
+        {
+          key: 'nie',
+          label: 'NIE',
         },
         // {
         //   key: "size",
         // },
         {
-          key: "mst_product_category_name",
-          label: "Category",
+          key: 'product_category_name',
+          label: 'Category',
         },
         {
-          key: "packagingl2_name",
-          label: "L2 Pkg",
+          key: 'packagingl2_name',
+          label: 'L2 Pkg',
         },
         {
-          key: "qty_packagingl2",
-          label: "L2 Qty",
+          key: 'qty_packagingl2',
+          label: 'L2 Qty',
         },
         {
-          key: "product_type",
-          label: "Product Type",
+          key: 'product_type',
+          label: 'Product Type',
           sorter: false,
           filter: false,
         },
         {
-          key: "status",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'status',
+          label: 'Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "show_status",
-          label: "Show",
-          _classes: "font-weight-bold",
+          key: 'show_status',
+          label: 'Show',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -168,26 +192,31 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePagination({
+    async loadData() {
+      let res = await getMstProduct(this.filter);
+      if (!res.error) {
+        this.items = res.data;
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
-      });
+      }
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: '/v3/master/product',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
       this.loadData();
+      this.$forceUpdate();
     },
     handleChangeSize($event) {
       this.filter.limit = $event;
@@ -209,40 +238,23 @@ export default {
         path: `product/create`,
       });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = {
-          ApiName: "DeleteProduct",
-          Params: {
-            id: item.id,
-          },
-        };
-        $axiosMertrack
-          .post("/general/web", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteMstProduct(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },
@@ -251,12 +263,12 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          show_status: item.show_status ? "Yes" : "No",
+          show_status: item.show_status ? 'Yes' : 'No',
           itemNo: item.no,
-          product_type: item.product_type == 0 ? "Serial" : "Non-Serial",
-          categoryName: item.category ? item.category.name : "",
-          packagingL1Name: item.packagingL1 ? item.packagingL1.name : "",
-          gtin: item.gtin ? item.gtin : "",
+          product_type: item.product_type == 0 ? 'Serial' : 'Non-Serial',
+          categoryName: item.category ? item.category.name : '',
+          packagingL1Name: item.packagingL1 ? item.packagingL1.name : '',
+          gtin: item.gtin ? item.gtin : '',
         };
       });
     },

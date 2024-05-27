@@ -8,6 +8,11 @@
           </CCardHeader>
           <CCardBody>
             <CForm>
+              <CInput :disabled="true" horizontal v-model="productCategory.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 label="Name *"
@@ -56,13 +61,11 @@
               </CTextarea>
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
-                {{ action == "Read" ? productCategory.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :inline="true"
-                  :checked.sync="productCategory.status"
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="productCategory.status"
+                  v-on:onChange="productCategory.status = $event"
                 />
               </CRow>
             </CForm>
@@ -78,16 +81,7 @@
               <CIcon name="cil-check-circle" />
               Submit
             </CButton>
-            <CButton
-              type="reset"
-              size="sm"
-              color="danger"
-              class="m-1"
-              @click="cancel()"
-            >
-              <CIcon name="cil-ban" />
-              Cancel
-            </CButton>
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>
@@ -96,20 +90,24 @@
 </template>
 
 <script>
-import { required } from "vuelidate/lib/validators";
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
+import { required } from 'vuelidate/lib/validators';
+import { capitalizeFirstLetter } from '../../../utils';
+import {
+  getMstProductCategory,
+  insertMstProductCategory,
+  updateMstProductCategory,
+} from '../../../resource/MstProductCategory';
 
 export default {
-  name: "ProductCategory",
+  name: 'ProductCategory',
   data() {
     return {
-      action: "",
-      route_action: "",
-      productCategory: { status: "Active" },
+      action: '',
+      route_action: '',
+      productCategory: { status: 'Active' },
       statusOptions: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
     };
   },
@@ -122,21 +120,19 @@ export default {
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
   },
   methods: {
-    loadData() {
-      let param = `ApiName=ProductCategoryList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.productCategory = data;
-      });
+    async loadData() {
+      let param = `id=${this.$route.params.id}`;
+      let _res = await getMstProductCategory(param);
+      this.productCategory = _res.data[0];
     },
 
-    save() {
+    async save() {
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
@@ -144,32 +140,26 @@ export default {
       if (this.$v.$invalid) {
         return;
       }
-      let dataPost = {
-        ApiName: this.$route.params.id
-          ? "UpdateProductCategory"
-          : "InsertProductCategory",
-        Params: this.productCategory,
-      };
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let dataPost = this.productCategory;
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstProductCategory(dataPost);
+        } else {
+          res = await insertMstProductCategory(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
         });
+        if (!res['error']) this.$router.back();
       }
       return;
     },

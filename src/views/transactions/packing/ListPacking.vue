@@ -3,7 +3,11 @@
     <CCol col="12" xl="12">
       <CCard id="print-hide">
         <CCardHeader>
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
           <h5>Packing</h5>
         </CCardHeader>
         <CCardBody>
@@ -24,8 +28,8 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
-                :filter="['All', 'ID', 'Product', 'Warehouse']"
+              <HeaderFilterTransactionV3
+                :filter="['All', 'id', 'product_id', 'warehouse_id']"
                 status_code="trx_pack"
                 v-on:handleClickFilter="handleClickFilter($event)"
                 v-on:handleChangeSize="handleChangeSize($event)"
@@ -44,6 +48,8 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowClicked(item, index)"
                     />
@@ -79,11 +85,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListPacking",
+  name: 'ListPacking',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -94,52 +100,56 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "PackList",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: '_warehouse.name',
+          label: 'Warehouse',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial_no",
-          label: "Packing SN",
+          key: 'serial',
+          label: 'Packing SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'quantity_lvl_1',
+          label: 'L1 Qty',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "full_name",
-          label: "Created By",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "action",
-          label: "Action",
+          key: '_created.full_name',
+          label: 'Created By',
+        },
+        {
+          key: 'action',
+          label: 'Action',
           sorter: false,
           filter: false,
         },
@@ -149,10 +159,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/packing?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -163,7 +173,12 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/transaction/packing',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -186,18 +201,17 @@ export default {
     repack() {
       return this.items.map((item) => {
         // END OF EDITED BY GESANG
-        let gtin_cp = "<view for detail>";
-        let serial_no = "<view for detail>";
+        let epc_key = '<view for detail>';
+        let serial = '<view for detail>';
         if (item.child_count == 1) {
-          gtin_cp =
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc;
-          serial_no = item.serial_no;
+          epc_key = item.epc_key;
+          serial = item.serial;
         }
         return {
           ...item,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
-          gtin_cp: gtin_cp,
-          serial_no: serial_no,
+          epc_key: epc_key,
+          serial: serial,
+          ['_created.full_name']: item['_created.full_name'] || '-',
         };
       });
     },

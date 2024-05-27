@@ -47,9 +47,23 @@
     <CModal centered="centered" :show.sync="notifModal" title="Notification">
       <template #header>
         <h5 class="modal-title">Notification</h5>
-        Click icon bell to remove notification
+        <CButton
+          v-if="notif.length > 0"
+          type="submit"
+          size="sm"
+          color="danger"
+          @click="readNotifAll()"
+        >
+          Clear All
+        </CButton>
       </template>
 
+      <a
+        v-if="notif.length > 0"
+        style="background-color: yellow; font-size: x-small"
+      >
+        Click icon bell to remove notification
+      </a>
       <CRow v-for="item in notif" :key="item.id">
         <CCol key="item.id" sm="11" md="11">
           <CButton @click="readNotif(item)"><CIcon name="cil-bell" /></CButton>
@@ -101,21 +115,31 @@
 </template>
 
 <script>
-import TheHeaderDropdownAccnt from "./TheHeaderDropdownAccnt";
-import $axiosMertrack from "../apiMertrack";
-import moment from "moment";
+import TheHeaderDropdownAccnt from './TheHeaderDropdownAccnt';
+import {
+  getMstNotification,
+  updateMstNotification,
+} from '../resource/MstNotification';
+import {
+  setLoginTimeout,
+  getLoginTimeout,
+  getRole,
+  getProfile,
+  clearStorage,
+} from '../utils';
+import moment from 'moment';
 export default {
-  name: "TheHeader",
+  name: 'TheHeader',
   components: {
     TheHeaderDropdownAccnt,
   },
   data() {
     return {
       path_url: [],
-      then: moment().add(15, "minutes"),
+      then: moment().add(15, 'minutes'),
       current_route: null,
       limit: 30,
-      timeout: 0,
+      timeout: null,
       can_show: true,
       timeoutModal: false,
       notif: null,
@@ -123,17 +147,17 @@ export default {
       notifLength: 0,
       notification: 0,
       notifId: [],
+      next_count: true,
     };
   },
   mounted() {
     this.timeout = this.getDifferentSecond();
     this.getNotif();
-    this.countingTImeOut();
   },
   beforeCreate() {
-    if (localStorage.getItem("is_login") != "true") {
-      localStorage.clear();
-      this.$router.push({ path: `/login` });
+    if (!getProfile()) {
+      clearStorage();
+      return this.$router.push({ path: `/login` });
     }
   },
   watch: {
@@ -147,18 +171,53 @@ export default {
         this.checkPermission(route);
       },
     },
+    timeout: {
+      immediate: true,
+      handler(val) {
+        if (val != null && val > 0 && this.next_count) {
+          this.next_count = false;
+          if (val <= this.limit) {
+            if (!this.timeoutModal) {
+              this.can_show = true;
+            }
+            if (val <= this.limit && this.can_show) {
+              this.timeoutModal = true;
+              this.can_show = false;
+            }
+          } else {
+            this.timeoutModal = false;
+            this.can_show = true;
+          }
+          // Resync timeout setiap 10 detik
+          if (val % 10 == 0) {
+            setTimeout(() => {
+              let diff = this.getDifferentSecond();
+              this.next_count = true;
+              this.timeout = diff === val ? val - 1 : diff;
+            }, 1000);
+          } else {
+            setTimeout(() => {
+              this.next_count = true;
+              this.timeout -= 1;
+            }, 1000);
+          }
+        } else if (val != null && val <= 0) {
+          this.sessionExpired();
+        }
+      },
+    },
   },
   methods: {
     handleClickLink(it, index) {
       if (!index) {
-        this.$router.push({ path: `/dashboard` });
+        this.$router.push({ path: `/home` });
         return;
       }
       let url = this.path_url[index + 1];
-      if (url.path.indexOf("/:") < 1) {
+      if (url.path.indexOf('/:') < 1) {
         url = url.path;
       } else {
-        url = url.path.substring(0, url.path.indexOf("/:"));
+        url = url.path.substring(0, url.path.indexOf('/:'));
       }
       if (url !== this.current_route.path) {
         this.$router.push({ path: `${url}` });
@@ -167,50 +226,26 @@ export default {
     },
 
     getDifferentSecond() {
-      let time_out = localStorage.getItem("time_out");
+      let time_out = getLoginTimeout();
       let time_now = moment(new Date())
-        .add(1, "seconds")
-        .format("DD/MM/YYYY HH:mm:ss:SSS");
-      let time_diff = moment(time_out, "DD/MM/YYYY HH:mm:ss").diff(
-        moment(time_now, "DD/MM/YYYY HH:mm:ss")
+        .add(1, 'seconds')
+        .format('DD/MM/YYYY HH:mm:ss:SSS');
+      let time_diff = moment(time_out, 'DD/MM/YYYY HH:mm:ss').diff(
+        moment(time_now, 'DD/MM/YYYY HH:mm:ss')
       );
       let sisa = parseInt(time_diff / 1000);
       return sisa;
     },
 
-    countingTImeOut() {
-      if (this.timeout > 0) {
-        let sisa = this.timeout - 1;
-        if (sisa > this.limit) {
-          sisa = this.getDifferentSecond();
-          this.timeoutModal = false;
-          this.can_show = true;
-        }
-        if (!this.timeoutModal) {
-          sisa = this.getDifferentSecond();
-          this.can_show = true;
-        }
-        if (sisa <= this.limit && this.can_show) {
-          this.timeoutModal = true;
-          this.can_show = false;
-        }
-        this.timeout = sisa;
-        setTimeout(() => {
-          this.countingTImeOut();
-        }, 1000);
-      } else if (this.timeout <= 0) {
-        this.sessionExpired();
-        return;
-      }
-    },
     handleClickClose() {
+      this.timeout = 9999;
       this.timeoutModal = false;
       this.getNotif();
     },
     checkPermission(route) {
       let can_access = false;
       var method = route.params.type;
-      let role = JSON.parse(localStorage.getItem("role"));
+      let role = getRole();
       for (const it of role) {
         if (route.path.includes(it.link)) {
           if (method) {
@@ -220,56 +255,61 @@ export default {
           }
         }
       }
-      if (route.path === "/setting/user-setting") {
+      let allow_access = ['/setting/user-setting', '/home'];
+      if (allow_access.includes(route.path)) {
         can_access = true;
       }
-      if (can_access === "false" || !can_access) {
+      if (can_access === 'false' || !can_access) {
         this.$router.push({ path: `/oops` });
       }
     },
-    readNotif(item) {
-      let body = {
-        ApiName: "UpdateNotification",
-        Params: {
-          ids: [item.id],
-        },
-      };
-      $axiosMertrack.post(`/general/web`, body).then((res) => {
-        this.$toast.open({
-          message: res.data.error
-            ? res.data.message
-            : "Data has been saved succesfully ",
-          type: res.data.error ? "error" : "success",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
-        this.getNotif();
+    async readNotif(item) {
+      let _res = await updateMstNotification({ id: [item.id] });
+      this.$toast.open({
+        message: _res.error ? _res.message : 'Data has been saved succesfully ',
+        type: _res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
       });
-      return;
+      this.getNotif();
     },
-    getNotif() {
-      let param = `ApiName=GetNotification&Params={}&Id=&page=&limit=&searchText=`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        if (res.data.StatusCode && res.data.StatusCode == "401") {
+    async readNotifAll() {
+      let message = `You are about to clear all existing notifications. All cleared notifications cannot be restored.\nAre you sure you want to continue?`;
+      if (!confirm(message)) {
+        return;
+      }
+      let _res = await updateMstNotification({ id: 'all' });
+      this.$toast.open({
+        message: _res.error ? _res.message : 'Data has been saved succesfully ',
+        type: _res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      this.getNotif();
+    },
+    async getNotif() {
+      let _res = await getMstNotification();
+      if (_res) {
+        if (_res.status_code && _res.status_code == '401') {
           this.sessionExpired();
           return;
         }
-        this.notif = res.data.data;
-        this.notifLength = res.data.data.length;
-      });
+        this.notif = _res.data;
+        this.notifLength = _res.data.length;
+        this.timeout = this.getDifferentSecond();
+      }
       return;
     },
     sessionExpired() {
-      localStorage.clear();
-      let message = "Your login session has expired, please login again.";
-      localStorage.setItem("current_url", this.current_route.path);
-      localStorage.setItem("message", message);
-      this.$router.push({ path: "/login" });
-      let time_out = moment()
-        .add(-1, "seconds")
-        .format("DD/MM/YYYY HH:mm:ss:SSS");
-      localStorage.setItem("time_out", `${time_out}`);
+      let message = 'Your login session has expired, please login again.';
+      localStorage.setItem('current_url', this.current_route.path);
+      localStorage.setItem('message', message);
+      clearStorage();
+      this.$router.push({ path: '/login' });
+      this.timeout = null;
+      setLoginTimeout(-1);
       // window.location.reload();
       return;
     },

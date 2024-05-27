@@ -35,7 +35,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="transfer.full_name"
+                      v-model="transfer.created_full_name"
                     />
                   </td>
                 </tr>
@@ -45,7 +45,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="transfer.warehouse_name_from"
+                      v-model="transfer.from_warehouse_name"
                     />
                   </td>
                 </tr>
@@ -55,7 +55,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="transfer.warehouse_name_to"
+                      v-model="transfer.to_warehouse_name"
                     />
                   </td>
                 </tr>
@@ -79,7 +79,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="transfer.full_name_modified_by"
+                      v-model="transfer.modified_full_name"
                     />
                   </td>
                 </tr>
@@ -110,6 +110,25 @@
                       class="form-control"
                       readonly
                       v-model="transfer.reason"
+                    />
+                  </td>
+                </tr>
+
+                <tr style="height: 50px" v-for="index in 1" :key="index">
+                  <td
+                    style="width: 40%"
+                    v-if="transfer[`quantity_lvl_${index}`] > 0"
+                  >
+                    {{ 'L' + index }} Quantity
+                  </td>
+                  <td
+                    style="width: 60%"
+                    v-if="transfer[`quantity_lvl_${index}`] > 0"
+                  >
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="transfer[`quantity_lvl_${index}`]"
                     />
                   </td>
                 </tr>
@@ -147,19 +166,23 @@
           </div>
         </CCardBody>
         <CCardFooter>
-          <button
-            class="btn btn-sm btn-primary float-right"
-            type="button"
-            @click="back()"
-          >
-            <CIcon name="cil-arrow-left" /> Back
-          </button>
+          <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardFooter>
       </CCard>
     </div>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailTransaction v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -169,54 +192,56 @@
   </div>
 </template>
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3 } from '../../../utils';
 export default {
   data() {
     return {
       items: [],
-      action: "",
+      action: '',
       viewModal: false,
       view: {},
       transfer: {},
       detail_item: {},
       fieldItem: [
-        { key: "no", label: "Item No" },
+        { key: 'no', label: 'Item No' },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
-        { key: "nie", label: "NIE" },
-        { key: "gtin_cp", label: "GTIN / CP" },
+        { key: 'nie', label: 'NIE' },
+        { key: 'epc_key', label: 'EPC Key' },
         {
-          key: "serial_id",
-          label: "SN",
-        },
-        {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
-        { key: "quantity", label: "L1 Qty" },
-        { key: "action", label: "Action", sorter: false, filter: false },
+        {
+          key: 'packaging_name',
+          label: 'Pkg Name',
+        },
+        { key: 'quantity', label: 'L1 Qty' },
+        { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
     };
   },
   mounted() {
-    this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     // get data detail stock transfer
-    let param = `ApiName=ListTransfer&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-    $axiosMertrack.get(`general/web?${param}`).then((response) => {
+
+    let url = `/v3/transaction/transfer?raw=true&id=${this.$route.params.id}`;
+    $axiosMertrack.get(url).then((response) => {
       let data = response.data.data[0];
       //
       this.transfer = data;
@@ -225,9 +250,9 @@ export default {
       } else {
         this.$toast.open({
           message: `No data to be viewed`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }
@@ -242,9 +267,9 @@ export default {
       if (item.packaging_level == 1) {
         this.$toast.open({
           message: `No detail SN data to be viewed, SN [${item.serial_id}] is Packaging L1`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -256,16 +281,22 @@ export default {
       this.view = {};
       this.viewModal = false;
     },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+        },
+        exportType: type,
+        url: '/v3/transaction/transfer',
+      });
+    },
   },
   computed: {
     detailItem() {
       return this.items.map((item) => {
-        let packaging_name = item[`name_packaging_l${item.packaging_level}`];
         return {
           ...item,
-          packaging_name: packaging_name,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

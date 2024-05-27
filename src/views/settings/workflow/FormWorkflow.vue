@@ -28,7 +28,7 @@
                 readonly
                 placeholder="--Select--"
                 horizontal
-                :value.sync="workflow.transaction_id_desc"
+                :value.sync="workflow['transaction_label']"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -106,16 +106,7 @@
               <CIcon name="cil-check-circle" />
               Submit
             </CButton>
-            <CButton
-              type="reset"
-              size="sm"
-              class="m-1"
-              color="danger"
-              @click="cancel()"
-            >
-              <CIcon name="cil-ban" />
-              Cancel
-            </CButton>
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>
@@ -161,16 +152,9 @@ export default {
     };
   },
   methods: {
-    loadDetailWorkflow() {
-      let param = `ApiName=ListPicking&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.workflow = data;
-      });
-    },
     loadWorkflowList() {
-      let param = `ApiName=GetWorkflow&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let param = `raw=true&id=${this.$route.params.id}`;
+      $axiosMertrack.get(`/v3/master/workflow?${param}`).then((response) => {
         let data = response.data.data[0];
         this.workflow = data;
       });
@@ -193,23 +177,18 @@ export default {
       }
     },
     checkDuplicateApproval() {
-      var keys = Object.keys(this.workflow);
       var dupe = false;
       let index_duplicate = [];
-
-      for (var i = 0; i < keys.length; i++) {
-        for (var j = i + 1; j < keys.length; j++) {
-          if (
-            this.workflow[keys[i]] === this.workflow[keys[j]] &&
-            this.workflow[keys[i]] &&
-            this.workflow[keys[i]] === parseInt(this.workflow[keys[i]], 10)
-          ) {
-            index_duplicate.push(keys[i], keys[j]);
+      for (var i = 1; i <= 4; i++) {
+        let usr_id = this.workflow[`approval_${i}`];
+        for (var x = 1; x <= 4; x++) {
+          let find = this.workflow[`approval_${x}`];
+          if (usr_id && i != x && usr_id === find) {
+            index_duplicate.push([`approval_${i}`], [`approval_${x}`]);
             dupe = true;
             break;
           }
         }
-
         if (dupe) {
           this.err_workflow[index_duplicate[0]] = false;
           this.err_workflow[index_duplicate[1]] = false;
@@ -246,23 +225,19 @@ export default {
         return;
       }
       // check duplicate approval
-
       let body = {
-        ApiName: "UpdateWorkflow",
-        Params: {
-          id: this.$route.params.id,
-          approval_1: this.workflow.approval_1,
-          approval_2: this.workflow.approval_2,
-          approval_3: this.workflow.approval_3,
-          approval_4: this.workflow.approval_4,
-        },
+        id: this.$route.params.id,
+        approval_1: this.workflow.approval_1,
+        approval_2: this.workflow.approval_2,
+        approval_3: this.workflow.approval_3,
+        approval_4: this.workflow.approval_4,
       };
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post("/general/web", body).then((result) => {
+        $axiosMertrack.post("/v3/master/workflow", body).then((result) => {
           this.$isLoading(false);
           let res = result.data;
           this.$toast.open({
@@ -282,8 +257,7 @@ export default {
       return;
     },
     loadUser() {
-      let param = `ApiName=UserList`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      $axiosMertrack.get(`/v3/master/user?status=Active`).then((res) => {
         var userMapping = res.data.data.map((item) => {
           return {
             label: item.full_name,

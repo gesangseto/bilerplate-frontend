@@ -3,27 +3,16 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
           <h5>Picking List</h5>
         </CCardHeader>
         <CCardBody>
-          <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-          <HeaderFilterTransaction
-            :filter="['All', 'ID', 'Warehouse', 'Customer']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'id', 'warehouse_id', 'customer_id']"
             status_code="trx_picking"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -44,6 +33,8 @@
               <template #action="{ item, index }">
                 <td>
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'read'"
                     @click="rowClicked(item, index)"
                   />
@@ -55,6 +46,8 @@
                   />
                   <ButtonPermission
                     v-if="item.status === 99"
+                    :id="item.id"
+                    :useHref="true"
                     :buttonProperty="btn_updateProperty"
                     :permission="'update'"
                     @click="rowUpdate(item, index)"
@@ -96,11 +89,12 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
+import moment from 'moment';
 export default {
-  name: "ListPickingList",
+  name: 'ListPickingList',
   mounted() {
     this.pages = [10, 20, 50, 100];
     this.page = 1;
@@ -110,75 +104,79 @@ export default {
   data() {
     return {
       btn_deleteProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        tooltip: "Cancel",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'window-close',
+        tooltip: 'Cancel',
       },
       btn_updateProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "success",
-        icon: "edit",
-        text: "DO",
-        tooltip: "Input DO",
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'edit',
+        text: 'DO',
+        tooltip: 'Input DO',
       },
       path: this.$route.path,
       filter: {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ListPicking",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       cancelProperty: {
-        title: "Picking List",
+        title: 'Picking List',
         modal: false,
         id: null,
-        reason: "",
+        reason: '',
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "so_number",
-          label: "SO No",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No, L1 Qty]',
         },
         {
-          key: "so_date",
-          label: "SO Date",
+          key: 'so_number',
+          label: 'SO No',
         },
         {
-          key: "erp_number",
-          label: "ERP Picking List",
+          key: 'so_date',
+          label: 'SO Date',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: 'erp_number',
+          label: 'ERP Picking List',
         },
         {
-          key: "customer_name",
-          label: "Customer",
+          key: 'warehouse_name',
+          label: 'Warehouse',
         },
         {
-          key: "status_desc",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'customer_name',
+          label: 'Customer',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:11%",
+          key: 'status_desc',
+          label: 'Status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:11%',
           sorter: false,
           filter: false,
         },
@@ -188,9 +186,11 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/picking?raw=true&${param}`;
+
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -201,7 +201,12 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/transaction/picking',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -227,27 +232,23 @@ export default {
     },
     handleCancel() {
       let data = {
-        ApiName: "PickingDecision",
-        Params: {
-          id: this.cancelProperty.id,
-          approved: false,
-          doNumber: "",
-          reason: this.cancelProperty.reason,
-        },
+        id: this.cancelProperty.id,
+        approved: false,
+        reason: `[CANCEL] ${this.cancelProperty.reason}`,
       };
       this.$isLoading(true);
       $axiosMertrack
-        .post("/general/web", data)
+        .post('/v3/transaction/picking', data)
         .then((result) => {
           this.$isLoading(false);
           this.loadData();
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
-              : "Transaction has been canceled succesfully",
-            type: result.data.error ? "error" : "success",
+              : 'Transaction has been canceled succesfully',
+            type: result.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         })
@@ -255,14 +256,14 @@ export default {
           this.$isLoading(false);
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       this.cancelProperty.id = null;
-      this.cancelProperty.reason = "";
+      this.cancelProperty.reason = '';
       this.cancelProperty.modal = false;
     },
   },
@@ -271,6 +272,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          so_date: moment(item.so_date).format('YYYY-MM-DD'),
         };
       });
     },

@@ -23,11 +23,11 @@
               'Distribution',
               'Release',
             ]" -->
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :costume_filter="[
                   {
-                    value: 'Operation',
-                    code: 'Operation',
+                    value: 'activate',
+                    code: 'activate',
                     label: 'Operation',
                     data: [
                       { value: '0', label: 'Decommission ' },
@@ -37,20 +37,20 @@
                 ]"
                 :filter="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Warehouse',
-                  'Requested By',
-                  'Next Approval',
+                  'id',
+                  'product_id',
+                  'warehouse_id',
+                  'requested_by',
+                  'approval_id',
                 ]"
                 :order="[
                   'All',
-                  'ID',
-                  'Product',
-                  'Warehouse',
-                  'Operation',
-                  'Requested By',
-                  'Next Approval',
+                  'id',
+                  'product_id',
+                  'warehouse_id',
+                  'activate',
+                  'requested_by',
+                  'approval_id',
                 ]"
                 status_code="trx_decomissioning"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -70,11 +70,15 @@
                 <template #action="{ item, index }">
                   <td>
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       :permission="'read'"
                       @click="rowViewClicked(item, index)"
                     />
                     &nbsp;
                     <ButtonPermission
+                      :id="item.id"
+                      :useHref="true"
                       v-if="item.approval_id == user_id && item.status == 0"
                       :permission="'approve'"
                       @click="rowUpdateClicked(item, index)"
@@ -110,11 +114,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3, getUserId } from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "DetailDecommissioning",
+  name: 'DetailDecommissioning',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -125,52 +129,52 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "DecommissionWorkflowList",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
-      user_id: localStorage.getItem("user_id"),
+      user_id: getUserId(),
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_date",
-          label: "Trx Date",
+          key: 'created_date',
+          label: 'Trx Date',
         },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: 'warehouse_name',
+          label: 'Warehouse',
         },
         {
-          key: "activate_desc",
-          label: "Operation",
-          _classes: "font-weight-bold",
+          key: 'activate_desc',
+          label: 'Operation',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "full_name",
-          label: "Requested By",
+          key: 'created_full_name',
+          label: 'Requested By',
         },
         {
-          key: "status_desc",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'status_desc',
+          label: 'Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "next_approval",
-          label: "Next Approval",
+          key: 'next_approval',
+          label: 'Next Approval',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
           sorter: false,
           filter: false,
         },
@@ -180,10 +184,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/comm-decomm?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -194,7 +198,12 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/transaction/comm-decomm',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -217,7 +226,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          next_approval: item.status !== 0 ? "" : item.approval_full_name,
+          created_full_name: item.created_full_name || '-',
+          next_approval: item.status !== 0 ? '' : item.approval_full_name,
         };
       });
     },

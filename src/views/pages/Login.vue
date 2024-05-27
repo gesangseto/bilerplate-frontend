@@ -8,7 +8,7 @@
               <CForm>
                 <!-- <h1>Login</h1> -->
                 <img
-                  v-bind:src="entityLogo"
+                  v-bind:src="loginLogo"
                   class="mb-5"
                   style="width: 120px; heigth: auto"
                 />
@@ -17,6 +17,8 @@
                   placeholder="Username"
                   autocomplete="username email"
                   v-model="email"
+                  data-layout="normal"
+                  @focus="showKeyboard = $event"
                 >
                   <template #prepend-content
                     ><CIcon name="cil-user"
@@ -28,6 +30,7 @@
                   autocomplete="curent-password"
                   v-model="password"
                   @keyup="loginEnter"
+                  @focus="showKeyboard = $event"
                 >
                   <template #prepend-content
                     ><CIcon name="cil-lock-locked"
@@ -66,7 +69,9 @@
               </div>
               <div class="ml-auto">
                 <div>
-                  <span class="mr-1">Copyright &copy; 2022</span>
+                  <span class="mr-1"
+                    >Copyright &copy; {{ new Date().getFullYear() }}</span
+                  >
                   <a href="http://merindo.co.id/" target="_blank">
                     PT Merindo Makmur</a
                   >
@@ -93,64 +98,122 @@
         </CCardGroup>
       </CCol>
     </CRow>
+    <VirtualKeyboard :visible="showKeyboard" />
+    <!-- <vue-fab
+      size="small"
+      :mainBtnColor="useKeyboard ? '#ff9900' : '#b5adac'"
+      :icon="useKeyboard ? 'keyboard_hide' : 'keyboard'"
+      @clickMainBtn="clickMainBtn"
+      :menu="[]"
+      style="right: 99%; top: 95%"
+    >
+    </vue-fab> 
+    Ini adalah floating button untuk menampilkan virtual keyboard
+    -->
   </CContainer>
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import moment from "moment";
 import {
   reformatRole,
-  reformatMenu,
-  isThatYou,
   setAsSuperAdmin,
-} from "../../utils";
-import { logoMertrack } from "../../constants";
-// import simpleStorage from "simplestorage.js";
+  convertMenuV3,
+  flatten,
+  setLoginTimeout,
+  setRole,
+  setConfig,
+  setProfile,
+  getProfile,
+  setMenu,
+  getLoginLogo,
+} from '../../utils';
+import { logoMertrack } from '../../constants';
+import { getSysConfig } from '../../resource/SysConfig';
+import { authLogin } from '../../resource/SysAuth';
+
 export default {
-  name: "Login",
+  name: 'Login',
 
   data() {
     return {
+      showKeyboard: false,
       copyright: logoMertrack,
       message: null,
       email: null,
       password: null,
-      entityLogo: null,
+      loginLogo: null,
       showPassword: false,
+      useKeyboard: false,
+
+      // visible: false,
+      layout: 'normal',
+      input: null,
+      options: {
+        useKbEvents: false,
+        preventClickEvent: false,
+      },
     };
   },
   mounted() {
+    this.loginLogo = getLoginLogo();
+    this.loadConfig();
     this.message = null;
-    if (!this.message && localStorage.getItem("message")) {
-      this.message = localStorage.getItem("message");
-      localStorage.removeItem("message");
+    if (!this.message && localStorage.getItem('message')) {
+      this.message = localStorage.getItem('message');
+      localStorage.removeItem('message');
     }
-    $axiosMertrack.get(`general/web?ApiName=GetConfig`).then((result) => {
-      localStorage.setItem(
-        "configuration",
-        JSON.stringify(result.data.data[0])
-      );
-      this.entityLogo = result.data.data[0].identity_logo_path;
-    });
   },
-  beforeCreate() {
-    if (localStorage.getItem("is_login") == "true") {
-      if (localStorage.getItem("current_url")) {
-        this.$router.push({ path: localStorage.getItem("current_url") });
+
+  beforeMount() {
+    if (getProfile()) {
+      if (localStorage.getItem('current_url')) {
+        this.$router.push({ path: localStorage.getItem('current_url') });
         return;
       }
-      this.$router.push({ path: `dashboard` });
+      this.redirectReload();
     }
   },
+
   methods: {
+    clickMainBtn() {
+      this.useKeyboard = !this.useKeyboard;
+      localStorage.setItem('use_keyboard', this.useKeyboard.toString());
+      window.dispatchEvent(
+        new CustomEvent('use_keyboard', {
+          detail: {
+            storage: localStorage.getItem('use_keyboard'),
+          },
+        })
+      );
+    },
+    redirectReload() {
+      if (localStorage.getItem('current_url')) {
+        this.$router
+          .push({ path: localStorage.getItem('current_url') })
+          .then(() => {
+            // this.$router.go();
+          });
+      } else {
+        this.$router.push({ path: '/home' }).then(() => {
+          // this.$router.go();
+        });
+      }
+    },
+    async loadConfig() {
+      let _res = await getSysConfig();
+      if (_res) {
+        setConfig(_res.data[0]);
+        this.loginLogo = getLoginLogo();
+      }
+    },
+
     loginEnter(event) {
       if (event.keyCode === 13) {
         this.login();
       }
     },
 
-    login() {
+    async login() {
       let param = {
         email: this.email,
         password: this.password,
@@ -158,78 +221,44 @@ export default {
       if (!this.email || !this.password) {
         this.$toast.open({
           message: `Please enter username and password`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
       }
-      if (isThatYou({ param: param })) {
-        window.location.reload();
+      this.$isLoading(true);
+      let res = await authLogin(param);
+      this.$isLoading(false);
+      if (res) {
+        this.$toast.open({
+          message: `${res.message}`,
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        let _data = res.data[0];
+        if (_data.id == 0) {
+          _data = setAsSuperAdmin(_data);
+        }
+
+        let menu = [
+          {
+            _name: 'CSidebarNav',
+            _children: convertMenuV3(_data.role_menu),
+          },
+        ];
+        let role = reformatRole(flatten(_data.role_menu, 'items'));
+        setMenu(menu);
+        setRole(role);
+
+        setProfile(_data);
+        setLoginTimeout(_data.idletimeout ?? 0);
+        this.redirectReload();
         return;
       }
-      this.$isLoading(true);
-      let dataPost = {
-        ApiName: "userLogin",
-        Params: {
-          email: this.email,
-          password: this.password,
-        },
-      };
-      $axiosMertrack
-        .post(`general/mobile`, dataPost)
-        .then((result) => {
-          let res = result.data;
-          this.$toast.open({
-            message: `${res.message}`,
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          this.$isLoading(false);
-          if (!res.error) {
-            if (res.data[0].id == 0) {
-              setAsSuperAdmin();
-              window.location.reload();
-              return;
-            }
-            let menu = [
-              {
-                _name: "CSidebarNav",
-                _children: reformatMenu(res.data[0].menu),
-              },
-            ];
-            let role = reformatRole(res.data[0].role);
-            let time_out = res.data[0].idletimeout ?? 0;
-            localStorage.setItem("menu", JSON.stringify(menu));
-            localStorage.setItem("role", JSON.stringify(role));
-            localStorage.setItem("profile", JSON.stringify(res.data[0]));
-            localStorage.setItem("user_id", res.data[0].id);
-            localStorage.setItem("token", res.data[0].token);
-            localStorage.setItem("is_login", true);
-            localStorage.setItem("app_image", this.entityLogo);
-            localStorage.setItem(
-              "time_out",
-              `${moment()
-                .add(time_out, "minutes")
-                .format("DD/MM/YYYY HH:mm:ss:SSS")}`
-            );
-            window.location.reload();
-          }
-        })
-        .catch((err) => {
-          this.$isLoading(false);
-          this.$toast.open({
-            message: `Error : ${err}`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-        });
-      return;
     },
   },
 };

@@ -13,6 +13,7 @@
         :options="printers"
         placeholder="Please select"
       />
+      <CInput horizontal v-model="formData.reason" label="Reason" />
       <!-- <label for="installedPrinterName">Select an installed Printer: </label>
       <select name="printer" id="printer" v-model="selected_printer">
         <option disabled n-bind:key="undefined">Select printer</option>
@@ -21,11 +22,15 @@
         </option>
       </select> -->
     </div>
-    <p>Visit : <CLink>https://www.neodynamic.com/downloads/jspm/</CLink></p>
 
     <template #footer>
-      <CButton size="sm" color="success" type="button" @click="doPrintZPL()">
-        Print
+      <CButton
+        size="sm"
+        color="success"
+        type="button"
+        @click="handleClickPrint()"
+      >
+        Print [{{ formData.print_count ? formData.print_count : '-' }}]
       </CButton>
       <CButton
         size="sm"
@@ -41,29 +46,25 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-// import Printers from "./Printer.vue";
-import * as JSPM from "jsprintmanager";
-import $axiosSupport from "../../apiSupport";
+import $axiosMertrack from '../../apiMertrack';
+import * as JSPM from 'jsprintmanager';
 export default {
-  name: "ModalPrintLabel",
-  props: ["item"],
+  name: 'ModalPrintLabelV3',
+  props: ['item'],
   watch: {
     selected_printer(value) {
-      this.$emit("change", value);
+      this.$emit('change', value);
     },
     isOpenModal() {
       if (!this.isOpenModal) {
-        this.printData = "";
-        this.$emit("onClose");
+        this.printData = '';
+        this.$emit('onClose');
       }
     },
     item: {
-      handler(n, o) {
+      handler(n) {
         if (Object.keys(n).length > 0) {
-          // this.loadData(n);
-          this.loadDataV2(n);
-          this.isOpenModal = true;
+          this.loadData(n);
         }
       },
       deep: true,
@@ -77,11 +78,19 @@ export default {
   data() {
     return {
       isOpenModal: false,
-      printData: "",
+      printData: '',
       print2default: false,
       printers: [],
-
-      selected_printer: "",
+      selected_printer: '',
+      formData: {
+        id: '',
+        serial: '',
+        epc_key: '',
+        reason: '',
+        update_count: true,
+        print_count: 1,
+        items: [],
+      },
     };
   },
   mounted() {
@@ -99,86 +108,108 @@ export default {
         });
       };
     },
-    loadData(itm) {
-      let param = `ApiName=GetStock&Params={"itf":"1"}&Id=${itm.stock_serial_id}`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((result) => {
-        let _data = result.data.data;
-        try {
-          _data = _data[0].stocks[0];
-          if (!_data.itf_content) {
-            this.isOpenModal = false;
-            throw new Error(`Validate serial failed!`);
-          }
-          this.printData = _data.itf_content;
-        } catch (error) {
-          this.$toast.open({
-            message: `${error}`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 3000,
-          });
-        }
-      });
-    },
 
-    loadDataV2(itm) {
+    loadData(itm) {
       let _body = { items: [] };
       if (itm.items) {
         for (const it of itm.items) {
           _body.items.push(it);
         }
-        $axiosSupport.post(`/helper/print-layout`, _body).then((result) => {
+        $axiosMertrack.post(`/v3/helper/print-layout`, _body).then((result) => {
           let _data = result.data;
           if (_data.error) {
-            this.isOpenModal = false;
             return this.$toast.open({
               message: `${_data.message}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 3000,
             });
+          } else {
+            this.formData.items = _data.data;
+            this.formData.print_count = null;
+            this.isOpenModal = true;
           }
-          let content = "";
-          for (const it of _data.data) {
-            content += it._layout;
-          }
-          this.printData = content;
         });
       } else if (!itm.items) {
-        let id = itm.stock_serial_id ?? itm.trx_pack_stock_serial_id;
-        let serial = itm.serial_no ?? itm.trx_pack_serial_no;
-        let gtin_sscc = itm.gtin_sscc ?? itm.gtin_sscc_trx_pack;
+        let serial = itm.trx_pack_serial || itm.serial;
+        let epc_key = itm.trx_pack_epc_key || itm.epc_key;
         _body = {
-          id: id,
           serial: serial,
-          gtin_sscc: gtin_sscc,
+          epc_key: epc_key,
         };
         var _url = new URLSearchParams(_body).toString();
-        $axiosSupport.get(`/helper/print-layout?${_url}`).then((result) => {
+        $axiosMertrack.get(`/v3/helper/print-layout?${_url}`).then((result) => {
           let _data = result.data;
           if (_data.error) {
             this.isOpenModal = false;
             return this.$toast.open({
               message: `${_data.message}`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 3000,
             });
+          } else {
+            this.formData = _data.data[0];
+            this.isOpenModal = true;
           }
-          this.printData = _data.data[0]._layout;
         });
       }
       return;
     },
-    doPrintZPL() {
-      if (this.selected_printer === "" && !this.print2default) {
-        alert("You must select a printer");
+    postAndPrint() {
+      let _body = {
+        reason: this.formData?.reason || '-',
+      };
+      if (this.formData?.items && this.formData?.items.length > 0) {
+        _body.update_count = true;
+        _body.items = this.formData?.items;
+      } else {
+        let serial = this.formData?.trx_pack_serial || this.formData?.serial;
+        let epc_key = this.formData?.trx_pack_epc_key || this.formData?.epc_key;
+        _body.update_count = true;
+        _body.serial = serial;
+        _body.epc_key = epc_key;
+      }
+      $axiosMertrack.post(`/v3/helper/print-layout`, _body).then((result) => {
+        let _data = result.data;
+        if (_data.error) {
+          this.isOpenModal = false;
+          return this.$toast.open({
+            message: `${_data.message}`,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 3000,
+          });
+        }
+        let content_itf = '';
+        for (const it of _data.data) {
+          content_itf += it._layout;
+        }
+        this.printData = content_itf;
+        this.doPrintZPL();
+      });
+      return;
+    },
+
+    handleClickPrint() {
+      if (this.selected_printer === '' && !this.print2default) {
+        alert('You must select a printer');
         return;
       }
-      NProgress.start();
+      let message = `You are about to print this data.\nThis operation will be update the count of print.\nWould you like to continue?`;
+      if (confirm(message)) {
+        this.postAndPrint();
+        return;
+      }
+    },
+    doPrintZPL() {
+      if (this.selected_printer === '' && !this.print2default) {
+        alert('You must select a printer');
+        return;
+      }
       let cpj = new JSPM.ClientPrintJob();
       if (this.print2default) {
         cpj.clientPrinter = new JSPM.DefaultPrinter();
@@ -186,32 +217,11 @@ export default {
         cpj.clientPrinter = new JSPM.InstalledPrinter(this.selected_printer);
       }
       cpj.printerCommands = this.printData;
-      NProgress.done();
-      cpj.sendToClient();
-    },
-    doPrintPDF() {
-      if (this.selected_printer === "" && !this.print2default) {
-        alert("You must select a printer");
-        return;
-      }
-      let cpj = new JSPM.ClientPrintJob();
-      if (this.print2default) {
-        cpj.clientPrinter = new JSPM.DefaultPrinter();
-      } else {
-        cpj.clientPrinter = new JSPM.InstalledPrinter(this.selected_printer);
-      }
-      var my_file = new JSPM.PrintFilePDF(
-        "https://neodynamic.com/temp/LoremIpsum.pdf",
-        JSPM.FileSourceType.URL,
-        "MyFile.pdf",
-        1
-      );
-      cpj.files.push(my_file);
       cpj.sendToClient();
     },
     onPrinterChange(value) {
       this.selected_printer = value;
-      console.info("Selected printer:", value);
+      console.info('Selected printer:', value);
     },
     getPrinters() {
       return new Promise((ok, err) => {
@@ -224,7 +234,7 @@ export default {
             })
             .catch((e) => err(e));
         } else {
-          console.warn("JSPM WS not open");
+          console.warn('JSPM WS not open');
           ok(printers);
         }
       });

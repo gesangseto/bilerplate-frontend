@@ -4,27 +4,22 @@
       <CCol col="12" xl="12">
         <CCard>
           <CCardHeader>
-            <ButtonPermission :permission="'create'" @click="addNew()" />
+            <ButtonPermission
+              :permission="'create'"
+              @click="addNew()"
+              :useHref="true"
+            />
             <h5>Stock Transfer</h5>
           </CCardHeader>
           <CCardBody>
-            <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-            <HeaderFilterTransaction
-              :filter="['All', 'ID', 'Product', 'source_wh', 'destination_wh']"
+            <HeaderFilterTransactionV3
+              :filter="[
+                'All',
+                'id',
+                'product_id',
+                'from_warehouse',
+                'to_warehouse',
+              ]"
               status_code="trx_transfer"
               v-on:handleClickFilter="handleClickFilter($event)"
               v-on:handleChangeSize="handleChangeSize($event)"
@@ -43,6 +38,8 @@
               <template #action="{ item, index }">
                 <td>
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'read'"
                     @click="rowClicked(item, index)"
                   />
@@ -90,11 +87,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListStockTransfer",
+  name: 'ListStockTransfer',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -102,48 +99,48 @@ export default {
   data() {
     return {
       cancelProperty: {
-        title: "Stock Transfer",
+        title: 'Stock Transfer',
         modal: false,
         id: null,
-        reason: "",
+        reason: '',
       },
       btn_deleteProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        text: "",
-        tooltip: "Cancel",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'window-close',
+        text: '',
+        tooltip: 'Cancel',
       },
       path: this.$route.path,
       filter: {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "ListTransfer",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       items: [],
       tempItems: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
-        { key: "created_date", label: "Trx Date" },
+        { key: 'created_date', label: 'Trx Date' },
         {
-          key: "product_name_batch",
-          label: "Product Name [Batch No]",
+          key: 'product_name_batch',
+          label: 'Product Name [Batch No]',
         },
-        { key: "warehouse_name_from", label: "Source WH" },
-        { key: "warehouse_name_to", label: "Destination WH" },
-        { key: "status_desc", label: "Status", _classes: "font-weight-bold" },
+        { key: 'from_warehouse_name', label: 'Source WH' },
+        { key: 'to_warehouse_name', label: 'Destination WH' },
+        { key: 'status_desc', label: 'Status', _classes: 'font-weight-bold' },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
         },
       ],
     };
@@ -151,9 +148,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/transfer?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -164,7 +162,12 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/transaction/transfer',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -188,26 +191,24 @@ export default {
     handleCancel() {
       this.$isLoading(true);
       let data = {
-        ApiName: "ApprovalTransfer",
-        Params: {
-          id: this.cancelProperty.id,
-          approved: false,
-          reason: this.cancelProperty.reason,
-        },
+        id: this.cancelProperty.id,
+        approved: false,
+        reason: `[CANCEL] ${this.cancelProperty.reason}`,
       };
 
+      let url = `/v3/transaction/transfer`;
       $axiosMertrack
-        .post("/general/mobile", data)
+        .post(url, data)
         .then((result) => {
           this.$isLoading(false);
           this.loadData();
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
-              : "Transaction has been canceled succesfully",
-            type: result.data.error ? "error" : "success",
+              : 'Transaction has been canceled succesfully',
+            type: result.data.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         })
@@ -215,14 +216,14 @@ export default {
           this.$isLoading(false);
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       this.cancelProperty.id = null;
-      this.cancelProperty.reason = "";
+      this.cancelProperty.reason = '';
       this.cancelProperty.modal = false;
     },
   },

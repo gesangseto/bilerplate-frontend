@@ -3,7 +3,11 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
           <h5>Customer</h5>
         </CCardHeader>
         <CCardBody>
@@ -32,10 +36,14 @@
                     @click="deleteRow(item, index)"
                   />
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'update'"
                     @click="rowUpdate(item, index)"
                   />
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'read'"
                     @click="rowRead(item, index)"
                   />
@@ -45,8 +53,8 @@
           </div>
           <template>
             <CPagination
-              :activePage.sync="page"
-              :pages="totalPages"
+              :activePage.sync="filter.page"
+              :pages="filter.totalPages"
               size="sm"
               align="center"
               @update:activePage="pageChange"
@@ -69,11 +77,14 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData } from "../../../utils";
+import {
+  deleteMstCustomer,
+  getMstCustomer,
+} from '../../../resource/MstCustomer';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 
 export default {
-  name: "ListCustomer",
+  name: 'ListCustomer',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -83,42 +94,46 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        ApiName: "CustomerList",
-        StartDate: "",
-        EndDate: "",
+        totalPages: 1,
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "pic",
-          label: "Person In Charge",
+          key: 'name',
+          label: 'Name',
         },
         {
-          key: "tlp",
-          label: "Phone No",
+          key: 'pic',
+          label: 'Person In Charge',
         },
         {
-          key: "tlp_alt",
-          label: "Alternative Phone No",
+          key: 'tlp',
+          label: 'Phone No',
         },
         {
-          key: "address",
-          label: "Address",
+          key: 'tlp_alt',
+          label: 'Alternative Phone No',
         },
         {
-          key: "status",
-          label: "Status",
-          _classes: "font-weight-bold",
+          key: 'address',
+          label: 'Address',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'status',
+          label: 'Status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -126,19 +141,26 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.totalPages = Math.ceil(res.data.total / this.filter.limit) ?? 0;
-      });
+    async loadData() {
+      let res = await getMstCustomer(this.filter);
+      if (!res.error) {
+        this.items = res.data;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
+        });
+      }
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: '/v3/master/customer',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -169,50 +191,36 @@ export default {
         path: `customer/create`,
       });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = {
-          ApiName: "DeleteCustomer",
-          Params: {
-            id: item.id,
-          },
-        };
-        $axiosMertrack
-          .post("/general/web", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteMstCustomer(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },
   computed: {
     customers() {
       return this.items.map((item) => {
+        let addr = '';
+        if (item.address) addr = `${item.address.substring(0, 30)}`;
         return {
           ...item,
-          tlp: item.tlp ?? "",
-          tlp_alt: item.tlp_alt ?? "",
+          tlp: item.tlp ?? '',
+          tlp_alt: item.tlp_alt ?? '',
+          address: addr,
         };
       });
     },

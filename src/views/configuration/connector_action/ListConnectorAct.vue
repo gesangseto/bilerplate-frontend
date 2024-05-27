@@ -3,8 +3,12 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <strong>List Connector Action</strong>
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
+          <h5>Connector Action</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
@@ -31,10 +35,14 @@
                     @click="deleteRow(item, index)"
                   />
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'update'"
                     @click="rowUpdate(item, index)"
                   />
                   <ButtonPermission
+                    :id="item.id"
+                    :useHref="true"
                     :permission="'read'"
                     @click="rowRead(item, index)"
                   />
@@ -51,7 +59,7 @@
               @update:activePage="pageChange"
             />
           </template>
-          <ButtonPermission
+          <!-- <ButtonPermission
             exportType="excel"
             :permission="'print'"
             @click="handleClickExport('xls')"
@@ -60,7 +68,7 @@
             exportType="pdf"
             :permission="'print'"
             @click="handleClickExport('pdf')"
-          />
+          /> -->
         </CCardBody>
       </CCard>
     </CCol>
@@ -68,11 +76,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { calculatePagination, exportData } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportData } from '../../../utils';
 
 export default {
-  name: "ListConnectorAction",
+  name: 'ListConnectorAction',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -82,44 +90,57 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        search: "",
+        search: '',
         totalPages: 1,
       },
       items: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
+          key: 'id',
+          label: 'ID',
         },
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
+          key: 'name',
+          label: 'Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "description",
-          label: "Desc",
+          key: 'description',
+          label: 'Desc',
         },
         {
-          key: "_connector_name",
-          label: "Connector",
+          key: 'connector_name',
+          label: 'Connector',
         },
         {
-          key: "folder_sftp",
-          label: "Folder SFTP",
+          key: 'using_connection',
+          label: 'SFTP Form Cloud',
         },
         {
-          key: "folder_backup",
-          label: "Folder Backup",
+          key: 'folder_sftp',
+          label: 'Folder SFTP',
         },
         {
-          key: "schedule",
-          label: "Schedule",
+          key: 'folder_backup',
+          label: 'Folder Archive',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'schedule',
+          label: 'Time Interval (in minute)',
+        },
+        {
+          key: 'value_name',
+          label: 'Key',
+        },
+        {
+          key: 'status',
+          label: 'Status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
           sorter: false,
           filter: false,
         },
@@ -143,7 +164,7 @@ export default {
         .get(`/v3/connector/connector-action?${param}`)
         .then((res) => {
           this.items = res.data.data;
-          this.filter = calculatePagination({
+          this.filter = calculatePaginationV3({
             filter: this.filter,
             item: res,
           });
@@ -186,24 +207,28 @@ export default {
         path: `connector_action/create`,
       });
     },
-    deleteRow(item) {
-      let _param = { id: item.id };
-      $axiosMertrack
-        .delete(`v3/connector/connector-action`, { data: _param })
-        .then((result) => {
-          this.$isLoading(false);
-          this.loadData();
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
+    async deleteRow(item) {
+      let message = `You are about to delete to this data.\nThis operation cannot be undone. Would you like to continue?`;
+      if (confirm(message)) {
+        this.$isLoading(true);
+        let _param = { id: item.id };
+        $axiosMertrack
+          .delete(`v3/connector/connector-action`, { data: _param })
+          .then((result) => {
+            this.$isLoading(false);
+            this.loadData();
+            let res = result.data;
+            this.$toast.open({
+              message: res.error
+                ? `${res.message}`
+                : 'Data has been saved succesfully ',
+              type: res.error ? 'error' : 'success',
+              dissmissible: true,
+              position: 'top-right',
+              duration: 5000,
+            });
           });
-        });
+      }
     },
   },
   computed: {
@@ -211,7 +236,10 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          _connector_name: item._connector.name,
+          description: item.description || '',
+          folder_sftp: item.folder_sftp || '',
+          folder_backup: item.folder_backup || '',
+          using_connection: item.connection ? 'TRUE' : 'FALSE',
         };
       });
     },

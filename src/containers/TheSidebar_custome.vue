@@ -86,7 +86,8 @@
 </template>
 
 <script>
-import nav from "./_nav";
+import { getLogo } from '../utils';
+import nav from './_nav';
 
 export default {
   data() {
@@ -100,10 +101,10 @@ export default {
       part_path: [],
     };
   },
-  name: "TheSidebar",
+  name: 'TheSidebar',
   mounted() {
     this.navMenu = this.renderMenu();
-    this.entityLogo = localStorage.getItem("app_image");
+    this.entityLogo = getLogo();
   },
   computed: {
     show() {
@@ -119,12 +120,8 @@ export default {
       handler(route) {
         // this.full_path = route.matched[1];
         this.full_path = route.path;
-        this.part_path = this.full_path.split("/");
+        this.part_path = this.full_path.split('/');
       },
-    },
-    show: {
-      immediate: true,
-      handler(n, o) {},
     },
   },
   methods: {

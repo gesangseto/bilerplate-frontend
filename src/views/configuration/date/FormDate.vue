@@ -3,7 +3,15 @@
     <CCol col="8" xl="8">
       <CCard>
         <CCardHeader>
-          <strong>Manage Date Format</strong>
+          <h5>
+            Date Format [{{
+              this.action == "Create"
+                ? "ADD"
+                : this.action == "Read"
+                ? "VIEW"
+                : "EDIT"
+            }}]
+          </h5>
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -72,6 +80,7 @@
                   </CButton>
                   <div class="text-center">
                     <CButton
+                      :disabled="action == 'Read' || data.used_in_layout"
                       style="margin-bottom: 15px; width: 50%"
                       color="danger"
                       @click="handleClickClear(index)"
@@ -82,7 +91,7 @@
                 </CCardBody>
                 <CCardFooter>
                   <CSelect
-                    :label="'Format Field ' + index"
+                    :disabled="action == 'Read' || data.used_in_layout"
                     placeholder="Please select"
                     @change="handleChangeFormat(index)"
                     :value.sync="data[`field${index}_format`]"
@@ -103,11 +112,19 @@
                           : false
                         : true
                     "
-                  />
+                  >
+                    <template #label>
+                      Format Field {{ index }}
+                      <span class="text-danger" v-if="index == 1">
+                        <strong>*</strong>
+                      </span>
+                    </template></CSelect
+                  >
 
                   <CSelect
+                    :disabled="action == 'Read' || data.used_in_layout"
                     v-if="data[`field${index}_type`] == 'day'"
-                    :label="'Override Option '"
+                    :label="'Overwrite Option '"
                     placeholder="Please select"
                     @change="handleChangeFormat(index)"
                     :value.sync="data['override']"
@@ -117,6 +134,15 @@
                 </CCardFooter>
               </CCard>
             </CCol>
+          </CRow>
+          <CRow form class="form-group">
+            <CCol tag="label" sm="3" class="col-form-label"> Status </CCol>
+            <SwitchStatusMaster
+              :disabled="action == 'Read'"
+              :show_label="true"
+              :default_value="data.status"
+              v-on:onChange="data.status = $event"
+            />
           </CRow>
         </CCardBody>
         <CCardFooter>
@@ -129,9 +155,7 @@
           >
             <CIcon name="cil-check-circle" /> Submit
           </CButton>
-          <CButton size="sm" class="m-1" color="danger" @click="cancel()">
-            <CIcon name="cil-ban" /> Cancel
-          </CButton>
+          <ButtonBack />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -142,14 +166,16 @@
         </CCardHeader>
         <CCardBody>
           <CSelect
-            :options="delimeter_list"
+            :disabled="action == 'Read' || data.used_in_layout"
+            :options="delimiter_list"
             placeholder="Please select"
-            :value.sync="data.delimeter"
+            :value.sync="data.delimiter"
             @change="handleChangeFormat()"
           >
-            <template #prepend-content>Delimeter</template>
+            <template #prepend-content>Delimiter</template>
           </CSelect>
           <CSelect
+            :disabled="action == 'Read' || data.used_in_layout"
             :options="around_list"
             placeholder="Please select"
             :value.sync="data.around"
@@ -177,21 +203,24 @@
 </template>
 
 <style>
-.table {
+.tableBig {
   height: 30vh;
   overflow-y: scroll;
   overflow-x: scroll;
 }
-th,
-td {
+/* th, */
+/* td {
   padding-top: 15px;
-}
+} */
 </style>
 <script>
-import $axiosMertrack from "../../../apiMertrack";
 import { exportData, capitalizeFirstLetter } from "../../../utils";
-import { get_date } from "../../../dummy_data";
 import moment from "moment";
+import {
+  getConfDate,
+  insertConfDate,
+  updateConfDate,
+} from "../../../resource/ConfDate";
 
 export default {
   name: "Customer",
@@ -208,7 +237,6 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        ApiName: "",
         StartDate: "",
         EndDate: "",
       },
@@ -223,7 +251,7 @@ export default {
       data: {
         format: "",
         example_format: "",
-        delimeter: "",
+        delimiter: "",
         override: "",
         around: "",
         field1_type: "",
@@ -261,7 +289,7 @@ export default {
       format_month: [
         { value: "M", label: "M" },
         { value: "MM", label: "MM" },
-        { value: "MMM", label: "MM" },
+        { value: "MMM", label: "MMM" },
         { value: "MMMM", label: "MMMM" },
       ],
       format_date: [
@@ -275,7 +303,7 @@ export default {
         { value: "last_day_of_month", label: "Last Day of Month" },
         { value: "first_day_of_month", label: "First Day of Month" },
       ],
-      delimeter_list: [
+      delimiter_list: [
         { value: "", label: "Nothing" },
         { value: ";", label: "SemiColon ( ; )" },
         { value: " ", label: "Space" },
@@ -288,10 +316,10 @@ export default {
       ],
       around_list: [
         { value: "", label: "Nothing" },
-        { value: "()", label: "Parentheses ()" },
-        { value: "[]", label: "Brackets []" },
-        { value: "{}", label: "Braces {}" },
-        { value: "--", label: "Double dash --" },
+        { value: "( )", label: "Parentheses ()" },
+        { value: "[ ]", label: "Brackets []" },
+        { value: "{ }", label: "Braces {}" },
+        { value: "-- --", label: "Double dash --" },
       ],
     };
   },
@@ -306,25 +334,26 @@ export default {
     },
   },
   methods: {
-    loadData() {
-      let param = `ApiName=GetWeb_DateFormat&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
+    async loadData() {
+      let _res = await getConfDate({ id: this.$route.params.id });
+      if (_res) {
+        let data = _res.data[0];
         let _data = data;
-        // let _data = get_date();
-        // _data = _data[0];
-        this.data.delimeter = _data.df_delimeter ?? "";
-        this.data.around = _data.df_around ?? "";
-        this.data.override = _data.df_override ?? "";
-        this.data.field1_format = _data.df_field1 ?? "";
-        this.data.field1_type = this.typeFormat(_data.df_field1) ?? "";
-        this.data.field2_format = _data.df_field2 ?? "";
-        this.data.field2_type = this.typeFormat(_data.df_field2) ?? "";
-        this.data.field3_format = _data.df_field3 ?? "";
-        this.data.field3_type = this.typeFormat(_data.df_field3) ?? "";
+        this.data.status = _data.status;
+        this.data.id = _data.id ?? "";
+        this.data.used_in_layout = _data.used_in_layout ?? null;
+        this.data.delimiter = _data.delimiter ?? "";
+        this.data.around = _data.around ?? "";
+        this.data.override = _data.overwrite ?? "";
+        this.data.field1_format = _data.field1 ?? "";
+        this.data.field1_type = this.typeFormat(_data.field1) ?? "";
+        this.data.field2_format = _data.field2 ?? "";
+        this.data.field2_type = this.typeFormat(_data.field2) ?? "";
+        this.data.field3_format = _data.field3 ?? "";
+        this.data.field3_type = this.typeFormat(_data.field3) ?? "";
         this.checkDisabled();
         this.reFormatDate();
-      });
+      }
     },
     typeFormat(str) {
       let string = str;
@@ -367,8 +396,9 @@ export default {
       return;
     },
     reFormatDate() {
-      let around = this.data.around;
-      let del = this.data.delimeter;
+      let around = this.data.around.split(" ");
+
+      let del = this.data.delimiter;
       let data = this.data;
       // let format = `${data.field1_format}${del}${data.field2_format}${del}${data.field3_format}`;
       let format = ``;
@@ -384,11 +414,12 @@ export default {
       } else if (data.override === "first_day_of_month") {
         dt = moment().startOf("month").format(format.toUpperCase());
       }
+
       if (format) {
-        this.data.example_format = `${around[0] ?? ""}${dt}${
-          around[1] ?? ""
-        }`.toUpperCase();
-        this.data.format = `${around[0] ?? ""}${format}${around[1] ?? ""}`;
+        let left = around[0] ?? "";
+        let right = around[1] ?? "";
+        this.data.example_format = `${left}${dt}${right}`.toUpperCase();
+        this.data.format = `${left}${format}${right}`;
       } else {
         this.data.example_format = `${around[0]} ${around[1]}`.toUpperCase();
       }
@@ -469,7 +500,7 @@ export default {
       });
     },
     validation() {
-      let message = "Please input all the required data";
+      let message = "Please complete required data field.";
       let error = false;
       for (var i = 1; i <= 3; i++) {
         switch (this.data[`field${i}_type`]) {
@@ -505,50 +536,44 @@ export default {
       }
       return true;
     },
-    save() {
+    async save() {
       if (!this.validation()) {
         return;
       }
       let body = {
-        df_id: this.$route.params.id,
-        df_name: this.data.format,
-        df_delimeter: this.data.delimeter,
-        df_around: this.data.around,
-        df_field1: this.data.field1_format,
-        df_field2: this.data.field2_format,
-        df_field3: this.data.field3_format,
-        df_override: this.data.override,
+        id: this.$route.params.id,
+        name: this.data.format,
+        delimiter: this.data.delimiter,
+        around: this.data.around,
+        field1: this.data.field1_format,
+        field2: this.data.field2_format,
+        field3: this.data.field3_format,
+        overwrite: this.data.override,
+        status: this.data.status,
       };
-
-      let dataPost = {
-        ApiName: this.$route.params.id
-          ? "PostWeb_UpdateDateFormat"
-          : "PostWeb_InsertDateFormat",
-        Params: body,
-      };
+      let dataPost = body;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateConfDate(dataPost);
+        } else {
+          res = await insertConfDate(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res["error"]
+            ? `${res["message"]}`
+            : "Data has been saved succesfully ",
+          type: res.error ? "error" : "success",
+          dissmissible: true,
+          position: "top-right",
+          duration: 5000,
         });
+        if (!res["error"]) this.$router.back();
       }
       return;
     },

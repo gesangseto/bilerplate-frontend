@@ -18,28 +18,29 @@
           Back
         </CButton> -->
         &nbsp; &nbsp;
-        <CButton color="info" size="sm" @click="dashboard"> Dashboard </CButton>
+        <CButton color="info" size="sm" @click="home"> Home </CButton>
       </CCol>
     </CRow>
   </CContainer>
 </template>
 
 <script>
+import { clearStorage, getProfile } from '../../utils';
 export default {
-  name: "Oops",
+  name: 'Oops',
   beforeCreate() {
-    if (localStorage.getItem("is_login") != "true") {
-      localStorage.clear();
+    if (!getProfile()) {
+      clearStorage();
       this.$router.push({ path: `/login` });
     }
   },
   methods: {
     logOut() {
-      localStorage.clear();
+      clearStorage();
       window.location.reload();
     },
-    dashboard() {
-      this.$router.push({ path: `/dashboard` });
+    home() {
+      this.$router.push({ path: `/home` });
     },
     goBack() {
       this.$router.back();

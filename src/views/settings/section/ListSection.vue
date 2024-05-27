@@ -3,7 +3,11 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader _style="padding:10px;">
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
           <h5>Section</h5>
         </CCardHeader>
         <CCardBody>
@@ -30,10 +34,14 @@
                   @click="deleteRow(item, index)"
                 />
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'update'"
                   @click="rowUpdate(item, index)"
                 />
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'read'"
                   @click="rowRead(item, index)"
                 />
@@ -56,11 +64,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
+import { deleteMstSection, getMstSection } from '../../../resource/MstSection';
+import { exportData, calculatePaginationV3 } from '../../../utils';
 
 export default {
-  name: "Department",
+  name: 'Department',
 
   mounted() {
     this.page = 1;
@@ -72,34 +80,34 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "SectionList",
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
-        { key: "name", label: "Section Name" },
-        { key: "description", label: "Section Description" },
-        { key: "mst_department_name", label: "Department Name" },
-        { key: "status", _classes: "font-weight-bold" },
+        { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
+        { key: 'name', label: 'Section Name' },
+        { key: 'description', label: 'Section Description' },
+        { key: 'department_name', label: 'Department Name' },
+        { key: 'status', _classes: 'font-weight-bold' },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:15%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:15%',
         },
       ],
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePagination({
+    async loadData() {
+      let _res = await getMstSection(this.filter);
+      if (_res) {
+        this.items = _res.data;
+        this.filter = calculatePaginationV3({
           filter: this.filter,
-          item: res,
+          item: _res,
         });
-      });
+      }
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -130,40 +138,23 @@ export default {
     addNew() {
       this.$router.push({ path: `section/create` });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = {
-          ApiName: "DeleteSection",
-          Params: {
-            id: item.id,
-          },
-        };
-        $axiosMertrack
-          .post("/general/web", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteMstSection(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },

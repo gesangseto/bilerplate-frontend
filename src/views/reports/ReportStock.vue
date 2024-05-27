@@ -6,15 +6,15 @@
           <h5>Product Stock</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransaction
+          <HeaderFilterTransactionV3
             :filter="[
               'All',
-              'Product',
-              'Warehouse',
-              'Mfg Date',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
+              'product_id',
+              'warehouse_id',
+              'mfg_date',
+              'expired_date',
+              'minimum',
+              'maximum',
             ]"
             status_code="report_stock"
             status_code_default="include_pending"
@@ -61,12 +61,11 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
-import { exportDataReport, calculatePagination } from "../../utils";
-import { dateFilter } from "../../constants";
+import $axiosMertrack from '../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../utils';
 
 export default {
-  name: "ReportStock",
+  name: 'ReportStock',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -77,61 +76,61 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "Report_ProductStock",
-        StatusCode: "include_pending",
-        StatusCodeText: "Include Pending",
-        StartDate: "",
-        EndDate: "",
+        totalData: 0,
+        StatusCode: 'include_pending',
+        StatusCodeText: 'Include Pending',
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
         {
-          key: "no",
-          label: "No",
+          key: 'no',
+          label: 'No',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: 'warehouse_name',
+          label: 'Warehouse',
         },
         {
-          key: "product_type_desc",
-          label: "SN / NON-SN",
+          key: 'sn_non_sn',
+          label: 'SN / NON-SN',
         },
         {
-          key: "product_no",
-          label: "Item No",
-          _classes: "font-weight-bold",
+          key: 'product_no',
+          label: 'Item No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "product_name",
-          label: "Product Name",
-          _classes: "font-weight-bold",
+          key: 'product_name',
+          label: 'Product Name',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
-          _classes: "font-weight-bold",
+          key: 'batch_no',
+          label: 'Batch No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "mfg_date",
-          label: "Mfg Date",
+          key: 'mfg_date',
+          label: 'Mfg Date',
         },
         {
-          key: "product_nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "product_gtin",
-          label: "L1 GTIN",
+          key: 'product_gtin',
+          label: 'L1 GTIN',
           // _classes: "font-weight-bold",
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity_l1',
+          label: 'L1 Qty',
         },
       ],
     };
@@ -139,9 +138,10 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/report?${param}`).then((res) => {
+      let url = `/v3/report/stock?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -149,12 +149,17 @@ export default {
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
-      this.filter.StartDate = "";
-      this.filter.EndDate = "";
+      this.filter.StartDate = '';
+      this.filter.EndDate = '';
       this.loadData();
     },
     handleClickExport(type) {
-      exportDataReport({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/report/stock',
+      });
     },
     pageChange(page) {
       this.filter.page = page;

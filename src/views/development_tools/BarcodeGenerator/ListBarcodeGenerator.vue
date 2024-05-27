@@ -3,20 +3,26 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>Barcode Generator</h5>
+          <h5>Stock Data Barcode Generator</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <HeaderFilterTransaction
+              <HeaderFilterTransactionV3
                 :filter="[
                   'All',
-                  'Product',
-                  'Supplier',
-                  'Warehouse',
-                  'Customer',
+                  'product_id',
+                  'supplier_id',
+                  'warehouse_id',
+                  'customer_id',
                 ]"
-                :order="['All', 'Product', 'Supplier', 'Warehouse', 'Customer']"
+                :order="[
+                  'All',
+                  'product_id',
+                  'supplier_id',
+                  'warehouse_id',
+                  'customer_id',
+                ]"
                 status_code="product_stock_serial"
                 :removeTrxDate="true"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -46,13 +52,13 @@
               <template>
                 <CPagination
                   :activePage.sync="filter.page"
-                  :pages="totalPages"
+                  :pages="filter.totalPages"
                   size="sm"
                   align="center"
                   @update:activePage="pageChange"
                 />
               </template>
-              <ButtonPermission
+              <!-- <ButtonPermission
                 exportType="excel"
                 :permission="'print'"
                 @click="handleClickExport('xls')"
@@ -61,7 +67,7 @@
                 exportType="pdf"
                 :permission="'print'"
                 @click="handleClickExport('pdf')"
-              />
+              /> -->
             </CCol>
           </CRow>
         </CCardBody>
@@ -72,12 +78,10 @@
 </template>
 
 <script>
-import DetailBarcodeGenerator from "../../component";
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, toTitleCase } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportData } from '../../../utils';
 export default {
-  name: "ListBarcodeGenerator",
+  name: 'ListBarcodeGenerator',
   mounted() {
     this.pages = [10, 20, 50, 100];
     this.page = 1;
@@ -89,71 +93,70 @@ export default {
       filter: {
         page: 1,
         limit: 10,
-        ApiName: "GetWeb_GenerateBarcodeTools",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalPages: 1,
+        StartDate: '',
+        EndDate: '',
       },
-      totalPages: 0,
       datas: [],
       selected_data: { modal: false, item: {} },
       fields: [
         {
-          key: "no",
-          label: "Item No",
-          _classes: "font-weight-bold",
+          key: 'product_no',
+          label: 'Item No',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "name_packaging",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "supplier_name",
-          label: "Supplier Name",
+          key: 'supplier_name',
+          label: 'Supplier Name',
         },
         {
-          key: "warehouse_name",
-          label: "Warehouse",
+          key: 'warehouse_name',
+          label: 'Warehouse',
         },
         {
-          key: "customer_name",
-          label: "Customer",
+          key: 'customer_name',
+          label: 'Customer',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "status_desc",
-          label: "Status",
+          key: 'status_desc',
+          label: 'Status',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
         },
       ],
     };
@@ -170,12 +173,18 @@ export default {
   },
   methods: {
     loadData() {
-      delete this.filter["StartDate"];
-      delete this.filter["EndDate"];
+      delete this.filter['StartDate'];
+      delete this.filter['EndDate'];
+      this.filter['parent'] = null;
+      this.filter['advanced'] = true;
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/stock?show_barcode=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.datas = res.data.data;
-        this.totalPages = Math.ceil(res.data.total / this.filter.limit) ?? 0;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
+        });
       });
     },
     handleClickFilter(val) {
@@ -220,12 +229,11 @@ export default {
       return this.datas.map((item) => {
         return {
           ...item,
-          supplier_name: item.supplier_name ?? "",
-          warehouse_name: item.warehouse_name ?? "",
-          customer_name: item.customer_name ?? "",
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
+          supplier_name: item.supplier_name ?? '',
+          warehouse_name: item.warehouse_name ?? '',
+          customer_name: item.customer_name ?? '',
           gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
+            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });
     },

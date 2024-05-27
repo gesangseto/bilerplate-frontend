@@ -61,12 +61,7 @@
                 v-model="connector.connector_path"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Path
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
+                  <p class="col-form-label col-sm-3">Path</p>
                 </template>
               </CInput>
               <CInput
@@ -76,19 +71,14 @@
                 v-model="connector.connector_port"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Port
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
+                  <p class="col-form-label col-sm-3">Port</p>
                 </template>
               </CInput>
               <template>
                 <table style="width: 100%">
                   <thead>
                     <th style="text-align: center; width: 30%">
-                      Name Parameter
+                      Parameter Name
                     </th>
                     <th style="text-align: center; width: 30%">Source</th>
                     <th style="text-align: center; width: 5%">Required</th>
@@ -144,24 +134,7 @@
             </CForm>
           </CCardBody>
           <CCardFooter>
-            <CButton
-              v-if="action == 'Read' ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
-            <CButton
-              type="reset"
-              size="sm"
-              class="m-1"
-              color="danger"
-              @click="cancel()"
-            >
-              <CIcon name="cil-ban" /> Cancel
-            </CButton>
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>
@@ -170,33 +143,33 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
+import { capitalizeFirstLetter } from '../../../utils';
+import $axiosMertrack from '../../../apiMertrack';
 
 export default {
-  name: "Connector",
+  name: 'Connector',
   data() {
     return {
-      route_action: "",
+      route_action: '',
       // category: '',
-      action: "Edit",
+      action: 'Edit',
       connector: { params: [] },
       listSource: [
         {
-          label: "Database",
-          value: "database",
+          label: 'Database',
+          value: 'database',
         },
         {
-          label: "File Content",
-          value: "file_content",
+          label: 'File Content',
+          value: 'file_content',
         },
         {
-          label: "File Name",
-          value: "file_name",
+          label: 'File Name',
+          value: 'file_name',
         },
         {
-          label: "String",
-          value: "string",
+          label: 'String',
+          value: 'string',
         },
       ],
     };
@@ -204,7 +177,7 @@ export default {
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }

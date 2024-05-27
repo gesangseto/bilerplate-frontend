@@ -1,0 +1,41 @@
+import $axiosMertrack from '../apiMertrack';
+import $axiosMertrackNonLoading from '../apiMertrackNonLoading';
+
+let url = `/v3/master/notification`;
+
+export const getMstNotification = async (param = Object) => {
+  var query_string = '';
+  if (param) {
+    query_string = new URLSearchParams(param).toString();
+  }
+  return new Promise((resolve) => {
+    $axiosMertrackNonLoading
+      .get(`${url}?${query_string}`)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
+export const updateMstNotification = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(url, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};

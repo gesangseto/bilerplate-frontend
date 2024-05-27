@@ -8,6 +8,11 @@
           </CCardHeader>
           <CCardBody>
             <CForm novalidate>
+              <CInput :disabled="true" horizontal v-model="warehouse.id">
+                <template #label>
+                  <p class="col-form-label col-sm-3">ID</p>
+                </template>
+              </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
@@ -121,7 +126,7 @@
               <CSelect
                 :disabled="action == 'Read' ? true : false"
                 label="Warehouse Category *"
-                :options="listCategoryWarehouse"
+                :options="listWhCategory"
                 horizontal
                 placeholder="--Select--"
                 v-model="warehouse.category_id"
@@ -174,17 +179,12 @@
               </CSelect>
 
               <CRow form class="form-group">
-                <CCol sm="3">
-                  Status
-                  <span class="text-danger">*</span>
-                </CCol>
-                {{ action == "Read" ? warehouse.status : null }}
-                <CInputRadioGroup
-                  v-if="action == 'Read' ? false : true"
-                  class="col-sm-9"
-                  :options="statusOptions"
-                  :checked.sync="warehouse.status"
-                  :inline="true"
+                <CCol sm="3"> Status </CCol>
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="warehouse.status"
+                  v-on:onChange="warehouse.status = $event"
                 />
               </CRow>
             </CForm>
@@ -199,15 +199,7 @@
             >
               <CIcon name="cil-check-circle" /> Submit
             </CButton>
-            <CButton
-              type="reset"
-              size="sm"
-              class="m-1"
-              color="danger"
-              @click="cancel()"
-            >
-              <CIcon name="cil-ban" /> Cancel
-            </CButton>
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>
@@ -216,65 +208,61 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
-import { required } from "vuelidate/lib/validators";
+import { capitalizeFirstLetter } from '../../../utils';
+import { required } from 'vuelidate/lib/validators';
+import {
+  getMstWarehouse,
+  getMstWarehouseCategory,
+  getMstWarehouseEntity,
+  insertMstWarehouse,
+  updateMstWarehouse,
+} from '../../../resource/MstWarehouse';
+import { getMstProvince } from '../../../resource/MstProvince';
 
 export default {
-  name: "FormWarehouse",
+  name: 'FormWarehouse',
   data() {
     return {
-      route_action: "",
-      // category: '',
-      action: "Edit",
-      listCategoryWarehouse: [
-        {
-          value: 1,
-          label: "Quarantine",
-        },
-        {
-          value: 3,
-          label: "Ready To Sell",
-        },
-      ],
+      route_action: '',
+      action: 'Edit',
       warehouse: {
-        status: "Active",
+        status: 'Active',
         entity: {
           id: undefined,
         },
         province: {
           id: undefined,
         },
-        temperature: "",
+        temperature: '',
         // category: { id: '',},
-        categoryId: "",
+        categoryId: '',
       },
       temperaturOptions: [
         {
-          value: true,
-          label: "Suhu",
+          value: 1,
+          label: 'Suhu',
         },
         {
-          value: false,
-          label: "Non Suhu",
+          value: 0,
+          label: 'Non Suhu',
         },
       ],
-      statusOptions: ["Active", "Inactive"],
+      statusOptions: ['Active', 'Inactive'],
       listProvince: [],
       listEntity: [],
+      listWhCategory: [],
     };
   },
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
-    } else {
-      this.protectCreateWarehouse();
     }
-    this.loadActiveProvince();
-    this.loadActiveEntity();
+    this.loadWhCategory();
+    this.loadProvince();
+    this.loadEntity();
   },
   validations: {
     warehouse: {
@@ -287,84 +275,66 @@ export default {
     },
   },
   methods: {
-    protectCreateWarehouse() {
-      $axiosMertrack.get(`/general/web?ApiName=WarehouseList`).then((res) => {
-        let total_wh = res.data.total || 0;
-        $axiosMertrack.get(`/general/web?ApiName=GetConfig`).then((res) => {
-          if (res.data.data && res.data.data[0]) {
-            if (res.data.data[0].total_wh <= total_wh) {
-              this.$router.push({ path: `/oops` });
-              return;
-            }
-          }
+    async loadData() {
+      let _res = await getMstWarehouse({ id: this.$route.params.id });
+      this.warehouse = _res.data[0];
+      this.warehouse['category_id'] = this.warehouse['category_id'].toString();
+    },
+    async loadEntity() {
+      let _res = await getMstWarehouseEntity({ status: 'Active' });
+      for (const it of _res.data) {
+        this.listEntity.push({
+          label: it.name,
+          value: `${it.id}`,
         });
-      });
+      }
     },
-    loadData() {
-      let param = `ApiName=WarehouseList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
-        this.warehouse = data;
-      });
+    async loadWhCategory() {
+      let _res = await getMstWarehouseCategory({ status: 'Active' });
+      for (const it of _res.data) {
+        this.listWhCategory.push({
+          label: it.name,
+          value: `${it.id}`,
+        });
+      }
     },
-    loadActiveProvince() {
-      let param = `ApiName=ProvinceList`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.listProvince.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
-      });
+    async loadProvince() {
+      let _res = await getMstProvince({ status: 'Active' });
+      for (const it of _res.data) {
+        this.listProvince.push({
+          label: it.name,
+          value: `${it.id}`,
+        });
+      }
     },
-    loadActiveEntity() {
-      let param = `ApiName=WarehouseEntityList`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.listEntity.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
-      });
-    },
-    save() {
+    async save() {
       this.$v.$touch();
       if (this.$v.$invalid) {
         return;
       }
-      let dataPost = {
-        ApiName: this.$route.params.id ? "UpdateWarehouse" : "InsertWarehouse",
-        Params: this.warehouse,
-      };
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let dataPost = this.warehouse;
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstWarehouse(dataPost);
+        } else {
+          res = await insertMstWarehouse(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
         });
+        if (!res['error']) this.$router.back();
       }
       return;
     },

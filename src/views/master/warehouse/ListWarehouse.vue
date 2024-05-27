@@ -7,6 +7,7 @@
             v-if="can_add_warehouse"
             :permission="'create'"
             @click="addNew()"
+            :useHref="true"
           />
           <h5>Warehouse</h5>
         </CCardHeader>
@@ -34,10 +35,14 @@
                   @click="deleteRow(item, index)"
                 />
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'update'"
                   @click="rowUpdate(item, index)"
                 />
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'read'"
                   @click="rowRead(item, index)"
                 />
@@ -70,12 +75,15 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData } from "../../../utils";
-import { calculatePagination } from "../../../utils";
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { getSysConfig } from '../../../resource/SysConfig';
+import {
+  deleteMstWarehouse,
+  getMstWarehouse,
+} from '../../../resource/MstWarehouse';
 
 export default {
-  name: "ListWarehouse",
+  name: 'ListWarehouse',
 
   mounted() {
     this.page = 1;
@@ -87,9 +95,8 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "WarehouseList",
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       can_add_warehouse: false,
       warningModal: false,
@@ -98,34 +105,37 @@ export default {
       totalWarehouseLimiter: true,
       fields: [
         {
-          key: "name",
-          label: "Name",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "category_name",
-          label: "Warehouse Category",
+          key: 'name',
+          label: 'Name',
         },
         {
-          key: "address",
+          key: 'category_name',
+          label: 'Warehouse Category',
         },
         {
-          key: "mst_province_name",
-          label: "Province",
+          key: 'address',
         },
         {
-          key: "mst_warehouse_entity_name",
-          label: "Entity",
+          key: 'province_name',
+          label: 'Province',
         },
         {
-          key: "status",
-          _classes: "font-weight-bold",
+          key: 'entity_name',
+          label: 'Entity',
         },
         {
-          key: "action",
-          label: "Action",
-          _classes: "font-weight-bold",
-          _style: "width:17%",
+          key: 'status',
+          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:17%',
           sorter: false,
           filter: false,
         },
@@ -133,35 +143,36 @@ export default {
     };
   },
   methods: {
-    protectCreateWarehouse() {
-      let param = `ApiName=GetConfig`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        if (res.data.data && res.data.data[0]) {
-          if (res.data.data[0].total_wh > this.items.length) {
-            this.can_add_warehouse = true;
-          }
+    async protectCreateWarehouse() {
+      let _res = await getSysConfig();
+      let conf = _res.data[0];
+      if (conf) {
+        if (conf.total_wh > this.items.length) {
+          this.can_add_warehouse = true;
         }
-      });
+      }
     },
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
-        this.items = res.data.data;
-        if (res.data.total != 0) {
-          this.protectCreateWarehouse();
-          this.filter = calculatePagination({
-            filter: this.filter,
-            item: res,
-          });
-        }
-      });
+    async loadData() {
+      let res = await getMstWarehouse(this.filter);
+      if (!res.error) {
+        this.items = res.data;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
+        });
+      }
+      this.protectCreateWarehouse();
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        param: this.filter,
+        exportType: type,
+        url: '/v3/master/warehouse',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -187,40 +198,23 @@ export default {
         path: `warehouse/create`,
       });
     },
-    deleteRow(item) {
+    async deleteRow(item) {
       let message = `You are about to delete to this data (Name: ${item.name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = {
-          ApiName: "DeleteWarehouse",
-          Params: {
-            id: item.id,
-          },
-        };
-        $axiosMertrack
-          .post("/general/web", param)
-          .then((result) => {
-            this.$isLoading(false);
-            this.loadData();
-            this.$toast.open({
-              message: result.data.error
-                ? `${result.data.message}`
-                : "Data has been deleted succesfully",
-              type: result.data.error ? "error" : "success",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: "error",
-              dissmissible: true,
-              position: "top-right",
-              duration: 5000,
-            });
-          });
+        let param = { id: item.id };
+        let _res = await deleteMstWarehouse(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: _res.error
+            ? `${_res.message}`
+            : 'Data has been deleted succesfully',
+          type: _res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!_res.error) this.loadData();
       }
     },
   },

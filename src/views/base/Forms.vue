@@ -402,7 +402,7 @@
                 label="Input is invalid"
                 required
                 valid-feedback="Thank you :)"
-                invalid-feedback="Please input all the required data"
+                invalid-feedback="Please complete required data field."
               />
             </CForm>
           </CCardBody>

@@ -11,7 +11,7 @@
         <CCol md="6">
           <CInput
             horizontal
-            v-model="property.item.no"
+            v-model="property.item['product_no']"
             label="Item No"
             readonly
           />
@@ -21,30 +21,35 @@
             label="Batch No"
             readonly
           />
-          <CInput horizontal v-model="property.item.nie" label="NIE" readonly />
+          <CInput
+            horizontal
+            v-model="property.item['product_nie']"
+            label="NIE"
+            readonly
+          />
           <CInput
             horizontal
             v-model="property.item.gtin_cp"
-            label="GTIN / CP"
+            label="EPC Key"
             readonly
           />
         </CCol>
         <CCol md="6">
           <CInput
             horizontal
-            v-model="property.item.name"
+            v-model="property.item['product_name']"
             label="Product"
             readonly
           />
           <CInput
             horizontal
-            v-model="property.item.expired_date"
+            v-model="property.item['expired_date']"
             label="Exp Date"
             readonly
           />
           <CInput
             horizontal
-            v-model="property.item.mfg_date"
+            v-model="property.item['mfg_date']"
             label="Mfg Date"
             readonly
           />
@@ -56,7 +61,10 @@
           />
         </CCol>
       </CRow>
-        <hr/>
+      <hr />
+      <CAlert color="danger">
+        Status {{ property.item['status_name'] }}
+      </CAlert>
       <CRow>
         <CCol md="12">
           <CDataTable
@@ -81,23 +89,23 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter, convertTableName } from "../../utils";
+import { convertTableName } from '../../utils';
 import Table from '../base/Table.vue';
 export default {
   components: { Table },
-  name: "ShowLockedStatus",
-  props: { property: Object},
+  name: 'ShowLockedStatus',
+  props: { property: Object },
   watch: {
     property: {
       deep: true,
       handler(n, o) {
-        let datas=[];
-        for(const it of this.property.item.locked){
-          let data = it;
-          data.trx_type = convertTableName(data.trx_type)
-          datas.push(data)
-        }
-        this.locked_item = datas
+        this.locked_item = [];
+        this.item = n;
+        this.locked_item.push({
+          lock_trx_id: n.item['lock_trx_id'],
+          lock_trx_name: n.item['lock_trx_name'],
+          quantity: n.item['quantity'],
+        });
       },
     },
   },
@@ -105,12 +113,13 @@ export default {
   data() {
     return {
       result: this.resetForm(),
-      locked_item :[],
-      locked_field:[
-          { key: "id", label: "Trx ID" },
-          { key: "trx_type", label: "Locking Pending Transaction" },
-          { key: "quantity", label: "L1 Qty" },
-        ]
+      locked_item: [],
+      locked_field: [
+        { key: 'lock_trx_id', label: 'Trx ID' },
+        { key: 'lock_trx_name', label: 'Locking Pending Transaction' },
+        { key: 'quantity', label: 'L1 Qty' },
+      ],
+      item: {},
     };
   },
   methods: {

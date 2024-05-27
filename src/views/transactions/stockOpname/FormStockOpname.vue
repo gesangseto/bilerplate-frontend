@@ -8,27 +8,24 @@
           </CCardHeader>
           <CCardBody>
             <CForm class="my-3">
-              <div class="form-group row">
-                <div class="col-sm-2 col-md-2 col-lg-2">
-                  <label>
-                    Warehouse <strong class="text-danger">*</strong>
-                  </label>
-                </div>
-                <div class="col-sm-7 col-md-7 col-lg-7">
-                  <v-select
-                    :options="warehouseOptions"
-                    id="warehouse"
-                    v-model="stock.warehouse"
-                    :value.sync="stock.warehouse"
-                  >
-                  </v-select>
-                  <span
-                    id="error-warehouse"
-                    class="text-danger"
-                    style="font-size: 12px"
-                  ></span>
-                </div>
-              </div>
+              <CSelect
+                placeholder="-Select-"
+                :options="warehouseOptions"
+                horizontal
+                :value.sync="stock.warehouse_id"
+                :is-valid="
+                  initialLoad ? null : !stock.warehouse_id ? false : true
+                "
+              >
+                <template #label>
+                  <p class="col-form-label col-sm-2">
+                    Warehouse
+                    <span class="text-danger">
+                      <strong>*</strong>
+                    </span>
+                  </p>
+                </template>
+              </CSelect>
             </CForm>
             <div class="my-3 clearfix">
               <CButton
@@ -106,16 +103,14 @@
               color="primary"
               ><CIcon name="cil-check-circle" /> Submit</CButton
             >
-            <CButton type="reset" size="sm" @click="cancel()" color="danger"
-              ><CIcon name="cil-ban" /> Cancel</CButton
-            >
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>
     </CRow>
     <!-- Modal Detail Barang Dipilih  -->
-    <CModal title="Detail" color="warning" :show.sync="viewModal" size="lg">
-      <DetailStockSerial v-if="viewModal == true" :item="detail_item" />
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
       <template #footer>
         <CButton size="sm" color="danger" type="button" @click="closeModal()">
           <CIcon name="cil-x-circle" /> Close
@@ -130,12 +125,10 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import "vue-select/dist/vue-select.css";
-import $ from "jquery";
-import { convertTableName } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import 'vue-select/dist/vue-select.css';
 export default {
-  name: "FormStockOpname",
+  name: 'FormStockOpname',
   data() {
     return {
       property_lock_status: {
@@ -143,87 +136,88 @@ export default {
         item: {},
       },
       btn_1_prop: {
-        size: "sm",
-        class: "float-right",
-        color: "info",
-        icon: "eye",
-        text: "",
-        tooltip: "View",
+        size: 'sm',
+        class: 'float-right',
+        color: 'info',
+        icon: 'eye',
+        text: '',
+        tooltip: 'View',
       },
       btn_2_prop: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "exclamation-circle",
-        text: "",
-        tooltip: "Show Locking Trx",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'exclamation-circle',
+        text: '',
+        tooltip: 'Show Locking Trx',
       },
+      initialLoad: true,
       detail_item: {},
       product_on_proccess: 0,
       datas: [],
       viewModal: false,
       view: {
-        articleId: "",
-        productId: "",
-        productName: "",
-        batch: "",
+        articleId: '',
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       optionType: [
-        { value: 1, label: "Aggregation" },
-        { value: 2, label: "Serialization" },
+        { value: 1, label: 'Aggregation' },
+        { value: 2, label: 'Serialization' },
       ],
       items: [],
       modalAdd: false,
-      action: "",
+      action: '',
       idArticleOptions: [],
       views: false,
       add: {
-        product: { id: "", name: "" },
-        article: { id: "", value: "" },
+        product: { id: '', name: '' },
+        article: { id: '', value: '' },
       },
       warehouseOptions: [],
       productFields: [
-        { key: "no", label: "Item No" },
+        { key: 'product_no', label: 'Item No' },
         {
-          key: "name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
-        { key: "nie", label: "NIE" },
-        { key: "gtin_cp", label: "GTIN / CP" },
+        { key: 'product_nie', label: 'NIE' },
+        { key: 'epc_key', label: 'EPC Key' },
         {
-          key: "serial",
-          label: "SN",
-        },
-        {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
-        { key: "quantity", label: "L1 Qty" },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'packaging_name',
+          label: 'Pkg Name',
+        },
+        { key: 'quantity', label: 'L1 Qty' },
+        {
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
         },
       ],
       productOptions: [],
       stock: {
-        warehouse: null,
+        warehouse_id: null,
         type: null,
       },
     };
@@ -231,12 +225,12 @@ export default {
   mounted() {
     this.loadListWarehouse();
     //   cek apakah ada parameter yang dikirim
-    this.action = this.$route.params.id === undefined ? "ADD" : "EDIT";
+    this.action = this.$route.params.id === undefined ? 'ADD' : 'EDIT';
   },
   methods: {
     loadListWarehouse() {
-      let param = `ApiName=ListWarehouse&Params={"status":"Active"}&StatusCode=Active`;
-      $axiosMertrack.get(`/general/mobile?${param}`).then((result) => {
+      let _url = `/v3/master/warehouse?status=Active`;
+      $axiosMertrack.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.warehouseOptions.push({
@@ -247,28 +241,36 @@ export default {
       });
       return;
     },
-    showLockedStatus(item, index) {
+    showLockedStatus(item) {
       this.property_lock_status.modal = true;
       this.property_lock_status.item = item;
     },
     removeGenerateProduct() {
       this.view = false;
       this.items = [];
-      this.stock.warehouse = null;
+      this.stock.warehouse_id = null;
       this.stock.type = null;
     },
+    validation() {
+      if (!this.stock.warehouse_id) return false;
+      return true;
+    },
     generateProduct() {
-      // warehouse validasi
-      if (!this.stock.warehouse) {
-        $("#error-warehouse").text("Warehouse is required");
-        return false;
-      } else {
-        $("#error-warehouse").text("");
+      //
+      this.initialLoad = false;
+      if (!this.validation()) {
+        return this.$toast.open({
+          message: `Please input all the required data.`,
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
       }
       this.items = [];
       this.views = false;
-      let param = `ApiName=OpnameGenerate&Params={"warehouse_id":${this.stock.warehouse.value}}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let _url = `/v3/transaction/stock-opname/generate?raw=true&warehouse_id=${this.stock.warehouse_id}`;
+      $axiosMertrack.get(_url).then((res) => {
         this.items = res.data.data;
         this.views = true;
       });
@@ -300,19 +302,24 @@ export default {
       this.viewModal = false;
     },
     save() {
-      if (!this.stock.warehouse) {
-        $("#error-warehouse").text("Warehouse is required");
-        return false;
-      } else {
-        $("#error-warehouse").text("");
+      //
+      this.initialLoad = false;
+      if (!this.validation()) {
+        return this.$toast.open({
+          message: `Please input all the required data.`,
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
       }
       for (const it of this.items) {
         if (it.status != 1) {
           this.$toast.open({
             message: `This Stock Opname cannot be saved. Please complete the pending process first.`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           return;
@@ -322,38 +329,37 @@ export default {
       if (this.items.length == 0) {
         this.$toast.open({
           message: `This Stock Opname cannot be saved. There is no stock item in this warehouse.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
       }
-      let paramBody = {
-        ApiName: "OpnameInput",
-        Params: {
-          warehouse: this.stock.warehouse.value,
-        },
+      let param = {
+        warehouse: this.stock.warehouse_id,
       };
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post("/general/web", paramBody).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
+        $axiosMertrack
+          .put('/v3/transaction/stock-opname', param)
+          .then((result) => {
+            this.$isLoading(false);
+            let res = result.data;
+            this.$toast.open({
+              message: res.error
+                ? `${res.message}`
+                : 'Data has been saved succesfully',
+              type: res.error ? 'error' : 'success',
+              dissmissible: true,
+              position: 'top-right',
+              duration: 5000,
+            });
+            if (!res.error) {
+              this.$router.back();
+            }
           });
-          if (!res.error) {
-            this.$router.back();
-          }
-        });
       }
       return;
     },
@@ -367,9 +373,6 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
         };
       });
     },

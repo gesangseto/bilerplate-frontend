@@ -10,15 +10,37 @@
           <CCardBody>
             <CForm>
               <CCol sm="12">
+                <CInput :disabled="true" horizontal v-model="user.id">
+                  <template #label>
+                    <p class="col-form-label col-sm-3">ID</p>
+                  </template>
+                </CInput>
+              </CCol>
+              <CCol sm="12">
+                <CInput
+                  :disabled="action == 'Read' ? true : false"
+                  horizontal
+                  placeholder="Enter Global ID"
+                  v-model="user.employee_id"
+                  :is-valid="
+                    initial_load ? null : user.employee_id ? true : false
+                  "
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Global ID
+                      <span class="text-danger"><strong>*</strong></span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+              <CCol sm="12">
                 <CInput
                   :disabled="action == 'Read' ? true : false"
                   horizontal
                   placeholder="Enter username"
                   v-model="user.username"
-                  :invalid-feedback="required.username.message"
-                  :add-input-classes="{
-                    'is-invalid': required.username.error,
-                  }"
+                  :is-valid="initial_load ? null : user.username ? true : false"
                 >
                   <template #label>
                     <p class="col-form-label col-sm-3">
@@ -34,10 +56,9 @@
                   horizontal
                   placeholder="Enter full name"
                   v-model="user.full_name"
-                  :invalid-feedback="required.full_name.message"
-                  :add-input-classes="{
-                    'is-invalid': required.full_name.error,
-                  }"
+                  :is-valid="
+                    initial_load ? null : user.full_name ? true : false
+                  "
                 >
                   <template #label>
                     <p class="col-form-label col-sm-3">
@@ -101,10 +122,7 @@
                   placeholder="email.address@email.com"
                   horizontal
                   v-model="user.email"
-                  :invalid-feedback="required.email.message"
-                  :add-input-classes="{
-                    'is-invalid': required.email.error,
-                  }"
+                  :is-valid="initial_load ? null : user.email ? true : false"
                 >
                   <template #label>
                     <p class="col-form-label col-sm-3">
@@ -116,7 +134,7 @@
               <CCol sm="12">
                 <CInput
                   :disabled="action == 'Read' ? true : false"
-                  type="password"
+                  :type="showPassword == false ? 'password' : 'text'"
                   :placeholder="
                     action === 'Update'
                       ? `Leave it blank if you don't want to change password.`
@@ -135,7 +153,15 @@
                     <p class="col-form-label col-sm-3">
                       Password
                       <span class="text-danger"><strong>*</strong></span>
-                    </p>
+                    </p> </template
+                  ><template #append-content>
+                    <CButton
+                      style="font-size: 10pt; margin: -10pt"
+                      @click="showPassword = !showPassword"
+                    >
+                      <v-icon v-if="!showPassword" name="eye-slash" />
+                      <v-icon v-if="showPassword" name="eye" />
+                    </CButton>
                   </template>
                 </CInput>
               </CCol>
@@ -177,10 +203,9 @@
                   placeholder="--Select--"
                   horizontal
                   :value.sync="user.mst_department_id"
-                  :invalid-feedback="required.mst_department_id.message"
-                  :add-input-classes="{
-                    'is-invalid': required.mst_department_id.error,
-                  }"
+                  :is-valid="
+                    initial_load ? null : user.mst_department_id ? true : false
+                  "
                 >
                   >
                   <template #label>
@@ -198,10 +223,9 @@
                   placeholder="--Select--"
                   horizontal
                   :value.sync="user.mst_section_id"
-                  :invalid-feedback="required.mst_section_id.message"
-                  :add-input-classes="{
-                    'is-invalid': required.mst_section_id.error,
-                  }"
+                  :is-valid="
+                    initial_load ? null : user.mst_section_id ? true : false
+                  "
                 >
                   >
                   <template #label>
@@ -214,17 +238,13 @@
               </CCol>
               <CCol sm="12">
                 <CRow form class="form-group">
-                  <CCol sm="3">
-                    Status <span class="text-danger"><strong>*</strong></span>
-                  </CCol>
-                  {{ action == "Read" ? user.status : null }}
-                  <CInputRadioGroup
-                    v-if="action == 'Read' ? false : true"
-                    :options="statusOptions"
-                    :inline="true"
-                    :checked.sync="user.status"
-                  >
-                  </CInputRadioGroup>
+                  <CCol sm="3"> Status </CCol>
+                  <SwitchStatusMaster
+                    :disabled="action == 'Read'"
+                    :show_label="true"
+                    :default_value="user.status"
+                    v-on:onChange="user.status = $event"
+                  />
                 </CRow>
               </CCol>
 
@@ -413,16 +433,7 @@
               <CIcon name="cil-check-circle" />
               Submit
             </CButton>
-            <CButton
-              type="reset"
-              size="sm"
-              class="m-1"
-              color="danger"
-              @click="cancel()"
-            >
-              <CIcon name="cil-ban" />
-              Cancel
-            </CButton>
+            <ButtonBack />
           </CCardFooter>
         </CCard>
       </CCol>
@@ -431,26 +442,47 @@
 </template>
 
 <script>
-import { notEmail } from "../../../validator";
-import "vue-select/dist/vue-select.css";
+import { notEmail } from '../../../validator';
+import 'vue-select/dist/vue-select.css';
 import {
   capitalizeFirstLetter,
   isPhone,
   coutryCode,
   isEmail,
-} from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
-import { required } from "vuelidate/lib/validators";
-// import { CheckPhone, SetPhone } from "../../../CustomJs";
+  validationPassword,
+} from '../../../utils';
+import {
+  getMstUser,
+  insertMstUser,
+  updateMstUser,
+} from '../../../resource/MstUser';
+import { required } from 'vuelidate/lib/validators';
+import { getMstDepartment } from '../../../resource/MstDepartment';
+import { getMstSection } from '../../../resource/MstSection';
 
 export default {
-  name: "FormUser",
+  name: 'FormUser',
   watch: {
     user: {
       deep: true,
-      handler(n, o) {
+      handler() {
         if (!this.initial_load) {
           this.checkValidation();
+        }
+      },
+    },
+    'user.pwd': {
+      deep: true,
+      handler(data) {
+        this.required.pwd.error = false;
+        this.needPassword = false;
+        if (data) {
+          let check = validationPassword(data);
+          if (typeof check === 'string') {
+            this.needPassword = true;
+            this.required.pwd.error = true;
+            this.required.pwd.message = check;
+          }
         }
       },
     },
@@ -459,7 +491,7 @@ export default {
     this.reformatCountryCode();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     this.loadDepartment();
     if (this.$route.params.id !== undefined) {
       this.needPassword = false;
@@ -470,46 +502,50 @@ export default {
   data() {
     return {
       initial_load: true,
-      action: "",
-      route_action: "",
+      action: '',
+      route_action: '',
+      showPassword: false,
       departmentOptions: [],
       optionSections: [],
       needPassword: true,
       needConfirmPassword: true,
       positions: [
-        { value: "0", label: "--Select--" },
-        { value: 1, label: "Level 1" },
-        { value: 2, label: "Level 2" },
-        { value: 3, label: "Level 3" },
-        { value: 4, label: "Level 4" },
+        { value: '0', label: '--Select--' },
+        { value: 1, label: 'Level 1' },
+        { value: 2, label: 'Level 2' },
+        { value: 3, label: 'Level 3' },
+        { value: 4, label: 'Level 4' },
       ],
       avatars: [],
       user: {
-        status: "Active",
-        tlp_code: "",
-        tlp: "",
+        status: 'Active',
+        tlp_code: '',
+        tlp: '',
         have_error: false,
-        mst_avatar_id: "1",
+        mst_avatar_id: '1',
+        pwd: '',
+        re_pwd: '',
+        email: '',
       },
-      temp_data: { tlp_code: "", tlp_code: "" },
+      temp_data: { tlp_code: '' },
       statusOptions: [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
       required: {
-        username: { error: false, message: "Username is required" },
-        full_name: { error: false, message: "Full name is required" },
-        email: { error: false, message: "Please provide valid email address" },
-        pwd: { error: false, message: "Password is required" },
-        mst_department_id: { error: false, message: "Department is required" },
-        mst_section_id: { error: false, message: "Section is required" },
-        tlp_code: { error: false, message: "Country code is required" },
+        username: { error: false, message: 'Username is required' },
+        full_name: { error: false, message: 'Full name is required' },
+        email: { error: false, message: 'Please provide valid email address' },
+        pwd: { error: false, message: 'Password is required' },
+        mst_department_id: { error: false, message: 'Department is required' },
+        mst_section_id: { error: false, message: 'Section is required' },
+        tlp_code: { error: false, message: 'Country code is required' },
         tlp: {
           error: false,
-          message: "Please provide 7-12 digits phone number",
+          message: 'Please provide 7-12 digits phone number',
         },
       },
-      avatarOptions: [{ value: "1", label: "1" }],
+      avatarOptions: [{ value: '1', label: '1' }],
       isPhoneValid: true,
       CountryCode: coutryCode(),
     };
@@ -523,6 +559,7 @@ export default {
       mst_section_id: { required },
       tlp: { required },
       tlp_code: { required },
+      employee_id: null,
     },
   },
   methods: {
@@ -530,18 +567,15 @@ export default {
       this.temp_data.tlp_code = $value;
       this.user.tlp_code = $value;
     },
-    loadDepartment() {
-      let param = `ApiName=DepartmentList&Params={}&StatusCode=Active`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.departmentOptions.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
-      });
+    async loadDepartment() {
+      this.departmentOptions = [];
+      let _res = await getMstDepartment({ status: 'Active' });
+      for (const it of _res.data) {
+        this.departmentOptions.push({
+          label: it.name,
+          value: `${it.id}`,
+        });
+      }
     },
     reformatCountryCode() {
       let list = this.CountryCode;
@@ -560,52 +594,64 @@ export default {
         }
       }
     },
-    loadData() {
-      let param = `ApiName=UserList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data[0];
+    async loadData() {
+      let _res = await getMstUser({ id: this.$route.params.id });
+      if (_res) {
+        let data = _res.data[0];
         this.user = data;
-        this.user.mst_avatar_id = "" + data.mst_avatar_id;
-
+        this.user.mst_department_id =
+          this.user.mst_department_id || this.user.department_id;
+        this.user.mst_section_id =
+          this.user.mst_section_id || this.user.mst_section_id;
+        this.user.mst_avatar_id = '' + data.mst_avatar_id;
         if (this.$route.params.id !== undefined) {
           delete this.user.pwd;
         }
-        let tlp = "";
+        let tlp = '';
         if (data.tlp) {
-          tlp = data.tlp.split("-");
+          tlp = data.tlp.split('-');
           this.user.tlp_code = tlp[0];
           this.temp_data.tlp_code = tlp[0];
           this.user.tlp = tlp[1];
         }
         this.onDepartmentChange();
-      });
+      }
     },
-    onDepartmentChange() {
-      this.optionSections = [];
-      let param = `ApiName=SectionList&Params={"mst_department_id":${this.user.mst_department_id}}&StatusCode=Active`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
-        let data = response.data.data;
-        for (const it of data) {
-          this.optionSections.push({
-            label: it.name,
-            value: it.id,
-          });
-        }
-        return;
+    async onDepartmentChange() {
+      let _res = await getMstSection({
+        mst_department_id: this.user.mst_department_id,
+        status: 'Active',
       });
+      this.optionSections = [];
+      for (const it of _res.data) {
+        this.optionSections.push({
+          label: it.name,
+          value: `${it.id}`,
+        });
+      }
     },
     checkValidation() {
       let have_error = false;
       for (const rq in this.required) {
         if (
-          (!this.user[rq] && rq != "pwd") ||
-          (!this.user[rq] && this.needPassword && rq == "pwd")
+          (!this.user[rq] && rq != 'pwd') ||
+          (!this.user[rq] && this.needPassword && rq == 'pwd')
         ) {
           this.required[rq].error = true;
           have_error = true;
         } else {
           this.required[rq].error = false;
         }
+      }
+      // check validation regex
+      if (validationPassword(this.user.pwd)) {
+        this.required.pwd.error = true;
+        this.required.pwd.message = validationPassword(this.user.pwd);
+        have_error = true;
+      }
+      // Check Eployee ID
+      if (!this.user.employee_id) {
+        have_error = true;
       }
       // Check Phone Number
       if (!isPhone(this.user.tlp)) {
@@ -617,6 +663,15 @@ export default {
         have_error = true;
         this.required.email.error = true;
       }
+      // Check Password
+      if (!this.user.id) {
+        if (!this.user.pwd && !this.user.re_pwd) {
+          have_error = true;
+          this.required['pwd'].error = true;
+        } else if (this.user.pwd !== this.user.re_pwd) {
+          have_error = true;
+        }
+      }
       // If any error
       if (have_error) {
         this.user.have_error = true;
@@ -626,46 +681,49 @@ export default {
       return;
     },
 
-    save() {
+    async save() {
       this.user.mst_position_id = 1;
       this.initial_load = false;
       this.checkValidation();
+
       if (this.user.have_error) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
-
       let _form_data = JSON.parse(JSON.stringify(this.user));
 
-      let dataPost = {
-        ApiName: this.$route.params.id ? "UpdateUser" : "InsertUser",
-        Params: _form_data,
-      };
+      let dataPost = _form_data;
       if (_form_data.tlp && _form_data.tlp_code) {
-        dataPost.Params.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
+        dataPost.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
       }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post(`general/web`, dataPost).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : "Data has been saved succesfully ",
-            type: res.error ? "error" : "success",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          if (!res.error) {
-            this.items = [];
-            dataPost = [];
-            this.$router.back();
-          }
+        let res = {};
+        if (dataPost.id) {
+          res = await updateMstUser(dataPost);
+        } else {
+          res = await insertMstUser(dataPost);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
         });
+        if (!res['error']) this.$router.back();
       }
       return;
     },

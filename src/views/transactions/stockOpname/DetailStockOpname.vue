@@ -31,7 +31,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="stock.full_name"
+                      v-model="stock.created_full_name"
                     />
                   </td>
                 </tr>
@@ -65,7 +65,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="stock.full_name_modified_by"
+                      v-model="stock.modified_full_name"
                     />
                   </td>
                 </tr>
@@ -111,6 +111,8 @@
                   striped
                   sorter
                   border
+                  :pagination="true"
+                  :items-per-page="10"
                   :items="detailStock"
                   :fields="fields"
                   class="text-left"
@@ -134,16 +136,17 @@
           </div>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            @click="cancel()"
-            class="my-2 mx-2 float-right"
-            color="primary"
-            size="sm"
-            type="button"
-          >
-            <CIcon name="cil-arrow-left" />
-            Back
-          </CButton>
+          <ButtonBack />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardFooter>
       </CCard>
     </div>
@@ -223,29 +226,24 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3 } from '../../../utils';
 export default {
   mounted() {
-    this.action = this.$route.params.type == "read" ? "VIEW" : "EDIT";
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
-      let param = `ApiName=OpnameList&Params={}&Id=${this.$route.params.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`general/web?${param}`).then((response) => {
+      let url = `/v3/transaction/stock-opname?id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.stock = data;
-        this.stock.status_desc = "Pending";
-        if (this.stock.status == 1) {
-          this.stock.status_desc = "Done";
-        } else if (this.stock.status == 2) {
-          this.stock.status_desc = "Canceled";
-        }
         if (data.items.length > 0) {
           this.items = data.items;
         } else {
           this.$toast.open({
             message: `No data to be viewed`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         }
@@ -254,67 +252,67 @@ export default {
   },
   data() {
     return {
-      action: "",
+      action: '',
       datas: [],
       viewModal: false,
       view: {
-        productId: "",
-        productName: "",
-        batch: "",
+        productId: '',
+        productName: '',
+        batch: '',
         serial: [],
-        gtin: "",
-        nie: "",
-        expiredDate: "",
+        gtin: '',
+        nie: '',
+        expiredDate: '',
       },
       items: [],
       fields: [
         {
-          key: "no",
-          label: "Item No",
+          key: 'product_no',
+          label: 'Item No',
         },
         {
-          key: "product_name",
-          label: "Product Name",
+          key: 'product_name',
+          label: 'Product Name',
         },
         {
-          key: "batch_no",
-          label: "Batch No",
+          key: 'batch_no',
+          label: 'Batch No',
         },
         {
-          key: "expired_date",
-          label: "Exp Date",
+          key: 'expired_date',
+          label: 'Exp Date',
         },
         {
-          key: "nie",
-          label: "NIE",
+          key: 'product_nie',
+          label: 'NIE',
         },
         {
-          key: "gtin_cp",
-          label: "GTIN / CP",
+          key: 'epc_key',
+          label: 'EPC Key',
         },
         {
-          key: "serial_no",
-          label: "SN",
+          key: 'serial',
+          label: 'SN',
         },
         {
-          key: "packaging_level",
-          label: "Pkg Level",
+          key: 'packaging_level',
+          label: 'Pkg Level',
         },
         {
-          key: "packaging_name",
-          label: "Pkg Name",
+          key: 'packaging_name',
+          label: 'Pkg Name',
         },
         {
-          key: "quantity",
-          label: "L1 Qty",
+          key: 'quantity',
+          label: 'L1 Qty',
         },
         {
-          key: "actual_quantity",
-          label: "L1 Qty Actual",
+          key: 'actual_quantity',
+          label: 'L1 Qty Actual',
         },
         {
-          key: "is_same",
-          label: "",
+          key: 'is_same',
+          label: '',
         },
         // {
         //   key: "action",
@@ -324,30 +322,27 @@ export default {
         // },
       ],
       stock: {
-        id: "",
-        warehouse: "",
-        storage: "",
-        createdDate: "",
+        id: '',
+        warehouse: '',
+        storage: '',
+        createdDate: '',
       },
-      stockOpnameDate: "",
+      stockOpnameDate: '',
     };
   },
   computed: {
     detailStock() {
       return this.items.map((item) => {
-        let operator = "=";
+        let operator = '=';
         if (item.quantity < item.actual_quantity) {
-          operator = "+";
+          operator = '+';
         } else if (item.quantity > item.actual_quantity) {
-          operator = "-";
+          operator = '-';
         }
         return {
           ...item,
           is_same: operator,
           actual_quantity: item.actual_quantity ?? 0,
-          packaging_name: item[`name_packaging_l${item.packaging_level}`],
-          gtin_cp:
-            item.epc_type == "sscc" ? item.company_prefix : item.gtin_sscc,
         };
       });
     },
@@ -356,67 +351,19 @@ export default {
     cancel() {
       this.$router.back();
     },
-    rowClicked(item) {
-      if (item.packaging_level == 1) {
-        this.$toast.open({
-          message: `No detail SN data to be viewed, SN [${item.serial_no}] is Packaging L1`,
-          type: "error",
-          dissmissible: true,
-          position: "top-right",
-          duration: 5000,
-        });
-        return false;
-      }
-      let param = `ApiName=DetailItem&Params={serial_id:"${item.serial_no}"}&Id=${item.id}&page=&limit=&searchText=`;
-      $axiosMertrack.get(`/general/web?${param}`).then((result) => {
-        let res = result.data;
-        if (res.error) {
-          this.$toast.open({
-            message: `${res.message}`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          return;
-        }
-        if (res.data.length == 0) {
-          this.$toast.open({
-            message: `No data to be viewed, Because ${item.serial_no} Is Nothing Have Child / Empty`,
-            type: "error",
-            dissmissible: true,
-            position: "top-right",
-            duration: 5000,
-          });
-          return;
-        }
-        this.viewModal = true;
-        res = res.data;
-        this.view = {
-          productId: res[0].product_id,
-          gtin: res[0].gtin,
-          productName: res[0].name,
-          nie: res[0].nie,
-          batch: res[0].batch_no,
-          expiredDate: res[0].expired_date,
-        };
-        if (res.length > 0) {
-          for (const it of res) {
-            if (it.serial) {
-              this.datas.push(it.serial);
-            } else {
-              this.datas.push(it.serial_id);
-            }
-          }
-        } else {
-          this.datas.push(result.data.serial);
-        }
-      });
-      return;
-    },
     closeModal() {
       this.datas = [];
       this.viewModal = false;
+    },
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+        },
+        exportType: type,
+        url: '/v3/transaction/stock-opname',
+      });
     },
   },
 };

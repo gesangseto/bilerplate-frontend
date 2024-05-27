@@ -3,27 +3,16 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ButtonPermission :permission="'create'" @click="addNew()" />
+          <ButtonPermission
+            :permission="'create'"
+            @click="addNew()"
+            :useHref="true"
+          />
           <h5>Stock Opname</h5>
         </CCardHeader>
         <CCardBody>
-          <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-          <HeaderFilterTransaction
-            :filter="['All', 'ID', 'Warehouse']"
+          <HeaderFilterTransactionV3
+            :filter="['All', 'id', 'warehouse_id']"
             status_code="trx_stock_opname"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -42,6 +31,8 @@
             <template #action="{ item, index }">
               <td>
                 <ButtonPermission
+                  :id="item.id"
+                  :useHref="true"
                   :permission="'read'"
                   @click="rowClicked(item, index)"
                 />
@@ -87,12 +78,12 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePagination } from "../../../utils";
-import { dateFilter } from "../../../constants";
+import $axiosMertrack from '../../../apiMertrack';
+import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
 
 export default {
-  name: "ListStockOpname",
+  name: 'ListStockOpname',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -103,33 +94,33 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        ApiName: "OpnameList",
-        StartDate: dateFilter.last_3_month.start,
-        EndDate: dateFilter.last_3_month.end,
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_deleteProperty: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        text: "",
-        tooltip: "Cancel",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'window-close',
+        text: '',
+        tooltip: 'Cancel',
       },
       cancelProperty: {
-        title: "Stock Opname",
+        title: 'Stock Opname',
         modal: false,
         id: null,
-        reason: "",
+        reason: '',
       },
       items: [],
       listProvince: [],
       listEntity: [],
       fields: [
-        { key: "id", label: "ID", _classes: "font-weight-bold" },
-        { key: "created_date", label: "Stock Opname Date" },
-        { key: "warehouse_name", label: "Warehouse Name" },
-        { key: "status_desc", label: "Status", _classes: "font-weight-bold" },
-        { key: "action", label: "Action" },
+        { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
+        { key: 'created_date', label: 'Stock Opname Date' },
+        { key: 'warehouse_name', label: 'Warehouse Name' },
+        { key: 'status_desc', label: 'Status', _classes: 'font-weight-bold' },
+        { key: 'action', label: 'Action' },
       ],
     };
   },
@@ -140,45 +131,44 @@ export default {
     },
     handleCancel() {
       let body = {
-        ApiName: "OpnameCancel",
-        Params: {
-          id: this.cancelProperty.id,
-          reason: this.cancelProperty.reason,
-        },
+        id: this.cancelProperty.id,
+        approved: false,
+        reason: `[CANCEL] ${this.cancelProperty.reason}`,
       };
       $axiosMertrack
-        .post(`/general/web`, body)
+        .post(`/v3/transaction/stock-opname`, body)
         .then((result) => {
           this.loadData();
           this.$toast.open({
             message: result.data.error
               ? result.data.message
               : `Transaction has been canceled succesfully`,
-            type: result.data.error == true ? "error" : "success",
+            type: result.data.error == true ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         })
         .catch((err) => {
           this.$toast.open({
             message: `Error : ${err}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
       this.cancelProperty.id = null;
-      this.cancelProperty.reason = "";
+      this.cancelProperty.reason = '';
       this.cancelProperty.modal = false;
     },
 
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack.get(`/general/web?${param}`).then((res) => {
+      let url = `/v3/transaction/stock-opname?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        this.filter = calculatePagination({
+        this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
@@ -189,7 +179,12 @@ export default {
       this.loadData();
     },
     handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
+      exportDataV3({
+        alert: true,
+        param: this.filter,
+        exportType: type,
+        url: '/v3/transaction/stock-opname',
+      });
     },
     pageChange(page) {
       this.filter.page = page;
@@ -210,11 +205,11 @@ export default {
   computed: {
     listOpname() {
       return this.items.map((item) => {
-        let status = "Pending";
+        let status = 'Pending';
         if (item.status == 1) {
-          status = "Done";
+          status = 'Done';
         } else if (item.status == 2) {
-          status = "Canceled";
+          status = 'Canceled';
         }
         return {
           ...item,
