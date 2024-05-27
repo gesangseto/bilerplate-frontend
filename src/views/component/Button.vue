@@ -85,6 +85,7 @@ export default {
         text: '',
         tooltip: '',
       },
+      href: null,
     };
   },
   methods: {},

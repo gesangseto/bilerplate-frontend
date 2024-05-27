@@ -210,8 +210,8 @@ export function validationPassword(input) {
 }
 
 export function isJsonString(item) {
-  item = typeof item !== 'string' ? JSON.stringify(item) : item;
   try {
+    // item = typeof item !== 'string' ? JSON.stringify(item) : item;
     item = JSON.parse(item);
     return true;
   } catch (e) {

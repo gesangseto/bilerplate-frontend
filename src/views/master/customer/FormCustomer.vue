@@ -19,10 +19,7 @@
                 horizontal
                 placeholder="Enter customer name"
                 v-model="formData.name"
-                :invalid-feedback="required.name.message"
-                :add-input-classes="{
-                  'is-invalid': required.name.error,
-                }"
+                :is-valid="initial_load ? null : formData.name ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -38,10 +35,7 @@
                 horizontal
                 placeholder="Enter customer PIC name"
                 v-model="formData.pic"
-                :invalid-feedback="required.pic.message"
-                :add-input-classes="{
-                  'is-invalid': required.pic.error,
-                }"
+                :is-valid="initial_load ? null : formData.pic ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -57,10 +51,9 @@
                 placeholder="Enter customer address"
                 horizontal
                 v-model="formData.address"
-                :invalid-feedback="required.address.message"
-                :add-input-classes="{
-                  'is-invalid': required.address.error,
-                }"
+                :is-valid="
+                  initial_load ? null : formData.address ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -94,7 +87,7 @@
                             >
                             </v-select>
                             <small
-                              v-if="required.tlp_code.error"
+                              v-if="!initial_load && !formData.tlp_code"
                               style="color: red"
                             >
                               {{ required.tlp_code.message }}
@@ -113,10 +106,13 @@
                                 })
                               "
                               v-model="formData.tlp"
-                              :invalid-feedback="required.tlp.message"
-                              :add-input-classes="{
-                                'is-invalid': required.tlp.error,
-                              }"
+                              :is-valid="
+                                initial_load
+                                  ? null
+                                  : formData.tlp
+                                  ? true
+                                  : false
+                              "
                             >
                             </CInput>
                           </td>
@@ -184,10 +180,7 @@
                 placeholder="email.address@email.com"
                 horizontal
                 v-model="formData.email"
-                :invalid-feedback="required.email.message"
-                :add-input-classes="{
-                  'is-invalid': required.email.error,
-                }"
+                :is-valid="initial_load ? null : formData.email ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -245,7 +238,7 @@
               :defaultMetadata="formData.metadata"
               v-on:handleChange="
                 (formData.metadata = $event.result),
-                  (formData.error = $event.error)
+                  (formData.error_metadata = $event.error_metadata)
               "
               model="mst_customer"
             />
@@ -416,6 +409,10 @@ export default {
         this.required.email.error = true;
       }
       // If any error
+      if (this.formData.error_metadata) {
+        have_error = true;
+      }
+      // If any error
       if (have_error) {
         this.formData.have_error = true;
       } else {
@@ -423,11 +420,30 @@ export default {
       }
       return;
     },
+    valid() {
+      console.log(this.formData);
+      if (!this.formData.name) {
+        return false;
+      } else if (!this.formData.pic) {
+        return false;
+      } else if (!this.formData.address) {
+        return false;
+      } else if (!this.formData.email) {
+        return false;
+      }
+      return true;
+    },
     handleChangePhone() {},
     async save() {
       this.initial_load = false;
-      this.checkValidation();
-      if (this.formData.have_error) {
+      if (!this.valid()) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
 

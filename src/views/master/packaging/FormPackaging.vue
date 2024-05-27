@@ -73,6 +73,15 @@
                 />
               </CRow>
             </CForm>
+
+            <Metadata
+              :defaultMetadata="formData.metadata"
+              v-on:handleChange="
+                (formData.metadata = $event.result),
+                  (formData.error_metadata = $event.error_metadata)
+              "
+              model="mst_packaging"
+            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -107,7 +116,7 @@ export default {
       initial_load: true,
       route_action: '',
       action: 'Edit',
-      formData: { id: null, have_error: false },
+      formData: { id: null, have_error: false, metadata: null },
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
@@ -133,7 +142,9 @@ export default {
   methods: {
     checkValidation() {
       this.formData.have_error = false;
-      if (!this.formData.name) {
+      if (this.formData.error_metadata) {
+        this.formData.have_error = true;
+      } else if (!this.formData.name) {
         this.formData.have_error = true;
       } else if (!this.formData.code) {
         this.formData.have_error = true;

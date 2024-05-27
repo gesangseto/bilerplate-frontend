@@ -151,7 +151,7 @@
         size="sm"
         color="danger"
         class="m-1"
-        @click="showModal = false"
+        @click="showModalDialog = false"
       >
         <CIcon name="cil-ban" /> Cancel
       </CButton>
@@ -182,35 +182,17 @@ export default {
   watch: {
     product: {
       handler(item) {
-        if (item.weight_l1) {
-          if (isJsonString(item.weight_l1)) {
-            this.weight_config.weight_l1 = JSON.parse(item.weight_l1);
-          } else {
-            this.weight_config.weight_l1 = item.weight_l1;
+        for (let i = 1; i <= 4; i++) {
+          if (item[`weight_l${i}`]) {
+            if (isJsonString(item[`weight_l${i}`])) {
+              this.weight_config[`weight_l${i}`] = JSON.parse(
+                item[`weight_l${i}`]
+              );
+            } else {
+              this.weight_config[`weight_l${i}`] = item[`weight_l${i}`];
+            }
           }
         }
-        if (item.weight_l2) {
-          if (isJsonString(item.weight_l2)) {
-            this.weight_config.weight_l2 = JSON.parse(item.weight_l2);
-          } else {
-            this.weight_config.weight_l2 = item.weight_l2;
-          }
-        }
-        if (item.weight_l3) {
-          if (isJsonString(item.weight_l3)) {
-            this.weight_config.weight_l3 = JSON.parse(item.weight_l3);
-          } else {
-            this.weight_config.weight_l3 = item.weight_l3;
-          }
-        }
-        if (item.weight_l4) {
-          if (isJsonString(item.weight_l4)) {
-            this.weight_config.weight_l4 = JSON.parse(item.weight_l4);
-          } else {
-            this.weight_config.weight_l4 = item.weight_l4;
-          }
-        }
-        console.log(this.weight_config);
       },
       deep: true,
     },

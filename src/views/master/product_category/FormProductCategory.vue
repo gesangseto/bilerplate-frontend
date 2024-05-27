@@ -8,24 +8,17 @@
           </CCardHeader>
           <CCardBody>
             <CForm>
-              <CInput :disabled="true" horizontal v-model="productCategory.id">
+              <CInput :disabled="true" horizontal v-model="formData.id">
                 <template #label>
                   <p class="col-form-label col-sm-3">ID</p>
                 </template>
               </CInput>
               <CInput
                 :disabled="action == 'Read' ? true : false"
-                label="Name *"
                 horizontal
                 placeholder="Enter product category name"
-                v-model="productCategory.name"
-                invalid-feedback="Category name is required"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.productCategory.name.$error &&
-                    $v.productCategory.name.required,
-                  'is-invalid': $v.productCategory.name.$error,
-                }"
+                v-model="formData.name"
+                :is-valid="initial_load ? null : formData.name ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -38,25 +31,12 @@
               </CInput>
               <CTextarea
                 :disabled="action == 'Read' ? true : false"
-                label="Description*"
                 horizontal
                 placeholder="Enter product category description"
-                v-model="productCategory.description"
-                invalid-feedback="Description is required"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.productCategory.description.$error &&
-                    $v.productCategory.description.required,
-                  'is-invalid': $v.productCategory.description.$error,
-                }"
+                v-model="formData.description"
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Description
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
+                  <p class="col-form-label col-sm-3">Description</p>
                 </template>
               </CTextarea>
               <CRow form class="form-group">
@@ -64,11 +44,19 @@
                 <SwitchStatusMaster
                   :disabled="action == 'Read'"
                   :show_label="true"
-                  :default_value="productCategory.status"
-                  v-on:onChange="productCategory.status = $event"
+                  :default_value="formData.status"
+                  v-on:onChange="formData.status = $event"
                 />
               </CRow>
             </CForm>
+            <Metadata
+              :defaultMetadata="formData.metadata"
+              v-on:handleChange="
+                (formData.metadata = $event.result),
+                  (formData.error_metadata = $event.error_metadata)
+              "
+              model="mst_product_category"
+            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -90,7 +78,6 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators';
 import { capitalizeFirstLetter } from '../../../utils';
 import {
   getMstProductCategory,
@@ -102,20 +89,11 @@ export default {
   name: 'ProductCategory',
   data() {
     return {
+      initial_load: true,
       action: '',
       route_action: '',
-      productCategory: { status: 'Active' },
-      statusOptions: [
-        { value: 'Active', label: 'Active' },
-        { value: 'Inactive', label: 'Inactive' },
-      ],
+      formData: { id: null, status: 'Active', metadata: null },
     };
-  },
-  validations: {
-    productCategory: {
-      name: { required },
-      description: { required },
-    },
   },
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
@@ -127,22 +105,37 @@ export default {
   },
   methods: {
     async loadData() {
-      let param = `id=${this.$route.params.id}`;
-      let _res = await getMstProductCategory(param);
-      this.productCategory = _res.data[0];
+      let _res = await getMstProductCategory({ id: this.$route.params.id });
+      if (_res) this.formData = _res.data[0];
+    },
+    valid() {
+      if (this.formData.error_metadata) {
+        return false;
+      } else if (!this.formData.name) {
+        return false;
+      }
+      return true;
     },
 
     async save() {
+      this.initial_load = false;
+      if (!this.valid()) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
-      this.$v.$touch();
-      if (this.$v.$invalid) {
-        return;
-      }
+
       if (confirm(message)) {
         this.$isLoading(true);
-        let dataPost = this.productCategory;
+        let dataPost = this.formData;
         let res = {};
         if (dataPost.id) {
           res = await updateMstProductCategory(dataPost);

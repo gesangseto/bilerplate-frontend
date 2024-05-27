@@ -11,7 +11,7 @@
             :value="item.result"
             @input="handleChangeInput($event, index)"
             :description="item.pattern_description"
-            :is-valid="!item.error"
+            :is-valid="!item.error_metadata"
           >
             <template #label>
               <p class="col-form-label col-sm-3">
@@ -51,10 +51,10 @@ export default {
     },
     reformat_metadata: {
       handler(item) {
-        let data = { result: {}, error: false };
+        let data = { result: {}, error_metadata: false };
         for (const it of item) {
           data.result[`${it.name}`] = it.result;
-          if (!data.error) data.error = it.error;
+          if (!data.error_metadata) data.error_metadata = it.error_metadata;
         }
         this.$emit('handleChange', data);
       },
@@ -77,8 +77,14 @@ export default {
             let pattern_description = it.conf_pattern
               ? it.conf_pattern.description
               : null;
-            let error = this.validation(result, pattern, it.mandatory);
-            row.push({ ...it, result, pattern, pattern_description, error });
+            let error_metadata = this.validation(result, pattern, it.mandatory);
+            row.push({
+              ...it,
+              result,
+              pattern,
+              pattern_description,
+              error_metadata,
+            });
           }
           this.reformat_metadata = row;
           console.log(row);
@@ -103,13 +109,17 @@ export default {
     handleChangeInput(event, index) {
       let newValue = event;
       let item = this.reformat_metadata[index];
-      let error = this.validation(newValue, item.pattern, item.mandatory);
+      let error_metadata = this.validation(
+        newValue,
+        item.pattern,
+        item.mandatory
+      );
 
-      // Update the item with the new value and error state
+      // Update the item with the new value and error_metadata state
       this.$set(this.reformat_metadata, index, {
         ...item,
         result: newValue,
-        error,
+        error_metadata,
       });
     },
   },

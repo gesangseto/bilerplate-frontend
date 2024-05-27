@@ -166,7 +166,7 @@ export default {
   data() {
     return {
       showModalDialog: false,
-      modalData: null,
+      modalData: { mandatory: false },
       initialLoad: true,
       route_action: '',
       // category: '',

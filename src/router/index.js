@@ -38,7 +38,7 @@ const FormProduct = () =>
   // getUserId() == 0
   // ? import("@/views/master/product/FormProduct_v2")
   //   : import("@/views/master/product/FormProduct");
-  import('@/views/master/product/FormProduct_v2');
+  import('@/views/master/product/FormProduct');
 // Packaging
 const ListPackaging = () => import('@/views/master/packaging/ListPackaging');
 const FormPackaging = () => import('@/views/master/packaging/FormPackaging');

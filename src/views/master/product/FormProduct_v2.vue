@@ -8,121 +8,598 @@
         <CCardBody>
           <CForm>
             <CRow>
-              <CCol sm="12">
-                <CInput :disabled="true" horizontal v-model="product.id">
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CInput
+                  :disabled="action == 'Read' ? true : false"
+                  :add-input-classes="{
+                    'is-valid': !$v.product.no.$error && $v.product.no.required,
+                    'is-invalid':
+                      $v.product.no.$error && !$v.product.no.required,
+                  }"
+                  horizontal
+                  invalid-feedback="Item No is required"
+                  placeholder="Enter item number"
+                  v-model="product.no"
+                >
                   <template #label>
-                    <p class="col-form-label col-sm-3">ID</p>
+                    <p class="col-form-label col-sm-3">
+                      Item No
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
                   </template>
                 </CInput>
               </CCol>
-
-              <CCol sm="12">
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
                 <CInput
-                  :disabled="!product.flag_upd_del"
-                  label="Item No *"
-                  placeholder="Enter item no"
-                  horizontal
-                  v-model="product.no"
-                  @keyup="validationData()"
+                  :disabled="action == 'Read' ? true : false"
                   :add-input-classes="{
-                    'is-invalid': error.no,
+                    'is-valid':
+                      !$v.product.name.$error && $v.product.name.required,
+                    'is-invalid':
+                      $v.product.name.$error && !$v.product.name.required,
                   }"
-                />
-              </CCol>
-              <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Product Name *"
+                  autocomplete="name"
+                  horizontal
+                  invalid-feedback="Product name is required"
                   placeholder="Enter product name"
-                  horizontal
-                  @keyup="validationData()"
                   v-model="product.name"
-                  :add-input-classes="{
-                    'is-invalid': error.name,
-                  }"
-                />
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Product Name
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
               </CCol>
-              <CCol sm="12">
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
                 <CTextarea
-                  :disabled="action == 'Read'"
-                  label="Description"
+                  :disabled="action == 'Read' ? true : false"
+                  :add-input-classes="{
+                    'is-valid':
+                      !$v.product.description.$error &&
+                      $v.product.description.required,
+                    'is-invalid':
+                      $v.product.description.$error &&
+                      !$v.product.description.required,
+                  }"
+                  horizontal
+                  invalid-feedback="Description is required"
                   placeholder="Enter product description"
-                  @keyup="validationData()"
-                  horizontal
                   v-model="product.description"
-                />
+                  rows="5"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Description
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CTextarea>
               </CCol>
-              <CCol sm="12">
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
                 <CSelect
-                  :disabled="action == 'Read'"
-                  label="Category *"
-                  horizontal
-                  @change="validationData()"
-                  placeholder="--Select--"
+                  :disabled="action == 'Read' ? true : false"
+                  :add-input-classes="{
+                    'is-valid':
+                      !$v.product.mst_product_category_id.$error &&
+                      $v.product.mst_product_category_id.required,
+                    'is-invalid':
+                      $v.product.mst_product_category_id.$error &&
+                      !$v.product.mst_product_category_id.required,
+                  }"
                   :options="listCategory"
                   :value.sync="product.mst_product_category_id"
-                  :add-input-classes="{
-                    'is-invalid': error.mst_product_category_id,
-                  }"
-                />
-              </CCol>
-
-              <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Min Stock"
-                  placeholder="Enter minimum L1 stock threshold"
-                  @keyup="validationData()"
                   horizontal
-                  v-model="product.minimum"
-                />
-              </CCol>
-              <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Max Stock"
-                  placeholder="Enter maximum L1 stock threshold"
-                  @keyup="validationData()"
-                  horizontal
-                  v-model="product.maximum"
-                />
-              </CCol>
-
-              <CCol sm="12">
-                <CRow form class="form-group">
-                  <CCol tag="label" sm="3" class="col-form-label">
-                    Product Type
-                  </CCol>
-                  <CCol sm="9">
-                    <CInputRadioGroup
-                      v-if="product.flag_upd_del"
-                      :options="productTypeOption"
-                      :inline="true"
-                      :checked.sync="product.product_type"
-                    />
-                    <p
-                      class="col-form-label col-sm-3"
-                      v-if="!product.flag_upd_del"
-                    >
-                      {{
-                        product.product_type == '0' ? 'Serial' : 'Non-Serial'
-                      }}
+                  invalid-feedback="Category is required"
+                  label="Category"
+                  placeholder="--Select--"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Category
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
                     </p>
+                  </template>
+                </CSelect>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CInput
+                  :disabled="
+                    action == 'Read' || product.flag_upd_del == 0 ? true : false
+                  "
+                  :add-input-classes="{
+                    'is-valid':
+                      !$v.product.gtin.$error &&
+                      $v.product.gtin.required &&
+                      validateGtin(product.gtin),
+                    'is-invalid':
+                      ($v.product.gtin.$error && !$v.product.gtin.required) ||
+                      (product.gtin && !validateGtin(product.gtin)),
+                  }"
+                  horizontal
+                  :invalid-feedback="error_message.gtin"
+                  placeholder="Enter GTIN for L1 Packaging"
+                  :maxlength="14"
+                  id="gtin"
+                  v-model="product.gtin"
+                  @keypress="limitGtin()"
+                  @change="validateGtin(product.gtin)"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      L1 GTIN
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CInput
+                  :disabled="action == 'Read' ? true : false"
+                  :add-input-classes="{
+                    'is-valid':
+                      !$v.product.nie.$error && $v.product.nie.required,
+                    'is-invalid':
+                      $v.product.nie.$error && !$v.product.nie.required,
+                  }"
+                  horizontal
+                  invalid-feedback="NIE is required"
+                  label="NIE *"
+                  :maxlength="15"
+                  @keypress="limitNie()"
+                  placeholder="Enter product NIE"
+                  v-model="product.nie"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      NIE
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CInput
+                  :disabled="action == 'Read' ? true : false"
+                  :add-input-classes="{
+                    'is-valid':
+                      !$v.product.size.$error && $v.product.size.required,
+                    'is-invalid':
+                      $v.product.size.$error && !$v.product.size.required,
+                  }"
+                  horizontal
+                  invalid-feedback="NIE packaging (kemasan NIE) is required"
+                  placeholder="Enter packaging description registered at BPOM"
+                  v-model="product.size"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      NIE Packaging (Kemasan NIE)
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CInput
+                  :disabled="action == 'Read' ? true : false"
+                  :add-input-classes="{
+                    'is-valid':
+                      !$v.product.print_name.$error &&
+                      $v.product.print_name.required,
+                    'is-invalid':
+                      $v.product.print_name.$error &&
+                      !$v.product.print_name.required,
+                  }"
+                  horizontal
+                  invalid-feedback="Product name (print) is required"
+                  placeholder="Enter product name for label printing"
+                  v-model="product.print_name"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Product Name (Print)
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+            </CRow>
+            <!-- Temperature -->
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CInput
+                  :disabled="action == 'Read' ? true : false"
+                  :add-input-classes="{
+                    'is-valid':
+                      !$v.product.suhu.$error && $v.product.suhu.required,
+                    'is-invalid':
+                      $v.product.suhu.$error && !$v.product.suhu.required,
+                  }"
+                  type="text"
+                  horizontal
+                  placeholder="Enter product storage temperature for label printing"
+                  v-model="product.suhu"
+                  invalid-feedback="Storage temperature is required"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Storage Temperature
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CSelect
+                  :disabled="action == 'Read' ? true : false"
+                  :add-input-classes="{
+                    'is-valid':
+                      !$v.product.packagingl1_id.$error &&
+                      $v.product.packagingl1_id.required,
+                    'is-invalid':
+                      $v.product.packagingl1_id.$error &&
+                      !$v.product.packagingl1_id.required,
+                  }"
+                  invalid-feedback="Packaging L1 is required"
+                  :horizontal="{ label: 'col-sm-6', input: 'col-sm-6' }"
+                  :options="listPackaging"
+                  v-model="product.packagingl1_id"
+                  placeholder="--Select--"
+                >
+                  <template #label>
+                    <p
+                      class="col-form-label col-sm-3 col-md-3 col-lg-3 col-xl-3"
+                    >
+                      Packaging L1
+                      <span class="text-danger">
+                        <strong>*</strong>
+                      </span>
+                    </p>
+                  </template>
+                </CSelect>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CRow>
+                  <CCol sm="6" md="6" lg="6">
+                    <CSelect
+                      :disabled="action == 'Read' ? true : false"
+                      :add-input-classes="{
+                        'is-valid':
+                          !$v.product.packagingl2_id.$error &&
+                          $v.product.packagingl2_id.required,
+                        'is-invalid':
+                          $v.product.packagingl2_id.$error &&
+                          !$v.product.packagingl2_id.required,
+                      }"
+                      invalid-feedback="Packaging L2 is required"
+                      :horizontal="{ label: 'col-sm-6', input: 'col-sm-6' }"
+                      :options="listPackaging"
+                      @change="packagingL2Change()"
+                      :value.sync="product.packagingl2_id"
+                      placeholder="Select L2 packaging"
+                    >
+                      <template #label>
+                        <p
+                          class="
+                            col-form-label col-sm-6 col-md-6 col-lg-6 col-xl-6
+                          "
+                        >
+                          Packaging L2
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </p>
+                      </template>
+                    </CSelect>
+                  </CCol>
+                  <CCol sm="3" md="3" lg="3">
+                    <CInput
+                      :disabled="action == 'Read' ? true : false"
+                      :readonly="
+                        !product.packagingl2_id || product.flag_upd_del == 0
+                          ? true
+                          : false
+                      "
+                      :add-input-classes="{
+                        'is-invalid':
+                          product.packagingl2_id && error_message.qty_l2 != '',
+                      }"
+                      :invalid-feedback="error_message.qty_l2"
+                      @change="qtyPackagingL2Change()"
+                      @keyup="qtyPackagingL2Change()"
+                      v-model="product.qty_packagingl2"
+                      id="qty_l2"
+                      horizontal
+                      label="L1 Qty"
+                      placeholder="L1 Qty inside Pkg L2"
+                    />
+                  </CCol>
+                  <CCol sm="3" md="3" lg="3" id="only-number">
+                    <CInput
+                      :disabled="
+                        action == 'Read' || product.flag_upd_del == 0
+                          ? true
+                          : false
+                      "
+                      :readonly="product.packagingl2_id ? false : true"
+                      :add-input-classes="{
+                        'is-invalid':
+                          product.packagingl2_id && !product.prefix_packagingl2,
+                      }"
+                      :invalid-feedback="error_message.prefix_l2"
+                      horizontal
+                      type="text"
+                      min="0"
+                      max="999"
+                      :maxlength="1"
+                      v-model="product.prefix_packagingl2"
+                      label="SN Prefix"
+                      id="prefix2"
+                    >
+                    </CInput>
                   </CCol>
                 </CRow>
               </CCol>
-              <CCol sm="12">
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CRow>
+                  <CCol sm="6" md="6" lg="6">
+                    <CSelect
+                      :disabled="action == 'Read' ? true : false"
+                      :add-input-classes="{
+                        'is-valid':
+                          !$v.product.packagingl3_id.$error &&
+                          $v.product.packagingl3_id.required,
+                        'is-invalid':
+                          $v.product.packagingl3_id.$error &&
+                          !$v.product.packagingl3_id.required,
+                      }"
+                      invalid-feedback="Packaging L3 is required"
+                      :horizontal="{ label: 'col-sm-6', input: 'col-sm-6' }"
+                      :options="listPackaging"
+                      :value.sync="product.packagingl3_id"
+                      @change="packagingL3Change()"
+                      placeholder="Select L3 Packaging"
+                    >
+                      <template #label>
+                        <p
+                          class="
+                            col-form-label col-sm-6 col-md-6 col-lg-6 col-xl-6
+                          "
+                        >
+                          Packaging L3
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </p>
+                      </template>
+                    </CSelect>
+                  </CCol>
+                  <CCol sm="3" md="3" lg="3">
+                    <CInput
+                      :disabled="
+                        action == 'Read' || product.flag_upd_del == 0
+                          ? true
+                          : false
+                      "
+                      :readonly="!product.packagingl3_id ? true : false"
+                      :add-input-classes="{
+                        'is-invalid':
+                          product.packagingl3_id && error_message.qty_l3 != '',
+                      }"
+                      :invalid-feedback="error_message.qty_l3"
+                      @change="qtyPackagingL3Change()"
+                      @keyup="qtyPackagingL3Change()"
+                      v-model="product.qty_packagingl3"
+                      id="qty_l3"
+                      horizontal
+                      label="L1 Qty"
+                      placeholder="L1 Qty inside Pkg L3"
+                    />
+                  </CCol>
+                  <CCol sm="3" md="3" lg="3" id="only">
+                    <CInput
+                      :disabled="true"
+                      :readonly="product.packagingl3_id ? false : true"
+                      horizontal
+                      type="text"
+                      v-model="product.prefix_packagingl3"
+                      label="SN Prefix"
+                      id="prefix3"
+                      min="0"
+                      max="999"
+                      :maxlength="1"
+                    >
+                    </CInput>
+                  </CCol>
+                </CRow>
+              </CCol>
+            </CRow>
+
+            <!-- 
+              <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CRow>
+                  <CCol sm="6" md="6" lg="6">
+                    <CSelect
+                      :disabled="action == 'Read' ? true : false"
+                      :horizontal="{ label: 'col-sm-6', input: 'col-sm-6' }"
+                      :options="listPackagingL4"
+                      @change="packagingL4Change()"
+                      :value.sync="product.packagingl4_id"
+                      label="Packaging L4"
+                      placeholder="Select packaging L4"
+                    />
+                  </CCol>
+                  <CCol sm="3" md="3" lg="3">
+                    <CInput
+                      :disabled="
+                        action == 'Read' || product.flag_upd_del == 0
+                          ? true
+                          : false
+                      "
+                      :readonly="!product.packagingl4_id ? true : false"
+                      :add-input-classes="{
+                        'is-invalid':
+                          product.packagingl4_id && error_message.qty_l4 != '',
+                      }"
+                      @change="qtyPackagingL4Change()"
+                      :invalid-feedback="error_message.qty_l4"
+                      id="qty_l4"
+                      :value.sync="product.qty_packagingl4"
+                      horizontal
+                      label="L1 Qty"
+                      placeholder="Qty Packaging L4 inner L3"
+                    />
+                  </CCol>
+                  <CCol sm="3" md="3" lg="3" id="number">
+                    <CInput
+                      :disabled="
+                        action == 'Read' || product.flag_upd_del == 0
+                          ? true
+                          : false
+                      "
+                      :readonly="product.packagingl4_id ? false : true"
+                      :add-input-classes="{
+                        'is-invalid':
+                          product.packagingl4_id && !product.prefix_packagingl4,
+                      }"
+                      :invalid-feedback="error_message.prefix_l4"
+                      horizontal
+                      type="text"
+                      min="0"
+                      max="999"
+                      :maxlength="1"
+                      pattern="^[0-9]$"
+                      v-model="product.prefix_packagingl4"
+                      label="SN Prefix"
+                      id="prefix4"
+                    >
+                    </CInput>
+                  </CCol>
+                </CRow>
+              </CCol>
+            </CRow>
+             -->
+
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CInput
+                  placeholder="Enter minimum L1 stock threshold"
+                  :disabled="action == 'Read' ? true : false"
+                  :horizontal="{ label: 'col-sm-6', input: 'col-sm-6' }"
+                  invalid-feedback="Maximum Stock product is required"
+                  v-model="product.minimum"
+                  type="number"
+                  min="0"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Minimum Stock
+                      <span class="text-danger">
+                        <strong></strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CInput
+                  placeholder="Enter maximum L1 stock threshold"
+                  :disabled="action == 'Read' ? true : false"
+                  :horizontal="{ label: 'col-sm-6', input: 'col-sm-6' }"
+                  invalid-feedback="Maximum Stock product is required"
+                  v-model="product.maximum"
+                  type="number"
+                  min="0"
+                >
+                  <template #label>
+                    <p class="col-form-label col-sm-3">
+                      Maximum Stock
+                      <span class="text-danger">
+                        <strong></strong>
+                      </span>
+                    </p>
+                  </template>
+                </CInput>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
+                <CRow form class="form-group">
+                  <CCol sm="3"> Product Type</CCol>
+                  <CInputRadioGroup
+                    v-if="action != 'Read'"
+                    class="col-sm-9"
+                    :options="productTypeOption"
+                    :inline="true"
+                    :checked.sync="product.product_type"
+                  />
+                  <p class="col-form-label col-sm-3" v-if="action == 'Read'">
+                    {{ product.product_type == 0 ? 'Serial' : 'Non-Serial' }}
+                  </p>
+                </CRow>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
                 <CRow form class="form-group">
                   <CCol sm="3"> Show </CCol>
-                  <SwitchDefault
-                    :disabled="action == 'Read'"
-                    :show_label="true"
-                    :default_value="product.show_status"
-                    v-on:onChange="product.show_status = $event"
+                  <CInputCheckbox
+                    v-if="action != 'Read'"
+                    class="col-sm-9"
+                    :checked.sync="product.show_status"
+                    @change="showStatusChange()"
                   />
+                  <p class="col-form-label col-sm-3" v-if="action == 'Read'">
+                    {{ product.show_status == 1 ? 'Yes' : 'No' }}
+                  </p>
                 </CRow>
               </CCol>
-              <CCol sm="12">
+            </CRow>
+            <CRow>
+              <CCol sm="11" md="11" lg="11" xl="11">
                 <CRow form class="form-group">
                   <CCol sm="3"> Status </CCol>
                   <SwitchStatusMaster
@@ -134,293 +611,8 @@
                 </CRow>
               </CCol>
             </CRow>
-            <hr />
-            <h4>Product Registration</h4>
-            <br />
-            <CRow>
-              <CCol sm="12">
-                <CInput
-                  label="NIE"
-                  horizontal
-                  v-model="product.nie"
-                  placeholder="NIE (Nomor Izin Edar)"
-                  :add-input-classes="{
-                    'is-invalid': !initial_load && !validationNieOrGtin('nie'),
-                  }"
-                  :readonly="
-                    action == 'Read' ||
-                    (product.flag_upd_del == 0 && action != 'Create')
-                  "
-                  @keypress="
-                    limitString({
-                      event: $event,
-                      data: product.nie,
-                      max: 15,
-                    })
-                  "
-                >
-                </CInput>
-              </CCol>
-
-              <CCol sm="12">
-                <CInput
-                  :disabled="!product.flag_upd_del"
-                  label="NIE Packaging (Kemasan NIE) *"
-                  placeholder="Enter packaging description registered at BPOM"
-                  horizontal
-                  @keyup="validationData()"
-                  v-model="product.kemasan_nie"
-                  invalid-feedback="NIE packaging (kemasan NIE) is required"
-                  :add-input-classes="{
-                    'is-invalid': error.kemasan_nie,
-                  }"
-                />
-              </CCol>
-
-              <CCol sm="12">
-                <CInput
-                  :disabled="true"
-                  label="L1 GTIN "
-                  description="Can only be changed by modifying Company Prefix and Item Reference and make sure there has been no transaction for this product."
-                  horizontal
-                  v-model="product.gtin"
-                  @keyup="validationNieOrGtin('gtin')"
-                  @keypress="
-                    limitNumber({ event: $event, data: product.gtin, max: 14 })
-                  "
-                  :add-input-classes="{
-                    'is-invalid': !validationNieOrGtin('gtin'),
-                  }"
-                  :invalid-feedback="error.gtin ? error.gtin : ''"
-                />
-              </CCol>
-
-              <CCol sm="12">
-                <CInput
-                  :disabled="!product.flag_upd_del"
-                  label="Company Prefix"
-                  horizontal
-                  v-model="product.company_prefix"
-                  placeholder="Company Prefix"
-                  @keyup="handleChangeGtin()"
-                  @keypress="
-                    limitNumber({
-                      event: $event,
-                      data: product.company_prefix,
-                      max:
-                        12 - product.item_reference.length >= 9
-                          ? 9
-                          : 12 - product.item_reference.length,
-                    })
-                  "
-                  :add-input-classes="{
-                    'is-invalid': !initial_load && !validationNieOrGtin('gtin'),
-                  }"
-                  :invalid-feedback="'Company prefix and Item Reference must be 13 digits'"
-                  :readonly="
-                    disabled &&
-                    product.flag_upd_del == 0 &&
-                    validationNieOrGtin('gtin')
-                  "
-                >
-                  <template #append>
-                    <CInput
-                      :disabled="!product.flag_upd_del"
-                      prepend="Item Reference"
-                      class="ml-1"
-                      horizontal
-                      v-model="product.item_reference"
-                      @keyup="handleChangeGtin()"
-                      @keypress="
-                        limitNumber({
-                          event: $event,
-                          data: product.item_reference,
-                          max: 12 - product.company_prefix.length,
-                        })
-                      "
-                      :add-input-classes="{
-                        'is-invalid':
-                          !initial_load && !validationNieOrGtin('gtin'),
-                      }"
-                      :readonly="
-                        (disabled &&
-                          product.flag_upd_del == 0 &&
-                          validationNieOrGtin('gtin')) ||
-                        !product.company_prefix
-                      "
-                    />
-                  </template>
-                </CInput>
-              </CCol>
-
-              <CCol sm="12">
-                <CRow form class="form-group">
-                  <CCol sm="3"> Generate BPOM Report </CCol>
-                  <CCol sm="9">
-                    <SwitchDefault
-                      :disabled="!product.flag_upd_del"
-                      :default_value="product.generate_bpom_report"
-                      v-on:onChange="product.generate_bpom_report = $event"
-                      description="
-                    This value affects the product report that will be generated for BPOM
-                    reporting. This value cannot change if there is already a
-                    transaction in the BPOM Queue"
-                    />
-                  </CCol>
-                </CRow>
-              </CCol>
-            </CRow>
-            <hr />
-            <h4>Print Detail</h4>
-            <br />
-            <CRow>
-              <CCol md="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Product Name *"
-                  @keyup="validationData()"
-                  horizontal
-                  v-model="product.print_name"
-                  invalid-feedback="Product name (print) is required"
-                  placeholder="Enter product name for label printing"
-                  :add-input-classes="{
-                    'is-invalid': error.print_name,
-                  }"
-                />
-              </CCol>
-              <CCol md="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Description 1"
-                  placeholder="Enter product description 1 for label printing"
-                  horizontal
-                  v-model="product.print_desc1"
-                />
-              </CCol>
-              <CCol md="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Description 2"
-                  placeholder="Enter product description 2 for label printing"
-                  horizontal
-                  v-model="product.print_desc2"
-                />
-              </CCol>
-              <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Storage Temperature *"
-                  placeholder="Enter product storage temperature for label printing"
-                  @keyup="validationData()"
-                  horizontal
-                  v-model="product.suhu"
-                  invalid-feedback="Storage temperature is required"
-                  :add-input-classes="{
-                    'is-invalid': error.suhu,
-                  }"
-                />
-              </CCol>
-            </CRow>
-            <hr />
-            <h4 class="float-left">Packaging Detail</h4>
-            <Button
-              :buttonProperty="{
-                size: 'sm',
-                class: 'float-right',
-                color: 'warning',
-                icon: 'cog',
-                text: 'Weight Config',
-                tooltip: '',
-              }"
-              @click="showModalWeight()"
-            />
-            <br />
-            <br />
-            <div>
-              <MasterPid :product="product" :packaging_level="'1'" />
-            </div>
           </CForm>
         </CCardBody>
-        <ProductWeight
-          :product="product"
-          :showModal="viewModalWeight"
-          v-on:onCloseModal="viewModalWeight = false"
-          v-on:onSubmit="handleChangeWeight($event)"
-        />
-        <!-- <CModal
-          title="Weight Configuration"
-          color="warning"
-          :show.sync="viewModalWeight"
-          size="lg"
-        >
-          <table style="width: 100%">
-            <tr>
-              <td><strong>Level</strong></td>
-              <td><strong>Min Weight (Kg)</strong></td>
-              <td><strong>Max Weight (Kg)</strong></td>
-              <td><strong>Required</strong></td>
-            </tr>
-            <tr v-for="level in product.current_pack" :key="level">
-              <td>
-                <p>{{ level }}</p>
-              </td>
-              <td>
-                <CInput
-                  :disabled="action == 'Read'"
-                  :placeholder="`Enter weight minimum L${level}`"
-                  horizontal
-                  v-model="product_weight[`weight_min_l${level}`]"
-                  type="number"
-                  :invalid-feedback="'Weight minimum must smaller than maximum'"
-                  :add-input-classes="{
-                    'is-invalid':
-                      product_weight[`weight_min_l${level}`] &&
-                      product_weight[`weight_max_l${level}`] &&
-                      product_weight[`weight_min_l${level}`] >=
-                        product_weight[`weight_max_l${level}`],
-                  }"
-                />
-              </td>
-              <td>
-                <CInput
-                  :disabled="action == 'Read'"
-                  :placeholder="`Enter weight maximum L${level}`"
-                  horizontal
-                  v-model="product_weight[`weight_max_l${level}`]"
-                  type="number"
-                  :invalid-feedback="'Weight maximum must biger than minimum'"
-                  :add-input-classes="{
-                    'is-invalid':
-                      product_weight[`weight_min_l${level}`] &&
-                      product_weight[`weight_max_l${level}`] &&
-                      product_weight[`weight_max_l${level}`] <=
-                        product_weight[`weight_min_l${level}`],
-                  }"
-                />
-              </td>
-              <td>
-                <SwitchDefault
-                  :disabled="action == 'Read'"
-                  :default_value="product_weight[`weight_required_l${level}`]"
-                  v-on:onChange="
-                    product_weight[`weight_required_l${level}`] = $event
-                  "
-                />
-              </td>
-            </tr>
-          </table>
-          <template #footer>
-            <CButton
-              :disabled="!allowSetWeight"
-              size="sm"
-              color="success"
-              type="button"
-              @click="setWeight()"
-            >
-              <CIcon name="cil-check-circle" /> Set
-            </CButton>
-          </template>
-        </CModal> -->
         <CCardFooter>
           <CButton
             v-if="action == 'Read' ? false : true"
@@ -439,214 +631,286 @@
 </template>
 
 <script>
-import {
-  getMstProduct,
-  insertMstProduct,
-  updateMstProduct,
-} from '../../../resource/MstProduct';
+import $axiosMertrack from '../../../apiMertrack';
+import { capitalizeFirstLetter } from '../../../utils';
+import $ from 'jquery';
+import { required } from 'vuelidate/lib/validators';
+import { getMstPackaging } from '../../../resource/MstPackaging';
 import { getMstProductCategory } from '../../../resource/MstProductCategory';
-import { capitalizeFirstLetter, checkDigit, onlyNumber } from '../../../utils';
-
+import {
+  insertMstProductV1,
+  updateMstProductV1,
+} from '../../../resource/MstProduct';
 export default {
-  watch: {
-    product_weight: {
-      handler(item) {
-        this.allowSetWeight = true;
-        for (var i = 1; i <= 4; i++) {
-          let min = parseFloat(item[`weight_min_l${i}`]);
-          let max = parseFloat(item[`weight_max_l${i}`]);
-          if (min >= max) {
-            this.allowSetWeight = false;
-          }
-        }
-      },
-      deep: true,
-    },
-    'product.mst_pid': {
-      handler(item = Array) {
-        let pid = item.find(
-          (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
-        );
-        let id1 = null;
-        if (this.product.gtin) id1 = Array.from(this.product.gtin)[0];
-        if (pid && pid.id1 != id1) this.handleChangeGtin();
-      },
-      deep: true,
-    },
-  },
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
+    // return;
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
-    if (this.$route.params.id) {
+    if (this.$route.params.id !== undefined) {
       this.loadData();
       this.readOnly = true;
     }
-    if (this.action == 'Read') {
-      this.disabled = true;
-      this.product.flag_upd_del = 0;
-    }
+
     // memanggil metod untuk memanggil isi dropdown
+    this.loadPackaging();
     this.loadProductCategory();
+
+    // input only angka
+    $(function () {
+      $('#qty_l2').on('keydown', function (e) {
+        -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) ||
+          (/65|67|86|88/.test(e.keyCode) &&
+            (!0 === e.ctrlKey || !0 === e.metaKey)) ||
+          (35 <= e.keyCode && 40 >= e.keyCode) ||
+          ((e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) &&
+            (96 > e.keyCode || 105 < e.keyCode) &&
+            e.preventDefault());
+      });
+      $('#qty_l3').on('keydown', function (e) {
+        -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) ||
+          (/65|67|86|88/.test(e.keyCode) &&
+            (!0 === e.ctrlKey || !0 === e.metaKey)) ||
+          (35 <= e.keyCode && 40 >= e.keyCode) ||
+          ((e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) &&
+            (96 > e.keyCode || 105 < e.keyCode) &&
+            e.preventDefault());
+      });
+      $('#qty_l4').on('keydown', function (e) {
+        -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) ||
+          (/65|67|86|88/.test(e.keyCode) &&
+            (!0 === e.ctrlKey || !0 === e.metaKey)) ||
+          (35 <= e.keyCode && 40 >= e.keyCode) ||
+          ((e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) &&
+            (96 > e.keyCode || 105 < e.keyCode) &&
+            e.preventDefault());
+      });
+    });
+
+    $(function () {
+      $('#prefix2').on('keydown', function (e) {
+        -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) ||
+          (/65|67|86|88/.test(e.keyCode) &&
+            (!0 === e.ctrlKey || !0 === e.metaKey)) ||
+          (35 <= e.keyCode && 40 >= e.keyCode) ||
+          ((e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) &&
+            (96 > e.keyCode || 105 < e.keyCode) &&
+            e.preventDefault());
+      });
+      $('#prefix3').on('keydown', function (e) {
+        -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) ||
+          (/65|67|86|88/.test(e.keyCode) &&
+            (!0 === e.ctrlKey || !0 === e.metaKey)) ||
+          (35 <= e.keyCode && 40 >= e.keyCode) ||
+          ((e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) &&
+            (96 > e.keyCode || 105 < e.keyCode) &&
+            e.preventDefault());
+      });
+      $('#prefix4').on('keydown', function (e) {
+        -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) ||
+          (/65|67|86|88/.test(e.keyCode) &&
+            (!0 === e.ctrlKey || !0 === e.metaKey)) ||
+          (35 <= e.keyCode && 40 >= e.keyCode) ||
+          ((e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) &&
+            (96 > e.keyCode || 105 < e.keyCode) &&
+            e.preventDefault());
+      });
+    });
+
+    $(function () {
+      $('#gtin').on('keydown', function (e) {
+        -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) ||
+          (/65|67|86|88/.test(e.keyCode) &&
+            (!0 === e.ctrlKey || !0 === e.metaKey)) ||
+          (35 <= e.keyCode && 40 >= e.keyCode) ||
+          ((e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) &&
+            (96 > e.keyCode || 105 < e.keyCode) &&
+            e.preventDefault());
+      });
+    });
   },
   data() {
     return {
-      disabled: false,
-      allowSetWeight: true,
-      viewModalWeight: false,
       route_action: '',
-      action: null,
-      initial_load: true,
-      product_weight: {
-        weight_required_l1: false,
-        weight_min_l1: null,
-        weight_max_l1: null,
-        weight_required_l2: false,
-        weight_min_l2: null,
-        weight_max_l2: null,
-        weight_required_l3: false,
-        weight_min_l3: null,
-        weight_max_l3: null,
-        weight_required_l4: false,
-        weight_min_l4: null,
-        weight_max_l4: null,
-      },
-      product: {
-        id: null,
-        nie: '',
-        company_prefix: '',
-        item_reference: '',
-        gtin: '',
-        product_type: '0',
-        status: 'Active',
-        show_status: true,
-        flag_upd_del: 1,
-        current_pack: 1,
-        mst_pid: [],
-        weight_required_l1: false,
-        weight_min_l1: null,
-        weight_max_l1: null,
-        weight_required_l2: false,
-        weight_min_l2: null,
-        weight_max_l2: null,
-        weight_required_l3: false,
-        weight_min_l3: null,
-        weight_max_l3: null,
-        weight_required_l4: false,
-        weight_min_l4: null,
-        weight_max_l4: null,
-      },
-      error: this.initial_error(),
-      listPackaging: [],
-      listCategory: [],
-      pid_level_1: {},
-      ResultPid: {
-        level_1: [],
-        level_2: [],
-        level_3: [],
-        level_4: [],
-      },
-      quantity_detail: {
-        max_qty_level_1: null,
-        max_qty_level_2: null,
-        max_qty_level_3: null,
-      },
       statusOptions: [
-        { value: true, label: 'Active' },
-        { value: false, label: 'Inactive' },
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
       ],
       productTypeOption: [
         { value: '0', label: 'Serial' },
         { value: '1', label: 'Non-Serial' },
       ],
+      // minimumQty: 0,
+      // maximumQty: 0,
+      laravelTemperature: '',
+      product: { status: 'Active', product_type: 0, show_status: true },
+      error_message: {
+        gtin: 'L1 GTIN is required',
+        prefix_l2: 'SN Prefix is required',
+        prefix_l3: 'SN Prefix is required',
+        prefix_l4: 'SN Prefix is required',
+        qty_l2: '',
+        qty_l3: '',
+        qty_l4: '',
+      },
+      can_add: false,
+      can_edit: false,
+      can_view: false,
+      selected: [], // Must be an array reference!
+      show: true,
+      action: 'Edit',
+      horizontal: { label: 'col-3', input: 'col-9' },
+      packagings: {},
+      qtyPack: {},
+      listCategory: [],
+      listPackaging: [],
+      listPackagingL4: [],
+      listStatus: [],
+      listQtyPackaging2: [],
+      listQtyPackaging3: ['1', '2'],
+      listQtyPackaging4: ['1', '2'],
+      selectedOption: ['some value', 'another value'],
+      readOnly: false,
     };
   },
-
+  validations: {
+    product: {
+      no: { required },
+      print_name: { required },
+      name: { required },
+      gtin: { required, maxlength: 14 },
+      nie: { required, maxlength: 15 },
+      description: { required },
+      size: { required },
+      packagingl1_id: { required },
+      packagingl2_id: { required },
+      packagingl3_id: { required },
+      mst_product_category_id: { required },
+      suhu: { required },
+      status: { required },
+    },
+  },
   methods: {
-    handleChangeWeight(item) {
-      this.product = { ...this.product, ...item };
+    loadData() {
+      let param = `id=${this.$route.params.id}`;
+      $axiosMertrack.get(`v3/master/product?${param}`).then((response) => {
+        let data = response.data.data[0];
+        this.product = data;
+        let gtin_lvl_2 = data.mst_pid.find(
+          (it) => it.packaging_level == 2 && it.flag_full == 1
+        );
+        if (gtin_lvl_2) {
+          if (gtin_lvl_2.epc_type == 'sgtin') {
+            this.product.prefix_packagingl2 = gtin_lvl_2.sn_prefix;
+          } else {
+            this.product.prefix_packagingl2 = gtin_lvl_2.id1;
+          }
+        } else {
+          this.product.prefix_packagingl2 = '-';
+        }
+        this.product.prefix_packagingl3 = '-';
+        this.product.product_type = `${data.product_type}`;
+      });
+      return;
     },
-    initial_error() {
-      // Inisialisasi error untuk PRODUCT
-      let tmp = {
-        no: false,
-        name: false,
-        print_name: false,
-        gtin: false,
-        nie: false,
-        kemasan_nie: false,
-        mst_product_category_id: false,
-        suhu: false,
-        product_type: false,
-        packagingl1_id: false,
-        packagingl2_id: false,
-        qty_packagingl2: '',
-      };
-      return tmp;
-    },
-    async loadData() {
-      let _res = await getMstProduct({ id: this.$route.params.id });
-      let data = _res.data[0];
-      this.product = data;
-      this.product.product_type = `${this.product.product_type}`;
-      if (this.action === 'Create') {
-        this.product.flag_upd_del = 1;
-        this.product.id = null;
-      } else if (this.action == 'Read') {
-        this.product.flag_upd_del = 0;
+    showStatusChange() {},
+    packagingL2Change() {
+      if (
+        parseInt(this.product.qty_packagingl2) == 0 ||
+        !this.product.qty_packagingl2
+      ) {
+        this.error_message.qty_l2 = 'Qty must be grater than 0';
+        this.error_message.prefix_l2 = 'SN Prefix is required';
+        return;
       }
     },
-    handleChangeGtin() {
-      // Jika terjadi perubahan yang mempengaruhi gtin
-      let pid_l1 = this.product.mst_pid.find(
-        (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
-      );
-      let id1 = null;
-      if (pid_l1) id1 = pid_l1.id1;
-      let item_reference = this.product.item_reference;
-      let company_prefix = this.product.company_prefix;
-      if (item_reference && company_prefix && id1) {
-        let gtin = `${id1}${company_prefix}${item_reference}`;
-        gtin = `${gtin}${checkDigit(gtin)}`;
-        this.product.gtin = gtin;
-      } else {
-        this.product.gtin = null;
+    packagingL3Change() {
+      if (
+        parseInt(this.product.qty_packagingl3) == 0 ||
+        !this.product.qty_packagingl3
+      ) {
+        this.error_message.qty_l3 = 'Qty must be grater than 0';
+        // this.error_message.prefix_l3 = "SN Prefix is required";
+        return;
       }
     },
-    handleResultPid({ result, level }) {
-      if (level == 1) {
-        this.pid_level_1 = result[0];
-      }
-      this.ResultPid[`level_${level}`] = result;
-    },
-
-    limitGtin({ event, data, max }) {
-      onlyNumber({ event, data, max });
-    },
-    limitNumber({ event, data, max }) {
-      onlyNumber({ event, data, max });
-    },
-    limitString({ event, data, max }) {
-      event = event ? event : window.event;
-      if (data && max && data.toString().length >= max) {
-        event.preventDefault();
+    packagingL4Change() {
+      if (
+        parseInt(this.product.qty_packagingl4) == 0 ||
+        !this.product.qty_packagingl4
+      ) {
+        this.error_message.qty_l4 = 'Qty must be grater than 0';
+        this.error_message.prefix_l4 = 'SN Prefix is required';
+        return;
       }
     },
-    gtinCheckDigit(s) {
-      let result = 0,
-        i = 1;
-      for (let counter = s.length - 1; counter >= 0; counter--) {
-        result = result + parseInt(s.charAt(counter)) * (1 + 2 * (i % 2));
-        i++;
+    qtyPackagingL2Change() {
+      // if (!this.product.packagingl1_id) {
+      //   return (this.error_message.qty_l2 =
+      //     "Must Select Packaging Level 1 First");
+      // } else
+      if (
+        parseInt(this.product.qty_packagingl2) == 0 ||
+        !this.product.qty_packagingl2
+      ) {
+        return (this.error_message.qty_l2 = 'Qty must be grater than 0');
       }
-      return (10 - (result % 10)) % 10;
+      this.error_message.qty_l2 = '';
+      if (this.product.packagingl3_id) {
+        this.error_message.qty_l3 = 'Please re-enter this qty';
+      }
+      if (this.product.packagingl4_id) {
+        this.error_message.qty_l4 = 'Please re-enter this qty';
+      }
     },
-    validateGtin() {
-      let value = this.product.gtin;
+    qtyPackagingL3Change() {
+      var sisa = this.product.qty_packagingl3 % this.product.qty_packagingl2;
+      if (isNaN(sisa)) {
+        this.error_message.qty_l3 = `Qty of Packaging L2 must be filled in first.`;
+        return;
+      }
+      if (
+        parseInt(this.product.qty_packagingl3) <
+          parseInt(this.product.qty_packagingl2) ||
+        !this.product.qty_packagingl3
+      ) {
+        this.error_message.qty_l3 = `Qty must be greater than or equal to ${this.product.qty_packagingl2}`;
+        return;
+      }
+      if (sisa != 0) {
+        this.error_message.qty_l3 = `Qty must be a multiple of ${this.product.qty_packagingl2}`;
+        return;
+      }
+      if (this.product.packagingl4_id) {
+        this.error_message.qty_l4 = 'Please re-enter this qty';
+      }
+      this.error_message.qty_l3 = '';
+    },
+    qtyPackagingL4Change() {
+      var sisa = this.product.qty_packagingl4 % this.product.qty_packagingl3;
+      if (isNaN(sisa)) {
+        this.error_message.qty_l4 = `Qty of Packaging L3 must be filled in first.`;
+        return;
+      }
+      if (
+        parseInt(this.product.qty_packagingl4) <
+          parseInt(this.product.qty_packagingl3) ||
+        !this.product.qty_packagingl4
+      ) {
+        this.error_message.qty_l4 = `Qty must be greater than or equal to ${this.product.qty_packagingl3}`;
+        return;
+      }
+      if (sisa != 0) {
+        this.error_message.qty_l4 = `Qty must be a multiple of ${this.product.qty_packagingl3}`;
+        return;
+      }
+      this.error_message.qty_l4 = '';
+    },
+    validateGtin(value) {
       if (value) {
         if (value.length != 14) {
-          this.error.gtin = 'GTIN must be 14 digits numeric';
+          this.error_message.gtin = 'GTIN must be 14 digits numeric';
           return false;
         }
         var barcode = value.substring(0, value.length - 1);
@@ -670,160 +934,118 @@ export default {
         calcChecksum = calcSum === 0 ? 0 : 10 - calcSum;
 
         if (calcChecksum !== checksum) {
-          this.error.gtin = 'GTIN number is not valid';
+          this.error_message.gtin = 'GTIN number is not valid';
           return false;
         }
-        this.error.gtin = false;
+        this.error_message.gtin = '';
         return true;
       } else {
-        this.error.gtin = 'L1 GTIN is required';
+        this.error_message.gtin = 'L1 GTIN is required';
         return false;
+      }
+    },
+    limitGtin() {
+      if (this.product.gtin) {
+        if (this.product.gtin.length >= 14) {
+          this.$toast.open({
+            message: `Maximum length of GTIN allowed is 14 digits numeric`,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 3000,
+          });
+        }
+      } else {
+      }
+    },
+    limitNie() {
+      if (this.product.nie != '' || this.product.nie != null) {
+        if (this.product.nie.length >= 15) {
+          this.$toast.open({
+            message: `Maximum length of NIE allowed is 15 characters`,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 3000,
+          });
+        }
+      } else {
       }
     },
     async loadProductCategory() {
-      let _res = await getMstProductCategory({ status: 'Active' });
-      for (const it of _res['data']) {
-        this.listCategory.push({
-          label: it.name,
-          value: `${it.id}`,
+      let res = await getMstProductCategory({ status: 'Active' });
+      if (res) {
+        let data = res.data;
+        for (const it of data) {
+          this.listCategory.push({
+            value: `${it.id}`,
+            label: it.name,
+          });
+        }
+      }
+    },
+    async loadPackaging() {
+      let res = await getMstPackaging({ status: 'Active' });
+      if (res) {
+        let data = res.data;
+        this.listPackagingL4.push({
+          value: null,
+          label: '--Select--',
         });
-      }
-    },
-
-    validationNieOrGtin(type = 'all') {
-      if (type == 'all' && !this.product.gtin && !this.product.nie) {
-        return false;
-      }
-      let company_prefix = this.product.company_prefix;
-      let item_reference = this.product.item_reference;
-      let mst_pid = JSON.parse(JSON.stringify(this.product.mst_pid));
-      let have_nie = mst_pid.find((it) => it.epc_type == 'nie');
-      let have_gtin_sscc = mst_pid.find(
-        (it) => it.epc_type == 'sgtin' || it.epc_type == 'sscc'
-      );
-      if ((type == 'all' || type == 'nie') && have_nie && !this.product.nie) {
-        return false;
-      } else if (
-        (type == 'all' || type == 'gtin' || type == 'sscc') &&
-        have_gtin_sscc
-      ) {
-        if (!item_reference || !company_prefix) {
-          return false;
-        } else if (`${company_prefix}${item_reference}`.length != 12) {
-          return false;
+        for (const it of data) {
+          this.listPackaging.push({
+            value: `${it.id}`,
+            label: it.name,
+          });
+          this.listPackagingL4.push({
+            value: `${it.id}`,
+            label: it.name,
+          });
         }
       }
-      return true;
-    },
-
-    validationData() {
-      if (this.initial_load) {
-        return false;
-      }
-      let required = [];
-      this.error = this.initial_error();
-      let is_error = false;
-      // CHeck Company prefix and item reference / NIE
-      if (!this.validationNieOrGtin()) {
-        is_error = true;
-      }
-
-      // CHECK PRODUCT
-      for (var key in this.error) {
-        if (!this.product[key] && this.product[key] != '0') {
-          this.error[key] = `Product ${key} is required`;
-          is_error = true;
-          if (key == 'gtin' || key == 'nie' || key == 'company_prefix') {
-            is_error = false;
-          }
-          required.push(capitalizeFirstLetter(key));
-        }
-      }
-      // Check Error PID
-      for (const it of this.product.mst_pid) {
-        if (it.error) {
-          is_error = true;
-          break;
-        }
-      }
-
-      // CHECK PACKAGING
-      for (var i = 1; lvl <= this.product.current_pack; lvl++) {
-        if (!this.product[`packagingl${i}_id`]) {
-          is_error = true;
-          break;
-        }
-      }
-      // Check Quantity
-      for (var lvl = 2; lvl <= this.product.current_pack; lvl++) {
-        let thisQty = this.product[`qty_packagingl${lvl}`];
-        let childQty = 1;
-        if (this.product[`qty_packagingl${lvl - 1}`]) {
-          childQty = this.product[`qty_packagingl${lvl - 1}`];
-        }
-        if (thisQty % childQty != 0 || !thisQty) {
-          is_error = true;
-          break;
-        }
-      }
-      if (is_error) {
-        return false;
-      }
-      return true;
-    },
-
-    showModalWeight() {
-      for (var i = 1; i <= 4; i++) {
-        let min = this.product[`weight_min_l${i}`];
-        let max = this.product[`weight_max_l${i}`];
-        let required = this.product[`weight_required_l${i}`];
-        this.product_weight[`weight_required_l${i}`] = required;
-        this.product_weight[`weight_min_l${i}`] = min;
-        this.product_weight[`weight_max_l${i}`] = max;
-      }
-      this.viewModalWeight = true;
-    },
-
-    setWeight() {
-      this.viewModalWeight = false;
-      this.product = { ...this.product, ...this.product_weight };
     },
 
     async save() {
-      this.initial_load = false;
-      if (!this.validationData()) {
-        this.$toast.open({
-          message: 'Please input all the required data',
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        return true;
+      }
+      if (this.product.packagingl2_id) {
+        if (
+          this.error_message.qty_l2 != '' ||
+          !this.product.prefix_packagingl2
+        ) {
+          return;
+        }
+      }
+      if (this.product.packagingl3_id) {
+        if (this.error_message.qty_l3 != '') {
+          return;
+        }
+      }
+      if (this.product.packagingl4_id) {
+        if (this.error_message.qty_l4 != '') {
+          return;
+        }
+      }
+      if (this.error_message.gtin != '') {
         return;
       }
-      let body = JSON.parse(JSON.stringify(this.product));
-      let is_serial = body.product_type == '1' ? 0 : 1;
-      body.mst_pid = body.mst_pid.map((it) => {
-        return {
-          ...it,
-          flag_serial: is_serial,
-          product_id: this.$route.params.id,
-        };
-      });
+      let dataPost = this.product;
+      dataPost.show_status = dataPost.show_status ? 1 : 0;
+      if (!dataPost.packagingl4_id) {
+        dataPost.packagingl4_id = null;
+      }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let dataPost = body;
         let res = {};
-        if (this.action === 'Create' && dataPost.id) {
-          delete dataPost.id;
-        }
         if (dataPost.id) {
-          res = await updateMstProduct(dataPost);
+          res = await updateMstProductV1(dataPost);
         } else {
-          res = await insertMstProduct(dataPost);
+          res = await insertMstProductV1(dataPost);
         }
         this.$isLoading(false);
         this.$toast.open({
@@ -845,4 +1067,3 @@ export default {
   },
 };
 </script>
->
