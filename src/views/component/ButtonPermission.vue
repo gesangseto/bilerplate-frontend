@@ -74,6 +74,11 @@ export default {
       this.property = this.btn_export_excel;
     } else if (this.exportType && this.exportType.toLowerCase() == 'pdf') {
       this.property = this.btn_export_pdf;
+    } else if (
+      this.exportType &&
+      this.exportType.toLowerCase() == 'bpom-report'
+    ) {
+      this.property = this.btn_bpom_report;
     }
   },
   data() {
@@ -104,6 +109,14 @@ export default {
         icon: 'file-pdf',
         text: 'pdf',
         tooltip: 'Export to pdf',
+      },
+      btn_bpom_report: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'download',
+        text: 'Bpom',
+        tooltip: 'Export BPOM Report',
       },
     };
   },

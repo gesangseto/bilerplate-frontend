@@ -232,6 +232,11 @@
 
           <ButtonBack />
           <ButtonPermission
+            exportType="bpom-report"
+            :permission="'print'"
+            @click="handleClickExportBPOM()"
+          />
+          <ButtonPermission
             exportType="excel"
             :permission="'print'"
             @click="handleClickExport('xls')"
@@ -275,9 +280,9 @@
         </CCol>
       </CRow>
       <template #footer>
-        <CButton color="primary" class="text-white" @click="saveDO()"
-          >Submit</CButton
-        >
+        <CButton color="primary" class="text-white" @click="saveDO()">
+          Submit
+        </CButton>
         <CButton @click="modalDO = false" color="danger">Cancel</CButton>
       </template>
     </CModal>
@@ -493,6 +498,16 @@ export default {
         },
         exportType: type,
         url: '/v3/transaction/picking',
+      });
+    },
+    handleClickExportBPOM(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+        },
+        exportType: type,
+        url: '/v3/transaction/picking/bpom-report',
       });
     },
   },
