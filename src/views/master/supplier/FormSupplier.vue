@@ -19,10 +19,7 @@
                 horizontal
                 placeholder="Enter supplier name"
                 v-model="formData.name"
-                :invalid-feedback="required.name.message"
-                :add-input-classes="{
-                  'is-invalid': required.name.error,
-                }"
+                :is-valid="initial_load ? null : formData.name ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -40,10 +37,7 @@
                 placeholder="Enter supplier PIC name"
                 horizontal
                 v-model="formData.pic"
-                :invalid-feedback="required.pic.message"
-                :add-input-classes="{
-                  'is-invalid': required.pic.error,
-                }"
+                :is-valid="initial_load ? null : formData.pic ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -60,10 +54,9 @@
                 placeholder="Enter supplier address"
                 horizontal
                 v-model="formData.address"
-                :invalid-feedback="required.address.message"
-                :add-input-classes="{
-                  'is-invalid': required.address.error,
-                }"
+                :is-valid="
+                  initial_load ? null : formData.address ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -93,15 +86,15 @@
                               placeholder="- Country -"
                               :options="CountryCode"
                               :reduce="(opt) => opt.value"
-                              v-model="temp_data.tlp_code"
-                              @input="handleChangeInput(temp_data.tlp_code)"
+                              v-model="formData.tlp_code"
+                              @input="handleChangeInput(formData.tlp_code)"
                             >
                             </v-select>
                             <small
-                              v-if="required.tlp_code.error"
+                              v-if="!initial_load && !formData.tlp_code"
                               style="color: red"
                             >
-                              {{ required.tlp_code.message }}
+                              Code Country is required
                             </small>
                           </td>
 
@@ -111,10 +104,14 @@
                               placeholder="Enter phone number (Example : 81211223344)"
                               horizontal
                               v-model="formData.tlp"
-                              :invalid-feedback="required.tlp.message"
-                              :add-input-classes="{
-                                'is-invalid': required.tlp.error,
-                              }"
+                              invalid-feedback="Please provide 7-12 digits phone number"
+                              :is-valid="
+                                initial_load
+                                  ? null
+                                  : checkValidPhone(formData.tlp)
+                                  ? true
+                                  : false
+                              "
                               @keypress="
                                 limitPhone({
                                   event: $event,
@@ -145,32 +142,16 @@
                               placeholder="- Country -"
                               :options="CountryCode"
                               :reduce="(opt) => opt.value"
-                              v-model="temp_data.tlp_alt_code"
+                              v-model="formData.tlp_alt_code"
                               @input="
                                 handleChangeInput(
-                                  temp_data.tlp_alt_code,
+                                  formData.tlp_alt_code,
                                   'alt_code'
                                 )
                               "
                             >
                             </v-select>
-                            <!-- <small
-                              v-if="required.tlp_alt_code.error"
-                              style="color: red"
-                            >
-                              {{ required.tlp_alt_code.message }}
-                            </small> -->
                           </td>
-                          <!-- <td style="width: 30%">
-                            <CSelect
-                              :disabled="action == 'Read' ? true : false"
-                              :options="CountryCode"
-                              placeholder="- Country -"
-                              horizontal
-                              :value.sync="formData.tlp_alt_code"
-                            >
-                            </CSelect>
-                          </td> -->
                           <td>
                             <CInput
                               :disabled="action == 'Read' ? true : false"
@@ -198,10 +179,14 @@
                 placeholder="email.address@email.com"
                 horizontal
                 v-model="formData.email"
-                :invalid-feedback="required.email.message"
-                :add-input-classes="{
-                  'is-invalid': required.email.error,
-                }"
+                invalid-feedback="Please provide valid email address"
+                :is-valid="
+                  initial_load
+                    ? null
+                    : checkValidEmail(formData.email)
+                    ? true
+                    : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -227,7 +212,7 @@
               :defaultMetadata="formData.metadata"
               v-on:handleChange="
                 (formData.metadata = $event.result),
-                  (formData.error = $event.error)
+                  (formData.error_metadata = $event.error_metadata)
               "
               model="mst_supplier"
             />
@@ -246,8 +231,6 @@
 </template>
 
 <script>
-import { notEmail } from '../../../validator';
-import { required } from 'vuelidate/lib/validators';
 import {
   coutryCode,
   isPhone,
@@ -264,16 +247,7 @@ import {
 
 export default {
   name: 'Forms',
-  watch: {
-    formData: {
-      deep: true,
-      handler() {
-        if (!this.initial_load) {
-          this.checkValidation();
-        }
-      },
-    },
-  },
+  watch: {},
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
@@ -290,7 +264,8 @@ export default {
       action: 'Edit',
       formData: {
         status: 'Active',
-        tlpAlt: '',
+        tlp_code: null,
+        tlp: null,
       },
       statusOptions: [
         { value: 'Active', label: 'Active' },
@@ -298,45 +273,26 @@ export default {
       ],
 
       CountryCode: coutryCode(),
-      temp_data: { tlp_code: '' },
-      required: {
-        name: { error: false, message: 'Name is required' },
-        pic: { error: false, message: 'PIC is required' },
-        email: { error: false, message: 'Please provide valid email address' },
-        address: { error: false, message: 'Address is required' },
-        tlp_code: { error: false, message: 'Country code is required' },
-        tlp: {
-          error: false,
-          message: 'Please provide 7-12 digits phone number',
-        },
-      },
     };
   },
-  validations: {
-    formData: {
-      name: { required },
-      address: { required },
-      pic: { required },
-      email: {
-        required,
-        notEmail,
-      },
-      tlp: { required },
-      tlp_code: { required },
-    },
-  },
+  validations: {},
   methods: {
     limitPhone({ event, data, max }) {
       onlyNumber({ event, data, max });
     },
+    checkValidEmail(email) {
+      return isEmail(email);
+    },
+    checkValidPhone(item) {
+      return isPhone(item);
+    },
     handleChangeInput($value, code) {
       if (code == 'alt_code') {
-        this.temp_data.tlp_alt_code = $value;
         this.formData.tlp_alt_code = $value;
       } else {
-        this.temp_data.tlp_code = $value;
         this.formData.tlp_code = $value;
       }
+      this.$forceUpdate(); // Memaksa update komponen
     },
     async loadData() {
       let res = await getMstSupplier({ id: this.$route.params.id });
@@ -346,13 +302,11 @@ export default {
         let tlp = '';
         if (data.tlp) {
           tlp = data.tlp.split('-');
-          this.temp_data.tlp_code = tlp[0];
           this.formData.tlp_code = tlp[0];
           this.formData.tlp = tlp[1];
         }
         if (data.tlp_alt) {
           tlp = data.tlp_alt.split('-');
-          this.temp_data.tlp_alt_code = tlp[0];
           this.formData.tlp_alt_code = tlp[0];
           this.formData.tlp_alt = tlp[1];
         }
@@ -367,47 +321,37 @@ export default {
             value: it.value,
             label: `(${it.value}) ${it.label}`,
           });
-        } else {
-          this.CountryCode.push({
-            value: it.value,
-            label: `${it.label}`,
-          });
         }
       }
     },
-    checkValidation() {
-      let have_error = false;
-      for (const rq in this.required) {
-        if (!this.formData[rq]) {
-          this.required[rq].error = true;
-          have_error = true;
-        } else {
-          this.required[rq].error = false;
-        }
+    valid() {
+      if (!this.formData.name) {
+        return false;
+      } else if (!this.formData.pic) {
+        return false;
+      } else if (!this.formData.address) {
+        return false;
+      } else if (!this.formData.tlp_code) {
+        return false;
+      } else if (!this.formData.tlp || !isPhone(this.formData.tlp)) {
+        return false;
+      } else if (!this.formData.email || !isEmail(this.formData.email)) {
+        return false;
+      } else if (this.formData.error_metadata) {
+        return false;
       }
-      // Check Phone Number
-      if (!isPhone(this.formData.tlp)) {
-        have_error = true;
-        this.required.tlp.error = true;
-      }
-
-      // Check Email
-      if (!isEmail(this.formData.email)) {
-        have_error = true;
-        this.required.email.error = true;
-      }
-      // If any error
-      if (have_error) {
-        this.formData.have_error = true;
-      } else {
-        this.formData.have_error = false;
-      }
-      return;
+      return true;
     },
     async save() {
       this.initial_load = false;
-      this.checkValidation();
-      if (this.formData.have_error) {
+      if (!this.valid()) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
       let _form_data = JSON.parse(JSON.stringify(this.formData));

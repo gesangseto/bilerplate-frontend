@@ -17,7 +17,7 @@
               <CInput
                 :disabled="action == 'Read' ? true : false"
                 horizontal
-                placeholder="Enter customer name"
+                placeholder="Enter supplier name"
                 v-model="formData.name"
                 :is-valid="initial_load ? null : formData.name ? true : false"
               >
@@ -30,10 +30,12 @@
                   </p>
                 </template>
               </CInput>
+
               <CInput
                 :disabled="action == 'Read' ? true : false"
+                label="Pic *"
+                placeholder="Enter supplier PIC name"
                 horizontal
-                placeholder="Enter customer PIC name"
                 v-model="formData.pic"
                 :is-valid="initial_load ? null : formData.pic ? true : false"
               >
@@ -46,9 +48,10 @@
                   </p>
                 </template>
               </CInput>
+
               <CTextarea
                 :disabled="action == 'Read' ? true : false"
-                placeholder="Enter customer address"
+                placeholder="Enter supplier address"
                 horizontal
                 v-model="formData.address"
                 :is-valid="
@@ -64,6 +67,7 @@
                   </p>
                 </template>
               </CTextarea>
+
               <div class="form-group">
                 <table style="width: 100%">
                   <tr>
@@ -82,36 +86,38 @@
                               placeholder="- Country -"
                               :options="CountryCode"
                               :reduce="(opt) => opt.value"
-                              v-model="temp_data.tlp_code"
-                              @input="handleChangeInput(temp_data.tlp_code)"
+                              v-model="formData.tlp_code"
+                              @input="handleChangeInput(formData.tlp_code)"
                             >
                             </v-select>
                             <small
                               v-if="!initial_load && !formData.tlp_code"
                               style="color: red"
                             >
-                              {{ required.tlp_code.message }}
+                              Code Country is required
                             </small>
                           </td>
+
                           <td>
                             <CInput
                               :disabled="action == 'Read' ? true : false"
                               placeholder="Enter phone number (Example : 81211223344)"
                               horizontal
+                              v-model="formData.tlp"
+                              invalid-feedback="Please provide 7-12 digits phone number"
+                              :is-valid="
+                                initial_load
+                                  ? null
+                                  : checkValidPhone(formData.tlp)
+                                  ? true
+                                  : false
+                              "
                               @keypress="
                                 limitPhone({
                                   event: $event,
                                   data: formData.tlp,
                                   max: 12,
                                 })
-                              "
-                              v-model="formData.tlp"
-                              :is-valid="
-                                initial_load
-                                  ? null
-                                  : formData.tlp
-                                  ? true
-                                  : false
                               "
                             >
                             </CInput>
@@ -136,21 +142,15 @@
                               placeholder="- Country -"
                               :options="CountryCode"
                               :reduce="(opt) => opt.value"
-                              v-model="temp_data.tlp_alt_code"
+                              v-model="formData.tlp_alt_code"
                               @input="
                                 handleChangeInput(
-                                  temp_data.tlp_alt_code,
+                                  formData.tlp_alt_code,
                                   'alt_code'
                                 )
                               "
                             >
                             </v-select>
-                            <!-- <small
-                              v-if="required.tlp_alt_code.error"
-                              style="color: red"
-                            >
-                              {{ required.tlp_alt_code.message }}
-                            </small> -->
                           </td>
                           <td>
                             <CInput
@@ -165,8 +165,7 @@
                                   max: 12,
                                 })
                               "
-                            >
-                            </CInput>
+                            />
                           </td>
                         </tr>
                       </table>
@@ -180,7 +179,14 @@
                 placeholder="email.address@email.com"
                 horizontal
                 v-model="formData.email"
-                :is-valid="initial_load ? null : formData.email ? true : false"
+                invalid-feedback="Please provide valid email address"
+                :is-valid="
+                  initial_load
+                    ? null
+                    : checkValidEmail(formData.email)
+                    ? true
+                    : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -243,14 +249,9 @@
               model="mst_customer"
             />
           </CCardBody>
+
           <CCardFooter>
-            <CButton
-              v-if="action == 'Read' ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
+            <CButton type="submit" size="sm" color="primary" @click="save()">
               <CIcon name="cil-check-circle" /> Submit
             </CButton>
             <ButtonBack />
@@ -269,107 +270,80 @@ import {
   onlyNumber,
   isEmail,
 } from '../../../utils';
-import { notEmail } from '../../../validator';
-import { required } from 'vuelidate/lib/validators';
 import {
   getMstCustomer,
   insertMstCustomer,
   updateMstCustomer,
 } from '../../../resource/MstCustomer';
+// import { CheckPhone, SetPhone } from "../../../CustomJs";
 
 export default {
   name: 'Forms',
-  watch: {
-    formData: {
-      deep: true,
-      handler() {
-        if (!this.initial_load) {
-          this.checkValidation();
-        }
-      },
-    },
-  },
-  data() {
-    return {
-      initial_load: true,
-      action: '',
-      route_action: '',
-      formData: { status: 'Active', tlp_alt: '', tlp: '', metadata: null },
-      statusOptions: [
-        { value: 'Active', label: 'Active' },
-        { value: 'Inactive', label: 'Inactive' },
-      ],
-      items: [],
-      CountryCode: coutryCode(),
-
-      temp_data: { tlp_code: '' },
-      required: {
-        name: { error: false, message: 'Name is required' },
-        pic: { error: false, message: 'PIC is required' },
-        email: { error: false, message: 'Please provide valid email address' },
-        // id_sarana: { error: false, message: 'Please provide id sarana' },
-        address: { error: false, message: 'Address is required' },
-        tlp_code: { error: false, message: 'Country code is required' },
-        tlp: {
-          error: false,
-          message: 'Please provide 7-12 digits phone number',
-        },
-      },
-    };
-  },
+  watch: {},
   mounted() {
-    this.reformatCountryCode();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
+    this.reformatCountryCode();
   },
-  validations: {
-    formData: {
-      name: { required },
-      address: { required },
-      pic: { required },
-      email: {
-        required,
-        notEmail,
+  data() {
+    return {
+      initial_load: true,
+      route_action: '',
+      action: 'Edit',
+      formData: {
+        status: 'Active',
+        tlp_code: null,
+        tlp: null,
       },
-    },
+      statusOptions: [
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
+      ],
+
+      CountryCode: coutryCode(),
+    };
   },
+  validations: {},
   methods: {
-    handleChangeInput($value, code) {
-      if (code == 'alt_code') {
-        this.temp_data.tlp_alt_code = $value;
-        this.formData.tlp_alt_code = $value;
-      } else {
-        this.temp_data.tlp_code = $value;
-        this.formData.tlp_code = $value;
-      }
-    },
     limitPhone({ event, data, max }) {
       onlyNumber({ event, data, max });
     },
+    checkValidEmail(email) {
+      return isEmail(email);
+    },
+    checkValidPhone(item) {
+      return isPhone(item);
+    },
+    handleChangeInput($value, code) {
+      if (code == 'alt_code') {
+        this.formData.tlp_alt_code = $value;
+      } else {
+        this.formData.tlp_code = $value;
+      }
+      this.$forceUpdate(); // Memaksa update komponen
+    },
     async loadData() {
-      let _res = await getMstCustomer({ id: this.$route.params.id });
-      if (_res) {
-        let data = _res.data[0];
+      let res = await getMstCustomer({ id: this.$route.params.id });
+      if (res) {
+        let data = res.data[0];
         this.formData = data;
+        let tlp = '';
         if (data.tlp) {
-          let tlp = data.tlp.split('-');
-          this.temp_data.tlp_code = tlp[0];
+          tlp = data.tlp.split('-');
           this.formData.tlp_code = tlp[0];
           this.formData.tlp = tlp[1];
         }
         if (data.tlp_alt) {
-          let tlp = data.tlp_alt.split('-');
-          this.temp_data.tlp_alt_code = tlp[0];
+          tlp = data.tlp_alt.split('-');
           this.formData.tlp_alt_code = tlp[0];
           this.formData.tlp_alt = tlp[1];
         }
       }
     },
-
     reformatCountryCode() {
       let list = this.CountryCode;
       this.CountryCode = [];
@@ -379,61 +353,27 @@ export default {
             value: it.value,
             label: `(${it.value}) ${it.label}`,
           });
-        } else {
-          this.CountryCode.push({
-            value: it.value,
-            label: `${it.label}`,
-          });
         }
       }
-    },
-
-    checkValidation() {
-      let have_error = false;
-      for (const rq in this.required) {
-        if (!this.formData[rq]) {
-          this.required[rq].error = true;
-          have_error = true;
-        } else {
-          this.required[rq].error = false;
-        }
-      }
-      // Check Phone Number
-      if (!isPhone(this.formData.tlp)) {
-        have_error = true;
-        this.required.tlp.error = true;
-      }
-      // Check Email
-      if (!isEmail(this.formData.email)) {
-        have_error = true;
-        this.required.email.error = true;
-      }
-      // If any error
-      if (this.formData.error_metadata) {
-        have_error = true;
-      }
-      // If any error
-      if (have_error) {
-        this.formData.have_error = true;
-      } else {
-        this.formData.have_error = false;
-      }
-      return;
     },
     valid() {
-      console.log(this.formData);
       if (!this.formData.name) {
         return false;
       } else if (!this.formData.pic) {
         return false;
       } else if (!this.formData.address) {
         return false;
-      } else if (!this.formData.email) {
+      } else if (!this.formData.tlp_code) {
+        return false;
+      } else if (!this.formData.tlp || !isPhone(this.formData.tlp)) {
+        return false;
+      } else if (!this.formData.email || !isEmail(this.formData.email)) {
+        return false;
+      } else if (this.formData.error_metadata) {
         return false;
       }
       return true;
     },
-    handleChangePhone() {},
     async save() {
       this.initial_load = false;
       if (!this.valid()) {
@@ -446,15 +386,15 @@ export default {
         });
         return;
       }
-
       let _form_data = JSON.parse(JSON.stringify(this.formData));
+
       let dataPost = JSON.parse(JSON.stringify(this.formData));
 
       if (_form_data.tlp && _form_data.tlp_code) {
-        dataPost.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
+        dataPost.tlp = `${_form_data.tlp_code.toString()}-${_form_data.tlp.toString()}`;
       }
       if (_form_data.tlp_alt && _form_data.tlp_alt_code) {
-        dataPost.tlp_alt = `${_form_data.tlp_alt_code}-${_form_data.tlp_alt}`;
+        dataPost.tlp_alt = `${_form_data.tlp_alt_code.toString()}-${_form_data.tlp_alt.toString()}`;
       }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`

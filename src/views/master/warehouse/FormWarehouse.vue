@@ -178,7 +178,6 @@
 
 <script>
 import { capitalizeFirstLetter } from '../../../utils';
-import { required } from 'vuelidate/lib/validators';
 import {
   getMstWarehouse,
   getMstWarehouseCategory,
@@ -265,7 +264,6 @@ export default {
       }
     },
     valid() {
-      console.log(this.formData);
       if (!this.formData.name) {
         return false;
       } else if (!this.formData.address) {
