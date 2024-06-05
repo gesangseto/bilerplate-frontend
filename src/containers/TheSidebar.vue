@@ -138,11 +138,15 @@ export default {
     renderMenu() {
       let menus = [];
       if (this.backupNavMenu.length === 0) {
-        for (const it of this.nav[0]._children[0]._children) {
-          let menu = it;
-          menu.expand = false;
-          menus.push(menu);
-        }
+        let have_children =
+          Array.isArray(this.nav[0]._children) &&
+          this.nav[0]._children.length > 0;
+        if (have_children)
+          for (const it of this.nav[0]._children[0]._children) {
+            let menu = it;
+            menu.expand = false;
+            menus.push(menu);
+          }
         this.backupNavMenu = menus;
       } else {
         menus = this.backupNavMenu;

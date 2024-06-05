@@ -1,32 +1,5 @@
-import CryptoJS from 'crypto-js';
 import moment from 'moment';
-export function encrypt(plaintext) {
-  const password = '1sampai9';
-  // Buat salt dan key dari password
-  const salt = CryptoJS.lib.WordArray.random(16);
-  const key = CryptoJS.PBKDF2(password, salt, { keySize: 256 / 32 });
-  // Buat IV (inisialisasi vektor) acak
-  const iv = CryptoJS.lib.WordArray.random(16);
-  // Lakukan enkripsi menggunakan kunci dan IV
-  const ciphertext = CryptoJS.AES.encrypt(plaintext, key, { iv: iv });
-  // Gabungkan salt, IV, dan teks terenkripsi menjadi satu string dan kembalikan hasilnya
-  return salt.toString() + iv.toString() + ciphertext.toString();
-}
-
-// Fungsi untuk melakukan dekripsi
-export function decrypt(ciphertext) {
-  const password = '1sampai9';
-  // Ambil salt, IV, dan teks terenkripsi dari string
-  const salt = CryptoJS.enc.Hex.parse(ciphertext.substr(0, 32));
-  const iv = CryptoJS.enc.Hex.parse(ciphertext.substr(32, 32));
-  const encrypted = ciphertext.substring(64);
-  // Buat kunci dari password dan salt
-  const key = CryptoJS.PBKDF2(password, salt, { keySize: 256 / 32 });
-  // Lakukan dekripsi menggunakan kunci dan IV
-  const bytes = CryptoJS.AES.decrypt(encrypted, key, { iv: iv });
-  // Kembalikan hasil dekripsi dalam bentuk string
-  return bytes.toString(CryptoJS.enc.Utf8);
-}
+import { decryptData, encryptData } from '../helper';
 
 export function clearStorage() {
   localStorage.removeItem('profile');
@@ -40,12 +13,12 @@ export function setProfile(data = {}) {
   delete data.identity_logo_path;
   delete data.login_logo;
   delete data.home_logo;
-  localStorage.setItem('profile', encrypt(JSON.stringify(data)));
+  localStorage.setItem('profile', encryptData(JSON.stringify(data)));
 }
 
 export function getProfile() {
   try {
-    return JSON.parse(decrypt(localStorage.getItem('profile')));
+    return JSON.parse(decryptData(localStorage.getItem('profile')));
   } catch (error) {
     return null;
   }
@@ -79,23 +52,27 @@ export function getToken() {
 }
 
 export function setMenu(data) {
-  localStorage.setItem('menu', encrypt(JSON.stringify(data)));
+  localStorage.setItem('menu', encryptData(JSON.stringify(data)));
 }
 
 export function getMenu() {
   try {
-    return JSON.parse(decrypt(localStorage.getItem('menu')));
+    return JSON.parse(decryptData(localStorage.getItem('menu')));
   } catch (error) {
     return [];
   }
 }
 
 export function setRole(data) {
-  localStorage.setItem('role', encrypt(JSON.stringify(data)));
+  localStorage.setItem('role', encryptData(JSON.stringify(data)));
 }
 
 export function getRole() {
-  return JSON.parse(decrypt(localStorage.getItem('role')));
+  try {
+    return JSON.parse(decryptData(localStorage.getItem('role')));
+  } catch (error) {
+    return null;
+  }
 }
 
 export function setConfig(data = {}) {
@@ -112,7 +89,7 @@ export function setConfig(data = {}) {
     delete data.identity_logo_path;
   }
 
-  localStorage.setItem('configuration', encrypt(JSON.stringify(data)));
+  localStorage.setItem('configuration', encryptData(JSON.stringify(data)));
 }
 
 export function getLogo() {
@@ -131,7 +108,7 @@ export function getHomeLogo() {
 }
 
 export function getConfig() {
-  return JSON.parse(decrypt(localStorage.getItem('configuration')));
+  return JSON.parse(decryptData(localStorage.getItem('configuration')));
 }
 
 export function setLoginTimeout(data) {

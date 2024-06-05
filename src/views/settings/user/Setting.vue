@@ -6,7 +6,7 @@
           <CCardHeader>
             <strong>Profile</strong>
           </CCardHeader>
-          <CCardBody>
+          <CCardBody v-if="profile">
             <CRow class="mt-3"
               ><CCol md="3"> Username </CCol>
               <CCol md="3">

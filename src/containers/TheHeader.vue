@@ -164,7 +164,7 @@ export default {
     $route: {
       immediate: true,
       handler(route) {
-        this.path_url = route.matched;
+        this.path_url = route.matched || null;
         this.timeoutModal = false;
         this.current_route = route;
         this.getNotif();
@@ -174,7 +174,8 @@ export default {
     timeout: {
       immediate: true,
       handler(val) {
-        if (val != null && val > 0 && this.next_count) {
+        let isNan = isNaN(parseFloat(val));
+        if (!isNan && val != null && val > 0 && this.next_count) {
           this.next_count = false;
           if (val <= this.limit) {
             if (!this.timeoutModal) {
@@ -201,7 +202,7 @@ export default {
               this.timeout -= 1;
             }, 1000);
           }
-        } else if (val != null && val <= 0) {
+        } else if (!isNan && val != null && val <= 0) {
           this.sessionExpired();
         }
       },
@@ -246,12 +247,14 @@ export default {
       let can_access = false;
       var method = route.params.type;
       let role = getRole();
-      for (const it of role) {
-        if (route.path.includes(it.link)) {
-          if (method) {
-            can_access = it[`can_${method}`];
-          } else {
-            can_access = true;
+      if (role && Array.isArray(role)) {
+        for (const it of role) {
+          if (route.path.includes(it.link)) {
+            if (method) {
+              can_access = it[`can_${method}`];
+            } else {
+              can_access = true;
+            }
           }
         }
       }
@@ -297,7 +300,7 @@ export default {
           return;
         }
         this.notif = _res.data;
-        this.notifLength = _res.data.length;
+        this.notifLength = _res.data.length || 0;
         this.timeout = this.getDifferentSecond();
       }
       return;
@@ -307,8 +310,8 @@ export default {
       localStorage.setItem('current_url', this.current_route.path);
       localStorage.setItem('message', message);
       clearStorage();
-      this.$router.push({ path: '/login' });
       this.timeout = null;
+      this.$router.push({ path: '/login' });
       setLoginTimeout(-1);
       // window.location.reload();
       return;

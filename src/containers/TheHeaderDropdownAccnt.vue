@@ -7,7 +7,7 @@
   >
     <template #toggler>
       <CHeaderNavLink style="border: 1px">
-        <div style="padding-right: 10px">{{ full_name }} {{ ' ' }}</div>
+        <div style="padding-right: 10px">{{ full_name || '' }} {{ ' ' }}</div>
         <div class="c-avatar">
           <img
             v-bind:src="avatar_path"
@@ -18,7 +18,7 @@
       </CHeaderNavLink>
     </template>
     <CDropdownHeader tag="div" class="text-center" color="light">
-      <strong>{{ email }}</strong>
+      <strong>{{ email || '' }}</strong>
     </CDropdownHeader>
     <!-- <CDropdownItem @click="toProfile">
       <CIcon name="cil-user" /> Profile

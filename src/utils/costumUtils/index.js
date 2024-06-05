@@ -159,6 +159,7 @@ export function buttonPermission({ path }) {
   const pattern = patterns.find((p) => path.includes(p));
   path = pattern ? path.split(pattern)[0] : path;
   let role = getRole();
+  if (!role) return action;
   for (const it of role) {
     if (path == it.link) {
       action.can_create = strToBool(it.can_create) ? true : false;

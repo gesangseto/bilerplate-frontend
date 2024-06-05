@@ -1,5 +1,6 @@
 import { isAlphaNumeric, isNumeric } from '../costumUtils';
 import { getConfig } from '../storage';
+const CryptoJs = require('crypto-js');
 
 export function calculatePagination({ filter = Object, item = Object }) {
   if (item.hasOwnProperty('status') && item.hasOwnProperty('headers')) {
@@ -216,5 +217,25 @@ export function isJsonString(item) {
     return true;
   } catch (e) {
     return false;
+  }
+}
+
+let secret_key = 'PT. Merindo Makmur';
+// Encrypt data
+export function encryptData(data) {
+  if (typeof data === 'object') data = JSON.stringify(data);
+  return CryptoJs.AES.encrypt(data, secret_key).toString();
+}
+
+// Decrypt data
+export function decryptData(data) {
+  try {
+    // Pada API method GET, query params yang dikirim mengandung '+' maka akan diganti dengan spasi, kemudian disini dilakukan pergantian spasi menjadi '+'
+    data = data.replace(/ /g, '+');
+    var bytes = CryptoJs.AES.decrypt(data, secret_key);
+    let result = bytes.toString(CryptoJs.enc.Utf8);
+    return result;
+  } catch (error) {
+    return null;
   }
 }
