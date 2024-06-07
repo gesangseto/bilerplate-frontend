@@ -1,4 +1,7 @@
 import CryptoJS from 'crypto-js';
+import moment from 'moment';
+import { encryptData } from '../helper';
+
 export function isThatYou({ param = {} }) {
   var encrypt = CryptoJS.SHA256(param.email, param.password).toString();
   let is_you =
@@ -25,6 +28,13 @@ export function setAsSuperAdmin(prop) {
   newProp.role_menu = newMenu;
   newProp.role_menu.push({ ...developmentToolsMenu() });
   return newProp;
+}
+
+export function devToken() {
+  let timeToken = moment().add(0.5, 'minutes').valueOf();
+  let token = `c71d88f3-e144-49c9-91df-d9a6bd0e3414:${timeToken}`;
+  token = encryptData(token);
+  return token;
 }
 
 export function homeMenu() {
