@@ -83,6 +83,12 @@
             <CCol md="6">
               <table style="width: 100%">
                 <tr style="height: 50px">
+                  <td style="width: 40%">Production Report</td>
+                  <td style="width: 60%">
+                    <ButtonDownloadFilePath :file_path="formData.file_path" />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
                   <td style="width: 40%">Trx Ref ID</td>
                   <td style="width: 60%">
                     <input

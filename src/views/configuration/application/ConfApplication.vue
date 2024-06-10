@@ -458,27 +458,22 @@
               </CCard>
 
               <CCard>
-                <CCardHeader style="font-weight: bold">SFTP Folder</CCardHeader>
+                <CCardHeader style="font-weight: bold">
+                  Archive Folder
+                </CCardHeader>
                 <CCardBody>
                   <CCol sm="10">
                     <CInput
-                      label="SFTP Folder 1"
+                      label="Pre Inbound"
                       horizontal
-                      v-model="data.sftp_folder_1"
+                      v-model="data.folder_preinbound"
                     />
                   </CCol>
                   <CCol sm="10">
                     <CInput
-                      label="SFTP Folder 2"
+                      label="Picking List"
                       horizontal
-                      v-model="data.sftp_folder_2"
-                    />
-                  </CCol>
-                  <CCol sm="10">
-                    <CInput
-                      label="SFTP Folder 3"
-                      horizontal
-                      v-model="data.sftp_folder_3"
+                      v-model="data.folder_pickinglist"
                     />
                   </CCol>
                 </CCardBody>
@@ -486,37 +481,8 @@
 
               <CCard>
                 <CCardHeader style="font-weight: bold">
-                  Archive Folder
+                  Serial Config (Deprecated)
                 </CCardHeader>
-                <CCardBody>
-                  <CCol sm="10">
-                    <CInput
-                      label="Archive Folder 1"
-                      horizontal
-                      v-model="data.achived_folder_1"
-                    />
-                  </CCol>
-                  <CCol sm="10">
-                    <CInput
-                      label="Archive Folder 2"
-                      horizontal
-                      v-model="data.achived_folder_2"
-                    />
-                  </CCol>
-                  <CCol sm="10">
-                    <CInput
-                      label="Archive Folder 3"
-                      horizontal
-                      v-model="data.achived_folder_3"
-                    />
-                  </CCol>
-                </CCardBody>
-              </CCard>
-
-              <CCard>
-                <CCardHeader style="font-weight: bold"
-                  >Serial Config (Deprecated)</CCardHeader
-                >
                 <CCardBody>
                   <CCol sm="12">
                     <CInput

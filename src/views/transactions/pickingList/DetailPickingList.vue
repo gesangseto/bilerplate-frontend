@@ -56,13 +56,9 @@
                   </td>
                 </tr>
                 <tr style="height: 50px">
-                  <td>SO File Ref Name</td>
+                  <td>SO File</td>
                   <td>
-                    <input
-                      readonly
-                      class="form-control"
-                      v-model="picking.file_1_name"
-                    />
+                    <ButtonDownloadFilePath :file_path="picking.file_path_1" />
                   </td>
                 </tr>
                 <tr style="height: 50px">
@@ -76,13 +72,9 @@
                   </td>
                 </tr>
                 <tr style="height: 50px">
-                  <td>ERP PL File Ref Name</td>
+                  <td>ERP PL File</td>
                   <td>
-                    <input
-                      readonly
-                      class="form-control"
-                      v-model="picking.file_1_name"
-                    />
+                    <ButtonDownloadFilePath :file_path="picking.file_path_2" />
                   </td>
                 </tr>
                 <tr style="height: 50px">

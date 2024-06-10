@@ -37,6 +37,7 @@ import {
   VirtualKeyboard,
   SelectOption,
   Metadata,
+  ButtonDownloadFilePath,
 } from './views/component';
 Vue.use(
   VueFab /* {
@@ -73,6 +74,7 @@ Vue.component('SwitchDefault', SwitchDefault);
 Vue.component('ProductWeight', ProductWeight);
 Vue.component('SelectOption', SelectOption);
 Vue.component('Metadata', Metadata);
+Vue.component('ButtonDownloadFilePath', ButtonDownloadFilePath);
 
 export default {
   name: 'App',

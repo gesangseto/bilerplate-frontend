@@ -21,11 +21,13 @@ import ProductWeight from './ProductWeight';
 import VirtualKeyboard from './VirtualKeyboard';
 import SelectOption from './SelectOption';
 import Metadata from './Metadata';
+import ButtonDownloadFilePath from './ButtonDownloadFilePath';
 
 export {
   VirtualKeyboard,
   ProductWeight,
   ButtonPermission,
+  ButtonDownloadFilePath,
   Button,
   ButtonBack,
   HeaderFilterDefault,
