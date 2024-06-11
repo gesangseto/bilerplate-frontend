@@ -204,6 +204,7 @@ export function exportDataV3({
   delete new_param.limit;
   delete new_param.page;
   new_param.MertrackApiToken = getToken();
+  new_param['User-Type'] = 'Website App';
   if (!new_param.SearchVal1Text) {
     new_param.SearchVal1Text = 'All';
   }
