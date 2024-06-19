@@ -155,7 +155,8 @@ let dataPost = [];
 import $axiosMertrack from '../../../apiMertrack';
 import 'vue-select/dist/vue-select.css';
 import moment from 'moment';
-import { getMstProduct } from '../../../resource/MstProduct';
+import { getMstProduct, insertMstProduct } from '../../../resource/MstProduct';
+import { insertPackingV4 } from '../../../resource/TrxPacking';
 import { getMstWarehouse } from '../../../resource/MstWarehouse';
 export default {
   name: 'FormPacking',
@@ -381,32 +382,27 @@ export default {
         this.can_proccess = false;
       }
     },
-    proccess_all() {
+    async proccess_all() {
       if (!this.checkValidation()) {
         return;
       }
       // return;
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
-        this.formData.items = this.items;
         this.$isLoading(true);
-        $axiosMertrack
-          .put(`/v3/transaction/packing`, this.formData)
-          .then((result) => {
-            this.$toast.open({
-              message: result.data.error
-                ? result.data.message
-                : `Data has been saved succesfully `,
-              type: result.data.error ? 'error' : 'success',
-              dissmissible: true,
-              position: 'top-right',
-              duration: 5000,
-            });
-            this.$isLoading(false);
-            if (!result.data.error) {
-              this.$router.back();
-            }
-          });
+        this.formData.items = this.items;
+        let res = await insertPackingV4(this.formData);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!res['error']) this.$router.back();
       }
       return;
     },
