@@ -75,15 +75,31 @@ export const insertProcessOrder = async (param = Object) => {
       });
   });
 };
+export const updateProcessOrder = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(`${url}`, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
 
 export const generateProcessOrder = async (param = Object) => {
   if (!param) {
     return false;
   }
-
   return new Promise((resolve) => {
     $axiosMertrack
-      .post(url, param)
+      .post(`${url}/generate-serial`, param)
       .then((result) => {
         let res = result.data;
         return resolve(res);

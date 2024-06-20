@@ -8,10 +8,13 @@
         <CCardBody>
           <CRow>
             <CCol sm="6" md="6" lg="6">
-              <CInput
+              <InputDefault
                 :disabled="action != 'Create'"
-                horizontal
-                :value.sync="formData.process_order_erp"
+                title="ERP No."
+                v-model="formData.process_order_erp"
+                :options="{ uppercase: true, nospace: true }"
+                :required="true"
+                :max="100"
                 :is-valid="
                   initialLoad
                     ? null
@@ -19,16 +22,7 @@
                     ? false
                     : true
                 "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    ERP No.
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
+              />
 
               <div class="form-group row mb-12">
                 <label
@@ -50,95 +44,75 @@
                 </div>
               </div>
 
-              <CInput horizontal :value.sync="formData.gtin" disabled>
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    GTIN
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput horizontal :value.sync="formData.nie" disabled>
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    NIE
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action != 'Create'"
-                horizontal
-                :type="'number'"
-                :value.sync="formData.het"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">HET</p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action != 'Create'"
-                horizontal
-                :value.sync="formData.batch_no"
+              <InputDefault
+                :disabled="true"
+                title="GTIN"
+                v-model="formData.gtin"
+              />
+
+              <InputDefault
+                :disabled="true"
+                title="NIE"
+                v-model="formData.nie"
+              />
+
+              <InputDefault
+                :disabled="action != 'Create' && action != 'Update'"
+                title="HET"
+                :validasi="'numeric'"
+                v-model="formData.het"
+                :options="{ uppercase: true }"
+                :required="true"
+                :max="20"
+                :is-valid="initialLoad ? null : !formData.het ? false : true"
+              />
+
+              <InputDefault
+                :disabled="action != 'Create' && action != 'Update'"
+                title="Batch No"
+                :validasi="'alphanumeric'"
+                v-model="formData.batch_no"
+                :options="{ uppercase: true }"
+                :required="true"
+                :max="20"
                 :is-valid="
                   initialLoad ? null : !formData.batch_no ? false : true
                 "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Batch No.
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action != 'Create'"
-                horizontal
-                :value.sync="formData.lot_no"
+              />
+
+              <InputDefault
+                :disabled="action != 'Create' && action != 'Update'"
+                title="Lot No"
+                :validasi="'alphanumeric'"
+                v-model="formData.lot_no"
+                :options="{ uppercase: true }"
+                :required="true"
+                :max="20"
                 :is-valid="initialLoad ? null : !formData.lot_no ? false : true"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Lot No.
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action != 'Create' && formData.status !== 0"
-                label="MFG Date *"
-                horizontal
-                type="date"
+              />
+
+              <InputDateDefault
+                :disabled="
+                  action != 'Create' &&
+                  action != 'Update' &&
+                  action != 'Approve'
+                "
+                title="Mfg Date"
                 v-model="formData.mfg_date"
+                :options="{ format: 'dd/mm/yyyy' }"
+                :required="true"
                 :is-valid="
-                  action === 'Update'
-                    ? initialLoad
-                      ? null
-                      : !formData.mfg_date
-                      ? false
-                      : true
-                    : null
+                  initialLoad ? null : !formData.mfg_date ? false : true
                 "
               >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    MFG Date
-                    <span class="text-danger" v-if="formData.status == 0">
-                      *
-                    </span>
-                  </p>
-                </template>
                 <template #append>
                   <CInput
-                    :disabled="action != 'Create' && formData.status !== 0"
+                    style="width: 400px"
+                    :disabled="
+                      action != 'Create' &&
+                      action != 'Update' &&
+                      action != 'Approve'
+                    "
                     type="number"
                     v-model="formData.shelf_life"
                     placeholder="Shelf Life"
@@ -148,42 +122,30 @@
                     </template>
                   </CInput>
                 </template>
-              </CInput>
-              <CInput
+              </InputDateDefault>
+
+              <InputDateDefault
                 :disabled="
-                  (action != 'Create' || formData.shelf_life > 0) &&
-                  formData.status !== 0
+                  action != 'Create' &&
+                  action != 'Update' &&
+                  action != 'Approve'
                 "
-                label="EXP Date *"
-                horizontal
-                type="date"
+                title="Exp Date"
                 v-model="formData.exp_date"
+                :options="{ format: 'dd/mm/yyyy' }"
+                :required="true"
                 :is-valid="
-                  action === 'Update'
-                    ? initialLoad
-                      ? null
-                      : !formData.exp_date
-                      ? false
-                      : true
-                    : null
+                  initialLoad ? null : !formData.exp_date ? false : true
                 "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    EXP Date
-                    <span v-if="formData.status == 0" class="text-danger">
-                      *
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput
-                disabled
+              />
+
+              <InputDefault
                 v-if="action != 'Create'"
-                label="Status"
-                horizontal
+                :disabled="true"
+                title="Status"
                 v-model="formData.status_name"
               />
+
               <CTextarea
                 disabled
                 v-if="formData.reason"
@@ -191,6 +153,7 @@
                 horizontal
                 v-model="formData.reason"
               />
+
               <CTextarea
                 disabled
                 v-if="formData.system_remark"
@@ -200,18 +163,14 @@
               />
             </CCol>
             <CCol sm="6" md="6" lg="6">
-              <CInput
-                :disabled="action != 'Create'"
-                horizontal
-                :value.sync="formData.generate_count_level_1"
-                type="number"
-                @keypress="
-                  limitNumber({
-                    event: $event,
-                    data: formData.generate_count_level_1,
-                    max: 7,
-                  })
-                "
+              <InputDefault
+                :disabled="action != 'Create' && action != 'Update'"
+                title="Total Production"
+                :validasi="'numeric'"
+                v-model="formData.generate_count_level_1"
+                :options="{ uppercase: true }"
+                :required="true"
+                :max="7"
                 :is-valid="
                   initialLoad
                     ? null
@@ -219,49 +178,24 @@
                     ? false
                     : true
                 "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Total Production
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action != 'Create'"
-                horizontal
-                :value.sync="formData.buff"
-                type="number"
-                @keypress="
-                  limitNumber({
-                    event: $event,
-                    data: formData.buff,
-                    max: 2,
-                  })
-                "
+              />
+
+              <InputDefault
+                :disabled="action != 'Create' && action != 'Update'"
+                title="Buff (%)"
+                :validasi="'numeric'"
+                v-model="formData.buff"
+                :options="{ uppercase: true }"
+                :max="2"
                 :is-valid="initialLoad ? null : !formData.buff ? false : true"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Buff (%)
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput
+              />
+
+              <InputDefault
                 :disabled="true"
-                horizontal
-                :value.sync="formData.min_count_generated_serial"
-                type="number"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Min Generated</p>
-                </template>
-              </CInput>
+                title="Min Generated"
+                v-model="formData.min_count_generated_serial"
+              />
+
               <CDataTable
                 hover
                 striped
@@ -329,7 +263,7 @@
         <CCardFooter>
           <!-- Simpan data saat create-->
           <CButton
-            v-if="action == 'Create'"
+            v-if="action == 'Create' || action == 'Update'"
             type="submit"
             size="sm"
             @click="save()"
@@ -339,13 +273,14 @@
           >
           <!-- Generate Serial data saat update-->
           <CButton
-            v-if="formData.status == 0 && action == 'Update'"
+            v-if="formData.status == 0 && action == 'Approve'"
             type="submit"
             size="sm"
             @click="generate_serial()"
             class="mr-2"
             color="primary"
-            ><CIcon name="cil-check-circle" /> Generate Serial</CButton
+          >
+            <CIcon name="cil-check-circle" /> Generate Serial</CButton
           >
           <!-- Buton Cancel-->
           <ButtonBack />
@@ -517,6 +452,7 @@ import {
   getProcessOrder,
   insertProcessOrder,
   requestAdditionalSerial,
+  updateProcessOrder,
 } from '../../../resource/ProcessOrder';
 import { capitalizeFirstLetter, getConfig, onlyNumber } from '../../../utils';
 export default {
@@ -596,7 +532,7 @@ export default {
         lot_no: '',
         exp_date: null,
         mfg_date: null,
-        het: null,
+        het: 0,
         process_order_erp: '',
         buff: 0,
         generate_count_level_1: null,
@@ -816,6 +752,8 @@ export default {
       let _res = await getProcessOrder({ id: this.$route.params.id });
       if (_res && !_res.error) {
         this.formData = _res.data[0];
+        this.formData.het = this.formData.het || 0;
+        this.formData.buff = this.formData.buff || 0;
         this.formData.min_count_generated_serial =
           getConfig().min_count_generated_serial || 0;
       }
@@ -923,9 +861,7 @@ export default {
         this.additionalSerial.generate_count_level_4 = 0;
       }
     },
-    async save() {
-      this.initialLoad = false;
-      // // cek semua input yang mandatory
+    isValid() {
       let required = [
         'process_order_erp',
         'generate_count_level_1',
@@ -937,30 +873,49 @@ export default {
       ];
       for (const key of required) {
         if (!this.formData[key]) {
-          this.$toast.open({
-            message: 'Please complete all required data',
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
           return false;
         }
       }
-
-      this.$isLoading(true);
-      let res = await insertProcessOrder(this.formData);
-      this.$isLoading(false);
-      this.$toast.open({
-        message: res['error']
-          ? `${res['message']}`
-          : 'Data has been saved succesfully ',
-        type: res.error ? 'error' : 'success',
-        dissmissible: true,
-        position: 'top-right',
-        duration: 5000,
-      });
-      if (!res['error']) this.$router.back();
+      if (!this.formData.het && this.formData.het != 0) {
+        return false;
+      }
+    },
+    async save() {
+      this.initialLoad = false;
+      // // cek semua input yang mandatory
+      if (!this.isValid) {
+        this.$toast.open({
+          message: 'Please complete all required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+      }
+      var message = this.$route.params.id
+        ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
+        : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
+      if (confirm(message)) {
+        this.$isLoading(true);
+        let res = null;
+        if (this.formData.id) {
+          res = await updateProcessOrder(this.formData);
+        } else {
+          res = await insertProcessOrder(this.formData);
+        }
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!res['error']) this.$router.back();
+      }
+      return;
     },
     rowClicked(item) {
       this.detail_item = item;

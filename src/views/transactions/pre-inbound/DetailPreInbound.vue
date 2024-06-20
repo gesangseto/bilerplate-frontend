@@ -20,6 +20,16 @@
                   </td>
                 </tr>
                 <tr style="height: 50px">
+                  <td style="width: 40%">Trx Ref ID</td>
+                  <td style="width: 60%">
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="formData.trx_ref_id"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
                   <td>Trx Date</td>
                   <td>
                     <input
@@ -40,12 +50,22 @@
                   </td>
                 </tr>
                 <tr style="height: 50px">
-                  <td>Remark</td>
+                  <td>Process Order No</td>
                   <td>
                     <input
                       class="form-control"
                       readonly
-                      v-model="formData.remark"
+                      v-model="formData.process_order_erp"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Batch No</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="formData.batch_no"
                     />
                   </td>
                 </tr>
@@ -69,6 +89,7 @@
                     />
                   </td>
                 </tr>
+
                 <tr style="height: 50px">
                   <td>Mfg Date</td>
                   <td>
@@ -78,8 +99,19 @@
                       v-model="formData.mfg_date"
                     />
                   </td>
-                </tr></table
-            ></CCol>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Exp Date</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="formData.exp_date"
+                    />
+                  </td>
+                </tr>
+              </table>
+            </CCol>
             <CCol md="6">
               <table style="width: 100%">
                 <tr style="height: 50px">
@@ -88,13 +120,43 @@
                     <ButtonDownloadFilePath :file_path="formData.file_path" />
                   </td>
                 </tr>
-                <tr style="height: 50px">
-                  <td style="width: 40%">Trx Ref ID</td>
-                  <td style="width: 60%">
+                <tr>
+                  <td>Status</td>
+                  <td>
                     <input
                       class="form-control"
                       readonly
-                      v-model="formData.trx_ref_id"
+                      v-model="formData.status_desc"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px" v-if="formData.modified_full_name">
+                  <td>Last Action By</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="formData.modified_full_name"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px" v-if="formData.modified_full_name">
+                  <td>Last Action By</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="formData.modified_date"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px" v-if="formData.remark">
+                  <td>Remark</td>
+                  <td>
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="formData.remark"
                     />
                   </td>
                 </tr>
@@ -313,7 +375,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/pre-inbound',
+        url: '/v4/transaction/pre-inbound',
       });
     },
   },

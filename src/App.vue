@@ -38,6 +38,8 @@ import {
   SelectOption,
   Metadata,
   ButtonDownloadFilePath,
+  InputDateDefault,
+  InputDefault,
 } from './views/component';
 Vue.use(
   VueFab /* {
@@ -75,6 +77,8 @@ Vue.component('ProductWeight', ProductWeight);
 Vue.component('SelectOption', SelectOption);
 Vue.component('Metadata', Metadata);
 Vue.component('ButtonDownloadFilePath', ButtonDownloadFilePath);
+Vue.component('InputDefault', InputDefault);
+Vue.component('InputDateDefault', InputDateDefault);
 
 export default {
   name: 'App',

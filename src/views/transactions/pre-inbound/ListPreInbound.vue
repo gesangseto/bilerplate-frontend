@@ -147,7 +147,10 @@ export default {
         {
           key: 'lot_no',
           label: 'Lot No',
-          _classes: 'font-weight-bold',
+        },
+        {
+          key: 'process_order_erp',
+          label: 'PO. No',
         },
         {
           key: 'quantity_lvl_1',
@@ -192,7 +195,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: '/v3/transaction/inbound',
+        url: '/v4/transaction/pre-inbound',
       });
     },
     pageChange(page) {

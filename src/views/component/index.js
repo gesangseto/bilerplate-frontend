@@ -22,6 +22,8 @@ import VirtualKeyboard from './VirtualKeyboard';
 import SelectOption from './SelectOption';
 import Metadata from './Metadata';
 import ButtonDownloadFilePath from './ButtonDownloadFilePath';
+import InputDefault from './InputDefault';
+import InputDateDefault from './InputDateDefault';
 
 export {
   VirtualKeyboard,
@@ -48,4 +50,6 @@ export {
   SwitchDefault,
   SelectOption,
   Metadata,
+  InputDefault,
+  InputDateDefault,
 };

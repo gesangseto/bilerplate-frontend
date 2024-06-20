@@ -58,6 +58,14 @@
                       @click="rowUpdate(item, index)"
                     />
                     <ButtonPermission
+                      :buttonProperty="approve_property"
+                      v-if="item.status == 0"
+                      :id="item.id"
+                      :useHref="true"
+                      :permission="'approve'"
+                      @click="rowUpdate(item, index)"
+                    />
+                    <ButtonPermission
                       :id="item.id"
                       :useHref="true"
                       :permission="'read'"
@@ -122,6 +130,14 @@ export default {
         id: null,
         reason: '',
       },
+      approve_property: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'clipboard-check',
+        text: '',
+        tooltip: 'Generate Serial',
+      },
       filter: {
         page: 1,
         limit: 10,
@@ -167,7 +183,7 @@ export default {
         {
           key: 'action',
           label: 'Action',
-          _style: 'width:15%',
+          _style: 'width:17%',
           sorter: false,
           filter: false,
         },
