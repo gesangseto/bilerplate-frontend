@@ -69,16 +69,7 @@
                     />
                   </td>
                 </tr>
-                <tr style="height: 50px">
-                  <td>Lot No</td>
-                  <td>
-                    <input
-                      class="form-control"
-                      readonly
-                      v-model="formData.lot_no"
-                    />
-                  </td>
-                </tr>
+
                 <tr style="height: 50px">
                   <td>Het</td>
                   <td>
@@ -126,7 +117,7 @@
                     <input
                       class="form-control"
                       readonly
-                      v-model="formData.status_desc"
+                      v-model="formData.status_name"
                     />
                   </td>
                 </tr>
@@ -141,7 +132,7 @@
                   </td>
                 </tr>
                 <tr style="height: 50px" v-if="formData.modified_full_name">
-                  <td>Last Action By</td>
+                  <td>Last Action Date</td>
                   <td>
                     <input
                       class="form-control"
