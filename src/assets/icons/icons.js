@@ -22,9 +22,12 @@ import {
   cibPaypal,
   cibGooglePay,
   cibCcAmex,
-} from "@coreui/icons";
-import { cifUs, cifBr, cifIn, cifFr, cifEs, cifPl } from "@coreui/icons";
+} from '@coreui/icons';
+import { cifUs, cifBr, cifIn, cifFr, cifEs, cifPl } from '@coreui/icons';
 import {
+  cilSync,
+  cilWindowRestore,
+  cilWarning,
   cilArrowRight,
   cilBan,
   cilBasket,
@@ -93,13 +96,16 @@ import {
   cilSwapHorizontal,
   cilClipboard,
   cilRoom,
-} from "@coreui/icons";
-import { logo } from "./logo";
+} from '@coreui/icons';
+import { logo } from './logo';
 
 export const iconsSet = Object.assign(
   {},
   { logo },
   {
+    cilSync,
+    cilWindowRestore,
+    cilWarning,
     cilArrowRight,
     cilBan,
     cilBasket,

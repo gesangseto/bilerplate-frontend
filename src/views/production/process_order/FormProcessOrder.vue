@@ -185,9 +185,14 @@
                 title="Buff (%)"
                 :validasi="'numeric'"
                 v-model="formData.buff"
-                :options="{ uppercase: true }"
                 :max="2"
-                :is-valid="initialLoad ? null : !formData.buff ? false : true"
+                :is-valid="
+                  initialLoad
+                    ? null
+                    : !formData.buff && formData.buff != 0
+                    ? false
+                    : true
+                "
               />
 
               <InputDefault
@@ -209,7 +214,7 @@
                 type="submit"
                 size="sm"
                 @click="requestSerial()"
-                class="mr-2"
+                class="mr-2 mb-2"
                 color="success"
                 ><CIcon name="cil-check-circle" /> Generate Additional
                 Serial</CButton
@@ -219,7 +224,7 @@
                 type="submit"
                 size="sm"
                 @click="viewModalHistory = true"
-                class="mr-2"
+                class="mr-2 mb-2"
                 color="info"
               >
                 <CIcon name="cil-check-circle" /> View History</CButton
@@ -229,7 +234,7 @@
                 type="submit"
                 size="sm"
                 @click="handleViewSerial"
-                class="mr-2"
+                class="mr-2 mb-2"
                 color="primary"
               >
                 <CIcon name="cil-check-circle" /> View Serial</CButton
@@ -239,7 +244,7 @@
                 type="submit"
                 size="sm"
                 @click="viewModalWeight = true"
-                class="mr-2"
+                class="mr-2 mb-2"
                 color="warning"
               >
                 <CIcon name="cil-check-circle" /> Weight Config</CButton
@@ -269,7 +274,8 @@
             @click="save()"
             class="mr-2"
             color="primary"
-            ><CIcon name="cil-check-circle" /> Submit</CButton
+          >
+            <CIcon name="cil-check-circle" /> Submit</CButton
           >
           <!-- Generate Serial data saat update-->
           <CButton
@@ -282,6 +288,18 @@
           >
             <CIcon name="cil-check-circle" /> Generate Serial</CButton
           >
+          <!-- Generate Serial data saat update-->
+          <CButton
+            v-if="formData.status == 4 && userInfo.id == 0"
+            type="submit"
+            size="sm"
+            @click="reset_status()"
+            class="mr-2"
+            color="warning"
+          >
+            <CIcon name="cil-sync" /> Reset Status</CButton
+          >
+
           <!-- Buton Cancel-->
           <ButtonBack />
         </CCardFooter>
@@ -452,9 +470,15 @@ import {
   getProcessOrder,
   insertProcessOrder,
   requestAdditionalSerial,
+  resetProcessOrder,
   updateProcessOrder,
 } from '../../../resource/ProcessOrder';
-import { capitalizeFirstLetter, getConfig, onlyNumber } from '../../../utils';
+import {
+  capitalizeFirstLetter,
+  getConfig,
+  getProfile,
+  onlyNumber,
+} from '../../../utils';
 export default {
   name: 'FormPacking',
   watch: {
@@ -515,6 +539,7 @@ export default {
   },
   data() {
     return {
+      userInfo: getProfile(),
       activeTab: 0,
       initialLoad: true,
       additionalSerial: {
@@ -807,6 +832,25 @@ export default {
         this.can_process = false;
       }
     },
+    async reset_status() {
+      var message = `You are about to changes status to "Ready" to this data. This operation cannot be undone. Would you like to continue?`;
+
+      if (confirm(message)) {
+        this.$isLoading(true);
+        let res = await resetProcessOrder({ id: this.formData.id });
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!res['error']) this.$router.back();
+      }
+    },
     async generate_serial() {
       this.$isLoading(true);
       let res = await generateProcessOrder({
@@ -879,12 +923,15 @@ export default {
       if (!this.formData.het && this.formData.het != 0) {
         return false;
       }
+      if (!this.formData.buff && this.formData.buff != 0) {
+        return false;
+      }
     },
     async save() {
       this.initialLoad = false;
       // // cek semua input yang mandatory
       if (!this.isValid) {
-        this.$toast.open({
+        return this.$toast.open({
           message: 'Please complete all required data',
           type: 'error',
           dissmissible: true,

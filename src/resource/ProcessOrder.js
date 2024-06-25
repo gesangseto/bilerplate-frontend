@@ -128,6 +128,24 @@ export const requestAdditionalSerial = async (param = Object) => {
       });
   });
 };
+export const resetProcessOrder = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(`${url}/change-to-ready`, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
 
 export const deleteProcessOrder = async (param = Object) => {
   if (!param.id) return false;
