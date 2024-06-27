@@ -27,8 +27,9 @@
               'Release',
             ]" -->
           <HeaderFilterDefault
+            :save_filtering="true"
             status_code="mst_supplier"
-            v-on:handleClickFilter="handleClickFilter($event)"
+            v-on:handleClickFilter="handleChangeFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
           <!-- INI BATAS HEADER TABLE -->
@@ -120,7 +121,6 @@ export default {
 
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {
@@ -202,7 +202,7 @@ export default {
         });
       }
     },
-    handleClickFilter(val) {
+    handleChangeFilter(val) {
       this.filter = Object.assign(this.filter, val);
       this.loadData();
     },

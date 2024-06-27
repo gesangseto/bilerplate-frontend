@@ -141,19 +141,30 @@ import { ModelSelect } from 'vue-search-select';
 import moment from 'moment';
 import { dateFilter } from '../../constants';
 import { getStatusDesc } from '../../resource/StatusDesc';
+import { getFiltering, setFiltering } from '../../utils/storage';
 
 export default {
   name: 'HeaderFilterTransactionV3',
-  props: [
-    'filter',
-    'status_code',
-    'status_code_default',
-    'remove_all_status_code',
-    'costume_filter',
-    'removeTrxDate',
-    'order',
-  ],
+  props: {
+    filter: Array,
+    status_code: String,
+    status_code_default: String,
+    remove_all_status_code: String,
+    costume_filter: Array,
+    removeTrxDate: Boolean,
+    order: Array,
+    save_filtering: { type: Boolean, default: false },
+  },
+
   components: { ModelSelect, DateRangePicker },
+  watch: {
+    filtering: {
+      handler(item) {
+        setFiltering(this.$route.path, item);
+      },
+      deep: true,
+    },
+  },
   mounted() {
     this.getSatusCode();
     if (this.filter && this.filter.constructor === Array) {
@@ -196,9 +207,18 @@ export default {
         if (idx >= 0) this.listFilter.push(temp_arr[idx]);
       }
     }
+
+    // Load filter kemudian trigering
+    let fil = getFiltering(this.$route.path);
+    if (fil) {
+      this.result = fil;
+      this.fill_date(this.result.StartDate, this.result.EndDate);
+    }
+    if (this.save_filtering) this.handleClickFilter();
   },
   data() {
     return {
+      filtering: {},
       ranges: {
         Today: [
           new Date(dateFilter.today.start),
@@ -488,6 +508,13 @@ export default {
       });
       return initial;
     },
+    fill_date(start, end) {
+      let date = (this.default_date = {
+        startDate: start,
+        endDate: end,
+      });
+      return date;
+    },
     handleResetFilter() {
       this.result = this.initial_result();
       if (!this.useTransactionDate) {
@@ -698,6 +725,7 @@ export default {
         });
         return;
       }
+      this.filtering = this.result;
       this.$emit('handleClickFilter', this.result);
     },
     getProduct() {

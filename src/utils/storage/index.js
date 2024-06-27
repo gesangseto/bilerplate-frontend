@@ -7,6 +7,23 @@ export function clearStorage() {
   localStorage.removeItem('role');
   localStorage.removeItem('time_out');
 }
+export function setFiltering(url, filter) {
+  sessionStorage.setItem(`filtering`, JSON.stringify(filter));
+  sessionStorage.setItem(`url`, url);
+}
+
+export function getFiltering(url) {
+  let oldUrl = sessionStorage.getItem('url');
+  if (oldUrl && oldUrl !== url) {
+    sessionStorage.removeItem(`filtering`);
+    sessionStorage.setItem('url', url);
+  }
+  let key = `filtering`;
+  let filtering = sessionStorage.getItem(key);
+  if (filtering) filtering = JSON.parse(filtering);
+  else filtering = null;
+  return filtering;
+}
 
 export function setProfile(data = {}) {
   delete data.role_menu;

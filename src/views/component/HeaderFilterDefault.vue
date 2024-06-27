@@ -77,16 +77,31 @@
 </template>
 
 <script>
-import "vue2-daterange-picker/dist/vue2-daterange-picker.css";
-import "vue-search-select/dist/VueSearchSelect.css";
-import { ModelSelect } from "vue-search-select";
-import { getMstProductCategory } from "../../resource/MstProductCategory";
-import { getStatusDesc } from "../../resource/StatusDesc";
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
+import 'vue-search-select/dist/VueSearchSelect.css';
+import { ModelSelect } from 'vue-search-select';
+import { getMstProductCategory } from '../../resource/MstProductCategory';
+import { getStatusDesc } from '../../resource/StatusDesc';
+import { getFiltering, setFiltering } from '../../utils/storage';
 
 export default {
-  name: "HeaderFilterDefault",
-  props: ["status_code", "costume_filter", "filter"],
+  name: 'HeaderFilterDefault',
+  props: {
+    status_code: { type: String },
+    costume_filter: { type: Array },
+    filter: { type: Array },
+    save_filtering: { type: Boolean, default: false },
+  },
+
   components: { ModelSelect },
+  watch: {
+    filtering: {
+      handler(item) {
+        if (this.save_filtering) setFiltering(this.$route.path, item);
+      },
+      deep: true,
+    },
+  },
   mounted() {
     this.getSatusCode();
     if (this.filter && this.filter.constructor === Array) {
@@ -110,20 +125,25 @@ export default {
         }
       }
     }
+    // Load filter kemudian trigering
+    let fil = getFiltering(this.$route.path);
+    if (fil) this.result = fil;
+    if (this.save_filtering) this.handleClickFilter();
   },
   data() {
     return {
+      filtering: {},
       result: {
         page: 1,
         limit: 10,
-        StatusCode: "",
-        StatusCodeText: "All",
-        SearchType: "All",
-        searchText: "",
-        SearchVal1: "",
-        SearchVal2: "",
-        SearchVal1Text: "",
-        SearchVal2Text: "",
+        StatusCode: '',
+        StatusCodeText: 'All',
+        SearchType: 'All',
+        searchText: '',
+        SearchVal1: '',
+        SearchVal2: '',
+        SearchVal1Text: '',
+        SearchVal2Text: '',
       },
       pages: [10, 20, 50, 100],
       is_visible: false,
@@ -132,12 +152,12 @@ export default {
       listExtendFilter: [],
       listFilter: [
         {
-          value: "All",
-          label: "All",
+          value: 'All',
+          label: 'All',
         },
         {
-          value: "mst_product_category_id",
-          label: "Product Category",
+          value: 'mst_product_category_id',
+          label: 'Product Category',
         },
       ],
     };
@@ -147,37 +167,37 @@ export default {
       this.result = {
         page: 1,
         limit: 10,
-        StatusCode: "",
-        SearchType: "All",
-        SearchTypeText: "All",
-        StartDate: "",
-        EndDate: "",
-        searchText: "",
-        SearchVal1: "",
-        SearchVal2: "",
+        StatusCode: '',
+        SearchType: 'All',
+        SearchTypeText: 'All',
+        StartDate: '',
+        EndDate: '',
+        searchText: '',
+        SearchVal1: '',
+        SearchVal2: '',
       };
       this.handleClickFilter();
     },
     handleChangeType() {
       this.extendFilter = true;
-      this.result.SearchVal1 = "";
-      this.result.SearchVal1Text = "";
+      this.result.SearchVal1 = '';
+      this.result.SearchVal1Text = '';
       let idx = this.listFilter.findIndex(
         (i) => i.value === this.result.SearchType.toLowerCase()
       );
       if (~idx) this.result.SearchTypeText = this.listFilter[idx].label;
-      else this.result.SearchTypeText = "All";
+      else this.result.SearchTypeText = 'All';
       if (this.result.SearchType) {
-        if (this.result.SearchType.toLowerCase() == "all") {
+        if (this.result.SearchType.toLowerCase() == 'all') {
           this.extendFilter = false;
-          this.result.SearchVal1 = "";
-          this.result.SearchVal1Text = "All";
+          this.result.SearchVal1 = '';
+          this.result.SearchVal1Text = 'All';
         } else if (
-          this.result.SearchType.toLowerCase() == "mst_product_category_id"
+          this.result.SearchType.toLowerCase() == 'mst_product_category_id'
         ) {
           this.extendFilter = true;
-          this.result.SearchVal1 = "";
-          this.result.SearchVal1Text = "";
+          this.result.SearchVal1 = '';
+          this.result.SearchVal1Text = '';
           this.getProductCategory();
         } else if (this.costume_filter) {
           for (const it of this.costume_filter) {
@@ -192,20 +212,21 @@ export default {
       }
     },
     handleChangeSize() {
-      this.$emit("handleChangeSize", this.result.limit);
+      this.$emit('handleChangeSize', this.result.limit);
     },
     handleEnterSearchText() {
       this.handleClickFilter();
     },
     handleClickFilter() {
-      this.$emit("handleClickFilter", this.result);
+      this.filtering = this.result;
+      this.$emit('handleClickFilter', this.result);
     },
     handleChangeFilter() {
       for (const it of this.listExtendFilter) {
         if (this.result.SearchVal1 == it.value)
           this.result.SearchVal1Text = it.label;
       }
-      this.$emit("handleChangeFilter", this.result);
+      this.$emit('handleChangeFilter', this.result);
     },
     handleChangeStatus() {
       for (const it of this.listFilterStatusCode) {
@@ -214,7 +235,7 @@ export default {
       }
     },
     async getSatusCode() {
-      this.listFilterStatusCode = [{ value: "", label: "All" }];
+      this.listFilterStatusCode = [{ value: '', label: 'All' }];
       if (this.status_code) {
         let _res = await getStatusDesc({ table_name: this.status_code });
         let data = _res.data || [];
@@ -232,7 +253,7 @@ export default {
       let _res = await getMstProductCategory({ include_delete: 1 });
       let data = _res.data || [];
       for (const it of data) {
-        let ext = it.delete_flag == 1 ? "(X)" : "";
+        let ext = it.delete_flag == 1 ? '(X)' : '';
         let tmp = it;
         tmp.value = it.id;
         tmp.label = `${ext} ${it.name}`;
