@@ -224,95 +224,97 @@
         </CCardFooter>
       </CCard>
     </CCol>
-    <CCol col="4" xl="4">
-      <CCard>
-        <CCardBody>
-          <CCard>
-            <CCardHeader>
-              <strong>Identifier</strong>
-            </CCardHeader>
-            <CCardBody>
-              <div>
+    <CCol col="4" xl="4" class="container">
+      <div class="static-div">
+        <CCard>
+          <CCardBody>
+            <CCard>
+              <CCardHeader>
+                <strong>Identifier</strong>
+              </CCardHeader>
+              <CCardBody>
+                <div>
+                  <CDataTable
+                    striped
+                    class="table-scroll-auto"
+                    hover
+                    :table-row-height="4"
+                    :items="identifier_list"
+                    :fields="identifier_field"
+                  >
+                    <template #action="{ item, index }">
+                      <td>
+                        <CInputCheckbox
+                          :checked.sync="item.is_selected"
+                          size="sm"
+                          @change="handleSelectIdentifier(item, index)"
+                        />
+                      </td>
+                    </template>
+                  </CDataTable>
+                </div>
+              </CCardBody>
+            </CCard>
+            <CCard>
+              <CCardHeader>
+                <strong>Associated Content</strong>
+              </CCardHeader>
+              <CCardBody>
                 <CDataTable
                   striped
-                  class="table-scroll-auto"
+                  class="table-associated-content"
                   hover
-                  :table-row-height="5"
-                  :items="identifier_list"
-                  :fields="identifier_field"
+                  :items="associated_list"
+                  :fields="associated_field"
                 >
-                  <template #action="{ item, index }">
+                  <template #action="{ item }">
                     <td>
-                      <CInputCheckbox
-                        :checked.sync="item.is_selected"
-                        size="sm"
-                        @change="handleSelectIdentifier(item, index)"
+                      <input
+                        type="radio"
+                        :value="item.layout_identifier_id"
+                        v-model="selectedIdentifier"
                       />
                     </td>
                   </template>
                 </CDataTable>
-              </div>
-            </CCardBody>
-          </CCard>
-          <CCard>
-            <CCardHeader>
-              <strong>Associated Content</strong>
-            </CCardHeader>
-            <CCardBody>
-              <CDataTable
-                striped
-                class="table-associated-content"
-                hover
-                :items="associated_list"
-                :fields="associated_field"
-              >
-                <template #action="{ item }">
-                  <td>
-                    <input
-                      type="radio"
-                      :value="item.layout_identifier_id"
-                      v-model="selectedIdentifier"
-                    />
-                  </td>
-                </template>
-              </CDataTable>
-              <br />
-              <CButton
-                :disabled="action == 'Read'"
-                size="sm"
-                color="primary"
-                @click="handleSwipe('UP')"
-              >
-                <v-icon name="arrow-up" />
-              </CButton>
-              &nbsp;
-              <CButton
-                :disabled="action == 'Read'"
-                size="sm"
-                color="primary"
-                @click="handleSwipe('DOWN')"
-              >
-                <v-icon name="arrow-down" />
-              </CButton>
-              &nbsp;
-              <CButton
-                :disabled="
-                  action == 'Read'
-                    ? true
-                    : selectedAssociated.flag_system
-                    ? true
-                    : false
-                "
-                size="sm"
-                color="primary"
-                @click="handleConfigAssociated()"
-              >
-                <v-icon name="cog" />
-              </CButton>
-            </CCardBody>
-          </CCard>
-        </CCardBody>
-      </CCard>
+                <br />
+                <CButton
+                  :disabled="action == 'Read'"
+                  size="sm"
+                  color="primary"
+                  @click="handleSwipe('UP')"
+                >
+                  <v-icon name="arrow-up" />
+                </CButton>
+                &nbsp;
+                <CButton
+                  :disabled="action == 'Read'"
+                  size="sm"
+                  color="primary"
+                  @click="handleSwipe('DOWN')"
+                >
+                  <v-icon name="arrow-down" />
+                </CButton>
+                &nbsp;
+                <CButton
+                  :disabled="
+                    action == 'Read'
+                      ? true
+                      : selectedAssociated.flag_system
+                      ? true
+                      : false
+                  "
+                  size="sm"
+                  color="primary"
+                  @click="handleConfigAssociated()"
+                >
+                  <v-icon name="cog" />
+                </CButton>
+              </CCardBody>
+            </CCard>
+          </CCardBody>
+        </CCard>
+      </div>
     </CCol>
     <CModal
       title="Warning Session Timeout"
@@ -352,7 +354,22 @@
   </CRow>
 </template>
 
-<style>
+<style scoped>
+.container {
+  display: flex;
+}
+
+.static-div {
+  position: fixed;
+  top: 55px; /* Atur sesuai kebutuhan */
+  right: 10px; /* Atur sesuai kebutuhan */
+  width: 400px; /* Atur sesuai kebutuhan */
+  padding-left: 20px; /* Atur sesuai kebutuhan */
+  z-index: 1000; /* Pastikan elemen tetap di atas konten lainnya */
+  height: 90vh;
+  overflow-y: scroll;
+}
+
 .table-scroll-auto {
   height: 30vh;
   overflow-y: scroll;
