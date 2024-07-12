@@ -200,7 +200,7 @@
                       :checked.sync="item.set_bpom_barcode_format"
                       size="sm"
                       class="center-checkbox"
-                      @change="handleCheckBarcodeFormat(item, index)"
+                      @click="handleCheckboxClick($event, index)"
                     />
                   </td>
                 </tr>
@@ -656,23 +656,59 @@ export default {
         (it) => it.value == layout_selected.layout_generate_type_id
       );
       this.formData.items[index].layout_generate_type = type.code;
+
+      // Memastikan data yang dirubah TYPE nya sebagai BPOM Format
+      let asBarcode = this.formData.items[index].set_bpom_barcode_format;
+      let field = this.formData.items[index].associated_field;
+      // Jika itu BPOM Format maka perlu dilakukan validasi BPOM
+      if (asBarcode && !this.validasiBPOM(field)) {
+        this.formData.items[index].set_bpom_barcode_format = false;
+        this.formData.bpom_barcode_format = '';
+      }
     },
+
+    validasiBPOM(associated_field) {
+      if (!associated_field) {
+        return false;
+      } else {
+        let arrAF = associated_field.split('-');
+        let allowAI = ['01', '00', '90', '10', '17', '21'];
+        for (const it of arrAF) {
+          if (!allowAI.includes(it)) {
+            this.$toast.open({
+              message: `BPOM only support with AI [${allowAI.join(', ')}]`,
+              type: 'error',
+              dissmissible: true,
+              position: 'top-right',
+              duration: 5000,
+            });
+            return false;
+          }
+        }
+        return true;
+      }
+    },
+
     /*
     END
     */
-    handleCheckBarcodeFormat(item, index) {
-      let n = 0;
-
-      let newData = [];
-      for (const it of this.formData.items) {
-        if (n != index) {
-          it.set_bpom_barcode_format = false;
+    handleCheckboxClick(event, index) {
+      this.formData.bpom_barcode_format = '';
+      let checked = !this.formData.items[index].set_bpom_barcode_format;
+      for (var i = 0; i < this.formData.items.length; i++) {
+        if (i != index) this.formData.items[i].set_bpom_barcode_format = false;
+        if (i == index) {
+          let field = this.formData.items[i].associated_field;
+          if (!this.validasiBPOM(field)) {
+            this.formData.items[index].set_bpom_barcode_format = false;
+            event.preventDefault();
+            event.stopPropagation();
+          } else {
+            this.formData.items[index].set_bpom_barcode_format = checked;
+            this.formData.bpom_barcode_format = checked ? field : '';
+          }
         }
-        n += 1;
-        newData.push(it);
       }
-      this.formData.items = newData;
-      this.formData.bpom_barcode_format = item.associated_field;
     },
     /*
     START
@@ -712,9 +748,18 @@ export default {
           n += 1;
         }
       }
+      lineParameter.code = lineParameter.layout_generate_type;
       this.formData.items[i] = lineParameter;
       this.associated_content = this.formData.items[i].field_associated;
       this.rewriteIdentifierText();
+      // Memastikan data yang dirubah TYPE nya sebagai BPOM Format
+      let asBarcode = this.formData.items[i].set_bpom_barcode_format;
+      let field = this.formData.items[i].associated_field;
+      // Jika itu BPOM Format maka perlu dilakukan validasi BPOM
+      if (asBarcode && !this.validasiBPOM(field)) {
+        this.formData.items[i].set_bpom_barcode_format = false;
+        this.formData.bpom_barcode_format = '';
+      }
     },
 
     rewriteIdentifierText(i = this.selectedIndex) {
@@ -901,7 +946,7 @@ export default {
     */
 
     validation() {
-      let required = ['name', 'itf_name'];
+      let required = ['name', 'itf_name', 'bpom_barcode_format'];
       let next = true;
       for (const key in this.formData) {
         if (required.includes(key) && !this.formData[key]) next = false;
