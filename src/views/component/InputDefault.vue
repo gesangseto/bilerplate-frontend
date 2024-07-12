@@ -1,13 +1,13 @@
 <template>
   <div>
     <CRow>
-      <CCol md="3">
+      <CCol :md="col[0]">
         {{ title }}
         <span v-if="required" class="text-danger">
           <strong>*</strong>
         </span>
       </CCol>
-      <CCol md="9">
+      <CCol :md="col[1]">
         <input
           :disabled="disabled"
           class="form-control"
@@ -38,6 +38,7 @@ export default {
     required: { type: Boolean, default: false },
     isValid: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
     disabled: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
+    col: { type: Array, default: () => [3, 9] }, // Properti isValid untuk menentukan validasi input
   },
   data() {
     return {

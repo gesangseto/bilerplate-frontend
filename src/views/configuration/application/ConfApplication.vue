@@ -165,22 +165,55 @@
                 </div>
               </div>
 
-              <CCol sm="10">
-                <CInput
-                  label="Maximum Warehouse"
-                  horizontal
-                  type="number"
-                  v-model="data.total_wh"
-                />
-              </CCol>
-              <CCol sm="10">
-                <CInput
-                  label="Maximum Android Device"
-                  horizontal
-                  type="number"
-                  v-model="data.total_device"
-                />
-              </CCol>
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  Limitation
+                </CCardHeader>
+                <CCardBody>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Maximum Warehouse"
+                    v-model="data.total_wh"
+                    :validasi="'numeric'"
+                    :max="100"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Maximum Department"
+                    v-model="data.total_department"
+                    :validasi="'numeric'"
+                    :max="100"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Maximum Section"
+                    v-model="data.total_section"
+                    :validasi="'numeric'"
+                    :max="100"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Maximum Config Layout"
+                    v-model="data.total_conf_layout"
+                    :validasi="'numeric'"
+                    :max="100"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Maximum Config Date"
+                    v-model="data.total_conf_date"
+                    :validasi="'numeric'"
+                    :max="100"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Maximum Android Device"
+                    :validasi="'numeric'"
+                    v-model="data.total_device"
+                    :max="100"
+                  />
+                </CCardBody>
+              </CCard>
 
               <CCard>
                 <CCardHeader style="font-weight: bold">
@@ -190,22 +223,14 @@
                   <div
                     v-for="(item, index) in parseInt(data.total_device)"
                     :key="item"
-                    class="form-group row"
                   >
-                    <CCol sm="10">
-                      <CInput
-                        :label="'Android ID ' + (index + 1)"
-                        horizontal
-                        v-model="data.list_device[index]"
-                        :is-valid="
-                          initialLoad
-                            ? null
-                            : !data.list_device[index]
-                            ? false
-                            : true
-                        "
-                      />
-                    </CCol>
+                    <InputDefault
+                      :col="[3, 7]"
+                      :title="'Android ID ' + (index + 1)"
+                      :validasi="'numeric'"
+                      v-model="data.list_device[index]"
+                      :max="100"
+                    />
                   </div>
                 </CCardBody>
               </CCard>

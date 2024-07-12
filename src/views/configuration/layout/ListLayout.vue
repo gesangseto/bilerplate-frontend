@@ -4,6 +4,7 @@
       <CCard>
         <CCardHeader>
           <ButtonPermission
+            v-if="can_create"
             :permission="'create'"
             @click="addNew()"
             :useHref="true"
@@ -85,7 +86,7 @@
 <script>
 import moment from 'moment';
 import { deleteConfLayout, getConfLayout } from '../../../resource/ConfLayout';
-import { calculatePaginationV3, exportData } from '../../../utils';
+import { calculatePaginationV3, exportData, getConfig } from '../../../utils';
 
 export default {
   name: 'Customer',
@@ -95,6 +96,7 @@ export default {
   },
   data() {
     return {
+      can_create: true,
       btn_copyProp: {
         size: 'sm',
         class: 'float-right',
@@ -160,6 +162,14 @@ export default {
     },
   },
   methods: {
+    protectCreateData() {
+      let conf = getConfig();
+      if (conf.total_conf_layout) {
+        if (conf.total_conf_layout <= this.items.length) {
+          this.can_create = false;
+        }
+      }
+    },
     async loadData() {
       let _res = await getConfLayout(this.filter);
       if (_res) {
@@ -169,6 +179,7 @@ export default {
           item: _res,
         });
       }
+      this.protectCreateData();
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);

@@ -4,6 +4,7 @@
       <CCard>
         <CCardHeader _style="padding:10px;">
           <ButtonPermission
+            v-if="can_create"
             :permission="'create'"
             @click="addNew()"
             :useHref="true"
@@ -65,7 +66,7 @@
 
 <script>
 import { deleteMstSection, getMstSection } from '../../../resource/MstSection';
-import { exportData, calculatePaginationV3 } from '../../../utils';
+import { exportData, calculatePaginationV3, getConfig } from '../../../utils';
 
 export default {
   name: 'Department',
@@ -76,6 +77,7 @@ export default {
   },
   data() {
     return {
+      can_create: true,
       filter: {
         page: 1,
         limit: 10,
@@ -99,6 +101,14 @@ export default {
     };
   },
   methods: {
+    protectCreateData() {
+      let conf = getConfig();
+      if (conf.total_section) {
+        if (conf.total_section <= this.items.length) {
+          this.can_create = false;
+        }
+      }
+    },
     async loadData() {
       let _res = await getMstSection(this.filter);
       if (_res) {
@@ -108,6 +118,7 @@ export default {
           item: _res,
         });
       }
+      this.protectCreateData();
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);

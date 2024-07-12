@@ -4,7 +4,7 @@
       <CCard>
         <CCardHeader>
           <ButtonPermission
-            v-if="can_add_warehouse"
+            v-if="can_create"
             :permission="'create'"
             @click="addNew()"
             :useHref="true"
@@ -75,8 +75,7 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportDataV3 } from '../../../utils';
-import { getSysConfig } from '../../../resource/SysConfig';
+import { calculatePaginationV3, exportDataV3, getConfig } from '../../../utils';
 import {
   deleteMstWarehouse,
   getMstWarehouse,
@@ -98,7 +97,7 @@ export default {
         StartDate: '',
         EndDate: '',
       },
-      can_add_warehouse: false,
+      can_create: true,
       warningModal: false,
       items: [],
       totalWarehouseActual: 0,
@@ -143,12 +142,12 @@ export default {
     };
   },
   methods: {
-    async protectCreateWarehouse() {
-      let _res = await getSysConfig();
-      let conf = _res.data[0];
-      if (conf) {
-        if (conf.total_wh > this.items.length) {
-          this.can_add_warehouse = true;
+    protectCreateData() {
+      let conf = getConfig();
+      console.log(conf);
+      if (conf.total_wh) {
+        if (conf.total_wh <= this.items.length) {
+          this.can_create = false;
         }
       }
     },
@@ -161,7 +160,7 @@ export default {
           item: res,
         });
       }
-      this.protectCreateWarehouse();
+      this.protectCreateData();
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);

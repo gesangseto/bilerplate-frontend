@@ -4,6 +4,7 @@
       <CCard>
         <CCardHeader>
           <ButtonPermission
+            v-if="can_create"
             :permission="'create'"
             @click="addNew()"
             :useHref="true"
@@ -76,7 +77,7 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportData } from '../../../utils';
+import { calculatePaginationV3, exportData, getConfig } from '../../../utils';
 import { deleteConfDate, getConfDate } from '../../../resource/ConfDate';
 import moment from 'moment';
 
@@ -87,6 +88,7 @@ export default {
   },
   data() {
     return {
+      can_create: true,
       filter: {
         page: 1,
         limit: 10,
@@ -133,6 +135,14 @@ export default {
     };
   },
   methods: {
+    protectCreateData() {
+      let conf = getConfig();
+      if (conf.total_conf_date) {
+        if (conf.total_conf_date <= this.items.length) {
+          this.can_create = false;
+        }
+      }
+    },
     async loadData() {
       let _res = await getConfDate(this.filter);
       if (_res) {
@@ -142,6 +152,7 @@ export default {
           item: _res,
         });
       }
+      this.protectCreateData();
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
