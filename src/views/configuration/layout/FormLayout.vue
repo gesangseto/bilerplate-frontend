@@ -229,37 +229,35 @@
         <CCard>
           <CCardBody>
             <CCard>
-              <CCardHeader>
+              <CCardHeader class="mini-height">
                 <strong>Identifier</strong>
               </CCardHeader>
-              <CCardBody>
-                <div>
-                  <CDataTable
-                    striped
-                    class="table-scroll-auto"
-                    hover
-                    :table-row-height="4"
-                    :items="identifier_list"
-                    :fields="identifier_field"
-                  >
-                    <template #action="{ item, index }">
-                      <td>
-                        <CInputCheckbox
-                          :checked.sync="item.is_selected"
-                          size="sm"
-                          @change="handleSelectIdentifier(item, index)"
-                        />
-                      </td>
-                    </template>
-                  </CDataTable>
-                </div>
+              <CCardBody class="custom-padding">
+                <CDataTable
+                  striped
+                  class="table-scroll-auto"
+                  hover
+                  :table-row-height="4"
+                  :items="identifier_list"
+                  :fields="identifier_field"
+                >
+                  <template #action="{ item, index }">
+                    <td>
+                      <CInputCheckbox
+                        :checked.sync="item.is_selected"
+                        size="sm"
+                        @change="handleSelectIdentifier(item, index)"
+                      />
+                    </td>
+                  </template>
+                </CDataTable>
               </CCardBody>
             </CCard>
             <CCard>
-              <CCardHeader>
+              <CCardHeader class="mini-height">
                 <strong>Associated Content</strong>
               </CCardHeader>
-              <CCardBody>
+              <CCardBody class="custom-padding">
                 <CDataTable
                   striped
                   class="table-associated-content"
@@ -277,39 +275,40 @@
                     </td>
                   </template>
                 </CDataTable>
-                <br />
-                <CButton
-                  :disabled="action == 'Read'"
-                  size="sm"
-                  color="primary"
-                  @click="handleSwipe('UP')"
-                >
-                  <v-icon name="arrow-up" />
-                </CButton>
-                &nbsp;
-                <CButton
-                  :disabled="action == 'Read'"
-                  size="sm"
-                  color="primary"
-                  @click="handleSwipe('DOWN')"
-                >
-                  <v-icon name="arrow-down" />
-                </CButton>
-                &nbsp;
-                <CButton
-                  :disabled="
-                    action == 'Read'
-                      ? true
-                      : selectedAssociated.flag_system
-                      ? true
-                      : false
-                  "
-                  size="sm"
-                  color="primary"
-                  @click="handleConfigAssociated()"
-                >
-                  <v-icon name="cog" />
-                </CButton>
+                <div class="mini-height">
+                  <CButton
+                    :disabled="action == 'Read'"
+                    size="sm"
+                    color="primary"
+                    @click="handleSwipe('UP')"
+                  >
+                    <v-icon name="arrow-up" />
+                  </CButton>
+                  &nbsp;
+                  <CButton
+                    :disabled="action == 'Read'"
+                    size="sm"
+                    color="primary"
+                    @click="handleSwipe('DOWN')"
+                  >
+                    <v-icon name="arrow-down" />
+                  </CButton>
+                  &nbsp;
+                  <CButton
+                    :disabled="
+                      action == 'Read'
+                        ? true
+                        : selectedAssociated.flag_system
+                        ? true
+                        : false
+                    "
+                    size="sm"
+                    color="primary"
+                    @click="handleConfigAssociated()"
+                  >
+                    <v-icon name="cog" />
+                  </CButton>
+                </div>
               </CCardBody>
             </CCard>
           </CCardBody>
@@ -358,16 +357,22 @@
 .container {
   display: flex;
 }
-
+.mini-height {
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+.custom-padding {
+  padding: 0px;
+}
 .static-div {
   position: fixed;
-  top: 55px; /* Atur sesuai kebutuhan */
+  top: 8vh; /* Atur sesuai kebutuhan */
   right: 10px; /* Atur sesuai kebutuhan */
   width: 400px; /* Atur sesuai kebutuhan */
   padding-left: 20px; /* Atur sesuai kebutuhan */
   z-index: 1000; /* Pastikan elemen tetap di atas konten lainnya */
-  height: 90vh;
-  overflow-y: scroll;
+  /* height: 90vh; */
 }
 
 .table-scroll-auto {
