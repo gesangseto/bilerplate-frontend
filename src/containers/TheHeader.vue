@@ -36,7 +36,9 @@
           <CHeaderNavLink>
             <CButton @click="notifModal = true">
               <CIcon name="cil-bell" />
-              <CBadge color="danger">{{ notifLength }}</CBadge>
+              <CBadge color="danger">{{
+                notif.filter((it) => it.flag_read == 0).length
+              }}</CBadge>
             </CButton>
           </CHeaderNavLink>
         </CHeaderNavItem>
@@ -44,32 +46,61 @@
         <TheHeaderDropdownAccnt />
       </CHeaderNav>
     </CSubheader>
-    <CModal centered="centered" :show.sync="notifModal" title="Notification">
+    <CModal :show.sync="notifModal" title="Notification">
       <template #header>
         <h5 class="modal-title">Notification</h5>
-        <CButton
-          v-if="notif.length > 0"
-          type="submit"
-          size="sm"
-          color="danger"
-          @click="readNotifAll()"
-        >
-          Clear All
-        </CButton>
+        <div>
+          <CButton
+            class="m-1"
+            type="submit"
+            size="sm"
+            color="danger"
+            @click="deleteNotifAll()"
+          >
+            Delete All
+          </CButton>
+          <CButton
+            v-if="notif.find((it) => it.flag_read == 0)"
+            class="m-1"
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="readNotifAll()"
+          >
+            Read All
+          </CButton>
+        </div>
       </template>
 
-      <a
-        v-if="notif.length > 0"
-        style="background-color: yellow; font-size: x-small"
-      >
-        Click icon bell to remove notification
-      </a>
-      <CRow v-for="item in notif" :key="item.id">
-        <CCol key="item.id" sm="11" md="11">
-          <CButton @click="readNotif(item)"><CIcon name="cil-bell" /></CButton>
-          {{ item.content }}
-        </CCol>
-      </CRow>
+      <div class="scroll-auto">
+        <CRow v-for="item in notif" :key="item.id">
+          <CCol key="item.id" sm="12" md="12">
+            <CButton
+              v-if="!item.flag_read"
+              @click="readNotif(item)"
+              color="primary"
+              size="sm"
+              class="m-1"
+            >
+              <CIcon name="cil-bell" />
+            </CButton>
+            <CButton
+              v-if="item.flag_read"
+              @click="deleteNotif(item)"
+              color="danger"
+              size="sm"
+              class="m-1"
+            >
+              <CIcon name="cil-trash" />
+            </CButton>
+            <a
+              class="notification"
+              :style="!item.flag_read ? 'font-weight: bold' : null"
+              >{{ item.content }}</a
+            >
+          </CCol>
+        </CRow>
+      </div>
       <template #footer>
         <button
           type="button"
@@ -114,11 +145,22 @@
   </CHeader>
 </template>
 
+<style scoped>
+.notification {
+  font-size: small;
+}
+.scroll-auto {
+  height: 60vh;
+  overflow-y: scroll;
+  overflow-x: hidden; /* Sembunyikan scroll horizontal secara eksplisit */
+}
+</style>
 <script>
 import TheHeaderDropdownAccnt from './TheHeaderDropdownAccnt';
 import {
   getMstNotification,
   updateMstNotification,
+  deleteMstNotification,
 } from '../resource/MstNotification';
 import {
   setLoginTimeout,
@@ -277,12 +319,38 @@ export default {
       });
       this.getNotif();
     },
+    async deleteNotif(item) {
+      let _res = await deleteMstNotification({ id: [item.id] });
+      this.$toast.open({
+        message: _res.error ? _res.message : 'Data has been saved succesfully ',
+        type: _res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      this.getNotif();
+    },
     async readNotifAll() {
-      let message = `You are about to clear all existing notifications. All cleared notifications cannot be restored.\nAre you sure you want to continue?`;
+      let message = `You are about to read all existing notifications. All read notifications cannot be restored.\nAre you sure you want to continue?`;
       if (!confirm(message)) {
         return;
       }
       let _res = await updateMstNotification({ id: 'all' });
+      this.$toast.open({
+        message: _res.error ? _res.message : 'Data has been saved succesfully ',
+        type: _res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      this.getNotif();
+    },
+    async deleteNotifAll() {
+      let message = `You are about to delete all existing notifications. All deleted notifications cannot be restored.\nAre you sure you want to continue?`;
+      if (!confirm(message)) {
+        return;
+      }
+      let _res = await deleteMstNotification({ id: 'all' });
       this.$toast.open({
         message: _res.error ? _res.message : 'Data has been saved succesfully ',
         type: _res.error ? 'error' : 'success',

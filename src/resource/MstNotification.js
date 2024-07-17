@@ -39,3 +39,21 @@ export const updateMstNotification = async (param = Object) => {
       });
   });
 };
+export const deleteMstNotification = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  param = { data: { ...param } };
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .delete(url, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
