@@ -40,16 +40,6 @@
                   </p>
                 </template>
               </CInput>
-
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
-                />
-              </CRow>
             </CForm>
             <ButtonPermission :permission="'create'" @click="addNew()" />
             <CDataTable
@@ -132,6 +122,13 @@
               v-on:onChange="modalData.mandatory = $event"
             />
           </CRow>
+          <CRow form class="form-group">
+            <CCol sm="3"> Status </CCol>
+            <SwitchStatusMaster
+              :default_value="modalData.status"
+              v-on:onChange="modalData.status = $event"
+            />
+          </CRow>
         </CCol>
       </CRow>
       <template #footer>
@@ -166,7 +163,7 @@ export default {
   data() {
     return {
       showModalDialog: false,
-      modalData: { mandatory: false },
+      modalData: {},
       initialLoad: true,
       route_action: '',
       // category: '',
@@ -200,6 +197,10 @@ export default {
         {
           key: 'mandatory',
           label: 'Mandatory',
+        },
+        {
+          key: 'status',
+          label: 'Status',
         },
         {
           key: 'action',
@@ -309,7 +310,6 @@ export default {
         return {
           ...item,
           description: item.description || '',
-          mandatory: item.mandatory ? 'true' : 'false',
           pattern: pattern ? pattern.name : '[No Pattern]',
         };
       });
