@@ -169,7 +169,7 @@ export default {
         },
         {
           key: 'product_gtin',
-          label: 'GTIN',
+          label: 'GTIN / NIE',
         },
         {
           key: 'generate_count_level_1',
@@ -257,6 +257,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          product_gtin: item.product_gtin || item.product_nie,
           created_date: moment(item.created_date).format('YYYY-MM-DD HH:mm'),
         };
       });
