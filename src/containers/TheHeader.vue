@@ -51,6 +51,7 @@
         <h5 class="modal-title">Notification</h5>
         <div>
           <CButton
+            v-if="notif.length > 0"
             class="m-1"
             type="submit"
             size="sm"
@@ -72,7 +73,7 @@
         </div>
       </template>
 
-      <div class="scroll-auto">
+      <div class="scroll-auto" v-if="notif.length > 0">
         <CRow v-for="item in notif" :key="item.id">
           <CCol key="item.id" sm="12" md="12">
             <CButton
@@ -94,7 +95,9 @@
               <CIcon name="cil-trash" />
             </CButton>
             <a
+              :href="item.trx_ref_name ? generateLinkNotif(item) : null"
               class="notification"
+              @click="readNotif(item, true)"
               :style="!item.flag_read ? 'font-weight: bold' : null"
               >{{ item.content }}</a
             >
@@ -148,6 +151,7 @@
 <style scoped>
 .notification {
   font-size: small;
+  color: black;
 }
 .scroll-auto {
   height: 60vh;
@@ -308,7 +312,7 @@ export default {
         this.$router.push({ path: `/oops` });
       }
     },
-    async readNotif(item) {
+    async readNotif(item, closeAfterUpdate) {
       let _res = await updateMstNotification({ id: [item.id] });
       this.$toast.open({
         message: _res.error ? _res.message : 'Data has been saved succesfully ',
@@ -318,6 +322,9 @@ export default {
         duration: 5000,
       });
       this.getNotif();
+      if (closeAfterUpdate) {
+        this.notifModal = false;
+      }
     },
     async deleteNotif(item) {
       let _res = await deleteMstNotification({ id: [item.id] });
@@ -372,6 +379,24 @@ export default {
         this.timeout = this.getDifferentSecond();
       }
       return;
+    },
+    generateLinkNotif(item) {
+      if (!item.trx_ref_name) return null;
+      let url = '#';
+      if (item.trx_ref_name.toLowerCase() == 'bpom') {
+        url += `/transaction/queue-bpom/read/${item.trx_ref_id}`;
+      } else if (item.trx_ref_name.toLowerCase() == 'return') {
+        url += `/transaction/return/approve/${item.trx_ref_id}`;
+      } else if (item.trx_ref_name.toLowerCase() == 'disposal') {
+        url += `/transaction/disposal/approve/${item.trx_ref_id}`;
+      } else if (item.trx_ref_name.toLowerCase() == 'sampling') {
+        url += `/transaction/indirect_request/approve/${item.trx_ref_id}`;
+      } else if (item.trx_ref_name.toLowerCase() == 'rework') {
+        url += `/transaction/rework/approve/${item.trx_ref_id}`;
+      } else if (item.trx_ref_name.toLowerCase() == 'decommission') {
+        url += `/transaction/comm-decomm/approve/${item.trx_ref_id}`;
+      }
+      return url;
     },
     sessionExpired() {
       let message = 'Your login session has expired, please login again.';

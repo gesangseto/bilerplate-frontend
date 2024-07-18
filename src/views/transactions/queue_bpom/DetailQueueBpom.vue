@@ -249,7 +249,19 @@ export default {
       this.items = [];
       this.formConnector.data.trx_ref_id = this.$route.params.id;
       this.formForceUpdate.trx_ref_id = this.$route.params.id;
-      let param = { trx_ref_id: this.$route.params.id };
+      let param = {};
+      function isInteger(value) {
+        return (
+          !isNaN(value) &&
+          parseInt(Number(value)) == value &&
+          !isNaN(parseInt(value, 10))
+        );
+      }
+      if (isInteger(this.$route.params.id)) {
+        param.trx_id = this.$route.params.id;
+      } else {
+        param.trx_ref_id = this.$route.params.id;
+      }
       let url = `/v3/transaction/queue-bpom?${new URLSearchParams(param)}`;
       $axiosMertrack.get(url).then((res) => {
         let data = res.data.data;
