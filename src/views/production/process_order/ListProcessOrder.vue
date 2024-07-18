@@ -11,25 +11,12 @@
           <h5>Process Order</h5>
         </CCardHeader>
         <CCardBody>
-          <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-          <HeaderFilterDefault
+          <HeaderFilterTransactionV3
             :save_filtering="true"
-            status_code="mst_supplier"
-            v-on:handleClickFilter="handleChangeFilter($event)"
+            :filter="['All', 'id', 'product_id']"
+            :order="['All', 'id', 'product_id']"
+            status_code="production_batch_list"
+            v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
           <!-- INI BATAS HEADER TABLE -->
@@ -115,12 +102,16 @@ import {
   getProcessOrder,
 } from '../../../resource/ProcessOrder';
 import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { dateFilter } from '../../../constants';
 
 export default {
   name: 'ListSupplier',
 
   mounted() {
+    this.pages = [10, 20, 50, 100];
     this.page = 1;
+    this.size = this.pages[0];
+    // this.loadData();
   },
   data() {
     return {
@@ -142,8 +133,9 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: '',
-        EndDate: '',
+        totalData: 0,
+        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
+        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       items: [],
       fields: [
@@ -202,7 +194,7 @@ export default {
         });
       }
     },
-    handleChangeFilter(val) {
+    handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
       this.loadData();
     },

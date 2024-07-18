@@ -9,44 +9,9 @@
           <CRow>
             <CCol sm="12" md="12" lg="12">
               <HeaderFilterTransactionV3
-                :costume_filter="[
-                  {
-                    value: 'source',
-                    code: 'source',
-                    label: 'Type',
-                    data: [
-                      { value: 'Transfer', label: 'Transfer ' },
-                      { value: 'Return-Internal', label: 'Return ' },
-                      { value: 'Return-EXTERNAL', label: 'Return-External' },
-                      { value: 'Production', label: 'Production ' },
-                      { value: 'Import', label: 'Import ' },
-                      {
-                        value: 'Toll Manufacturing',
-                        label: 'Toll Manufacturing ',
-                      },
-                    ],
-                  },
-                ]"
-                :filter="[
-                  'All',
-                  'id',
-                  'product_id',
-                  'from_supplier',
-                  'from_warehouse',
-                  'from_customer',
-                  'to_warehouse',
-                ]"
-                :order="[
-                  'All',
-                  'id',
-                  'product_id',
-                  'source',
-                  'from_supplier',
-                  'from_warehouse',
-                  'from_customer',
-                  'to_warehouse',
-                ]"
-                status_code="trx_inbound"
+                :filter="['All', 'id', 'product_id']"
+                :order="['All', 'id', 'product_id']"
+                status_code="pre_inbound"
                 v-on:handleClickFilter="handleClickFilter($event)"
                 v-on:handleChangeSize="handleChangeSize($event)"
               />
@@ -137,6 +102,10 @@ export default {
           label: 'Trx ID',
         },
         {
+          key: 'process_order_erp',
+          label: 'PO. No',
+        },
+        {
           key: 'product_name',
           label: 'Product Name',
         },
@@ -147,10 +116,6 @@ export default {
         {
           key: 'lot_no',
           label: 'Lot No',
-        },
-        {
-          key: 'process_order_erp',
-          label: 'PO. No',
         },
         {
           key: 'quantity_lvl_1',
