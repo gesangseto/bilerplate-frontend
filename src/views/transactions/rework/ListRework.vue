@@ -3,7 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>Rework</h5>
+          <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>

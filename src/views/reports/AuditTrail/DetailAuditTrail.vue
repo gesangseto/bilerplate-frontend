@@ -5,7 +5,7 @@
         <CCard>
           <CCardHeader>
             <h5>
-              Audit Trail [{{ route_action }}]
+              {{ $activeMenu.name }} [{{ route_action }}]
               <ButtonPermission
                 exportType="pdf"
                 :permission="'print'"

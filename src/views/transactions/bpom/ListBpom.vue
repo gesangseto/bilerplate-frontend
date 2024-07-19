@@ -3,7 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>BPOM Reporting</h5>
+          <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -110,16 +110,16 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
+import $axiosMertrack from '../../../apiMertrack';
 import {
   calculatePaginationV3,
   exportDataV3,
   getToken,
   getUserId,
-} from "../../../utils";
-import { dateFilter } from "../../../constants";
+} from '../../../utils';
+import { dateFilter } from '../../../constants';
 export default {
-  name: "ListBpom",
+  name: 'ListBpom',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -135,28 +135,28 @@ export default {
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
       btn_downloadProp: {
-        size: "sm",
-        class: "float-right",
-        color: "secondary",
-        icon: "download",
-        text: "",
-        tooltip: "Download csv",
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'download',
+        text: '',
+        tooltip: 'Download csv',
       },
       btn_updateProp: {
-        size: "sm",
-        class: "float-right",
-        color: "success",
-        icon: "paper-plane",
-        text: "",
-        tooltip: "Send via API now",
+        size: 'sm',
+        class: 'float-right',
+        color: 'success',
+        icon: 'paper-plane',
+        text: '',
+        tooltip: 'Send via API now',
       },
       btn_deleteProp: {
-        size: "sm",
-        class: "float-right",
-        color: "danger",
-        icon: "window-close",
-        text: "",
-        tooltip: "Cancel sending via API",
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'window-close',
+        text: '',
+        tooltip: 'Cancel sending via API',
       },
       user_id: getUserId(),
       items: [],
@@ -165,55 +165,55 @@ export default {
       dataUsers: [],
       fields: [
         {
-          key: "id",
-          label: "ID",
-          _classes: "font-weight-bold",
+          key: 'id',
+          label: 'ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "generate_date",
-          label: "Generated Date",
+          key: 'generate_date',
+          label: 'Generated Date',
         },
         {
-          key: "id_trx",
-          label: "Trx Ref ID",
-          _classes: "font-weight-bold",
+          key: 'id_trx',
+          label: 'Trx Ref ID',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "transaction_desc",
-          label: "Type",
-          _style: "text-transform: capitalize;",
-          _classes: "font-weight-bold",
+          key: 'transaction_desc',
+          label: 'Type',
+          _style: 'text-transform: capitalize;',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "csv_name",
-          label: "CSV Name",
+          key: 'csv_name',
+          label: 'CSV Name',
         },
         {
-          key: "status_desc",
-          label: "Approval Status",
-          _classes: "font-weight-bold",
+          key: 'status_desc',
+          label: 'Approval Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "approval_date",
-          label: "Approval Date",
+          key: 'approval_date',
+          label: 'Approval Date',
         },
         {
-          key: "approved_by_name",
-          label: "Approval By",
+          key: 'approved_by_name',
+          label: 'Approval By',
         },
         {
-          key: "date_send_api",
-          label: "Last API Sent Date",
+          key: 'date_send_api',
+          label: 'Last API Sent Date',
         },
         {
-          key: "status_send_api",
-          label: "API Sent Status",
-          _classes: "font-weight-bold",
+          key: 'status_send_api',
+          label: 'API Sent Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          _style: "width:16%",
-          label: "Action",
+          key: 'action',
+          _style: 'width:16%',
+          label: 'Action',
         },
       ],
     };
@@ -240,7 +240,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: "/v3/transaction/bpom",
+        url: '/v3/transaction/bpom',
       });
     },
     pageChange(page) {
@@ -255,27 +255,27 @@ export default {
     handleDownloadClick(item) {
       let body = {};
       body.id = item.id;
-      body.PrintTo = "csv";
+      body.PrintTo = 'csv';
       body.MertrackApiToken = getToken();
       let url = `${new URLSearchParams(body).toString()}`;
       url = `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/transaction/bpom?raw=true&${url}`;
-      window.open(url, "_blank").focus();
+      window.open(url, '_blank').focus();
     },
     rowUpdateClicked(item) {
       this.$toast.open({
         message: `This Action is currently unavailable`,
-        type: "success",
+        type: 'success',
         dissmissible: true,
-        position: "top-right",
+        position: 'top-right',
         duration: 5000,
       });
     },
     rowDeleteClicked(item) {
       this.$toast.open({
         message: `This Action is currently unavailable`,
-        type: "danger",
+        type: 'danger',
         dissmissible: true,
-        position: "top-right",
+        position: 'top-right',
         duration: 5000,
       });
     },
@@ -286,10 +286,10 @@ export default {
         return {
           ...item,
           // transaction_desc: item.transaction_desc.charAt(0).toUpperCase(),
-          status_send_api: item.status_send_api ?? " ",
-          date_send_api: item.date_send_api ?? " ",
-          approved_by_name: item.approved_by_name ?? " ",
-          approval_date: item.approval_date ?? " ",
+          status_send_api: item.status_send_api ?? ' ',
+          date_send_api: item.date_send_api ?? ' ',
+          approved_by_name: item.approved_by_name ?? ' ',
+          approval_date: item.approval_date ?? ' ',
         };
       });
     },

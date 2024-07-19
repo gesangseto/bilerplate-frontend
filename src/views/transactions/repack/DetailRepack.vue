@@ -3,7 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>Re-Packing [VIEW]</h5>
+          <h5>{{ $activeMenu.name }} [VIEW]</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>

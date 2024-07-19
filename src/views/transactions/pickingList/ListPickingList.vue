@@ -8,7 +8,7 @@
             @click="addNew()"
             :useHref="true"
           />
-          <h5>Picking List</h5>
+          <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
           <HeaderFilterTransactionV3

@@ -3,7 +3,7 @@
     <div class="col-lg-12 col-md-12 col-sm-12">
       <CCard>
         <CCardHeader>
-          <h5>Upload XML [ADD]</h5>
+          <h5>{{ $activeMenu.name }} [ADD]</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -85,12 +85,12 @@
 let fileName;
 let isiFile;
 const reader = new FileReader();
-import $axiosMertrack from "../../../apiMertrack";
-import "vue-select/dist/vue-select.css";
-import $ from "jquery";
-import { getMstSupplier } from "../../../resource/MstSupplier";
+import $axiosMertrack from '../../../apiMertrack';
+import 'vue-select/dist/vue-select.css';
+import $ from 'jquery';
+import { getMstSupplier } from '../../../resource/MstSupplier';
 export default {
-  name: "FormUploadXML",
+  name: 'FormUploadXML',
   watch: {
     // form: {
     //   handler(n, o) {
@@ -100,7 +100,7 @@ export default {
   },
   data() {
     return {
-      action: "",
+      action: '',
       initialLoad: true,
       supplierOptions: [],
       fileUpload: null,
@@ -114,14 +114,14 @@ export default {
         },
       },
       typeXmlOptions: [
-        { value: 1, label: "Production" },
-        { value: 2, label: "Import" },
-        { value: 3, label: "Toll Manufacturing" },
+        { value: 1, label: 'Production' },
+        { value: 2, label: 'Import' },
+        { value: 3, label: 'Toll Manufacturing' },
       ],
     };
   },
   async mounted() {
-    let _res = await getMstSupplier({ status: "Active" });
+    let _res = await getMstSupplier({ status: 'Active' });
     if (_res) {
       let data = _res.data;
       for (const it of data) {
@@ -134,10 +134,10 @@ export default {
       isiFile = event[0];
       if (isiFile != undefined) {
         fileName = isiFile.name;
-        let ekstensiValid = "xml";
-        let ekstensiFile = fileName.split(".").reverse()[0];
+        let ekstensiValid = 'xml';
+        let ekstensiFile = fileName.split('.').reverse()[0];
         if (ekstensiFile != ekstensiValid) {
-          alert("Your file is not XML. Please select the correct XML file");
+          alert('Your file is not XML. Please select the correct XML file');
           return;
         }
         this.form.data.file_name = fileName;
@@ -148,7 +148,7 @@ export default {
       }
     },
     handleChangeSupplier() {
-      let param = { key: "supplier_id", value: this.form.data.supplier_id };
+      let param = { key: 'supplier_id', value: this.form.data.supplier_id };
       param = new URLSearchParams(param).toString();
       $axiosMertrack
         .get(`/v3/connector/connector-action?${param}`)
@@ -157,32 +157,32 @@ export default {
           if (data.error || data.data.length === 0) {
             this.$toast.open({
               message: `The Supplier you have selected is not assigned to any Connector Action.`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             this.form.connector_action_id = null;
             return;
-          } else if (data.data[0].status !== "Active") {
+          } else if (data.data[0].status !== 'Active') {
             this.$toast.open({
               message: `The Supplier you have selected is not assigned to Active Connector Action.`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             this.form.connector_action_id = null;
             return;
           }
           let params = data.data[0].params;
-          let idx = params.findIndex((it) => it.variable_name === "type");
+          let idx = params.findIndex((it) => it.variable_name === 'type');
           if (!~idx || !params[idx].variable_value) {
             this.$toast.open({
               message: `The supplier you selected has not completed the Connector Action configuration.`,
-              type: "error",
+              type: 'error',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             this.form.connector_action_id = null;
@@ -194,9 +194,9 @@ export default {
         .catch((e) => {
           this.$toast.open({
             message: `${e.message}`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
         });
@@ -218,9 +218,9 @@ export default {
       if (!this.validation()) {
         return this.$toast.open({
           message: `Please input all the required data.`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }
@@ -228,16 +228,16 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         $axiosMertrack
-          .post("/v3/connector/connector-action/execute", this.form)
+          .post('/v3/connector/connector-action/execute', this.form)
           .then((result) => {
             this.$isLoading(false);
             this.$toast.open({
               message: result.data.error
                 ? `${result.data.message}`
-                : "Data has been saved successfully.",
-              type: result.data.error ? "error" : "success",
+                : 'Data has been saved successfully.',
+              type: result.data.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             if (!result.data.error) {
@@ -250,7 +250,7 @@ export default {
               message: `${err}`,
               type: `error`,
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
           });
@@ -264,7 +264,7 @@ export default {
 </script>
 
 <style scoped>
-[class*="-message"] {
+[class*='-message'] {
   font-weight: 500;
 }
 

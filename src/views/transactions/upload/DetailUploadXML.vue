@@ -3,7 +3,7 @@
     <CCol sm="12" md="12" lg="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>Upload XML [VIEW]</h5>
+          <h5>{{ $activeMenu.name }} [VIEW]</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>

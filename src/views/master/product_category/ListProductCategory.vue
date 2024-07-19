@@ -8,7 +8,7 @@
             @click="addNew()"
             :useHref="true"
           />
-          <h5>Product Category</h5>
+          <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody
           ><!-- :filter="[

@@ -4,7 +4,7 @@
       <CCard>
         <CCardHeader>
           <h5>
-            Label Layout [{{
+            {{ $activeMenu.name }} [{{
               this.action == 'Create'
                 ? 'ADD'
                 : this.action == 'Read'

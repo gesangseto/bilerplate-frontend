@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import { getRole } from '../utils/storage';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer');
@@ -216,6 +217,16 @@ let router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  let result = { name: '', link: null };
+  let role = getRole();
+  if (role)
+    for (const it of role) {
+      if (to.path.includes(it.link)) {
+        result = it;
+        break;
+      }
+    }
+  Vue.prototype.$activeMenu = result;
   return next();
 });
 

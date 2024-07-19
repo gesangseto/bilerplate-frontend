@@ -3,7 +3,7 @@
     <div class="col-sm-12 col-md-12 col-lg-12">
       <CCard>
         <CCardHeader>
-          <h5>Stock Opname [{{ action }}]</h5>
+          <h5>{{ $activeMenu.name }} [{{ action }}]</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>

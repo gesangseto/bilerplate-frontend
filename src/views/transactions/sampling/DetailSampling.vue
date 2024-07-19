@@ -3,7 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>Indirect Request [{{ action }}]</h5>
+          <h5>{{ $activeMenu.name }} [{{ action }}]</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>

@@ -4,7 +4,7 @@
       <CCol sm="12" md="12" lg="12" xl="12">
         <CCard>
           <CCardHeader>
-            <h5>Stock Opname [{{ action }}]</h5>
+            <h5>{{ $activeMenu.name }} [{{ action }}]</h5>
           </CCardHeader>
           <CCardBody>
             <CForm class="my-3">

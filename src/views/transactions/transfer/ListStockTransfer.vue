@@ -9,7 +9,7 @@
               @click="addNew()"
               :useHref="true"
             />
-            <h5>Stock Transfer</h5>
+            <h5>{{ $activeMenu.name }}</h5>
           </CCardHeader>
           <CCardBody>
             <HeaderFilterTransactionV3

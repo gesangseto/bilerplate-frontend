@@ -9,7 +9,7 @@
             @click="addNew()"
             :useHref="true"
           />
-          <h5>Date Format</h5>
+          <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->

@@ -4,12 +4,12 @@
       <CCard>
         <CCardHeader>
           <h5>
-            Date Format [{{
-              this.action == "Create"
-                ? "ADD"
-                : this.action == "Read"
-                ? "VIEW"
-                : "EDIT"
+            {{ $activeMenu.name }} [{{
+              this.action == 'Create'
+                ? 'ADD'
+                : this.action == 'Read'
+                ? 'VIEW'
+                : 'EDIT'
             }}]
           </h5>
         </CCardHeader>
@@ -214,16 +214,16 @@
 } */
 </style>
 <script>
-import { exportData, capitalizeFirstLetter } from "../../../utils";
-import moment from "moment";
+import { exportData, capitalizeFirstLetter } from '../../../utils';
+import moment from 'moment';
 import {
   getConfDate,
   insertConfDate,
   updateConfDate,
-} from "../../../resource/ConfDate";
+} from '../../../resource/ConfDate';
 
 export default {
-  name: "Customer",
+  name: 'Customer',
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.page = 1;
@@ -233,33 +233,33 @@ export default {
   },
   data() {
     return {
-      action: "",
+      action: '',
       filter: {
         page: 1,
         limit: 10,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       customer: {},
       // items: [],
       data: {
-        format: "",
-        example_format: "",
-        delimiter: "",
-        override: "",
-        around: "",
-        field1_type: "",
-        field1_format: "",
-        field2_type: "",
-        field2_format: "",
-        field3_type: "",
-        field3_format: "",
+        format: '',
+        example_format: '',
+        delimiter: '',
+        override: '',
+        around: '',
+        field1_type: '',
+        field1_format: '',
+        field2_type: '',
+        field2_format: '',
+        field3_type: '',
+        field3_format: '',
       },
       type_selected: [],
       disable_type: {
@@ -283,43 +283,43 @@ export default {
         },
       },
       format_year: [
-        { value: "YY", label: "YY" },
-        { value: "YYYY", label: "YYYY" },
+        { value: 'YY', label: 'YY' },
+        { value: 'YYYY', label: 'YYYY' },
       ],
       format_month: [
-        { value: "M", label: "M" },
-        { value: "MM", label: "MM" },
-        { value: "MMM", label: "MMM" },
-        { value: "MMMM", label: "MMMM" },
+        { value: 'M', label: 'M' },
+        { value: 'MM', label: 'MM' },
+        { value: 'MMM', label: 'MMM' },
+        { value: 'MMMM', label: 'MMMM' },
       ],
       format_date: [
         // { value: "dddd", label: "dddd" },
-        { value: "D", label: "D" },
-        { value: "DD", label: "DD" },
+        { value: 'D', label: 'D' },
+        { value: 'DD', label: 'DD' },
         // { value: "Do", label: "Do" },
       ],
       override_type: [
-        { value: "no_overwrite", label: "No Overwrite" },
-        { value: "last_day_of_month", label: "Last Day of Month" },
-        { value: "first_day_of_month", label: "First Day of Month" },
+        { value: 'no_overwrite', label: 'No Overwrite' },
+        { value: 'last_day_of_month', label: 'Last Day of Month' },
+        { value: 'first_day_of_month', label: 'First Day of Month' },
       ],
       delimiter_list: [
-        { value: "", label: "Nothing" },
-        { value: ";", label: "SemiColon ( ; )" },
-        { value: " ", label: "Space" },
-        { value: "-", label: "Dash ( - )" },
-        { value: "/", label: "Slash ( / )" },
-        { value: "|", label: "Vartical bar ( | )" },
-        { value: ".", label: "Period ( . )" },
-        { value: ",", label: "Comma ( , )" },
-        { value: ":", label: "Colon ( : )" },
+        { value: '', label: 'Nothing' },
+        { value: ';', label: 'SemiColon ( ; )' },
+        { value: ' ', label: 'Space' },
+        { value: '-', label: 'Dash ( - )' },
+        { value: '/', label: 'Slash ( / )' },
+        { value: '|', label: 'Vartical bar ( | )' },
+        { value: '.', label: 'Period ( . )' },
+        { value: ',', label: 'Comma ( , )' },
+        { value: ':', label: 'Colon ( : )' },
       ],
       around_list: [
-        { value: "", label: "Nothing" },
-        { value: "( )", label: "Parentheses ()" },
-        { value: "[ ]", label: "Brackets []" },
-        { value: "{ }", label: "Braces {}" },
-        { value: "-- --", label: "Double dash --" },
+        { value: '', label: 'Nothing' },
+        { value: '( )', label: 'Parentheses ()' },
+        { value: '[ ]', label: 'Brackets []' },
+        { value: '{ }', label: 'Braces {}' },
+        { value: '-- --', label: 'Double dash --' },
       ],
     };
   },
@@ -340,17 +340,17 @@ export default {
         let data = _res.data[0];
         let _data = data;
         this.data.status = _data.status;
-        this.data.id = _data.id ?? "";
+        this.data.id = _data.id ?? '';
         this.data.used_in_layout = _data.used_in_layout ?? null;
-        this.data.delimiter = _data.delimiter ?? "";
-        this.data.around = _data.around ?? "";
-        this.data.override = _data.overwrite ?? "";
-        this.data.field1_format = _data.field1 ?? "";
-        this.data.field1_type = this.typeFormat(_data.field1) ?? "";
-        this.data.field2_format = _data.field2 ?? "";
-        this.data.field2_type = this.typeFormat(_data.field2) ?? "";
-        this.data.field3_format = _data.field3 ?? "";
-        this.data.field3_type = this.typeFormat(_data.field3) ?? "";
+        this.data.delimiter = _data.delimiter ?? '';
+        this.data.around = _data.around ?? '';
+        this.data.override = _data.overwrite ?? '';
+        this.data.field1_format = _data.field1 ?? '';
+        this.data.field1_type = this.typeFormat(_data.field1) ?? '';
+        this.data.field2_format = _data.field2 ?? '';
+        this.data.field2_type = this.typeFormat(_data.field2) ?? '';
+        this.data.field3_format = _data.field3 ?? '';
+        this.data.field3_type = this.typeFormat(_data.field3) ?? '';
         this.checkDisabled();
         this.reFormatDate();
       }
@@ -359,12 +359,12 @@ export default {
       let string = str;
       if (str) {
         string = str.toLowerCase();
-        if (string.includes("d")) {
-          return "day";
-        } else if (string.includes("m")) {
-          return "month";
-        } else if (string.includes("y")) {
-          return "year";
+        if (string.includes('d')) {
+          return 'day';
+        } else if (string.includes('m')) {
+          return 'month';
+        } else if (string.includes('y')) {
+          return 'year';
         }
       }
       return null;
@@ -377,8 +377,8 @@ export default {
     handleClickClear(index) {
       for (var i = index; i <= 3; i++) {
         // if (this.data[`field${i}_type`] == "day") this.data.override = "";
-        this.data[`field${i}_type`] = "";
-        this.data[`field${i}_format`] = "";
+        this.data[`field${i}_type`] = '';
+        this.data[`field${i}_format`] = '';
         delete this.type_selected[i - 1];
       }
       for (const dis in this.disable_type[`field${index}`]) {
@@ -396,7 +396,7 @@ export default {
       return;
     },
     reFormatDate() {
-      let around = this.data.around.split(" ");
+      let around = this.data.around.split(' ');
 
       let del = this.data.delimiter;
       let data = this.data;
@@ -409,15 +409,15 @@ export default {
         format += `${del}${data.field3_format}`;
       // let dt = moment().format(format.toUpperCase());
       let dt = moment().format(format);
-      if (data.override === "last_day_of_month") {
-        dt = moment().endOf("month").format(format.toUpperCase());
-      } else if (data.override === "first_day_of_month") {
-        dt = moment().startOf("month").format(format.toUpperCase());
+      if (data.override === 'last_day_of_month') {
+        dt = moment().endOf('month').format(format.toUpperCase());
+      } else if (data.override === 'first_day_of_month') {
+        dt = moment().startOf('month').format(format.toUpperCase());
       }
 
       if (format) {
-        let left = around[0] ?? "";
-        let right = around[1] ?? "";
+        let left = around[0] ?? '';
+        let right = around[1] ?? '';
         this.data.example_format = `${left}${dt}${right}`.toUpperCase();
         this.data.format = `${left}${format}${right}`;
       } else {
@@ -500,21 +500,21 @@ export default {
       });
     },
     validation() {
-      let message = "Please complete required data field.";
+      let message = 'Please complete required data field.';
       let error = false;
       for (var i = 1; i <= 3; i++) {
         switch (this.data[`field${i}_type`]) {
-          case "day":
+          case 'day':
             if (!this.data.override) {
               error = true;
             }
             break;
-          case "month":
+          case 'month':
             if (!this.data[`field${i}_format`]) {
               error = true;
             }
             break;
-          case "year":
+          case 'year':
             if (!this.data[`field${i}_format`]) {
               error = true;
             }
@@ -527,9 +527,9 @@ export default {
       if (error) {
         this.$toast.open({
           message: message,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return false;
@@ -565,15 +565,15 @@ export default {
         }
         this.$isLoading(false);
         this.$toast.open({
-          message: res["error"]
-            ? `${res["message"]}`
-            : "Data has been saved succesfully ",
-          type: res.error ? "error" : "success",
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
-        if (!res["error"]) this.$router.back();
+        if (!res['error']) this.$router.back();
       }
       return;
     },
