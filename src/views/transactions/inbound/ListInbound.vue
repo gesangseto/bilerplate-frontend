@@ -9,6 +9,7 @@
           <CRow>
             <CCol sm="12" md="12" lg="12">
               <HeaderFilterTransactionV3
+                :save_filtering="true"
                 :costume_filter="[
                   {
                     value: 'source',
@@ -109,7 +110,7 @@ export default {
     this.pages = [10, 20, 50, 100];
     this.page = 1;
     this.size = this.pages[0];
-    this.loadData();
+    // this.loadData();
   },
   data() {
     return {

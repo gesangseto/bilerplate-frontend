@@ -214,7 +214,10 @@ export default {
       this.result = fil;
       this.fill_date(this.result.StartDate, this.result.EndDate);
     }
-    if (this.save_filtering) this.handleClickFilter();
+    if (this.save_filtering) {
+      this.handleClickFilter();
+      this.handleChangeType(false);
+    }
   },
   data() {
     return {
@@ -564,9 +567,14 @@ export default {
       this.result.SearchVal1Text = start_date;
       this.result.SearchVal2Text = end_date;
     },
-    handleChangeType() {
-      this.result.SearchVal1 = '';
-      this.result.SearchVal2 = '';
+    handleChangeType(reset = true) {
+      if (reset) {
+        this.result.SearchVal1 = '';
+        this.result.SearchVal2 = '';
+      }
+      if (this.result.SearchVal1 && !this.is_visible) {
+        this.is_visible = true;
+      }
       let idx = this.listFilter.findIndex(
         (i) => i.value === this.result.SearchType.toLowerCase()
       );

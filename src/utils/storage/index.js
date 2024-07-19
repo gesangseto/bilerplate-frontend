@@ -9,17 +9,16 @@ export function clearStorage() {
 }
 export function setFiltering(url, filter) {
   sessionStorage.setItem(`filtering`, JSON.stringify(filter));
-  sessionStorage.setItem(`url`, url);
+  sessionStorage.setItem(`filtering-url`, url);
 }
 
 export function getFiltering(url) {
-  let oldUrl = sessionStorage.getItem('url');
+  let oldUrl = sessionStorage.getItem('filtering-url');
   if (oldUrl && oldUrl !== url) {
-    sessionStorage.removeItem(`filtering`);
-    sessionStorage.setItem('url', url);
+    sessionStorage.removeItem('filtering');
+    sessionStorage.setItem('filtering-url', url);
   }
-  let key = `filtering`;
-  let filtering = sessionStorage.getItem(key);
+  let filtering = sessionStorage.getItem('filtering');
   if (filtering) filtering = JSON.parse(filtering);
   else filtering = null;
   return filtering;
