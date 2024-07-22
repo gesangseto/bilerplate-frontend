@@ -24,6 +24,7 @@
               'Release',
             ]" -->
               <HeaderFilterTransactionV3
+                :save_filtering="true"
                 :filter="['All', 'id', 'product_id', 'warehouse_id']"
                 status_code="trx_aggregation"
                 v-on:handleClickFilter="handleClickFilter($event)"

@@ -24,6 +24,7 @@
               'Release',
             ]" -->
               <HeaderFilterTransactionV3
+                :save_filtering="true"
                 :costume_filter="[
                   {
                     value: 'activate',
@@ -121,7 +122,6 @@ export default {
   name: 'DetailDecommissioning',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

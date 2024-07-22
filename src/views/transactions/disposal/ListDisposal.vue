@@ -24,6 +24,7 @@
               'Release',
             ]" -->
               <HeaderFilterTransactionV3
+                :save_filtering="true"
                 :filter="[
                   'All',
                   'id',
@@ -100,7 +101,6 @@ export default {
   name: 'ListDisposal',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

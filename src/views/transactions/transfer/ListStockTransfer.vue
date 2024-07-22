@@ -13,6 +13,7 @@
           </CCardHeader>
           <CCardBody>
             <HeaderFilterTransactionV3
+              :save_filtering="true"
               :filter="[
                 'All',
                 'id',
@@ -94,7 +95,6 @@ export default {
   name: 'ListStockTransfer',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

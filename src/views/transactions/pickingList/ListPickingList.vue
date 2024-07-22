@@ -12,6 +12,7 @@
         </CCardHeader>
         <CCardBody>
           <HeaderFilterTransactionV3
+            :save_filtering="true"
             :filter="['All', 'id', 'warehouse_id', 'customer_id']"
             status_code="trx_picking"
             v-on:handleClickFilter="handleClickFilter($event)"
@@ -99,7 +100,6 @@ export default {
     this.pages = [10, 20, 50, 100];
     this.page = 1;
     this.size = this.pages[0];
-    this.loadData();
   },
   data() {
     return {

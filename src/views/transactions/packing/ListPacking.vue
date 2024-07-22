@@ -29,6 +29,7 @@
               'Release',
             ]" -->
               <HeaderFilterTransactionV3
+                :save_filtering="true"
                 :filter="['All', 'id', 'product_id', 'warehouse_id']"
                 status_code="trx_pack"
                 v-on:handleClickFilter="handleClickFilter($event)"
@@ -92,7 +93,6 @@ export default {
   name: 'ListPacking',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

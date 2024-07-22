@@ -24,6 +24,7 @@
               'Release',
             ]" -->
               <HeaderFilterTransactionV3
+                :save_filtering="true"
                 :filter="[
                   'All',
                   'id',
@@ -101,7 +102,6 @@ export default {
   name: 'Sampling',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

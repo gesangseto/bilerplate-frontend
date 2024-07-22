@@ -12,6 +12,7 @@
         </CCardHeader>
         <CCardBody>
           <HeaderFilterTransactionV3
+            :save_filtering="true"
             :filter="['All', 'id', 'warehouse_id']"
             status_code="trx_stock_opname"
             v-on:handleClickFilter="handleClickFilter($event)"
@@ -86,7 +87,6 @@ export default {
   name: 'ListStockOpname',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

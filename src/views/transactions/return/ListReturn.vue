@@ -24,6 +24,7 @@
               'Release',
             ]" -->
               <HeaderFilterTransactionV3
+                :save_filtering="true"
                 :costume_filter="[
                   {
                     value: 'type',
@@ -125,7 +126,6 @@ export default {
   name: 'ListReturn',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {
