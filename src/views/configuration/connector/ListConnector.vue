@@ -13,7 +13,7 @@
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
           <HeaderFilterDefault
-            status_code="mst_customer"
+            :save_filtering="true"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
@@ -83,7 +83,6 @@ export default {
   name: 'ListConnector',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

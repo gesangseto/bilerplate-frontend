@@ -9,6 +9,7 @@
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
           <HeaderFilterDefault
+            :save_filtering="true"
             status_code="mst_customer"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -57,15 +58,14 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { exportData, calculatePaginationV3 } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { exportData, calculatePaginationV3 } from '../../../utils';
 
 export default {
-  name: "ListRole",
+  name: 'ListRole',
 
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {
@@ -73,25 +73,25 @@ export default {
         page: 1,
         limit: 10,
         totalPages: 1,
-        StartDate: "",
-        EndDate: "",
+        StartDate: '',
+        EndDate: '',
       },
       items: [],
       fields: [
-        { key: "section_name", label: "Section" },
+        { key: 'section_name', label: 'Section' },
         {
-          key: "department_name",
-          label: "Department",
+          key: 'department_name',
+          label: 'Department',
         },
         {
-          key: "status",
-          label: "Section Status",
-          _classes: "font-weight-bold",
+          key: 'status',
+          label: 'Section Status',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:12%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:12%',
         },
       ],
     };

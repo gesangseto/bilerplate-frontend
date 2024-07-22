@@ -97,7 +97,7 @@ export default {
   watch: {
     filtering: {
       handler(item) {
-        if (this.save_filtering) setFiltering(this.$route.path, item);
+        setFiltering(this.$route.path, item);
       },
       deep: true,
     },
@@ -128,7 +128,10 @@ export default {
     // Load filter kemudian trigering
     let fil = getFiltering(this.$route.path);
     if (fil) this.result = fil;
-    if (this.save_filtering) this.handleClickFilter();
+    if (this.save_filtering) {
+      this.handleClickFilter();
+      this.handleChangeType(false);
+    }
   },
   data() {
     return {
@@ -178,10 +181,15 @@ export default {
       };
       this.handleClickFilter();
     },
-    handleChangeType() {
+    handleChangeType(reset = true) {
+      if (reset) {
+        this.result.SearchVal1 = '';
+        this.result.SearchVal2 = '';
+      }
+      if (this.result.SearchVal1 && !this.is_visible) {
+        this.is_visible = true;
+      }
       this.extendFilter = true;
-      this.result.SearchVal1 = '';
-      this.result.SearchVal1Text = '';
       let idx = this.listFilter.findIndex(
         (i) => i.value === this.result.SearchType.toLowerCase()
       );
@@ -196,8 +204,6 @@ export default {
           this.result.SearchType.toLowerCase() == 'mst_product_category_id'
         ) {
           this.extendFilter = true;
-          this.result.SearchVal1 = '';
-          this.result.SearchVal1Text = '';
           this.getProductCategory();
         } else if (this.costume_filter) {
           for (const it of this.costume_filter) {

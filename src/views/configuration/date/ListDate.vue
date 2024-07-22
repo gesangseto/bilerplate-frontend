@@ -14,6 +14,7 @@
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
           <HeaderFilterDefault
+            :save_filtering="true"
             status_code="mst_customer"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -83,9 +84,7 @@ import moment from 'moment';
 
 export default {
   name: 'Date_Configuration',
-  mounted() {
-    this.loadData();
-  },
+  mounted() {},
   data() {
     return {
       can_create: true,

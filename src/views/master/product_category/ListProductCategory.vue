@@ -27,6 +27,7 @@
               'Release',
             ]" -->
           <HeaderFilterDefault
+            :save_filtering="true"
             status_code="mst_product_category"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -101,7 +102,6 @@ export default {
 
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

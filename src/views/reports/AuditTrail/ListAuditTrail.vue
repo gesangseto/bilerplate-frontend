@@ -7,6 +7,7 @@
         </CCardHeader>
         <CCardBody>
           <HeaderFilterTransactionV3
+            :save_filtering="true"
             :filter="['All', 'created_by']"
             status_code="sys_audit_trail"
             v-on:handleClickFilter="handleClickFilter($event)"
@@ -71,7 +72,6 @@ export default {
   name: 'ListAuditTrail',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

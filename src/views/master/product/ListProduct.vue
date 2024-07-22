@@ -27,6 +27,7 @@
               'Release',
             ]" -->
           <HeaderFilterDefault
+            :save_filtering="true"
             :filter="['All', 'mst_product_category_id']"
             status_code="mst_product"
             v-on:handleClickFilter="handleClickFilter($event)"
@@ -108,7 +109,6 @@ export default {
 
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {

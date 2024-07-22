@@ -8,6 +8,7 @@
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->
           <HeaderFilterDefault
+            :save_filtering="true"
             status_code="mst_customer"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
@@ -63,7 +64,6 @@ export default {
   name: 'ListMetadata',
   mounted() {
     this.page = 1;
-    this.loadData();
   },
   data() {
     return {
