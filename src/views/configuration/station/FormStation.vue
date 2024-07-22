@@ -60,7 +60,7 @@
                   <p class="col-form-label col-sm-3">Description</p>
                 </template>
               </CTextarea>
-              <CInput
+              <CInput v-if="profile.id ==0"
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Device ID"
@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter, humanize } from '../../../utils';
+import { capitalizeFirstLetter, getProfile, humanize } from '../../../utils';
 import {
   getConfStation,
   updateConfStation,
@@ -141,6 +141,7 @@ export default {
   },
   data() {
     return {
+      profile:getProfile(),
       initialLoad: true,
       route_action: '',
       // category: '',
@@ -180,9 +181,7 @@ export default {
         return false;
       } else if (!this.formData.name) {
         return false;
-      } else if (!this.formData.device_id) {
-        return false;
-      } else if (!this.formData.station_type) {
+      }else if (!this.formData.station_type) {
         return false;
       }
       return true;

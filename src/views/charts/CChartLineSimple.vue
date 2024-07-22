@@ -7,8 +7,7 @@
 </template>
 
 <script>
-import { CChartLine } from '@coreui/vue-chartjs'
-import { getColor, deepObjectsMerge } from '@coreui/utils/src'
+import { CChartLine } from '@coreui/vue-chartjs';
 
 export default {
   name: 'CChartLineSimple',
@@ -17,120 +16,86 @@ export default {
     ...CChartLine.props,
     borderColor: {
       type: String,
-      default: 'rgba(255,255,255,.55)'
+      default: 'rgba(255,255,255,.55)',
     },
     backgroundColor: {
       type: String,
-      default: 'transparent'
+      default: 'transparent',
     },
-    dataPoints: {
+    labels: {
       type: Array,
-      default: () => [10, 22, 34, 46, 58, 70, 46, 23, 45, 78, 34, 12]
+      default: [],
+    },
+    datasets: {
+      type: Array,
+      default: () => [
+        {
+          data: [10, 22, 34, 46, 58, 70, 46, 23, 45, 78, 34, 12],
+          borderColor: 'red',
+          backgroundColor: 'transparent',
+          label: 'Inbound',
+        },
+        {
+          data: [1, 15, 78, 66, 85, 3, 1, 44, 45, 15, 20, 10],
+          borderColor: 'green',
+          backgroundColor: 'transparent',
+          label: 'Outbound',
+        },
+      ],
     },
     label: {
       type: String,
-      default: 'Sales'
+      default: 'Sales',
     },
     pointed: Boolean,
-    pointHoverBackgroundColor: String
+    pointHoverBackgroundColor: String,
   },
   computed: {
-    pointHoverColor () {
-      if (this.pointHoverBackgroundColor) {
-        return this.pointHoverBackgroundColor
-      } else if (this.backgroundColor !== 'transparent') {
-        return this.backgroundColor
+    computedDatasets() {
+      for (const it of this.datasets) {
+        it.borderColor = `#` + ((Math.random() * 0xffffff) << 0).toString(16);
+        it.backgroundColor = 'transparent';
       }
-      return this.borderColor
+
+      return this.datasets;
     },
-    defaultDatasets () {
-      return [
-        {
-          data: this.dataPoints,
-          borderColor: getColor(this.borderColor),
-          backgroundColor: getColor(this.backgroundColor),
-          pointBackgroundColor: getColor(this.pointHoverColor),
-          pointHoverBackgroundColor: getColor(this.pointHoverColor),
-          label: this.label
-        }
-      ]
-    },
-    pointedOptions () {
+    computedOptions() {
       return {
+        maintainAspectRatio: true,
+        legend: {
+          display: true,
+        },
         scales: {
           xAxes: [
             {
-              offset: true,
-              gridLines: {
-                color: 'transparent',
-                zeroLineColor: 'transparent'
-              },
               ticks: {
-                fontSize: 2,
-                fontColor: 'transparent'
-              }
-            }
+                display: true,
+              },
+            },
           ],
           yAxes: [
             {
-              display: false,
+              display: true,
               ticks: {
-                display: false,
-                min: Math.min.apply(Math, this.dataPoints) - 5,
-                max: Math.max.apply(Math, this.dataPoints) + 5
-              }
-            }
-          ]
+                display: true,
+                min: 0,
+              },
+            },
+          ],
         },
         elements: {
           line: {
-            borderWidth: 1
+            borderWidth: 1,
           },
+          hover: true,
           point: {
             radius: 4,
             hitRadius: 10,
-            hoverRadius: 4
-          }
-        }
-      }
-    },
-    straightOptions () {
-      return {
-        scales: {
-          xAxes: [{
-            display: false
-          }],
-          yAxes: [{
-            display: false
-          }]
-        },
-        elements: {
-          line: {
-            borderWidth: 2
+            hoverRadius: 4,
           },
-          point: {
-            radius: 0,
-            hitRadius: 10,
-            hoverRadius: 4
-          }
-        }
-      }
+        },
+      };
     },
-    defaultOptions () {
-      const options = this.pointed ? this.pointedOptions : this.straightOptions
-      return Object.assign({}, options, {
-        maintainAspectRatio: false,
-        legend: {
-          display: false
-        }
-      })
-    },
-    computedDatasets () {
-      return deepObjectsMerge(this.defaultDatasets, this.datasets || {})
-    },
-    computedOptions () {
-      return deepObjectsMerge(this.defaultOptions, this.options || {})
-    }
-  }
-}
+  },
+};
 </script>

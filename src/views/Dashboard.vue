@@ -353,33 +353,71 @@
         </CCard>
       </CCol>
     </CRow>
+    <CRow v-if="profile.id == 0">
+      <CCol class="ContainerDashboard" sm="6" md="6" lg="6">
+        <CCard>
+          <CCardHeader>
+            <h5 class="text-center" style="color: black">
+              Incoming - Outgoing Last 12 Months
+            </h5>
+          </CCardHeader>
+          <CCardBody>
+            <CChartLineSimple
+              :labels="in_out_month.labels"
+              :datasets="in_out_month.datasets"
+              pointed
+              border-color="warning"
+            />
+          </CCardBody>
+        </CCard>
+      </CCol>
+      <CCol class="ContainerDashboard" sm="6" md="6" lg="6">
+        <CCard>
+          <CCardHeader>
+            <h5 class="text-center" style="color: black">
+              Incoming - Outgoing Last 30 Days
+            </h5></CCardHeader
+          >
+          <CCardBody>
+            <CChartLineSimple
+              :labels="in_out_day.labels"
+              :datasets="in_out_day.datasets"
+              pointed
+              border-color="warning"
+            />
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
   </div>
 </template>
 
 <script>
-import { CChartPie, CChartLine } from "@coreui/vue-chartjs";
-import moment from "moment";
-import PieChart from "./charts/PieChart";
-import BarChart from "./charts/BarChart";
-import CalendarAlert from "vue-material-design-icons/CalendarAlert.vue";
-import DatabaseAlertOutline from "vue-material-design-icons/DatabaseAlertOutline.vue";
-import DatabaseAlert from "vue-material-design-icons/DatabaseAlert.vue";
-import GarageVariantLock from "vue-material-design-icons/GarageVariantLock.vue";
-import GarageOpenVariant from "vue-material-design-icons/GarageOpenVariant.vue";
-import Warehouse from "vue-material-design-icons/Warehouse.vue";
-import TrayFull from "vue-material-design-icons/TrayFull.vue";
-import PackageVariantClosed from "vue-material-design-icons/PackageVariantClosed.vue";
-import TagTextOutline from "vue-material-design-icons/TagTextOutline.vue";
-import { getDashboard } from "../resource/Helper";
+import { CChartPie, CChartLine } from '@coreui/vue-chartjs';
+import moment from 'moment';
+import PieChart from './charts/PieChart';
+import CChartLineSimple from './charts/CChartLineSimple.vue';
+import BarChart from './charts/BarChart';
+import CalendarAlert from 'vue-material-design-icons/CalendarAlert.vue';
+import DatabaseAlertOutline from 'vue-material-design-icons/DatabaseAlertOutline.vue';
+import DatabaseAlert from 'vue-material-design-icons/DatabaseAlert.vue';
+import GarageVariantLock from 'vue-material-design-icons/GarageVariantLock.vue';
+import GarageOpenVariant from 'vue-material-design-icons/GarageOpenVariant.vue';
+import Warehouse from 'vue-material-design-icons/Warehouse.vue';
+import TrayFull from 'vue-material-design-icons/TrayFull.vue';
+import PackageVariantClosed from 'vue-material-design-icons/PackageVariantClosed.vue';
+import TagTextOutline from 'vue-material-design-icons/TagTextOutline.vue';
+import { getDashboard, getInOutDashboard } from '../resource/Helper';
 // import MainChartExample from "./charts/MainChartExample";
 // import WidgetsDropdown from "./widgets/WidgetsDropdown";
 // import WidgetsBrand from "./widgets/WidgetsBrand";
 // import CChartBarStockAll from "./charts/CChartBarStockAll";
-import $axiosMertrack from "../apiMertrack";
+import $axiosMertrack from '../apiMertrack';
+import { getProfile } from '../utils';
 
 const interval_date = 11;
 export default {
-  name: "Dashboard",
+  name: 'Dashboard',
   components: {
     CChartPie,
     CChartLine,
@@ -394,42 +432,46 @@ export default {
     TrayFull,
     PackageVariantClosed,
     TagTextOutline,
+    CChartLineSimple,
   },
   data() {
     return {
+      profile: getProfile(),
+      in_out_month: { labels: [], datasets: [] },
+      in_out_day: { labels: [], datasets: [] },
       dataDefault: {
         pie: [],
       },
       chartLineData: null,
       conf_date: {
         start: moment()
-          .subtract(interval_date, "months")
-          .startOf("month")
-          .format("YYYY-MM-DD"),
-        end: moment().endOf("month").format("YYYY-MM-DD"),
+          .subtract(interval_date, 'months')
+          .startOf('month')
+          .format('YYYY-MM-DD'),
+        end: moment().endOf('month').format('YYYY-MM-DD'),
         all: [],
       },
       chartPieData1: null,
       chartPieData2: null,
       chartOption: {
         legend: {
-          position: "top",
+          position: 'top',
           labels: {
-            fontColor: "#505050",
+            fontColor: '#505050',
           },
         },
         scales: {
           xAxes: [
             {
               ticks: {
-                fontColor: "#505050",
+                fontColor: '#505050',
               },
             },
           ],
           yAxes: [
             {
               ticks: {
-                fontColor: "#505050",
+                fontColor: '#505050',
               },
             },
           ],
@@ -449,8 +491,23 @@ export default {
       this.getDataPieChart1();
       this.getDataPieChart2();
     }
+    await this.getInOut('months');
+    await this.getInOut('days');
   },
   methods: {
+    async getInOut(type = 'months') {
+      let data = await getInOutDashboard({ interval: type });
+      if (data && !data.error) {
+        data = data.data[0];
+        if (type == 'months') {
+          this.in_out_month.labels = data.labels;
+          this.in_out_month.datasets = data.datasets;
+        } else if (type == 'days') {
+          this.in_out_day.labels = data.labels;
+          this.in_out_day.datasets = data.datasets;
+        }
+      }
+    },
     getDataPieChart1() {
       let serial = this.dataDefault.pie[0];
       let nonserial = this.dataDefault.pie[1];
@@ -459,11 +516,11 @@ export default {
         labels: label,
         datasets: [
           {
-            yAxisID: "yAxis",
-            xAxisID: "xAxis",
-            label: "My First Dataset",
-            data: [serial["stock_l1"], nonserial["stock_l1"]],
-            backgroundColor: ["#0018AB", "#F7AF30"],
+            yAxisID: 'yAxis',
+            xAxisID: 'xAxis',
+            label: 'My First Dataset',
+            data: [serial['stock_l1'], nonserial['stock_l1']],
+            backgroundColor: ['#0018AB', '#F7AF30'],
             hoverOffset: 4,
           },
         ],
@@ -477,11 +534,11 @@ export default {
         labels: label,
         datasets: [
           {
-            yAxisID: "yAxis",
-            xAxisID: "xAxis",
-            label: "My First Dataset",
-            data: [serial["stock_batch"], nonserial["stock_batch"]],
-            backgroundColor: ["#0018AB", "#F7AF30"],
+            yAxisID: 'yAxis',
+            xAxisID: 'xAxis',
+            label: 'My First Dataset',
+            data: [serial['stock_batch'], nonserial['stock_batch']],
+            backgroundColor: ['#0018AB', '#F7AF30'],
             hoverOffset: 4,
           },
         ],
@@ -492,15 +549,15 @@ export default {
         labels: this.conf_date.all,
         datasets: [
           {
-            label: "Incoming Batch",
-            backgroundColor: "#0018AB",
-            data: this.dataDefault["bar_incoming"].map((it) => it.batch),
+            label: 'Incoming Batch',
+            backgroundColor: '#0018AB',
+            data: this.dataDefault['bar_incoming'].map((it) => it.batch),
             // borderColor: 'red'
           },
           {
-            label: "Outgoing Batch",
-            backgroundColor: "#F7AF30",
-            data: this.dataDefault["bar_outgoing"].map((it) => it.batch),
+            label: 'Outgoing Batch',
+            backgroundColor: '#F7AF30',
+            data: this.dataDefault['bar_outgoing'].map((it) => it.batch),
             // borderColor: 'green'
           },
         ],
@@ -513,9 +570,9 @@ export default {
       this.conf_date.all = [];
       for (var i = interval_date; i >= 0; i--) {
         let m = moment()
-          .subtract(i, "months")
-          .endOf("month")
-          .format("MMM YYYY");
+          .subtract(i, 'months')
+          .endOf('month')
+          .format('MMM YYYY');
         this.conf_date.all.push(m);
       }
       return;
