@@ -3,7 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <h5>Role</h5>
+          <h5>{{ $activeMenu.name }}</h5>
           <!-- <ButtonPermission :permission="'create'" @click="addNew()" /> -->
         </CCardHeader>
         <CCardBody>

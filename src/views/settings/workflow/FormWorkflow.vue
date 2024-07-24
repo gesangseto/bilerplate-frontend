@@ -4,7 +4,7 @@
       <CCol md="12">
         <CCard>
           <CCardHeader>
-            <h5>Workflow [{{ route_action }}]</h5>
+            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
           </CCardHeader>
           <CCardBody>
             <CForm>
@@ -115,22 +115,22 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../../apiMertrack";
-import { capitalizeFirstLetter } from "../../../utils";
+import $axiosMertrack from '../../../apiMertrack';
+import { capitalizeFirstLetter } from '../../../utils';
 
 export default {
-  name: "FormWorkflow",
+  name: 'FormWorkflow',
   mounted() {
     this.loadWorkflowList();
     this.loadUser();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
   },
   data() {
     return {
-      action: "",
-      route_action: "",
+      action: '',
+      route_action: '',
       usedTransaction: [],
       transactionIsUsed: false,
       err_workflow: {
@@ -165,9 +165,9 @@ export default {
           this.transactionIsUsed = true;
           this.$toast.open({
             message: `Transaction Already Used`,
-            type: "error",
+            type: 'error',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           break;
@@ -237,16 +237,16 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post("/v3/master/workflow", body).then((result) => {
+        $axiosMertrack.post('/v3/master/workflow', body).then((result) => {
           this.$isLoading(false);
           let res = result.data;
           this.$toast.open({
             message: res.error
               ? res.message
               : `Data has been saved succesfully `,
-            type: res.error ? "error" : "success",
+            type: res.error ? 'error' : 'success',
             dissmissible: true,
-            position: "top-right",
+            position: 'top-right',
             duration: 5000,
           });
           if (!res.error) {
@@ -264,7 +264,7 @@ export default {
             value: item.id,
           };
         });
-        userMapping.push({ label: "Empty", value: null });
+        userMapping.push({ label: 'Empty', value: null });
         this.users = userMapping;
       });
 
@@ -274,9 +274,9 @@ export default {
       if (!this.workflow.approval_1) {
         this.$toast.open({
           message: `Please input Approval 1`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
       }

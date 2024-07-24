@@ -3,7 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader
-          ><h5>Role [{{ route_action }}]</h5></CCardHeader
+          ><h5>{{ $activeMenu.name }} [{{ route_action }}]</h5></CCardHeader
         >
         <CCardBody>
           <CRow style="margin: 10px 0">
@@ -262,11 +262,11 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../../utils";
-import $axiosMertrack from "../../../apiMertrack";
+import { capitalizeFirstLetter } from '../../../utils';
+import $axiosMertrack from '../../../apiMertrack';
 
 export default {
-  name: "AddRoles",
+  name: 'AddRoles',
   props: {
     id: {
       type: String,
@@ -275,33 +275,33 @@ export default {
   },
   data() {
     return {
-      route_action: "",
+      route_action: '',
       readOnlyItem: false,
       pages: null,
       page: null,
       totalPages: 0,
       size: null,
-      keyword: "",
+      keyword: '',
       search: false,
       departments: [],
       optionSections: [],
       body: {},
-      action: "",
+      action: '',
       idRoles: null,
       check_all: false,
       role: [],
       menu: [],
       defaultMenu: [],
       fields: [
-        { key: "parent_label", label: "Parent Menu" },
-        { key: "label", label: "Child Menu" },
+        { key: 'parent_label', label: 'Parent Menu' },
+        { key: 'label', label: 'Child Menu' },
         // { key: "check_all", label: "All" },
-        { key: "can_view", label: "View" },
-        { key: "can_add", label: "Add" },
-        { key: "can_edit", label: "Edit" },
-        { key: "can_delete", label: "Delete" },
-        { key: "can_print", label: "Print" },
-        { key: "can_approve", label: "Approve" },
+        { key: 'can_view', label: 'View' },
+        { key: 'can_add', label: 'Add' },
+        { key: 'can_edit', label: 'Edit' },
+        { key: 'can_delete', label: 'Delete' },
+        { key: 'can_print', label: 'Print' },
+        { key: 'can_approve', label: 'Approve' },
         // {key: 'action', label: 'Action'},
       ],
     };
@@ -313,7 +313,7 @@ export default {
     this.size = this.pages[0];
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
-      this.action == "Create" ? "ADD" : this.action == "Read" ? "VIEW" : "EDIT";
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -350,12 +350,12 @@ export default {
           if (!parent.link) {
             for (const child of parent.children) {
               let temp = child;
-              temp.can_add = child.can_add == "true" ? true : false;
-              temp.can_view = child.can_view == "true" ? true : false;
-              temp.can_edit = child.can_edit == "true" ? true : false;
-              temp.can_delete = child.can_delete == "true" ? true : false;
-              temp.can_print = child.can_print == "true" ? true : false;
-              temp.can_approve = child.can_approve == "true" ? true : false;
+              temp.can_add = child.can_add == 'true' ? true : false;
+              temp.can_view = child.can_view == 'true' ? true : false;
+              temp.can_edit = child.can_edit == 'true' ? true : false;
+              temp.can_delete = child.can_delete == 'true' ? true : false;
+              temp.can_print = child.can_print == 'true' ? true : false;
+              temp.can_approve = child.can_approve == 'true' ? true : false;
               temp.parent_label = parent.label;
               temp.parent_id = parent.id;
               temp.count = count;
@@ -377,12 +377,12 @@ export default {
             // Handle Menu Without Child
             count = 1;
             let temp = parent;
-            temp.can_add = parent.can_add == "true" ? true : false;
-            temp.can_view = parent.can_view == "true" ? true : false;
-            temp.can_edit = parent.can_edit == "true" ? true : false;
-            temp.can_delete = parent.can_delete == "true" ? true : false;
-            temp.can_print = parent.can_print == "true" ? true : false;
-            temp.can_approve = parent.can_approve == "true" ? true : false;
+            temp.can_add = parent.can_add == 'true' ? true : false;
+            temp.can_view = parent.can_view == 'true' ? true : false;
+            temp.can_edit = parent.can_edit == 'true' ? true : false;
+            temp.can_delete = parent.can_delete == 'true' ? true : false;
+            temp.can_print = parent.can_print == 'true' ? true : false;
+            temp.can_approve = parent.can_approve == 'true' ? true : false;
             temp.parent_label = parent.label;
             temp.parent_id = parent.id;
             temp.count = count;
@@ -491,9 +491,9 @@ export default {
       if (!this.role.section_id) {
         this.$toast.open({
           message: `Please select Department and Section to continue`,
-          type: "error",
+          type: 'error',
           dissmissible: true,
-          position: "top-right",
+          position: 'top-right',
           duration: 5000,
         });
         return;
@@ -527,10 +527,10 @@ export default {
             this.$toast.open({
               message: res.error
                 ? `${res.message}`
-                : "Data has been saved succesfully ",
-              type: res.error ? "error" : "success",
+                : 'Data has been saved succesfully ',
+              type: res.error ? 'error' : 'success',
               dissmissible: true,
-              position: "top-right",
+              position: 'top-right',
               duration: 5000,
             });
             if (!res.error) {
@@ -549,7 +549,7 @@ export default {
       return this.menu.map((item) => {
         return {
           ...item,
-          parentLabel: item.parentLabel ? item.parentLabel : "",
+          parentLabel: item.parentLabel ? item.parentLabel : '',
         };
       });
     },

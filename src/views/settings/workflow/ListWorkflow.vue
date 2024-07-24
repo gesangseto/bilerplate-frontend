@@ -3,7 +3,7 @@
     <CCol col="12" xl="12" md="12" sm="12">
       <CCard>
         <CCardHeader _style="padding:10px;">
-          <h5>Workflow</h5>
+          <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
           <!-- INI BATAS HEADER TABLE -->

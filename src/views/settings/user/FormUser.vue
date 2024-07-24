@@ -4,7 +4,7 @@
       <CCol md="12">
         <CCard>
           <CCardHeader>
-            <h5>User [{{ route_action }}]</h5>
+            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
           </CCardHeader>
 
           <CCardBody>
