@@ -7,6 +7,55 @@ export function clearStorage() {
   localStorage.removeItem('role');
   localStorage.removeItem('time_out');
 }
+
+export function getFilterTable(url) {
+  let result = null;
+  let history = [];
+  let stringHistory = sessionStorage.getItem('filter');
+  if (stringHistory) history = JSON.parse(stringHistory);
+  let backHistory = history[history.length - 2];
+  let lastHistory = history[history.length - 1];
+  if (backHistory) {
+    // jika url sebelumnya sama dengan url yang di check dianggap sedang HIT BACK BUTTON
+    if (backHistory.url === url) {
+      // maka hapus history terakhir
+      history.pop();
+      // kembalikan nilai backHistory
+      result = backHistory.filter;
+    }
+  } else if (lastHistory) {
+    // jika url terakhir sama dengan url yang di check
+    if (lastHistory.url === url) {
+      // kembalikan nilai lastHistory
+      result = lastHistory.filter;
+    }
+  } else {
+    history.push({ url: url, filter: {} });
+  }
+  sessionStorage.setItem(`filter`, JSON.stringify(history));
+  return result;
+}
+
+export function setFilterTable(url, filter) {
+  let history = [];
+  let stringHistory = sessionStorage.getItem('filter');
+  if (stringHistory) history = JSON.parse(stringHistory);
+  if (history.length >= 20) history.shift();
+  let lastHistory = history[history.length - 1];
+  if (lastHistory) {
+    // jika url terakhir sama dengan url yang di set maka replace filtering dengan yang baru
+    if (lastHistory.url === url) {
+      lastHistory.filter = filter;
+      history[history.length - 1] = lastHistory;
+      sessionStorage.setItem(`filter`, JSON.stringify(history));
+      return;
+    }
+  }
+  history.push({ url: url, filter: filter });
+  sessionStorage.setItem(`filter`, JSON.stringify(history));
+  return;
+}
+
 export function setFiltering(url, filter) {
   sessionStorage.setItem(`filtering`, JSON.stringify(filter));
   sessionStorage.setItem(`filtering-url`, url);

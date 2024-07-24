@@ -36,9 +36,7 @@
           <CHeaderNavLink>
             <CButton @click="notifModal = true">
               <CIcon name="cil-bell" />
-              <CBadge color="danger">{{
-                notif.filter((it) => it.flag_read == 0).length
-              }}</CBadge>
+              <CBadge color="danger">{{ notifUnreadCount }}</CBadge>
             </CButton>
           </CHeaderNavLink>
         </CHeaderNavItem>
@@ -51,7 +49,7 @@
         <h5 class="modal-title">Notification</h5>
         <div>
           <CButton
-            v-if="notif.length > 0"
+            v-if="notifCount > 0"
             class="m-1"
             type="submit"
             size="sm"
@@ -61,7 +59,7 @@
             Delete All
           </CButton>
           <CButton
-            v-if="notif.find((it) => it.flag_read == 0)"
+            v-if="notifUnreadCount > 0"
             class="m-1"
             type="submit"
             size="sm"
@@ -73,7 +71,7 @@
         </div>
       </template>
 
-      <div class="scroll-auto" v-if="notif.length > 0">
+      <div class="scroll-auto" v-if="notifCount > 0">
         <CRow v-for="item in notif" :key="item.id">
           <CCol key="item.id" sm="12" md="12">
             <CButton
@@ -408,6 +406,16 @@ export default {
       setLoginTimeout(-1);
       // window.location.reload();
       return;
+    },
+  },
+  computed: {
+    notifUnreadCount() {
+      return Array.isArray(this.notif)
+        ? this.notif.filter((it) => it.flag_read === 0).length
+        : 0;
+    },
+    notifCount() {
+      return Array.isArray(this.notif) ? this.notif.length : 0;
     },
   },
 };

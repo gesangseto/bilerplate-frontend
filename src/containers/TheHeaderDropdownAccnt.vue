@@ -49,11 +49,12 @@ export default {
   },
   mounted() {
     this.profile = getProfile();
-    this.full_name = this.profile.full_name;
-    this.email = this.profile.email;
-    this.avatar_path = this.profile.path
-      ? `img/avatars/${this.profile.path}`
-      : getLogo();
+    this.full_name = this.profile ? this.profile.full_name : '-';
+    this.email = this.profile ? this.profile.email : '';
+    this.avatar_path =
+      this.profile && this.profile.path
+        ? `img/avatars/${this.profile.path}`
+        : getLogo();
   },
   methods: {
     async logOut() {

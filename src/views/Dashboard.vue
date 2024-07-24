@@ -353,7 +353,7 @@
         </CCard>
       </CCol>
     </CRow>
-    <CRow v-if="profile.id == 0">
+    <CRow v-if="profile && profile.id == 0">
       <CCol class="ContainerDashboard" sm="6" md="6" lg="6">
         <CCard>
           <CCardHeader>

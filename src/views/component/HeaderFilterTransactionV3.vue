@@ -141,7 +141,7 @@ import { ModelSelect } from 'vue-search-select';
 import moment from 'moment';
 import { dateFilter } from '../../constants';
 import { getStatusDesc } from '../../resource/StatusDesc';
-import { getFiltering, setFiltering } from '../../utils/storage';
+import { setFilterTable, getFilterTable } from '../../utils/storage';
 
 export default {
   name: 'HeaderFilterTransactionV3',
@@ -158,12 +158,11 @@ export default {
 
   components: { ModelSelect, DateRangePicker },
   watch: {
-    filtering: {
-      handler(item) {
-        setFiltering(this.$route.path, item);
-      },
-      deep: true,
-    },
+    // filtering: {
+    //   handler(item) {
+    //   },
+    //   deep: true,
+    // },
   },
   mounted() {
     this.getSatusCode();
@@ -209,7 +208,7 @@ export default {
     }
 
     // Load filter kemudian trigering
-    let fil = getFiltering(this.$route.path);
+    let fil = getFilterTable(this.$route.path);
     if (fil) {
       this.result = fil;
       this.fill_date(this.result.StartDate, this.result.EndDate);
@@ -733,6 +732,7 @@ export default {
         });
         return;
       }
+      setFilterTable(this.$route.path, this.result);
       this.filtering = this.result;
       this.$emit('handleClickFilter', this.result);
     },

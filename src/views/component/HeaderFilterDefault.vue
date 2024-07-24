@@ -82,7 +82,7 @@ import 'vue-search-select/dist/VueSearchSelect.css';
 import { ModelSelect } from 'vue-search-select';
 import { getMstProductCategory } from '../../resource/MstProductCategory';
 import { getStatusDesc } from '../../resource/StatusDesc';
-import { getFiltering, setFiltering } from '../../utils/storage';
+import { setFilterTable, getFilterTable } from '../../utils/storage';
 
 export default {
   name: 'HeaderFilterDefault',
@@ -95,12 +95,11 @@ export default {
 
   components: { ModelSelect },
   watch: {
-    filtering: {
-      handler(item) {
-        setFiltering(this.$route.path, item);
-      },
-      deep: true,
-    },
+    // filtering: {
+    //   handler(item) {
+    //   },
+    //   deep: true,
+    // },
   },
   mounted() {
     this.getSatusCode();
@@ -126,7 +125,7 @@ export default {
       }
     }
     // Load filter kemudian trigering
-    let fil = getFiltering(this.$route.path);
+    let fil = getFilterTable(this.$route.path);
     if (fil) this.result = fil;
     if (this.save_filtering) {
       this.handleClickFilter();
@@ -224,6 +223,7 @@ export default {
       this.handleClickFilter();
     },
     handleClickFilter() {
+      setFilterTable(this.$route.path, this.result);
       this.filtering = this.result;
       this.$emit('handleClickFilter', this.result);
     },

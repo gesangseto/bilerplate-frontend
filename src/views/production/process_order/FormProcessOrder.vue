@@ -252,18 +252,23 @@
             </CCol>
           </CRow>
           <!-- DATA TABLE untuk menampilkan semua HISTORY Station-->
-          <CDataTable
-            hover
-            striped
-            sorter
-            tableFilter
-            :pagination="true"
-            :items-per-page="50"
-            :items="detailHistory"
-            :fields="fieldStationHistory"
-            style="font-size: 12px"
-          >
-          </CDataTable>
+          <CCard>
+            <CCardHeader><Strong>Progress</Strong></CCardHeader>
+            <CCardBody>
+              <CDataTable
+                hover
+                striped
+                sorter
+                tableFilter
+                :pagination="true"
+                :items-per-page="50"
+                :items="detailHistory"
+                :fields="fieldStationHistory"
+                style="font-size: 12px"
+              >
+              </CDataTable>
+            </CCardBody>
+          </CCard>
         </CCardBody>
         <CCardFooter>
           <!-- Simpan data saat create-->

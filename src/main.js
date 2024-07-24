@@ -53,6 +53,11 @@ Vue.component('v-select', vSelect);
 Vue.prototype.$log = console.log.bind(console);
 Vue.prototype.$activeMenu = { name: '', link: null };
 
+Vue.config.errorHandler = (err, vm, info) => {
+  console.error('==========================vvv==========================');
+  console.error(vm._name, info, err);
+  console.error('==========================^^^==========================');
+};
 const app = new Vue({
   el: '#app',
   router,

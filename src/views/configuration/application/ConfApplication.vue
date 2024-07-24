@@ -793,7 +793,7 @@ import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
 import { getSysConfig } from '../../../resource/SysConfig';
 import { setConfig } from '../../../utils';
 export default {
-  name: 'PackageForm',
+  name: 'ConfigApplication',
   components: {},
   data() {
     return {
