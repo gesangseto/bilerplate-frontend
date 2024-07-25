@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { getRole } from '../utils/storage';
+import { getMenu, getRole } from '../utils/storage';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer');
@@ -210,22 +210,37 @@ const ManualBarcodeGenerator = () =>
 // ========================CONFIGURATION========================
 Vue.use(Router);
 let router = new Router({
-  mode: 'hash', // https://router.vuejs.org/api/#mode
+  mode: 'history', // https://router.vuejs.org/api/#mode
   linkActiveClass: 'active',
   scrollBehavior: () => ({ y: 0 }),
   routes: configRoutes(),
 });
 
 router.beforeEach((to, from, next) => {
-  let result = { name: '', link: null };
-  let role = getRole();
-  if (role)
-    for (const it of role) {
-      if (to.path.includes(it.link)) {
-        result = it;
-        break;
+  let result = { name: '', link: null, breadcrumbs: '' };
+  let menu = getMenu();
+  if (menu && menu[0]._children) {
+    menu = menu[0]._children;
+    function findActiveMenu(menu, breadcrumbs) {
+      let result = { name: '', link: null, breadcrumbs: breadcrumbs };
+      let childBreadcrumbs = '';
+      for (const it of menu) {
+        childBreadcrumbs = it.name;
+        if (it.link && to.path.includes(it.link)) {
+          result = {
+            ...it,
+            breadcrumbs: `${breadcrumbs} / ${childBreadcrumbs}`,
+          };
+          break;
+        } else if (it.items) {
+          result = findActiveMenu(it.items, childBreadcrumbs);
+          if (result.link) break;
+        }
       }
+      return result;
     }
+    result = findActiveMenu(menu, '');
+  }
   Vue.prototype.$activeMenu = result;
   return next();
 });

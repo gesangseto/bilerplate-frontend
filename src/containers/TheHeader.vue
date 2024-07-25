@@ -13,20 +13,11 @@
       />
 
       <!-- <CBreadcrumbRouter class="border-0 mb-0" /> -->
-      <CHeaderNav
-        style="margin-left: 10px"
-        v-for="(item, index) in path_url"
-        :key="index"
-      >
-        <a
-          style="color: blue; cursor: pointer"
-          v-if="index + 1 != path_url.length"
-          @click="handleClickLink(item, index)"
-        >
-          {{ item.name }} /
-        </a>
-        <a v-if="index + 1 == path_url.length"> {{ item.name }}</a>
+      <CHeaderNav>
+        <a href="#/home"> Home /&nbsp;</a>
+        <a :href="`#${$activeMenu.link}`"> {{ $activeMenu.breadcrumbs }}</a>
       </CHeaderNav>
+
       <!-- <div v-for="item of path_url" :key="item.path">
         {{ item }}
       </div> -->
