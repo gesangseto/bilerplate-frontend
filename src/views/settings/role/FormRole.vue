@@ -63,185 +63,174 @@
           </CRow>
           <br />
           <template>
-            <table
-              border="1"
-              style="
-                width: 100%;
-                border-collapse: collapse;
-                border: 1px solid #ddd;
-              "
-            >
-              <thead
-                style="
-                  height: 40px;
-                  padding-top: 12px;
-                  padding-bottom: 12px;
-                  text-align: left;
-                  background-color: #3266a8;
-                  color: white;
-                "
-              >
-                <th v-if="!search" style="text-align: center">Parent Menu</th>
-                <th style="text-align: center">Child Menu</th>
-                <th style="text-align: center">Create</th>
-                <th style="text-align: center">Read</th>
-                <th style="text-align: center">Update</th>
-                <th style="text-align: center">Delete</th>
-                <th style="text-align: center">Print</th>
-                <th style="text-align: center">Approve</th>
-                <th style="text-align: center">Check All in Row</th>
-              </thead>
-              <tbody>
-                <template v-for="(child, key) in menu">
-                  <tr
-                    :key="key"
-                    :style="
-                      key % 2 == 0
-                        ? 'background-color:#ffffff;'
-                        : 'background-color:#ededed;'
-                    "
-                  >
-                    <td
-                      v-if="key == child.start_menu_count && !search"
-                      :rowspan="child.count"
-                      style="
-                        padding-left: 10px;
-                        border-bottom: 1px solid #7d7d7d;
-                      "
-                    >
-                      {{ child.parent_label }}
-                    </td>
-                    <td
-                      :style="
-                        child.count + child.start_menu_count == key + 1
-                          ? 'padding-left: 10px;border-bottom: 1px solid #7d7d7d;'
-                          : 'padding-left: 10px;'
-                      "
-                    >
-                      {{ child.label }}
-                    </td>
-                    <td
-                      :style="
-                        child.count + child.start_menu_count == key + 1
-                          ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                          : 'text-align: center;'
-                      "
-                      v-if="child.parent_label != 'Android'"
-                    >
-                      <CInputCheckbox
-                        v-if="child.show_create === 1"
-                        :disabled="action == 'Read' ? true : false"
-                        size="sm"
-                        @click="clickCreate(child, key)"
-                        :checked="child.can_add"
-                        style="margin-bottom: 30px; margin-top: 5px"
-                      />
-                    </td>
-                    <td
-                      :style="
-                        child.count + child.start_menu_count == key + 1
-                          ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                          : 'text-align: center;'
-                      "
-                      v-if="child.parent_label != 'Android'"
-                    >
-                      <CInputCheckbox
-                        v-if="child.show_read === 1"
-                        :disabled="action == 'Read' ? true : false"
-                        @click="clickRead(child, key)"
-                        size="sm"
-                        :checked="child.can_view"
-                        style="margin-bottom: 30px; margin-top: 5px"
-                      />
-                    </td>
-                    <td
-                      :style="
-                        child.count + child.start_menu_count == key + 1
-                          ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                          : 'text-align: center;'
-                      "
-                      :colspan="child.parent_label == 'Android' ? 7 : null"
-                    >
-                      <CInputCheckbox
-                        v-if="child.show_update === 1"
-                        :disabled="action == 'Read' ? true : false"
-                        @click="clickUpdate(child, key)"
-                        size="sm"
-                        :checked="child.can_edit"
-                        style="margin-bottom: 30px; margin-top: 5px"
-                      />
-                    </td>
-                    <td
-                      :style="
-                        child.count + child.start_menu_count == key + 1
-                          ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                          : 'text-align: center;'
-                      "
-                      v-if="child.parent_label != 'Android'"
-                    >
-                      <CInputCheckbox
-                        v-if="child.show_delete === 1"
-                        :disabled="action == 'Read' ? true : false"
-                        @click="clickDelete(child, key)"
-                        size="sm"
-                        :checked="child.can_delete"
-                        style="margin-bottom: 30px; margin-top: 5px"
-                      />
-                    </td>
-                    <td
-                      :style="
-                        child.count + child.start_menu_count == key + 1
-                          ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                          : 'text-align: center;'
-                      "
-                      v-if="child.parent_label != 'Android'"
-                    >
-                      <CInputCheckbox
-                        v-if="child.show_print === 1"
-                        :disabled="action == 'Read' ? true : false"
-                        @click="clickPrint(child, key)"
-                        size="sm"
-                        :checked="child.can_print"
-                        style="margin-bottom: 30px; margin-top: 5px"
-                      />
-                    </td>
-                    <td
-                      :style="
-                        child.count + child.start_menu_count == key + 1
-                          ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                          : 'text-align: center;'
-                      "
-                      v-if="child.parent_label != 'Android'"
-                    >
-                      <CInputCheckbox
-                        v-if="child.show_approve === 1"
-                        :disabled="action == 'Read' ? true : false"
-                        @click="clickApprove(child, key)"
-                        size="sm"
-                        :checked="child.can_approve"
-                        style="margin-bottom: 30px; margin-top: 5px"
-                      />
-                    </td>
-                    <td
-                      :style="
-                        child.count + child.start_menu_count == key + 1
-                          ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                          : 'text-align: center;'
-                      "
-                      v-if="child.parent_label != 'Android'"
-                    >
-                      <CInputCheckbox
-                        :disabled="action == 'Read' ? true : false"
-                        @click="clickAll(child, key)"
-                        size="sm"
-                        :checked="child.can_all"
-                        style="margin-bottom: 30px; margin-top: 5px"
-                      />
-                    </td>
+            <div class="table-container">
+              <table class="sticky-table">
+                <thead>
+                  <tr>
+                    <th v-if="!search" style="text-align: center">
+                      Parent Menu
+                    </th>
+                    <th style="text-align: center">Child Menu</th>
+                    <th style="text-align: center">Create</th>
+                    <th style="text-align: center">Read</th>
+                    <th style="text-align: center">Update</th>
+                    <th style="text-align: center">Delete</th>
+                    <th style="text-align: center">Print</th>
+                    <th style="text-align: center">Approve</th>
+                    <th style="text-align: center">Check All in Row</th>
                   </tr>
-                </template>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <template v-for="(child, key) in menu">
+                    <tr
+                      :style="
+                        key % 2 == 0
+                          ? 'background-color:#ffffff;'
+                          : 'background-color:#ededed;'
+                      "
+                    >
+                      <td
+                        v-if="key == child.start_menu_count && !search"
+                        :rowspan="child.count"
+                        style="
+                          padding-left: 10px;
+                          border-bottom: 1px solid #7d7d7d;
+                        "
+                      >
+                        {{ child.parent_label }}
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'padding-left: 10px;border-bottom: 1px solid #7d7d7d;'
+                            : 'padding-left: 10px;'
+                        "
+                      >
+                        {{ child.label }}
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
+                            : 'text-align: center;'
+                        "
+                        v-if="child.parent_label != 'Android'"
+                      >
+                        <CInputCheckbox
+                          v-if="child.show_create === 1"
+                          :disabled="action == 'Read' ? true : false"
+                          size="sm"
+                          @click="clickCreate(child, key)"
+                          :checked="child.can_add"
+                          style="margin-bottom: 30px; margin-top: 5px"
+                        />
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
+                            : 'text-align: center;'
+                        "
+                        v-if="child.parent_label != 'Android'"
+                      >
+                        <CInputCheckbox
+                          v-if="child.show_read === 1"
+                          :disabled="action == 'Read' ? true : false"
+                          @click="clickRead(child, key)"
+                          size="sm"
+                          :checked="child.can_view"
+                          style="margin-bottom: 30px; margin-top: 5px"
+                        />
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
+                            : 'text-align: center;'
+                        "
+                        :colspan="child.parent_label == 'Android' ? 7 : null"
+                      >
+                        <CInputCheckbox
+                          v-if="child.show_update === 1"
+                          :disabled="action == 'Read' ? true : false"
+                          @click="clickUpdate(child, key)"
+                          size="sm"
+                          :checked="child.can_edit"
+                          style="margin-bottom: 30px; margin-top: 5px"
+                        />
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
+                            : 'text-align: center;'
+                        "
+                        v-if="child.parent_label != 'Android'"
+                      >
+                        <CInputCheckbox
+                          v-if="child.show_delete === 1"
+                          :disabled="action == 'Read' ? true : false"
+                          @click="clickDelete(child, key)"
+                          size="sm"
+                          :checked="child.can_delete"
+                          style="margin-bottom: 30px; margin-top: 5px"
+                        />
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
+                            : 'text-align: center;'
+                        "
+                        v-if="child.parent_label != 'Android'"
+                      >
+                        <CInputCheckbox
+                          v-if="child.show_print === 1"
+                          :disabled="action == 'Read' ? true : false"
+                          @click="clickPrint(child, key)"
+                          size="sm"
+                          :checked="child.can_print"
+                          style="margin-bottom: 30px; margin-top: 5px"
+                        />
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
+                            : 'text-align: center;'
+                        "
+                        v-if="child.parent_label != 'Android'"
+                      >
+                        <CInputCheckbox
+                          v-if="child.show_approve === 1"
+                          :disabled="action == 'Read' ? true : false"
+                          @click="clickApprove(child, key)"
+                          size="sm"
+                          :checked="child.can_approve"
+                          style="margin-bottom: 30px; margin-top: 5px"
+                        />
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
+                            : 'text-align: center;'
+                        "
+                        v-if="child.parent_label != 'Android'"
+                      >
+                        <CInputCheckbox
+                          :disabled="action == 'Read' ? true : false"
+                          @click="clickAll(child, key)"
+                          size="sm"
+                          :checked="child.can_all"
+                          style="margin-bottom: 30px; margin-top: 5px"
+                        />
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
           </template>
         </CCardBody>
         <CCardFooter>
@@ -261,6 +250,34 @@
   </CRow>
 </template>
 
+<style scoped>
+.table-container {
+  /* max-height: 520px; */
+  overflow-y: auto;
+}
+
+.sticky-table {
+  width: 100%;
+}
+
+.sticky-table thead tr {
+  position: sticky;
+  top: 0;
+  background: #3266a8; /* Latar belakang header untuk menutupi konten saat scroll */
+  z-index: 1; /* Pastikan header berada di atas konten */
+  color: white;
+}
+
+.sticky-table th {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.sticky-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+</style>
 <script>
 import { capitalizeFirstLetter } from '../../../utils';
 import $axiosMertrack from '../../../apiMertrack';

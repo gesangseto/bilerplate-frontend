@@ -241,6 +241,10 @@ router.beforeEach((to, from, next) => {
     }
     result = findActiveMenu(menu, '');
   }
+  result.breadcrumbs = result.breadcrumbs.replace(/^\s*\/+/, '');
+  if (!result.link) {
+    result.breadcrumbs = '';
+  }
   Vue.prototype.$activeMenu = result;
   return next();
 });
@@ -857,13 +861,13 @@ function configRoutes() {
         // STATION
         {
           path: 'station/:type/:id',
-          name: 'Station',
+          name: 'Station Details',
           component: FormStation,
           meta: { login: true },
         },
         {
           path: 'station/:type',
-          name: 'Add Station',
+          name: 'Station Add',
           component: FormStation,
           meta: { login: true },
         },
@@ -876,13 +880,13 @@ function configRoutes() {
         // PATTERN
         {
           path: 'pattern/:type/:id',
-          name: 'Pattern',
+          name: 'Pattern Details',
           component: FormPattern,
           meta: { login: true },
         },
         {
           path: 'pattern/:type',
-          name: 'Add Pattern',
+          name: 'Pattern Add',
           component: FormPattern,
           meta: { login: true },
         },
@@ -895,13 +899,13 @@ function configRoutes() {
         // METADATA
         {
           path: 'metadata/:type/:id',
-          name: 'Metadata',
+          name: 'Metadata Details',
           component: FormMetadata,
           meta: { login: true },
         },
         {
           path: 'metadata/:type',
-          name: 'Metadata',
+          name: 'Metadata Add',
           component: FormMetadata,
           meta: { login: true },
         },
@@ -1041,9 +1045,8 @@ function configRoutes() {
   return [
     {
       path: '/',
-      redirect: '/dashboard',
-      name: 'Home',
-
+      redirect: '/home',
+      name: 'TheContainer',
       meta: {
         login: true,
       },
