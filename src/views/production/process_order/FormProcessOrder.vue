@@ -10,7 +10,7 @@
             <CCol sm="6" md="6" lg="6">
               <InputDefault
                 :disabled="action != 'Create'"
-                title="ERP No."
+                title="ERP PO No."
                 v-model="formData.process_order_erp"
                 :options="{ uppercase: true, nospace: true }"
                 :required="true"

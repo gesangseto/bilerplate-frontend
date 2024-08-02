@@ -213,6 +213,37 @@
         </CCardFooter>
       </CCard>
     </CCol>
+    <CModal
+      title="Print PDF Report"
+      color="secondary"
+      :show.sync="popupButtonPrintPdf"
+      size="sm"
+    >
+      <div style="display: flex; justify-content: center; flex: 1">
+        <Button
+          :buttonProperty="{ color: 'secondary', text: 'Summary' }"
+          @click="handleClickExportPDF('summary')"
+        />
+        <Button
+          :buttonProperty="{ color: 'secondary', text: 'Detail' }"
+          @click="handleClickExportPDF('detail')"
+        />
+        <Button
+          :buttonProperty="{ color: 'secondary', text: 'Timbangan' }"
+          @click="handleClickExportPDF('timbangan')"
+        />
+      </div>
+      <template #footer>
+        <CButton
+          size="sm"
+          color="danger"
+          type="button"
+          @click="popupButtonPrintPdf = !popupButtonPrintPdf"
+        >
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
     <!-- Modal Detail Barang Dipilih  -->
     <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
       <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
@@ -248,6 +279,7 @@ export default {
       detail_item: {},
       datas: [],
       viewModal: false,
+      popupButtonPrintPdf: false,
       view: {
         productId: '',
         productName: '',
@@ -359,7 +391,24 @@ export default {
     cancel() {
       this.$router.back();
     },
+    handleClickExportPDF(type) {
+      console.log(type);
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+          ptintType: type,
+        },
+        exportType: 'pdf',
+        url: '/v4/transaction/pre-inbound',
+      });
+    },
     handleClickExport(type) {
+      if (type == 'pdf') {
+        this.popupButtonPrintPdf = true;
+        console.log(this.popupButtonPrintPdf);
+        return;
+      }
       exportDataV3({
         alert: true,
         param: {
