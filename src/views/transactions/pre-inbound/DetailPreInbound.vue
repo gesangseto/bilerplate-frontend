@@ -205,45 +205,16 @@
             :permission="'print'"
             @click="handleClickExport('xls')"
           />
-          <ButtonPermission
+          <ButtonPopover
+            permission="print"
             exportType="pdf"
-            :permission="'print'"
-            @click="handleClickExport('pdf')"
+            :popover_list="['Summary', 'Timbangan', 'Details']"
+            @handleClick="handleExportPdf($event)"
+            mt="-10"
           />
         </CCardFooter>
       </CCard>
     </CCol>
-    <CModal
-      title="Print PDF Report"
-      color="secondary"
-      :show.sync="popupButtonPrintPdf"
-      size="sm"
-    >
-      <div style="display: flex; justify-content: center; flex: 1">
-        <Button
-          :buttonProperty="{ color: 'secondary', text: 'Summary' }"
-          @click="handleClickExportPDF('summary')"
-        />
-        <Button
-          :buttonProperty="{ color: 'secondary', text: 'Detail' }"
-          @click="handleClickExportPDF('detail')"
-        />
-        <Button
-          :buttonProperty="{ color: 'secondary', text: 'Timbangan' }"
-          @click="handleClickExportPDF('timbangan')"
-        />
-      </div>
-      <template #footer>
-        <CButton
-          size="sm"
-          color="danger"
-          type="button"
-          @click="popupButtonPrintPdf = !popupButtonPrintPdf"
-        >
-          <CIcon name="cil-x-circle" /> Close
-        </CButton>
-      </template>
-    </CModal>
     <!-- Modal Detail Barang Dipilih  -->
     <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
       <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
@@ -391,8 +362,10 @@ export default {
     cancel() {
       this.$router.back();
     },
-    handleClickExportPDF(type) {
-      console.log(type);
+    handleExportPdf(type) {
+      if (type == 'Timbangan') type = 'timbangan';
+      if (type == 'Details') type = 'detail';
+      if (type == 'Summary') type = 'summary';
       exportDataV3({
         alert: true,
         param: {

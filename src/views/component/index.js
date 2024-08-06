@@ -24,6 +24,7 @@ import Metadata from './Metadata';
 import ButtonDownloadFilePath from './ButtonDownloadFilePath';
 import InputDefault from './InputDefault';
 import InputDateDefault from './InputDateDefault';
+import ButtonPopover from './ButtonPopover';
 
 export {
   VirtualKeyboard,
@@ -52,4 +53,5 @@ export {
   Metadata,
   InputDefault,
   InputDateDefault,
+  ButtonPopover,
 };
