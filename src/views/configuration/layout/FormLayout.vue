@@ -322,7 +322,9 @@
       size="lg"
     >
       <template #header>
-        <h5><strong>Select Date Format</strong></h5>
+        <h5>
+          <strong>Config Associated Content</strong>
+        </h5>
       </template>
       <CCardBody>
         <div class="form-group row mb-2">
@@ -330,12 +332,17 @@
             for="product-name"
             class="col-sm-3 col-md-3 col-lg-3 form-label"
           >
-            Date Format <strong class="text-danger">*</strong>
+            {{ selectedAssociated.data_type }}
+            <strong class="text-danger">*</strong>
           </label>
           <div class="col-sm-9 col-md-9 col-lg-9">
             <model-select
-              :options="listFormatDate"
-              v-model="vSelectDate"
+              :options="
+                selectedAssociated.data_type == 'Metadata'
+                  ? listMetadata
+                  : listFormatDate
+              "
+              v-model="selectedConfigAssociated"
               placeholder="--Select--"
             >
             </model-select>
@@ -410,6 +417,7 @@ td {
 import { ModelSelect } from 'vue-search-select';
 import moment from 'moment';
 import { getConfDate } from '../../../resource/ConfDate';
+import { getConfMetadata } from '../../../resource/ConfMetadata';
 import {
   getConfLayout,
   getLayoutIdentifier,
@@ -459,8 +467,9 @@ export default {
       modalRefDate: false,
       listFormatDate: [],
       listType: [],
+      listMetadata: [],
       selectedDate: null,
-      vSelectDate: null,
+      selectedConfigAssociated: null,
       list_packaging: [
         { value: 1, name: '1', label: `1` },
         { value: 1, name: '2', label: `2` },
@@ -719,7 +728,7 @@ export default {
     START
     INI UNTUK SAAT PILIH IDENTIFIER
     */
-    handleSelectIdentifier(item, index) {
+    async handleSelectIdentifier(item, index) {
       let i = this.selectedIndex;
       let check_ai = this.identifier[index];
       check_ai.is_selected = !check_ai.selected;
@@ -733,6 +742,34 @@ export default {
         } else {
           check_ai.format_ref = this.listFormatDate[0].value;
           check_ai.format_ref_data = this.listFormatDate[0].label;
+        }
+      } else if (check_ai.data_type == 'Metadata') {
+        // ini jika yang dipilih bertipe METADATA
+        let metadata = await getConfMetadata({
+          status: 'Active',
+          model: check_ai.table_name,
+        });
+        if (metadata && metadata.data.length == 1) {
+          this.listMetadata = metadata.data[0].metadata;
+          this.listMetadata = this.listMetadata.map((it) => {
+            return {
+              id: `${it.id}`,
+              value: `${it.id}`,
+              label: `${it.name}`,
+              text: `${it.name}`,
+              ...it,
+            };
+          });
+          let find = this.listMetadata.find(
+            (it) => it.value == check_ai.format_ref
+          );
+          if (find) {
+            check_ai.format_ref = find.value;
+            check_ai.format_ref_data = find.label;
+          } else {
+            check_ai.format_ref = null;
+            check_ai.format_ref_data = null;
+          }
         }
       }
       let lineParameter = this.formData.items[i];
@@ -833,17 +870,27 @@ export default {
       }
     },
     handleConfigAssociated() {
-      let idx = this.listFormatDate.findIndex(
-        (it) => this.selectedAssociated.format_ref === it.value
-      );
-      if (~idx) {
-        this.vSelectDate = this.listFormatDate[idx].value;
+      let find = null;
+      if (this.selectedAssociated.data_type === 'Metadata') {
+        find = this.listMetadata.find(
+          (it) => this.selectedAssociated.format_ref === it.value
+        );
+      } else if (this.selectedAssociated.data_type === 'Date') {
+        find = this.listFormatDate.find(
+          (it) => this.selectedAssociated.format_ref === it.value
+        );
+      }
+      if (find) {
+        this.selectedConfigAssociated = find.value;
       } else {
-        this.vSelectDate = null;
+        this.selectedConfigAssociated = null;
       }
 
       if (this.selectedAssociated) {
         if (this.selectedAssociated.data_type == 'Date') {
+          this.selectedDate = this.selectedAssociated.format_ref;
+          this.modalRefDate = true;
+        } else if (this.selectedAssociated.data_type == 'Metadata') {
           this.selectedDate = this.selectedAssociated.format_ref;
           this.modalRefDate = true;
         }
@@ -851,7 +898,7 @@ export default {
     },
 
     handleSetDateFormat() {
-      this.selectedDate = this.vSelectDate;
+      this.selectedDate = this.selectedConfigAssociated;
       let i = this.selectedIndex;
       let associated = this.selectedAssociated;
       associated.format_ref = this.selectedDate;
@@ -867,7 +914,7 @@ export default {
       //   n += 1;
       // }
       this.modalRefDate = false;
-      this.vSelectDate = null;
+      this.selectedConfigAssociated = null;
       this.rewriteIdentifierText();
       this.rewriteIdentifierText();
     },
@@ -1031,10 +1078,13 @@ export default {
     },
     associated_list() {
       return this.associated_content.map((item) => {
-        let idx = this.listFormatDate.findIndex(
-          (o) => o.value == item.format_ref
-        );
-        if (~idx) item.format_ref_data = this.listFormatDate[idx].label;
+        let find = null;
+        if (item.data_type == 'Metadata') {
+          find = this.listMetadata.find((it) => it.value == item.format_ref);
+        } else if (item.data_type == 'Metadata') {
+          find = this.listFormatDate.find((it) => it.value == item.format_ref);
+        }
+        if (find) item.format_ref_data = find.label;
 
         let title =
           `${item.layout_identifier_name} ` + (item.format_ref_data || '');

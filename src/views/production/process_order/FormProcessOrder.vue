@@ -92,11 +92,7 @@
               />
 
               <InputDateDefault
-                :disabled="
-                  action != 'Create' &&
-                  action != 'Update' &&
-                  action != 'Approve'
-                "
+                :disabled="action != 'Create' && action != 'Update'"
                 title="Mfg Date"
                 v-model="formData.mfg_date"
                 :options="{ format: 'dd/mm/yyyy' }"
@@ -108,11 +104,7 @@
                 <template #append>
                   <CInput
                     style="width: 400px"
-                    :disabled="
-                      action != 'Create' &&
-                      action != 'Update' &&
-                      action != 'Approve'
-                    "
+                    :disabled="action != 'Create' && action != 'Update'"
                     type="number"
                     v-model="formData.shelf_life"
                     placeholder="Shelf Life"
@@ -125,11 +117,7 @@
               </InputDateDefault>
 
               <InputDateDefault
-                :disabled="
-                  action != 'Create' &&
-                  action != 'Update' &&
-                  action != 'Approve'
-                "
+                :disabled="action != 'Create' && action != 'Update'"
                 title="Exp Date"
                 v-model="formData.exp_date"
                 :options="{ format: 'dd/mm/yyyy' }"
