@@ -171,13 +171,7 @@
                           readonly
                           :value.sync="item.associated_field"
                           @click="editAssociatedField((selectedIndex = index))"
-                          :is-valid="
-                            initialLoad
-                              ? null
-                              : !item.associated_field
-                              ? false
-                              : true
-                          "
+                          :is-valid="validationAssociatedField(item)"
                         >
                           <template #append>
                             <CButton
@@ -351,8 +345,8 @@
       </CCardBody>
       <template #footer>
         <div style="display: block; margin-left: auto">
-          <CButton size="sm" color="success" @click="handleSetDateFormat()">
-            Set Date
+          <CButton size="sm" color="success" @click="handleSetContentConfig()">
+            Save
           </CButton>
         </div>
       </template>
@@ -728,6 +722,25 @@ export default {
     START
     INI UNTUK SAAT PILIH IDENTIFIER
     */
+    async loadListMetadata(model) {
+      this.listMetadata = [];
+      let metadata = await getConfMetadata({
+        status: 'Active',
+        model: model,
+      });
+      if (metadata.data && metadata.data.length == 1) {
+        this.listMetadata = metadata.data[0].metadata;
+        this.listMetadata = this.listMetadata.map((it) => {
+          return {
+            id: `${it.id}`,
+            value: `${it.id}`,
+            label: `${it.name}`,
+            text: `${it.name}`,
+            ...it,
+          };
+        });
+      }
+    },
     async handleSelectIdentifier(item, index) {
       let i = this.selectedIndex;
       let check_ai = this.identifier[index];
@@ -745,31 +758,16 @@ export default {
         }
       } else if (check_ai.data_type == 'Metadata') {
         // ini jika yang dipilih bertipe METADATA
-        let metadata = await getConfMetadata({
-          status: 'Active',
-          model: check_ai.table_name,
-        });
-        if (metadata && metadata.data.length == 1) {
-          this.listMetadata = metadata.data[0].metadata;
-          this.listMetadata = this.listMetadata.map((it) => {
-            return {
-              id: `${it.id}`,
-              value: `${it.id}`,
-              label: `${it.name}`,
-              text: `${it.name}`,
-              ...it,
-            };
-          });
-          let find = this.listMetadata.find(
-            (it) => it.value == check_ai.format_ref
-          );
-          if (find) {
-            check_ai.format_ref = find.value;
-            check_ai.format_ref_data = find.label;
-          } else {
-            check_ai.format_ref = null;
-            check_ai.format_ref_data = null;
-          }
+        await this.loadListMetadata(check_ai.table_name);
+        let find = this.listMetadata.find(
+          (it) => it.value == check_ai.format_ref
+        );
+        if (find) {
+          check_ai.format_ref = find.value;
+          check_ai.format_ref_data = find.label;
+        } else {
+          check_ai.format_ref = null;
+          check_ai.format_ref_data = null;
         }
       }
       let lineParameter = this.formData.items[i];
@@ -842,6 +840,10 @@ export default {
       this.resetData();
       let layout_selected = this.formData.items[index];
       this.associated_content = layout_selected.field_associated ?? [];
+      // Load list config metadata jika row di klik
+      if (layout_selected && layout_selected.code == 'METADATA')
+        if (layout_selected.field_associated.length == 1)
+          this.loadListMetadata(layout_selected.field_associated[0].table_name);
     },
     handleSwipe(swipe) {
       let N = this.selectedIndex;
@@ -897,7 +899,7 @@ export default {
       }
     },
 
-    handleSetDateFormat() {
+    handleSetContentConfig() {
       this.selectedDate = this.selectedConfigAssociated;
       let i = this.selectedIndex;
       let associated = this.selectedAssociated;
@@ -918,6 +920,7 @@ export default {
       this.rewriteIdentifierText();
       this.rewriteIdentifierText();
     },
+
     matchDate(id) {
       let data = '';
       let idx = this.listFormatDate.findIndex((it) => it.value == id);
@@ -1007,11 +1010,35 @@ export default {
       if (this.formData.items.length == 0) next = false;
       for (const it of this.formData.items) {
         for (const req of required_item) {
-          if (!it[req]) next = false;
+          if (!it[req]) {
+            next = false;
+            break;
+          }
+        }
+
+        // check metadata
+        if (it.code == 'METADATA') {
+          for (const ass of it.field_associated) {
+            if (!ass.format_ref) next = false;
+            break;
+          }
         }
       }
       return next;
     },
+
+    validationAssociatedField(item) {
+      if (this.initialLoad) {
+        return null;
+      } else if (!item.associated_field) {
+        return false;
+      } else if (item.code == 'METADATA') {
+        let metadata = item.field_associated[0];
+        if (!metadata.format_ref_id) return false;
+      }
+      return true;
+    },
+
     async save() {
       this.initialLoad = false;
       if (!this.validation()) {
@@ -1078,16 +1105,18 @@ export default {
     },
     associated_list() {
       return this.associated_content.map((item) => {
+        let title = item.layout_identifier_name;
         let find = null;
         if (item.data_type == 'Metadata') {
           find = this.listMetadata.find((it) => it.value == item.format_ref);
-        } else if (item.data_type == 'Metadata') {
+        } else if (item.data_type == 'Date') {
           find = this.listFormatDate.find((it) => it.value == item.format_ref);
         }
-        if (find) item.format_ref_data = find.label;
+        if (find) {
+          item.format_ref_data = find.label;
+          title += ` - ${item.format_ref_data}`;
+        }
 
-        let title =
-          `${item.layout_identifier_name} ` + (item.format_ref_data || '');
         return {
           ...item,
           AI: item.layout_identifier_AI || '',
