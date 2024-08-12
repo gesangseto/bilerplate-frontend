@@ -257,7 +257,7 @@
                   class="table-associated-content"
                   hover
                   :items="associated_list"
-                  :fields="associated_field"
+                  :fields="associated_field_object"
                 >
                   <template #action="{ item }">
                     <td>
@@ -433,7 +433,7 @@ export default {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.page = 1;
     this.getGenerateType();
-    this.getDateFromat();
+    this.getDateFormat();
     if (this.action == 'Create' && this.$route.params.id) {
       this.is_copy = true;
     }
@@ -462,7 +462,6 @@ export default {
       listFormatDate: [],
       listType: [],
       listMetadata: [],
-      selectedDate: null,
       selectedConfigAssociated: null,
       list_packaging: [
         { value: 1, name: '1', label: `1` },
@@ -505,7 +504,7 @@ export default {
         identifier_name: '',
       },
       // DONE
-      associated_field: [
+      associated_field_object: [
         {
           key: 'action',
           label: ' ',
@@ -803,15 +802,19 @@ export default {
     },
 
     rewriteIdentifierText(i = this.selectedIndex) {
+      let item = JSON.parse(JSON.stringify(this.formData.items[i]));
       let text = '';
-      if (this.formData.items[i].field_associated.length > 0) {
-        for (const it of this.formData.items[i].field_associated) {
-          //
+      if (item.field_associated.length > 0) {
+        for (const it of item.field_associated) {
           if (it.layout_identifier_AI) {
             text += '-' + it.layout_identifier_AI;
           } else {
             text += '-' + it.layout_identifier_name;
           }
+          if (it.format_ref)
+            if (it.data_type == 'Metadata' || it.data_type == 'Date') {
+              text += ` (${it.format_ref_data})`;
+            }
         }
       } else {
         text = 'Automatic';
@@ -889,39 +892,41 @@ export default {
       }
 
       if (this.selectedAssociated) {
-        if (this.selectedAssociated.data_type == 'Date') {
-          this.selectedDate = this.selectedAssociated.format_ref;
-          this.modalRefDate = true;
-        } else if (this.selectedAssociated.data_type == 'Metadata') {
-          this.selectedDate = this.selectedAssociated.format_ref;
+        if (
+          this.selectedAssociated.data_type == 'Date' ||
+          this.selectedAssociated.data_type == 'Metadata'
+        ) {
           this.modalRefDate = true;
         }
       }
     },
 
     handleSetContentConfig() {
-      this.selectedDate = this.selectedConfigAssociated;
       let i = this.selectedIndex;
+      let selectedConfig = null;
       let associated = this.selectedAssociated;
-      associated.format_ref = this.selectedDate;
-      associated.format_ref_data = this.matchDate(this.selectedDate);
+      if (associated.data_type == 'Metadata') {
+        selectedConfig = this.listMetadata.find(
+          (it) => it.value == this.selectedConfigAssociated
+        );
+      } else if (associated.data_type == 'Date') {
+        selectedConfig = this.listFormatDate.find(
+          (it) => it.value == this.selectedConfigAssociated
+        );
+      }
+      associated.format_ref = this.selectedConfigAssociated;
+      associated.format_ref_data = selectedConfig.label || null;
+
       let idx = this.formData.items[i].field_associated.findIndex(
         (it) => it.layout_identifier_id == associated.layout_identifier_id
       );
       if (~idx) this.formData.items[i].field_associated[idx] = associated;
-      // for (const it of this.formData.items[i].field_associated) {
-      //   if (it.layout_identifier_id === associated.layout_identifier_id) {
-      //     this.formData.items[i].field_associated[n] = associated;
-      //   }
-      //   n += 1;
-      // }
       this.modalRefDate = false;
       this.selectedConfigAssociated = null;
       this.rewriteIdentifierText();
-      this.rewriteIdentifierText();
     },
 
-    matchDate(id) {
+    rematchAssociated(id) {
       let data = '';
       let idx = this.listFormatDate.findIndex((it) => it.value == id);
       if (~idx) return this.listFormatDate[idx].label;
@@ -956,7 +961,7 @@ export default {
     handleClickRow(index) {
       this.selectedIndex = index;
     },
-    async getDateFromat() {
+    async getDateFormat() {
       this.listFormatDate = [];
       let _res = await getConfDate({ status: 'Active' });
       if (_res) {
@@ -1034,7 +1039,7 @@ export default {
         return false;
       } else if (item.code == 'METADATA') {
         let metadata = item.field_associated[0];
-        if (!metadata.format_ref_id) return false;
+        if (!metadata.format_ref) return false;
       }
       return true;
     },

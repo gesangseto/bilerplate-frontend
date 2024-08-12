@@ -141,16 +141,6 @@
                     />
                   </td>
                 </tr>
-                <tr style="height: 50px" v-if="formData.remark">
-                  <td>Remark</td>
-                  <td>
-                    <input
-                      class="form-control"
-                      readonly
-                      v-model="formData.remark"
-                    />
-                  </td>
-                </tr>
 
                 <tr style="height: 50px" v-for="index in 1" :key="index">
                   <td
