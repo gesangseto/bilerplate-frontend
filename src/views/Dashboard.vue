@@ -301,7 +301,7 @@
         </CCard>
       </CCol>
     </CRow>
-    <CRow>
+    <!-- <CRow>
       <CCol class="ContainerDashboard" sm="6" lg="6">
         <CCard>
           <CCardHeader>
@@ -352,25 +352,8 @@
           </CCardBody>
         </CCard>
       </CCol>
-    </CRow>
-    <CRow v-if="profile && profile.id == 0">
-      <CCol class="ContainerDashboard" sm="6" md="6" lg="6">
-        <CCard>
-          <CCardHeader>
-            <h5 class="text-center" style="color: black">
-              Incoming - Outgoing Last 12 Months
-            </h5>
-          </CCardHeader>
-          <CCardBody>
-            <CChartLineSimple
-              :labels="in_out_month.labels"
-              :datasets="in_out_month.datasets"
-              pointed
-              border-color="warning"
-            />
-          </CCardBody>
-        </CCard>
-      </CCol>
+    </CRow> -->
+    <CRow>
       <CCol class="ContainerDashboard" sm="6" md="6" lg="6">
         <CCard>
           <CCardHeader>
@@ -382,6 +365,23 @@
             <CChartLineSimple
               :labels="in_out_day.labels"
               :datasets="in_out_day.datasets"
+              pointed
+              border-color="warning"
+            />
+          </CCardBody>
+        </CCard>
+      </CCol>
+      <CCol class="ContainerDashboard" sm="6" md="6" lg="6">
+        <CCard>
+          <CCardHeader>
+            <h5 class="text-center" style="color: black">
+              Incoming - Outgoing Last 12 Months
+            </h5>
+          </CCardHeader>
+          <CCardBody>
+            <CChartLineSimple
+              :labels="in_out_month.labels"
+              :datasets="in_out_month.datasets"
               pointed
               border-color="warning"
             />
@@ -486,10 +486,10 @@ export default {
     });
     if (_res) {
       this.dataDefault = _res.data[0];
-      this.generateAllMonth();
-      this.getDataBarChart();
-      this.getDataPieChart1();
-      this.getDataPieChart2();
+      // this.generateAllMonth();
+      // this.getDataBarChart();
+      // this.getDataPieChart1();
+      // this.getDataPieChart2();
     }
     await this.getInOut('months');
     await this.getInOut('days');
