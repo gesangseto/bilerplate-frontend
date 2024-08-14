@@ -81,6 +81,10 @@ export default {
       if (this.options.nospace) {
         cleanedValue = cleanedValue.trim();
       }
+      if (this.validasi == 'numeric') {
+        cleanedValue = cleanedValue.replace(/^0+/, '');
+      }
+
       this.internalValue = cleanedValue;
     },
     convertValueToString() {

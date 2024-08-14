@@ -227,7 +227,7 @@
                     <InputDefault
                       :col="[3, 7]"
                       :title="'Android ID ' + (index + 1)"
-                      :validasi="'numeric'"
+                      :validasi="'alphanumeric'"
                       v-model="data.list_device[index]"
                       :max="100"
                     />
