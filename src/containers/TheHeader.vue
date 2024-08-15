@@ -40,56 +40,40 @@
         <h5 class="modal-title">Notification</h5>
         <div>
           <CButton
-            v-if="notifCount > 0"
+            :disabled="!checkedNotif"
             class="m-1"
             type="submit"
             size="sm"
             color="danger"
-            @click="deleteNotifAll()"
+            @click="deleteNotif()"
           >
-            Delete All
+            Delete
           </CButton>
           <CButton
-            v-if="notifUnreadCount > 0"
+            :disabled="!checkedNotif"
             class="m-1"
             type="submit"
             size="sm"
             color="primary"
-            @click="readNotifAll()"
+            @click="readNotif()"
           >
-            Read All
+            Read
           </CButton>
         </div>
       </template>
-
       <div class="scroll-auto" v-if="notifCount > 0">
         <CRow v-for="item in notif" :key="item.id">
-          <CCol key="item.id" sm="12" md="12">
-            <CButton
-              v-if="!item.flag_read"
-              @click="readNotif(item)"
-              color="primary"
-              size="sm"
-              class="m-1"
-            >
-              <CIcon name="cil-bell" />
-            </CButton>
-            <CButton
-              v-if="item.flag_read"
-              @click="deleteNotif(item)"
-              color="danger"
-              size="sm"
-              class="m-1"
-            >
-              <CIcon name="cil-trash" />
-            </CButton>
+          <CCol sm="12" md="12" class="mb-2">
+            <CInputCheckbox class="mr-2" :checked.sync="item.checked" />
             <a
               :href="item.trx_ref_name ? generateLinkNotif(item) : null"
-              class="notification"
+              class="notification ml-4"
               @click="readNotif(item, true)"
               :style="!item.flag_read ? 'font-weight: bold' : null"
-              >{{ item.content }}</a
             >
+              {{ item.content }}
+            </a>
+            <hr class="mt-2 mb-0" />
           </CCol>
         </CRow>
       </div>
@@ -301,22 +285,21 @@ export default {
         this.$router.push({ path: `/oops` });
       }
     },
-    async readNotif(item, closeAfterUpdate) {
-      let _res = await updateMstNotification({ id: [item.id] });
-      this.$toast.open({
-        message: _res.error ? _res.message : 'Data has been saved succesfully ',
-        type: _res.error ? 'error' : 'success',
-        dissmissible: true,
-        position: 'top-right',
-        duration: 5000,
-      });
-      this.getNotif();
-      if (closeAfterUpdate) {
-        this.notifModal = false;
+    async readNotif(item, alert = false) {
+      if (!alert) {
+        let message = `You are about to read the selected notification. All read notifications cannot be restored.\nAre you sure you want to continue?`;
+        if (!confirm(message)) {
+          return;
+        }
       }
-    },
-    async deleteNotif(item) {
-      let _res = await deleteMstNotification({ id: [item.id] });
+
+      let checkedIds = null;
+      if (item) {
+        checkedIds = item.id;
+      } else {
+        checkedIds = this.notif.filter((it) => it.checked).map((it) => it.id);
+      }
+      let _res = await updateMstNotification({ id: checkedIds });
       this.$toast.open({
         message: _res.error ? _res.message : 'Data has been saved succesfully ',
         type: _res.error ? 'error' : 'success',
@@ -326,27 +309,13 @@ export default {
       });
       this.getNotif();
     },
-    async readNotifAll() {
-      let message = `You are about to read all existing notifications. All read notifications cannot be restored.\nAre you sure you want to continue?`;
+    async deleteNotif() {
+      let message = `You are about to delete the selected notification. All deleted notifications cannot be restored.\nAre you sure you want to continue?`;
       if (!confirm(message)) {
         return;
       }
-      let _res = await updateMstNotification({ id: 'all' });
-      this.$toast.open({
-        message: _res.error ? _res.message : 'Data has been saved succesfully ',
-        type: _res.error ? 'error' : 'success',
-        dissmissible: true,
-        position: 'top-right',
-        duration: 5000,
-      });
-      this.getNotif();
-    },
-    async deleteNotifAll() {
-      let message = `You are about to delete all existing notifications. All deleted notifications cannot be restored.\nAre you sure you want to continue?`;
-      if (!confirm(message)) {
-        return;
-      }
-      let _res = await deleteMstNotification({ id: 'all' });
+      let checkedIds = this.notif.filter((it) => it.checked).map((it) => it.id);
+      let _res = await deleteMstNotification({ id: checkedIds });
       this.$toast.open({
         message: _res.error ? _res.message : 'Data has been saved succesfully ',
         type: _res.error ? 'error' : 'success',
@@ -407,6 +376,12 @@ export default {
     },
     notifCount() {
       return Array.isArray(this.notif) ? this.notif.length : 0;
+    },
+    checkedNotif() {
+      if (Array.isArray(this.notif)) {
+        return this.notif.find((it) => it.checked);
+      }
+      return null;
     },
   },
 };
