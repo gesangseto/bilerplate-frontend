@@ -282,17 +282,28 @@
             <CIcon name="cil-check-circle" /> Generate Serial</CButton
           >
           <!-- Generate Serial data saat update-->
-          <CButton
-            v-if="formData.status == 4 && userInfo.id == 0"
-            type="submit"
-            size="sm"
-            @click="reset_status()"
-            class="mr-2"
-            color="warning"
-          >
-            <CIcon name="cil-sync" /> Reset Status</CButton
-          >
 
+          <ButtonPermission
+            v-if="formData.status == 4 && userInfo.id == 0"
+            :buttonProperty="{
+              color: 'warning',
+              text: 'Reset Status',
+            }"
+            class="float-right"
+            :permission="'approve'"
+            @click="reset_status()"
+          />
+          <ButtonPopover
+            v-if="formData.status == 4 && userInfo.id == 0"
+            :buttonProperty="{
+              color: 'warning',
+              text: 'Close Batch',
+            }"
+            permission="approve"
+            :popover_list="['Partial', 'Batch']"
+            @handleClick="closeDevelopment($event)"
+            mt="-11"
+          />
           <!-- Buton Cancel-->
           <ButtonBack />
         </CCardFooter>
@@ -465,6 +476,7 @@ import {
   requestAdditionalSerial,
   resetProcessOrder,
   updateProcessOrder,
+  closeDevelopmentPO,
 } from '../../../resource/ProcessOrder';
 import {
   capitalizeFirstLetter,
@@ -693,6 +705,30 @@ export default {
     }
   },
   methods: {
+    async closeDevelopment(type) {
+      this.$isLoading(true);
+      function getRandomMinMax(n) {
+        let result = { min: (Math.random() * 5).toFixed(2), max: null };
+        result.max = (parseFloat(result.min) + parseFloat(n)).toFixed(2);
+        return result;
+      }
+      let res = await closeDevelopmentPO({
+        id: this.formData.id,
+        type: type == 'Partial' ? 'partial' : 'batch',
+        weight_l2: getRandomMinMax(2.1),
+      });
+      this.$isLoading(false);
+      this.$toast.open({
+        message: res['error']
+          ? `${res['message']}`
+          : 'Success close development',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!res['error']) this.$router.back();
+    },
     reformatExp() {
       let add = this.formData.shelf_life;
       if (add && this.formData.mfg_date) {

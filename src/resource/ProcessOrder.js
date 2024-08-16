@@ -110,6 +110,23 @@ export const generateProcessOrder = async (param = Object) => {
       });
   });
 };
+export const closeDevelopmentPO = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(`${url}/closed-development`, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
 export const requestAdditionalSerial = async (param = Object) => {
   if (!param) {
     return false;
