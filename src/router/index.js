@@ -224,6 +224,11 @@ let router = new Router({
 router.beforeEach((to, from, next) => {
   let result = { name: '', link: null, breadcrumbs: '' };
   let menu = getMenu();
+  function getStringBeforeKeyword(url) {
+    let match = url.match(/(.*)(?=\/(update|create|read|approve|delete))/);
+    return match ? match[0] : url;
+  }
+  let tujuan = getStringBeforeKeyword(to.path);
   if (menu && menu[0]._children) {
     menu = menu[0]._children;
     function findActiveMenu(menu, breadcrumbs) {
@@ -231,8 +236,8 @@ router.beforeEach((to, from, next) => {
       let childBreadcrumbs = '';
       for (const it of menu) {
         childBreadcrumbs = it.name;
-        if (it.link && to.path.includes(it.link)) {
-          let findExactMenu = menu.find((a) => a.link == to.path);
+        if (it.link && tujuan.includes(it.link)) {
+          let findExactMenu = menu.find((a) => a.link == tujuan);
           if (findExactMenu) {
             result = {
               ...findExactMenu,
@@ -258,6 +263,8 @@ router.beforeEach((to, from, next) => {
   if (!result.link) {
     result.breadcrumbs = '';
   }
+  console.log(result);
+
   Vue.prototype.$activeMenu = result;
   return next();
 });
