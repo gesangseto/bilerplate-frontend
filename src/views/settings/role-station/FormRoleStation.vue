@@ -71,13 +71,7 @@
                       Parent Menu
                     </th>
                     <th style="text-align: center">Child Menu</th>
-                    <th style="text-align: center">Create</th>
-                    <th style="text-align: center">Read</th>
-                    <th style="text-align: center">Update</th>
-                    <th style="text-align: center">Delete</th>
-                    <th style="text-align: center">Print</th>
-                    <th style="text-align: center">Approve</th>
-                    <th style="text-align: center">Check All in Row</th>
+                    <th style="text-align: center">Access</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -114,41 +108,6 @@
                             ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
                             : 'text-align: center;'
                         "
-                        v-if="child.parent_label != 'Android'"
-                      >
-                        <CInputCheckbox
-                          v-if="child.show_create === 1"
-                          :disabled="action == 'Read' ? true : false"
-                          size="sm"
-                          @click="clickCreate(child, key)"
-                          :checked="child.can_add"
-                          style="margin-bottom: 30px; margin-top: 5px"
-                        />
-                      </td>
-                      <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                            : 'text-align: center;'
-                        "
-                        v-if="child.parent_label != 'Android'"
-                      >
-                        <CInputCheckbox
-                          v-if="child.show_read === 1"
-                          :disabled="action == 'Read' ? true : false"
-                          @click="clickRead(child, key)"
-                          size="sm"
-                          :checked="child.can_view"
-                          style="margin-bottom: 30px; margin-top: 5px"
-                        />
-                      </td>
-                      <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                            : 'text-align: center;'
-                        "
-                        :colspan="child.parent_label == 'Android' ? 7 : null"
                       >
                         <CInputCheckbox
                           v-if="child.show_update === 1"
@@ -156,73 +115,6 @@
                           @click="clickUpdate(child, key)"
                           size="sm"
                           :checked="child.can_edit"
-                          style="margin-bottom: 30px; margin-top: 5px"
-                        />
-                      </td>
-                      <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                            : 'text-align: center;'
-                        "
-                        v-if="child.parent_label != 'Android'"
-                      >
-                        <CInputCheckbox
-                          v-if="child.show_delete === 1"
-                          :disabled="action == 'Read' ? true : false"
-                          @click="clickDelete(child, key)"
-                          size="sm"
-                          :checked="child.can_delete"
-                          style="margin-bottom: 30px; margin-top: 5px"
-                        />
-                      </td>
-                      <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                            : 'text-align: center;'
-                        "
-                        v-if="child.parent_label != 'Android'"
-                      >
-                        <CInputCheckbox
-                          v-if="child.show_print === 1"
-                          :disabled="action == 'Read' ? true : false"
-                          @click="clickPrint(child, key)"
-                          size="sm"
-                          :checked="child.can_print"
-                          style="margin-bottom: 30px; margin-top: 5px"
-                        />
-                      </td>
-                      <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                            : 'text-align: center;'
-                        "
-                        v-if="child.parent_label != 'Android'"
-                      >
-                        <CInputCheckbox
-                          v-if="child.show_approve === 1"
-                          :disabled="action == 'Read' ? true : false"
-                          @click="clickApprove(child, key)"
-                          size="sm"
-                          :checked="child.can_approve"
-                          style="margin-bottom: 30px; margin-top: 5px"
-                        />
-                      </td>
-                      <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                            : 'text-align: center;'
-                        "
-                        v-if="child.parent_label != 'Android'"
-                      >
-                        <CInputCheckbox
-                          :disabled="action == 'Read' ? true : false"
-                          @click="clickAll(child, key)"
-                          size="sm"
-                          :checked="child.can_all"
                           style="margin-bottom: 30px; margin-top: 5px"
                         />
                       </td>
@@ -286,7 +178,7 @@ import {
 } from '../../../resource/MstSectionRole';
 
 export default {
-  name: 'AddRoles',
+  name: 'FormRoleStation',
   props: {
     id: {
       type: String,
@@ -359,7 +251,7 @@ export default {
       }
     },
     async loadData() {
-      let param = { type: '[0, 1]', id: this.$route.params.id };
+      let param = { type: 2, id: this.$route.params.id };
       let _res = await getMstSectionRole(param);
       if (!_res) return;
       let data = _res.data[0];
@@ -427,47 +319,9 @@ export default {
       this.defaultMenu = nestedMenu;
       this.menu = nestedMenu;
     },
-
-    clickCreate(item, key) {
-      this.menu[key].can_add = !this.menu[key].can_add;
-      this.defaultMenu[key].can_add = this.menu[key].can_add;
-    },
-    clickRead(item, key) {
-      this.menu[key].can_view = !this.menu[key].can_view;
-      this.defaultMenu[key].can_view = this.menu[key].can_view;
-    },
     clickUpdate(item, key) {
       this.menu[key].can_edit = !this.menu[key].can_edit;
       this.defaultMenu[key].can_edit = this.menu[key].can_edit;
-    },
-    clickDelete(item, key) {
-      this.menu[key].can_delete = !this.menu[key].can_delete;
-      this.defaultMenu[key].can_delete = this.menu[key].can_delete;
-    },
-    clickPrint(item, key) {
-      this.menu[key].can_print = !this.menu[key].can_print;
-      this.defaultMenu[key].can_print = this.menu[key].can_print;
-    },
-    clickApprove(item, key) {
-      this.menu[key].can_approve = !this.menu[key].can_approve;
-      this.defaultMenu[key].can_approve = this.menu[key].can_approve;
-    },
-    clickAll(item, key) {
-      this.menu[key].can_add = !this.menu[key].can_all;
-      this.menu[key].can_view = !this.menu[key].can_all;
-      this.menu[key].can_edit = !this.menu[key].can_all;
-      this.menu[key].can_delete = !this.menu[key].can_all;
-      this.menu[key].can_print = !this.menu[key].can_all;
-      this.menu[key].can_approve = !this.menu[key].can_all;
-      this.menu[key].can_all = !this.menu[key].can_all;
-
-      this.defaultMenu[key].can_add = this.menu[key].can_all;
-      this.defaultMenu[key].can_view = this.menu[key].can_all;
-      this.defaultMenu[key].can_edit = this.menu[key].can_all;
-      this.defaultMenu[key].can_delete = this.menu[key].can_all;
-      this.defaultMenu[key].can_print = this.menu[key].can_all;
-      this.defaultMenu[key].can_approve = this.menu[key].can_all;
-      this.defaultMenu[key].can_all = this.menu[key].can_all;
     },
     checkAll() {
       let newMenu = [];
@@ -524,7 +378,7 @@ export default {
 
       let dataPost = {
         id: this.role.id,
-        type: '[0,1]',
+        type: 2,
         section_id: this.role.section_id,
         department_id: this.role.department_id,
         role_menu: newMenu,

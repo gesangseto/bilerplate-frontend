@@ -62,7 +62,7 @@ import { getMstSectionRole } from '../../../resource/MstSectionRole';
 import { exportData, calculatePaginationV3 } from '../../../utils';
 
 export default {
-  name: 'ListRole',
+  name: 'ListRoleStation',
 
   mounted() {
     this.page = 1;
@@ -125,12 +125,12 @@ export default {
     },
     rowUpdate(item) {
       this.$router.push({
-        path: `role/update/${item.id}`,
+        path: `role-station/update/${item.id}`,
       });
     },
     rowRead(item) {
       this.$router.push({
-        path: `role/read/${item.id}`,
+        path: `role-station/read/${item.id}`,
       });
     },
   },

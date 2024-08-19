@@ -53,6 +53,11 @@ const FormUser = () => import('@/views/settings/user/FormUser');
 // Role
 const ListRole = () => import('@/views/settings/role/ListRole');
 const FormRole = () => import('@/views/settings/role/FormRole');
+// Role-Station
+const ListRoleStation = () =>
+  import('@/views/settings/role-station/ListRoleStation');
+const FormRoleStation = () =>
+  import('@/views/settings/role-station/FormRoleStation');
 // Workflow
 const ListWorkflow = () => import('@/views/settings/workflow/ListWorkflow');
 const FormWorkflow = () => import('@/views/settings/workflow/FormWorkflow');
@@ -227,10 +232,18 @@ router.beforeEach((to, from, next) => {
       for (const it of menu) {
         childBreadcrumbs = it.name;
         if (it.link && to.path.includes(it.link)) {
-          result = {
-            ...it,
-            breadcrumbs: `${breadcrumbs} / ${childBreadcrumbs}`,
-          };
+          let findExactMenu = menu.find((a) => a.link == to.path);
+          if (findExactMenu) {
+            result = {
+              ...findExactMenu,
+              breadcrumbs: `${breadcrumbs} / ${childBreadcrumbs}`,
+            };
+          } else {
+            result = {
+              ...it,
+              breadcrumbs: `${breadcrumbs} / ${childBreadcrumbs}`,
+            };
+          }
           break;
         } else if (it.items) {
           result = findActiveMenu(it.items, childBreadcrumbs);
@@ -443,6 +456,25 @@ function configRoutes() {
           path: 'role',
           name: 'Role (Home)',
           component: ListRole,
+          meta: { login: true },
+        },
+        // ROLES-STATION
+        {
+          path: 'role-station/:type/:id',
+          name: 'Role (Details) ',
+          component: FormRoleStation,
+          meta: { login: true },
+        },
+        {
+          path: 'role-station/:type',
+          name: 'Role (Details)',
+          component: FormRoleStation,
+          meta: { login: true },
+        },
+        {
+          path: 'role-station',
+          name: 'Role (Home)',
+          component: ListRoleStation,
           meta: { login: true },
         },
         // DEPARTMENT
