@@ -230,6 +230,10 @@ export default {
           new Date(dateFilter.this_week.start),
           new Date(dateFilter.this_week.end),
         ],
+        'Last 1 week': [
+          new Date(dateFilter.last_one_week.start),
+          new Date(dateFilter.last_one_week.end),
+        ],
         'This month': [
           new Date(dateFilter.this_month.start),
           new Date(dateFilter.this_month.end),

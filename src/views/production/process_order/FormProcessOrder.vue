@@ -293,6 +293,16 @@
             :permission="'approve'"
             @click="reset_status()"
           />
+          <ButtonPermission
+            v-if="formData.status == 3 && userInfo.id == 0"
+            :buttonProperty="{
+              color: 'warning',
+              text: 'Start Batch',
+            }"
+            class="float-right"
+            :permission="'approve'"
+            @click="start_batch()"
+          />
           <ButtonPopover
             v-if="formData.status == 4 && userInfo.id == 0"
             :buttonProperty="{
@@ -475,6 +485,7 @@ import {
   insertProcessOrder,
   requestAdditionalSerial,
   resetProcessOrder,
+  startBatchProcessOrder,
   updateProcessOrder,
   closeDevelopmentPO,
 } from '../../../resource/ProcessOrder';
@@ -705,30 +716,6 @@ export default {
     }
   },
   methods: {
-    async closeDevelopment(type) {
-      this.$isLoading(true);
-      function getRandomMinMax(n) {
-        let result = { min: (Math.random() * 5).toFixed(2), max: null };
-        result.max = (parseFloat(result.min) + parseFloat(n)).toFixed(2);
-        return result;
-      }
-      let res = await closeDevelopmentPO({
-        id: this.formData.id,
-        type: type == 'Partial' ? 'partial' : 'batch',
-        weight_l2: getRandomMinMax(2.1),
-      });
-      this.$isLoading(false);
-      this.$toast.open({
-        message: res['error']
-          ? `${res['message']}`
-          : 'Success close development',
-        type: res.error ? 'error' : 'success',
-        dissmissible: true,
-        position: 'top-right',
-        duration: 5000,
-      });
-      if (!res['error']) this.$router.back();
-    },
     reformatExp() {
       let add = this.formData.shelf_life;
       if (add && this.formData.mfg_date) {
@@ -859,25 +846,6 @@ export default {
       this.chekcedBatch.splice(index, 1);
       if (this.items.length == 0) {
         this.can_process = false;
-      }
-    },
-    async reset_status() {
-      var message = `You are about to changes status to "Ready" to this data. This operation cannot be undone. Would you like to continue?`;
-
-      if (confirm(message)) {
-        this.$isLoading(true);
-        let res = await resetProcessOrder({ id: this.formData.id });
-        this.$isLoading(false);
-        this.$toast.open({
-          message: res['error']
-            ? `${res['message']}`
-            : 'Data has been saved succesfully ',
-          type: res.error ? 'error' : 'success',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-        if (!res['error']) this.$router.back();
       }
     },
     async generate_serial() {
@@ -1019,6 +987,71 @@ export default {
     },
     cancel() {
       this.$router.back();
+    },
+    async closeDevelopment(type) {
+      this.$isLoading(true);
+      function getRandomMinMax(n) {
+        let result = { min: (Math.random() * 5).toFixed(2), max: null };
+        result.max = (parseFloat(result.min) + parseFloat(n)).toFixed(2);
+        return result;
+      }
+      let res = await closeDevelopmentPO({
+        id: this.formData.id,
+        type: type == 'Partial' ? 'partial' : 'batch',
+        weight_l2: getRandomMinMax(2.1),
+      });
+      this.$isLoading(false);
+      this.$toast.open({
+        message: res['error']
+          ? `${res['message']}`
+          : 'Success close development',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!res['error']) this.$router.back();
+    },
+    async start_batch() {
+      var message = `You are about to Start Batch to this data. This operation cannot be undone. Would you like to continue?`;
+      if (confirm(message)) {
+        this.$isLoading(true);
+        let param = {
+          id: this.formData.id,
+          serial_ids: { type: 'all' },
+        };
+        let res = await startBatchProcessOrder(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!res['error']) this.$router.back();
+      }
+    },
+    async reset_status() {
+      var message = `You are about to changes status to "Ready" to this data. This operation cannot be undone. Would you like to continue?`;
+
+      if (confirm(message)) {
+        this.$isLoading(true);
+        let res = await resetProcessOrder({ id: this.formData.id });
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved succesfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!res['error']) this.$router.back();
+      }
     },
   },
   computed: {

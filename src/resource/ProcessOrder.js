@@ -75,6 +75,7 @@ export const insertProcessOrder = async (param = Object) => {
       });
   });
 };
+
 export const updateProcessOrder = async (param = Object) => {
   if (!param) {
     return false;
@@ -110,6 +111,7 @@ export const generateProcessOrder = async (param = Object) => {
       });
   });
 };
+
 export const closeDevelopmentPO = async (param = Object) => {
   if (!param) {
     return false;
@@ -131,7 +133,6 @@ export const requestAdditionalSerial = async (param = Object) => {
   if (!param) {
     return false;
   }
-
   return new Promise((resolve) => {
     $axiosMertrack
       .post(`${url}/request-additional-serial`, param)
@@ -145,6 +146,7 @@ export const requestAdditionalSerial = async (param = Object) => {
       });
   });
 };
+
 export const resetProcessOrder = async (param = Object) => {
   if (!param) {
     return false;
@@ -153,6 +155,23 @@ export const resetProcessOrder = async (param = Object) => {
   return new Promise((resolve) => {
     $axiosMertrack
       .post(`${url}/change-to-ready`, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+export const startBatchProcessOrder = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(`${url}/confirmation`, param)
       .then((result) => {
         let res = result.data;
         return resolve(res);
