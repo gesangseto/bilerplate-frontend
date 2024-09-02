@@ -112,7 +112,7 @@ export const generateProcessOrder = async (param = Object) => {
   });
 };
 
-export const closeDevelopmentPO = async (param = Object) => {
+export const closeBatchPO = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -129,6 +129,25 @@ export const closeDevelopmentPO = async (param = Object) => {
       });
   });
 };
+
+export const changeProgressPO = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(`${url}/change-progress`, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
 export const requestAdditionalSerial = async (param = Object) => {
   if (!param) {
     return false;

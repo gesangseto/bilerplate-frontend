@@ -59,12 +59,8 @@
               <InputDefault
                 :disabled="action != 'Create' && action != 'Update'"
                 title="HET"
-                :validasi="'numeric'"
                 v-model="formData.het"
-                :options="{ uppercase: true }"
-                :required="true"
-                :max="20"
-                :is-valid="initialLoad ? null : !formData.het ? false : true"
+                :max="25"
               />
 
               <InputDefault
@@ -294,7 +290,9 @@
             @click="reset_status()"
           />
           <ButtonPermission
-            v-if="formData.status == 3 && userInfo.id == 0"
+            v-if="
+              (formData.status == 3 || formData.status == 4) && userInfo.id == 0
+            "
             :buttonProperty="{
               color: 'warning',
               text: 'Start Batch',
@@ -310,8 +308,19 @@
               text: 'Close Batch',
             }"
             permission="approve"
-            :popover_list="['Partial', 'Batch']"
+            :popover_list="['Partial', 'Final']"
             @handleClick="closeDevelopment($event)"
+            mt="-11"
+          />
+          <ButtonPopover
+            v-if="formData.status == 4 && userInfo.id == 0"
+            :buttonProperty="{
+              color: 'warning',
+              text: 'Change Progress',
+            }"
+            permission="approve"
+            :popover_list="['Paused', 'Resume']"
+            @handleClick="changeProgressDevelopment($event)"
             mt="-11"
           />
           <!-- Buton Cancel-->
@@ -487,7 +496,8 @@ import {
   resetProcessOrder,
   startBatchProcessOrder,
   updateProcessOrder,
-  closeDevelopmentPO,
+  closeBatchPO,
+  changeProgressPO,
 } from '../../../resource/ProcessOrder';
 import {
   capitalizeFirstLetter,
@@ -573,7 +583,7 @@ export default {
         lot_no: '',
         exp_date: null,
         mfg_date: null,
-        het: 0,
+        het: '',
         process_order_erp: '',
         buff: 0,
         generate_count_level_1: null,
@@ -793,7 +803,7 @@ export default {
       let _res = await getProcessOrder({ id: this.$route.params.id });
       if (_res && !_res.error) {
         this.formData = _res.data[0];
-        this.formData.het = this.formData.het || 0;
+        this.formData.het = this.formData.het || '';
         this.formData.buff = this.formData.buff || 0;
         this.formData.min_count_generated_serial =
           getConfig().min_count_generated_serial || 0;
@@ -917,9 +927,9 @@ export default {
           return false;
         }
       }
-      if (!this.formData.het && this.formData.het != 0) {
-        return false;
-      }
+      // if (!this.formData.het) {
+      //   return false;
+      // }
       if (!this.formData.buff && this.formData.buff != 0) {
         return false;
       }
@@ -988,6 +998,24 @@ export default {
     cancel() {
       this.$router.back();
     },
+    async changeProgressDevelopment(type) {
+      this.$isLoading(true);
+      let res = await changeProgressPO({
+        id: this.formData.id,
+        status: type == 'Resume' ? '1' : '2',
+      });
+      this.$isLoading(false);
+      this.$toast.open({
+        message: res['error']
+          ? `${res['message']}`
+          : 'Success change progress development',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!res['error']) this.$router.back();
+    },
     async closeDevelopment(type) {
       this.$isLoading(true);
       function getRandomMinMax(n) {
@@ -995,9 +1023,9 @@ export default {
         result.max = (parseFloat(result.min) + parseFloat(n)).toFixed(2);
         return result;
       }
-      let res = await closeDevelopmentPO({
+      let res = await closeBatchPO({
         id: this.formData.id,
-        type: type == 'Partial' ? 'partial' : 'batch',
+        type: type == 'Partial' ? 'partial' : 'final',
         weight_l2: getRandomMinMax(2.1),
       });
       this.$isLoading(false);
