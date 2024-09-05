@@ -136,7 +136,7 @@ export default {
         },
         {
           key: 'itemNo',
-          label: 'Item No',
+          label: 'Item No ERP',
         },
         {
           key: 'name',
@@ -163,7 +163,7 @@ export default {
         },
         {
           key: 'qty_packagingl2',
-          label: 'L2 Qty',
+          label: 'L2 Qty Cnt',
         },
         {
           key: 'product_type',

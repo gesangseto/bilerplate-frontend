@@ -19,8 +19,8 @@
               <CCol sm="12">
                 <CInput
                   :disabled="!product.flag_upd_del"
-                  label="Item No *"
-                  placeholder="Enter item no"
+                  label="Item No ERP*"
+                  placeholder="Enter item no erp"
                   horizontal
                   v-model="product.no"
                   @keyup="validationData()"

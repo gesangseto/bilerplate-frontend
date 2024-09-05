@@ -263,7 +263,7 @@ router.beforeEach((to, from, next) => {
   if (!result.link) {
     result.breadcrumbs = '';
   }
-  console.log(result);
+  // console.log(result);
 
   Vue.prototype.$activeMenu = result;
   return next();

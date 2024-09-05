@@ -699,22 +699,20 @@
                   >Production Option</CCardHeader
                 >
                 <CCardBody>
-                  <CRow form class="form-group">
-                    <CCol sm="10">
-                      <CInput
-                        label=""
-                        horizontal
-                        type="number"
-                        v-model="data.min_count_generated_serial"
-                      >
-                        <template #label>
-                          <p class="col-form-label col-sm-3">
-                            Min. Count Generated Serial
-                          </p>
-                        </template></CInput
-                      >
-                    </CCol>
-                  </CRow>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Min. Count Generated Serial"
+                    v-model="data.min_count_generated_serial"
+                    :validasi="'numeric'"
+                    :max="10000"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Additional EPC for ref Sample"
+                    v-model="data.additional_serial_for_sample"
+                    :validasi="'numeric'"
+                    :max="10000"
+                  />
                 </CCardBody>
               </CCard>
 

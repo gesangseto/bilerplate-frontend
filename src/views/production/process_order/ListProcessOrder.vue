@@ -153,7 +153,7 @@ export default {
         },
         {
           key: 'process_order_erp',
-          label: 'ERP No',
+          label: 'ERP PO No',
         },
         {
           key: 'product_name',
@@ -161,11 +161,11 @@ export default {
         },
         {
           key: 'product_gtin',
-          label: 'GTIN / NIE',
+          label: 'L1 GTIN / NIE',
         },
         {
           key: 'generate_count_level_1',
-          label: 'Total Serial',
+          label: 'Target L1 Qty',
         },
         {
           key: 'status_name',

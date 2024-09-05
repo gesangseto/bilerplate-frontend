@@ -1,22 +1,41 @@
 <template>
   <div>
     <CRow>
-      <CCol :md="col[0]">
+      <CCol v-if="title" :md="col[0]">
         {{ title }}
         <span v-if="required" class="text-danger">
           <strong>*</strong>
         </span>
       </CCol>
-      <CCol :md="col[1]">
-        <input
-          :disabled="disabled"
-          class="form-control"
-          v-model="internalValue"
-          @keypress="validateInput"
-          @input="cleanInput"
-          :placeholder="required ? `Please input ${title}` : ''"
-          :class="isValid === null ? null : isValid ? 'is-valid' : 'is-invalid'"
-        />
+      <CCol :md="title ? col[1] : '12'">
+        <div class="input-wrapper">
+          <input
+            :disabled="disabled"
+            class="form-control"
+            v-model="internalValue"
+            @keypress="validateInput"
+            @input="handleInput"
+            :placeholder="
+              placeholder
+                ? placeholder
+                : required
+                ? `Please input ${title}`
+                : ''
+            "
+            :class="
+              isValid === null ? null : isValid ? 'is-valid' : 'is-invalid'
+            "
+          />
+          <slot name="append"></slot>
+        </div>
+
+        <p
+          class="mb-0 mt-0"
+          v-if="description"
+          style="font-size: smaller; color: rgb(143, 143, 143)"
+        >
+          {{ description }}
+        </p>
       </CCol>
     </CRow>
     <br />
@@ -35,6 +54,8 @@ export default {
     validasi: { type: String, default: null },
     max: { type: Number, default: null },
     title: { type: String, default: 'No Title' },
+    description: { type: String, default: '' },
+    placeholder: { type: String },
     required: { type: Boolean, default: false },
     isValid: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
     disabled: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
@@ -56,7 +77,7 @@ export default {
       this.convertValueToString(); // Panggil method saat nilai value berubah
     },
     internalValue(newInput) {
-      this.$emit('input', newInput); // Emit input event untuk v-model
+      this.$emit('change', newInput); // Emit input event untuk v-model
     },
   },
   methods: {
@@ -67,7 +88,7 @@ export default {
         event.preventDefault();
       }
     },
-    cleanInput(event) {
+    handleInput(event) {
       let cleanedValue = event.target.value;
       if (this.validasi) {
         cleanedValue = cleanedValue.replace(this.regex, '');
@@ -84,8 +105,8 @@ export default {
       if (this.validasi == 'numeric') {
         cleanedValue = cleanedValue.replace(/^0+/, '');
       }
-
       this.internalValue = cleanedValue;
+      this.$emit('input', this.internalValue); // Emit event input untuk v-model
     },
     convertValueToString() {
       if (this.value || this.value == 0) {
@@ -115,5 +136,8 @@ export default {
 }
 .is-valid {
   border-color: green; /* Menjadikan input hijau jika valid */
+}
+.input-wrapper {
+  display: flex;
 }
 </style>

@@ -22,7 +22,7 @@
               :disabled="!product.flag_upd_del"
               horizontal
               size="sm"
-              label="Quantity *"
+              label="Full L1 Qty *"
               v-model="product[`qty_packagingl${level}`]"
               @keypress="
                 validateNumber({

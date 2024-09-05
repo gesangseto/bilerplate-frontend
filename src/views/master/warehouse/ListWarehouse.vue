@@ -144,7 +144,7 @@ export default {
   methods: {
     protectCreateData() {
       let conf = getConfig();
-      console.log(conf);
+      // console.log(conf);
       if (conf.total_wh) {
         if (conf.total_wh <= this.items.length) {
           this.can_create = false;

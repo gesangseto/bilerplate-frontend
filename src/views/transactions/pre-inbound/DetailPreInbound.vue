@@ -369,7 +369,6 @@ export default {
     handleClickExport(type) {
       if (type == 'pdf') {
         this.popupButtonPrintPdf = true;
-        console.log(this.popupButtonPrintPdf);
         return;
       }
       exportDataV3({

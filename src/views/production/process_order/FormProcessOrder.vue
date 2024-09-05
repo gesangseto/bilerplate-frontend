@@ -46,7 +46,7 @@
 
               <InputDefault
                 :disabled="true"
-                title="GTIN"
+                title="L1 GTIN"
                 v-model="formData.gtin"
               />
 
@@ -98,17 +98,19 @@
                 "
               >
                 <template #append>
-                  <CInput
+                  <InputDefault
+                    :title="null"
                     style="width: 400px"
                     :disabled="action != 'Create' && action != 'Update'"
-                    type="number"
+                    :validasi="'numeric'"
                     v-model="formData.shelf_life"
+                    :description="formData.shelf_life ? 'Shelf Life' : null"
                     placeholder="Shelf Life"
                   >
                     <template #append>
-                      <CButton color="secondary">Month</CButton>
+                      <CButton disabled color="secondary">Month</CButton>
                     </template>
-                  </CInput>
+                  </InputDefault>
                 </template>
               </InputDateDefault>
 
@@ -118,6 +120,7 @@
                 v-model="formData.exp_date"
                 :options="{ format: 'dd/mm/yyyy' }"
                 :required="true"
+                @input="handleInputEXP($event)"
                 :is-valid="
                   initialLoad ? null : !formData.exp_date ? false : true
                 "
@@ -149,7 +152,7 @@
             <CCol sm="6" md="6" lg="6">
               <InputDefault
                 :disabled="action != 'Create' && action != 'Update'"
-                title="Total Production"
+                title="Target L1 Qty"
                 :validasi="'numeric'"
                 v-model="formData.generate_count_level_1"
                 :options="{ uppercase: true }"
@@ -179,6 +182,11 @@
                 "
               />
 
+              <InputDefault
+                :disabled="true"
+                title="Additional EPC for Sample"
+                v-model="formData.additional_serial_for_sample"
+              />
               <InputDefault
                 :disabled="true"
                 title="Min Generated"
@@ -591,6 +599,8 @@ export default {
         generate_count_level_3: null,
         generate_count_level_4: null,
         min_count_generated_serial: getConfig().min_count_generated_serial || 0,
+        additional_serial_for_sample:
+          getConfig().additional_serial_for_sample || 0,
         generate_count_additional: [],
         history: [],
       },
@@ -611,7 +621,7 @@ export default {
         },
         {
           key: 'quantity',
-          label: 'Quantity',
+          label: 'Full L1 Qty',
         },
         {
           key: 'generate_count',
@@ -726,6 +736,9 @@ export default {
     }
   },
   methods: {
+    handleInputEXP($event) {
+      if ($event) this.formData.shelf_life = null;
+    },
     reformatExp() {
       let add = this.formData.shelf_life;
       if (add && this.formData.mfg_date) {
@@ -807,12 +820,17 @@ export default {
         this.formData.buff = this.formData.buff || 0;
         this.formData.min_count_generated_serial =
           getConfig().min_count_generated_serial || 0;
+        this.formData.additional_serial_for_sample =
+          this.formData.additional_serial_for_sample || 0;
       }
     },
     limitNumber({ event, data, max }) {
       onlyNumber({ event, data, max });
     },
     updateGenerateCount(product, count, buff) {
+      let additional_sample = parseInt(
+        this.formData.additional_serial_for_sample
+      );
       this.formData.generate_count_level_1 = parseInt(count || 0);
       this.formData.buff = parseInt(buff);
       let _buff = buff / 100 || 0;
@@ -830,6 +848,8 @@ export default {
                 ? this.formData.min_count_generated_serial
                 : generate_count,
           };
+          if (additional_sample)
+            item.generate_count = `${item.generate_count} + ${additional_sample}`;
           this.itemGenerateCount.push(item);
           last_qty = 1 / last_qty;
         } else if (product[`qty_packagingl${i}`]) {
@@ -844,6 +864,8 @@ export default {
                 ? this.formData.min_count_generated_serial
                 : generate_count,
           };
+          if (additional_sample)
+            item.generate_count = `${item.generate_count} + ${additional_sample}`;
           this.itemGenerateCount.push(item);
         }
       }

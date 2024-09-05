@@ -1,7 +1,7 @@
 <template>
   <div>
     <CRow>
-      <CCol md="3">
+      <CCol v-if="title" md="3">
         {{ title }}
         <span v-if="required" class="text-danger">
           <strong>*</strong>
@@ -53,12 +53,13 @@ export default {
       this.convertValueToString(); // Memantau perubahan nilai value
     },
     internalValue(newInput) {
-      this.$emit('input', newInput); // Emit event input untuk v-model
+      this.$emit('change', newInput); // Emit event change untuk v-model
     },
   },
   methods: {
     handleInput(event) {
       this.internalValue = event.target.value; // Mengubah nilai internal saat input berubah
+      this.$emit('input', this.internalValue); // Emit event input untuk v-model
     },
     convertValueToString() {
       if (this.value || this.value === 0) {
