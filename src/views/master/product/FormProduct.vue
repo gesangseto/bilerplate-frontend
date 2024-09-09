@@ -172,7 +172,7 @@
                     initial_load ? null : product.kemasan_nie ? true : false
                   "
                   :col="[3, 9]"
-                  :options="{ uppercase: true }"
+                  :options="{ nodoublespace: true }"
                   :max="50"
                 />
               </CCol>
