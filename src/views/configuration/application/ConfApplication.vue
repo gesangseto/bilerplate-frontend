@@ -355,68 +355,47 @@
                 <CCardHeader style="font-weight: bold">BPOM Config</CCardHeader>
                 <CCardBody>
                   <CRow form class="form-group">
-                    <CCol sm="10">
-                      <CInput
-                        label="Latitude"
-                        horizontal
+                    <CCol sm="12">
+                      <InputDefault
+                        :required="true"
+                        :col="[3, 7]"
+                        title="Latitude"
                         v-model="data.latitude"
-                        :is-valid="
+                        :validasi="'float'"
+                        :isValid="
                           initialLoad ? null : !data.latitude ? false : true
                         "
-                      >
-                        <template #label>
-                          <p class="col-form-label col-sm-3">
-                            Latitude
-                            <span class="text-danger">
-                              <strong>*</strong>
-                            </span>
-                          </p>
-                        </template>
-                      </CInput>
+                      />
                     </CCol>
-                    <CCol sm="10">
-                      <CInput
-                        label="Longitude"
-                        horizontal
+                    <CCol sm="12">
+                      <InputDefault
+                        :required="true"
+                        :col="[3, 7]"
+                        title="Longitude"
                         v-model="data.longitude"
-                        :is-valid="
+                        :validasi="'float'"
+                        :isValid="
                           initialLoad ? null : !data.longitude ? false : true
                         "
-                      >
-                        <template #label>
-                          <p class="col-form-label col-sm-3">
-                            Longitude
-                            <span class="text-danger">
-                              <strong>*</strong>
-                            </span>
-                          </p>
-                        </template>
-                      </CInput>
+                      />
                     </CCol>
 
-                    <CCol sm="10">
-                      <CInput
-                        label="ID Location"
-                        horizontal
-                        type="number"
+                    <CCol sm="12">
+                      <InputDefault
+                        :required="true"
+                        :col="[3, 7]"
+                        title="ID Location (BPOM)"
                         v-model="data.id_location"
-                        :is-valid="
+                        :validasi="'numeric'"
+                        :max="100"
+                        :isValid="
                           initialLoad ? null : !data.id_location ? false : true
                         "
                         description="This value is named 'ID Sarana' is obtained from BPOM and is used for serial reporting to BPOM"
-                      >
-                        <template #label>
-                          <p class="col-form-label col-sm-3">
-                            ID Location (BPOM)
-                            <span class="text-danger">
-                              <strong>*</strong>
-                            </span>
-                          </p>
-                        </template>
-                      </CInput>
+                      />
                     </CCol>
 
-                    <CCol sm="10">
+                    <CCol sm="12">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="3" class="col-form-label">
                           Advance BPOM Reporting
@@ -444,7 +423,7 @@
                         </CCol>
                       </CRow>
                     </CCol>
-                    <CCol sm="10">
+                    <CCol sm="12">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="3" class="col-form-label">
                           Return External Validation
@@ -467,14 +446,13 @@
                         </CCol>
                       </CRow>
                     </CCol>
-                    <CCol sm="10">
+                    <CCol sm="12">
                       <SelectOption
                         title="Return External Status"
                         :options="epcStatusOptions"
                         v-on:onchange="data.return_ext_status = $event"
-                        :defaultValue="data.return_ext_status"
-                        col_title="3"
-                        col_option="9"
+                        :value="data.return_ext_status"
+                        :col="[3, 7]"
                         description="Leave blank if status set to active"
                       />
                     </CCol>

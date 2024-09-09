@@ -9,31 +9,37 @@
           <CRow>
             <CCol sm="6" md="6" lg="6">
               <SelectOption
-                title="Warehouse"
                 :required="true"
+                title="Warehouse"
                 :options="warehouseOptions"
-                :is_valid="
+                v-on:onchange="formData.warehouse_id = $event"
+                :value="formData.warehouse_id"
+                :col="[3, 9]"
+                :isValid="
                   initialLoad ? null : !formData.warehouse_id ? false : true
                 "
-                v-on:onchange="formData.warehouse_id = $event"
               />
               <SelectOption
-                title="Product Name"
                 :required="true"
+                title="Product Name"
                 :options="productOptions"
-                :is_valid="
+                v-on:onchange="formData.product_id = $event"
+                :value="formData.product_id"
+                :col="[3, 9]"
+                :isValid="
                   initialLoad ? null : !formData.product_id ? false : true
                 "
-                v-on:onchange="formData.product_id = $event"
               />
               <SelectOption
-                title="Batch No"
                 :required="true"
+                title="Batch No"
                 :options="batchNumberOptions"
-                :is_valid="
+                v-on:onchange="formData.batch_no = $event"
+                :value="formData.batch_no"
+                :col="[3, 9]"
+                :isValid="
                   initialLoad ? null : !formData.batch_no ? false : true
                 "
-                v-on:onchange="formData.batch_no = $event"
               />
             </CCol>
             <CCol sm="6" md="6" lg="6">

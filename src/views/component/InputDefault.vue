@@ -26,13 +26,27 @@
               isValid === null ? null : isValid ? 'is-valid' : 'is-invalid'
             "
           />
+          <!-- Slot untuk append -->
           <slot name="append"></slot>
         </div>
+        <p
+          v-if="
+            isValid === null
+              ? false
+              : isValid && invalid_feedback
+              ? true
+              : false
+          "
+          class="mb-0 mt-0"
+          style="font-size: smaller; color: red"
+        >
+          {{ invalid_feedback }}
+        </p>
 
         <p
           class="mb-0 mt-0"
-          v-if="description"
           style="font-size: smaller; color: rgb(143, 143, 143)"
+          v-if="description"
         >
           {{ description }}
         </p>
@@ -51,6 +65,7 @@ export default {
       type: Object,
       default: () => ({ uppercase: false, nospace: false }),
     },
+    invalid_feedback: { type: String, default: null },
     validasi: { type: String, default: null },
     max: { type: Number, default: null },
     title: { type: String, default: 'No Title' },
@@ -83,7 +98,10 @@ export default {
   methods: {
     validateInput(event) {
       const char = String.fromCharCode(event.keyCode || event.which);
-      const isValid = this.validasi ? this.regexValidation.test(char) : true;
+      let isValid = true;
+      if (this.validasi) {
+        isValid = this.regexValidation.test(char);
+      }
       if (!isValid || (this.max && this.internalValue.length >= this.max)) {
         event.preventDefault();
       }
@@ -101,6 +119,9 @@ export default {
       }
       if (this.options.nospace) {
         cleanedValue = cleanedValue.trim();
+      }
+      if (this.options.nodoublespace) {
+        cleanedValue = cleanedValue.replace(/\s\s+/g, ' ');
       }
       if (this.validasi == 'numeric') {
         cleanedValue = cleanedValue.replace(/^0+/, '');
@@ -124,6 +145,9 @@ export default {
       } else if (this.validasi === 'numeric') {
         this.regex = /[^0-9]/g;
         this.regexValidation = /^[0-9]$/;
+      } else if (this.validasi === 'float') {
+        this.regex = /[^-?\d*.\d+]/g;
+        this.regexValidation = /^-?\d*\.?\d*$/; // Menerima float dengan atau tanpa angka di depan titik
       }
     },
   },
@@ -139,5 +163,9 @@ export default {
 }
 .input-wrapper {
   display: flex;
+}
+.invalid-feedback {
+  font-size: x-small;
+  color: red;
 }
 </style>

@@ -1,76 +1,86 @@
 <template>
   <!-- Bacth No -->
-  <div class="form-group row">
-    <label for="product-name" :class="class_title">
-      {{ title }}
-      <strong v-if="required" class="text-danger">*</strong>
-    </label>
-    <div :class="class_option">
-      <v-select
-        placeholder="--Select--"
-        :options="options"
-        :reduce="(opt) => opt.value"
-        v-model="formData"
-        @input="handleChange()"
-        required="is_valid"
-      >
-        <template #no-options="{ search, searching, loading }">
-          Sorry, no matching item.
-        </template>
-        <template #footer v-if="is_valid === false ? true : false">
-          <div style="color: red; font-size: x-small">
-            {{ title }} is required
-          </div>
-        </template>
-        <template #footer v-if="description">
-          <div style="color: gray; font-size: x-small">
-            {{ description }}
-          </div>
-        </template>
-      </v-select>
-    </div>
+  <div>
+    <CRow>
+      <CCol v-if="title" :md="col[0]">
+        <label for="product-name">
+          {{ title }}
+          <strong v-if="required" class="text-danger">*</strong>
+        </label>
+      </CCol>
+      <CCol :md="title ? col[1] : '12'">
+        <v-select
+          :disabled="disabled"
+          placeholder="--Select--"
+          :options="options"
+          :reduce="(opt) => opt.value"
+          v-model="localValue"
+          @input="handleChange($event)"
+          :required="required"
+        >
+          <template #no-options="{ search, searching, loading }">
+            Sorry, no matching item.
+          </template>
+          <template #footer>
+            <div
+              style="color: red; font-size: x-small"
+              v-if="!description && isValid === false ? true : false"
+            >
+              {{ title }} is required
+            </div>
+            <div
+              :style="`color: ${
+                isValid === false ? 'red' : 'grey'
+              }; font-size: x-small`"
+            >
+              {{ description }}
+            </div>
+          </template>
+        </v-select>
+      </CCol>
+    </CRow>
+    <br />
   </div>
 </template>
 
 <script>
+import { CCol } from '@coreui/vue';
+
 export default {
   name: 'SelectOption',
-  props: [
-    'options',
-    'title',
-    'required',
-    'is_valid',
-    'col_title',
-    'col_option',
-    'description',
-    'defaultValue',
-  ],
-
+  props: {
+    value: { type: [String, Number], default: '' }, // Menerima tipe String atau Number
+    options: { type: Array, default: () => [] },
+    validasi: { type: String, default: null },
+    max: { type: Number, default: null },
+    title: { type: String, default: 'No Title' },
+    description: { type: String, default: '' },
+    placeholder: { type: String },
+    required: { type: Boolean, default: false },
+    isValid: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
+    disabled: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
+    col: { type: Array, default: () => [3, 9] }, // Properti isValid untuk menentukan validasi input
+  },
   watch: {
-    id: {
-      deep: true,
-      handler(n) {},
+    // Memperbarui data lokal jika prop value berubah
+    value(newValue) {
+      this.localValue = newValue;
+    },
+    // Emit event jika nilai data lokal berubah
+    localValue(newValue) {
+      this.$emit('update:value', newValue); // Gunakan 'update:value' untuk v-model
     },
   },
-  mounted() {
-    if (this.col_title) {
-      this.class_title = `col-sm-${this.col_title} col-md-${this.col_title} col-lg-${this.col_title} form-label`;
-    }
-    if (this.col_option) {
-      this.class_option = `col-sm-${this.col_option} col-md-${this.col_option} col-lg-${this.col_option}`;
-    }
-    if (this.defaultValue) this.formData = this.defaultValue;
-  },
+  mounted() {},
   data() {
     return {
-      formData: null,
-      class_title: 'col-sm-4 col-md-4 col-lg-4 form-label',
-      class_option: 'col-sm-8 col-md-8 col-lg-8',
+      // value: null,
+      localValue: this.value, // Salin nilai prop ke data lokal
     };
   },
   methods: {
-    handleChange() {
-      this.$emit('onchange', this.formData);
+    handleChange($event) {
+      this.$emit('onchange', $event);
     },
   },
 };

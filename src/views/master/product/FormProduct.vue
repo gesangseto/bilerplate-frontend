@@ -9,37 +9,35 @@
           <CForm>
             <CRow>
               <CCol sm="12">
-                <CInput :disabled="true" horizontal v-model="product.id">
-                  <template #label>
-                    <p class="col-form-label col-sm-3">ID</p>
-                  </template>
-                </CInput>
+                <InputDefault
+                  :disabled="true"
+                  :col="[3, 9]"
+                  title="Min Stock"
+                  v-model="product.id"
+                />
               </CCol>
 
               <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="!product.flag_upd_del"
-                  label="Item No ERP*"
+                  title="Item No ERP"
                   placeholder="Enter item no erp"
-                  horizontal
                   v-model="product.no"
-                  @keyup="validationData()"
-                  :add-input-classes="{
-                    'is-invalid': error.no,
-                  }"
+                  :options="{ nospace: true }"
+                  :required="true"
+                  :isValid="initial_load ? null : !product.no ? false : true"
+                  :col="[3, 9]"
                 />
               </CCol>
               <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="action == 'Read'"
-                  label="Product Name *"
+                  title="Product Name"
                   placeholder="Enter product name"
-                  horizontal
-                  @keyup="validationData()"
                   v-model="product.name"
-                  :add-input-classes="{
-                    'is-invalid': error.name,
-                  }"
+                  :required="true"
+                  :isValid="initial_load ? null : !product.name ? false : true"
+                  :col="[3, 9]"
                 />
               </CCol>
               <CCol sm="12">
@@ -52,39 +50,43 @@
                   v-model="product.description"
                 />
               </CCol>
+
               <CCol sm="12">
-                <CSelect
+                <SelectOption
                   :disabled="action == 'Read'"
-                  label="Category *"
-                  horizontal
-                  @change="validationData()"
-                  placeholder="--Select--"
+                  :required="true"
+                  title="Category "
                   :options="listCategory"
-                  :value.sync="product.mst_product_category_id"
-                  :add-input-classes="{
-                    'is-invalid': error.mst_product_category_id,
-                  }"
+                  v-on:onchange="product.mst_product_category_id = $event"
+                  :value="product.mst_product_category_id"
+                  :col="[3, 9]"
+                  :isValid="
+                    initial_load
+                      ? null
+                      : !product.mst_product_category_id
+                      ? false
+                      : true
+                  "
                 />
               </CCol>
 
               <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Min Stock"
-                  placeholder="Enter minimum L1 stock threshold"
-                  @keyup="validationData()"
-                  horizontal
+                <InputDefault
+                  :col="[3, 9]"
+                  title="Min Stock"
+                  placeholder="Enter minimum L1 stock treshold"
                   v-model="product.minimum"
+                  :validasi="'numeric'"
                 />
               </CCol>
+
               <CCol sm="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Max Stock"
-                  placeholder="Enter maximum L1 stock threshold"
-                  @keyup="validationData()"
-                  horizontal
+                <InputDefault
+                  :col="[3, 9]"
+                  title="Max Stock"
+                  placeholder="Enter maximum L1 stock treshold"
                   v-model="product.maximum"
+                  :validasi="'numeric'"
                 />
               </CCol>
 
@@ -139,59 +141,53 @@
             <br />
             <CRow>
               <CCol sm="12">
-                <CInput
-                  label="NIE"
-                  horizontal
-                  v-model="product.nie"
-                  placeholder="NIE (Nomor Izin Edar)"
-                  :add-input-classes="{
-                    'is-invalid': !initial_load && !validationNieOrGtin('nie'),
-                  }"
-                  :readonly="
+                <InputDefault
+                  required
+                  :disabled="
                     action == 'Read' ||
                     (product.flag_upd_del == 0 && action != 'Create')
                   "
-                  @keypress="
-                    limitString({
-                      event: $event,
-                      data: product.nie,
-                      max: 15,
-                    })
-                  "
-                >
-                </CInput>
-              </CCol>
-
-              <CCol sm="12">
-                <CInput
-                  :disabled="!product.flag_upd_del"
-                  label="NIE Packaging (Kemasan NIE) *"
-                  placeholder="Enter packaging description registered at BPOM"
-                  horizontal
-                  @keyup="validationData()"
-                  v-model="product.kemasan_nie"
-                  invalid-feedback="NIE packaging (kemasan NIE) is required"
-                  :add-input-classes="{
-                    'is-invalid': error.kemasan_nie,
-                  }"
+                  validasi="alphanumeric"
+                  title="NIE"
+                  placeholder="NIE (Nomor Izin Edar)"
+                  v-model="product.nie"
+                  :isValid="initial_load ? null : isValidNIE()"
+                  :col="[3, 9]"
+                  :options="{ uppercase: true, nospace: true }"
+                  :max="16"
                 />
               </CCol>
 
               <CCol sm="12">
-                <CInput
-                  :disabled="true"
-                  label="L1 GTIN "
-                  description="Can only be changed by modifying Company Prefix and Item Reference and make sure there has been no transaction for this product."
-                  horizontal
-                  v-model="product.gtin"
-                  @keyup="validationNieOrGtin('gtin')"
-                  @keypress="
-                    limitNumber({ event: $event, data: product.gtin, max: 14 })
+                <InputDefault
+                  required
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
                   "
-                  :add-input-classes="{
-                    'is-invalid': !validationNieOrGtin('gtin'),
-                  }"
-                  :invalid-feedback="error.gtin ? error.gtin : ''"
+                  title="NIE Packaging (Kemasan NIE) "
+                  placeholder="Enter packaging description registered at BPOM"
+                  v-model="product.kemasan_nie"
+                  :isValid="
+                    initial_load ? null : product.kemasan_nie ? true : false
+                  "
+                  :col="[3, 9]"
+                  :options="{ uppercase: true }"
+                  :max="50"
+                />
+              </CCol>
+
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="true"
+                  validasi="alphanumeric"
+                  title="L1 GTIN"
+                  description="Can only be changed by modifying Company Prefix and Item Reference and make sure there has been no transaction for this product."
+                  v-model="product.gtin"
+                  :isValid="initial_load ? null : isValidGTIN()"
+                  :col="[3, 9]"
+                  :options="{ uppercase: true, nospace: true }"
+                  :max="16"
                 />
               </CCol>
 
@@ -459,6 +455,7 @@ export default {
         show_status: true,
         flag_upd_del: 1,
         current_pack: 1,
+        mst_product_category_id: null,
         mst_pid: [],
         weight_required_l1: false,
         weight_min_l1: null,
@@ -625,7 +622,18 @@ export default {
         });
       }
     },
-
+    isValidNIE() {
+      const regex = /^.{15,16}$/;
+      return regex.test(this.product.nie);
+    },
+    isValidGTIN() {
+      if (this.product.gtin) {
+        if (this.product.gtin.length == 14) return true;
+      } else if (!this.product.gtin) {
+        return null;
+      }
+      return false;
+    },
     validationNieOrGtin(type = 'all') {
       if (type == 'all' && !this.product.gtin && !this.product.nie) {
         return false;
