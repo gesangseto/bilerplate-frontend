@@ -347,6 +347,7 @@
           />
         </CCardBody>
         <ProductWeight
+          :readonly="action == 'Read'"
           :product="product"
           :showModal="viewModalWeight"
           v-on:onCloseModal="viewModalWeight = false"

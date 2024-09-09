@@ -170,6 +170,7 @@
 </template>
 
 <script>
+import { readonly } from 'vue';
 import { isJsonString } from '../../utils';
 export default {
   name: 'ProductWeight',
