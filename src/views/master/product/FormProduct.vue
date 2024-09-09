@@ -12,7 +12,7 @@
                 <InputDefault
                   :disabled="true"
                   :col="[3, 9]"
-                  title="Min Stock"
+                  title="ID"
                   v-model="product.id"
                 />
               </CCol>
