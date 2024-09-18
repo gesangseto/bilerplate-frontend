@@ -236,6 +236,20 @@
               </CCard>
               <CCard>
                 <CCardHeader style="font-weight: bold">
+                  Authentication
+                </CCardHeader>
+                <CCardBody>
+                  <InputDefault
+                    :col="[3, 7]"
+                    :title="'Login attempts exceeded'"
+                    :validasi="'numeric'"
+                    v-model="data.login_attempt"
+                    :max="50"
+                  />
+                </CCardBody>
+              </CCard>
+              <CCard>
+                <CCardHeader style="font-weight: bold">
                   Password Validation
                 </CCardHeader>
                 <CCardBody>
