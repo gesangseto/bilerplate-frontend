@@ -355,25 +355,14 @@
       <CRow>
         <CCol sm="12" md="12" lg="12">
           <div v-for="(item, index) in itemGenerateCount" :key="index">
-            <CInput
+            <InputDefault
               v-if="product[`qty_packagingl${index + 1}`] || index == 0"
               :disabled="additionalSerial.all && index >= 1"
-              horizontal
-              :value.sync="
-                additionalSerial[`generate_count_level_${index + 1}`]
-              "
-              type="number"
-              @keypress="limitNumber({ event: $event, max: 7 })"
-            >
-              <template #label>
-                <p class="col-form-label col-sm-3">
-                  Pack Level {{ index + 1 }}
-                  <span class="text-danger">
-                    <strong>*</strong>
-                  </span>
-                </p>
-              </template>
-            </CInput>
+              :title="`Pack Level ${index + 1}`"
+              :validasi="'numeric'"
+              v-model="additionalSerial[`generate_count_level_${index + 1}`]"
+              :max="7"
+            />
           </div>
           <CRow form class="form-group">
             <CCol tag="label" sm="3" class="col-form-label"> All </CCol>
@@ -537,13 +526,18 @@ export default {
     additionalSerial: {
       deep: true,
       handler(item) {
-        if (item.generate_count_level_1 && item.all) {
-          let last_qty = item.generate_count_level_1;
-          for (var i = 2; i <= 4; i++) {
-            let pack_qty = this.product[`qty_packagingl${i}`];
-            last_qty = last_qty / pack_qty;
-            this.additionalSerial[`generate_count_level_${i}`] =
-              Math.ceil(last_qty) || 0;
+        if (item.all) {
+          if (item.generate_count_level_1) {
+            let qty = item.generate_count_level_1;
+            for (var i = 2; i <= 4; i++) {
+              let pack_qty = qty / this.product[`qty_packagingl${i}`];
+              this.additionalSerial[`generate_count_level_${i}`] =
+                Math.ceil(pack_qty) || 0;
+            }
+          } else {
+            this.additionalSerial.generate_count_level_2 = '';
+            this.additionalSerial.generate_count_level_3 = '';
+            this.additionalSerial.generate_count_level_4 = '';
           }
         }
       },
@@ -903,9 +897,14 @@ export default {
     },
     async submitAdditionSerial() {
       this.initialLoad = false;
-      if (!this.additionalSerial.generate_count_level_1) {
+      if (
+        !this.additionalSerial.generate_count_level_1 &&
+        !this.additionalSerial.generate_count_level_2 &&
+        !this.additionalSerial.generate_count_level_3 &&
+        !this.additionalSerial.generate_count_level_4
+      ) {
         this.$toast.open({
-          message: 'Please complete all required data',
+          message: 'Additional Serial cannot be empty',
           type: 'error',
           dissmissible: true,
           position: 'top-right',
@@ -928,10 +927,10 @@ export default {
       if (!res['error']) {
         this.viewModalRequestSerial = false;
         this.loadData();
-        this.additionalSerial.generate_count_level_1 = 0;
-        this.additionalSerial.generate_count_level_2 = 0;
-        this.additionalSerial.generate_count_level_3 = 0;
-        this.additionalSerial.generate_count_level_4 = 0;
+        this.additionalSerial.generate_count_level_1 = '';
+        this.additionalSerial.generate_count_level_2 = '';
+        this.additionalSerial.generate_count_level_3 = '';
+        this.additionalSerial.generate_count_level_4 = '';
       }
     },
     isValid() {
