@@ -369,7 +369,7 @@
               :defaultMetadata="formData.metadata"
               v-on:handleChange="
                 (formData.metadata = $event.result),
-                  (formData.error = $event.error)
+                  (formData.error_metadata = $event.error_metadata)
               "
               model="mst_user"
             />
@@ -415,14 +415,14 @@ import { getMstSection } from '../../../resource/MstSection';
 export default {
   name: 'FormUser',
   watch: {
-    formData: {
-      deep: true,
-      handler() {
-        if (!this.initial_load) {
-          this.checkValidation();
-        }
-      },
-    },
+    // formData: {
+    //   deep: true,
+    //   handler() {
+    //     if (!this.initial_load) {
+    //       this.checkValidation();
+    //     }
+    //   },
+    // },
     'formData.pwd': {
       deep: true,
       handler(data) {
@@ -648,12 +648,25 @@ export default {
       }
       return;
     },
+    isValid() {
+      if (this.formData.error_metadata) return false;
+      if (!this.formData.username) return false;
+      if (!this.formData.employee_id) return false;
+      if (!this.formData.full_name) return false;
+      if (!this.formData.mst_department_id) return false;
+      if (!this.formData.mst_section_id) return false;
+      if (!isPhone(this.formData.tlp)) return false;
+      if (!isEmail(this.formData.email)) return false;
+      if (this.formData.pwd || this.formData.re_pwd)
+        if (this.formData.re_pwd != this.formData.pwd) return false;
+      return true;
+    },
     async save() {
       this.formData.mst_position_id = 1;
       this.initial_load = false;
-      this.checkValidation();
+      this.isValid();
 
-      if (this.formData.have_error) {
+      if (!this.isValid()) {
         this.$toast.open({
           message: 'Please input all the required data',
           type: 'error',

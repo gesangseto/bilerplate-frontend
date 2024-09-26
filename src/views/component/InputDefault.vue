@@ -33,7 +33,7 @@
           <!-- Slot untuk append -->
           <slot name="append"></slot>
         </div>
-        <p
+        <div
           v-if="
             isValid === null
               ? false
@@ -44,7 +44,7 @@
           class="mb-0 mt-0"
           style="font-size: x-small; color: red"
           v-html="formattedInvalidFeedback"
-        ></p>
+        ></div>
 
         <p
           class="mb-0 mt-0"

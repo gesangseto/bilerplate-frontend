@@ -183,26 +183,56 @@ export function strToBool(str) {
 
 export function validationPassword(input) {
   let conf = getConfig();
+  let message = [];
   if (input && conf.password_pattern) {
     let pattern = JSON.parse(conf.password_pattern);
     if (pattern.regex) {
       let regex = new RegExp(pattern.regex, 'gm');
       if (!regex.test(input)) {
+        message.push(`Password must meet the following criteria: `);
         let msg = `Password must meet the following criteria: `;
-        if (pattern.min) msg += `\n- Min. ${pattern.min} characters`;
-        if (pattern.max) msg += `\n- Max. ${pattern.max} characters`;
-
-        if (pattern.alphabet_lower) msg += `\n- Contain lowercase letters`;
-        if (pattern.alphabet_upper) msg += `\n- Contain uppercase letters`;
-        if (pattern.numeric) msg += `\n- Contain numbers`;
-        if (pattern.symbol) msg += `\n- Contain symbols`;
+        if (pattern.min) {
+          if (input.length < pattern.min)
+            msg += `\n- Min. ${pattern.min} characters`;
+        }
+        if (pattern.max) {
+          if (input.length > pattern.max)
+            msg += `\n- Max. ${pattern.max} characters`;
+        }
+        if (pattern.alphabet_lower) {
+          if (!containsLowercase(input)) msg += `\n- Contain lowercase letters`;
+        }
+        if (pattern.alphabet_upper) {
+          if (!containsUppercase(input)) msg += `\n- Contain uppercase letters`;
+        }
+        if (pattern.numeric) {
+          if (!containsNumeric(input)) msg += `\n- Contain numbers`;
+        }
+        if (pattern.symbol) {
+          if (!containsSymbol(input)) msg += `\n- Contain symbols`;
+        }
         return msg;
       }
     }
   }
   return;
 }
-
+function containsSymbol(str) {
+  const regex = /[^\w\s]/; // Mencocokkan karakter yang bukan huruf, angka, atau spasi
+  return regex.test(str);
+}
+function containsNumeric(str) {
+  const regex = /\d/; // Regex untuk mencari digit (0-9)
+  return regex.test(str);
+}
+function containsLowercase(str) {
+  const regex = /[a-z]/; // Regex untuk huruf kecil
+  return regex.test(str);
+}
+function containsUppercase(str) {
+  const regex = /[A-Z]/; // Regex untuk huruf besar
+  return regex.test(str);
+}
 export function isJsonString(item) {
   try {
     // item = typeof item !== 'string' ? JSON.stringify(item) : item;
