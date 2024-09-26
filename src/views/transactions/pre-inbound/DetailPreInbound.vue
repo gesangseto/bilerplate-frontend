@@ -168,6 +168,8 @@
             striped
             sorter
             border
+            :pagination="true"
+            :items-per-page="10"
             :items="detailItems"
             :fields="fields"
             class="text-left"

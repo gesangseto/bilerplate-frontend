@@ -1,5 +1,5 @@
 <template>
-  <div v-if="reformat_metadata">
+  <div v-if="reformat_metadata && reformat_metadata.length > 0">
     <CCard>
       <CCardBody>
         <h5>Metadata</h5>
@@ -87,7 +87,6 @@ export default {
             });
           }
           this.reformat_metadata = row;
-          console.log(row);
         }
       }
     },

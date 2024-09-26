@@ -44,51 +44,49 @@
           </CCardHeader>
           <CCardBody>
             <CRow class="mt-3">
-              <CCol md="6"> Old Password </CCol>
-              <CCol md="6">
-                <CInput
-                  placeholder="Old Password"
+              <CCol md="12">
+                <InputDefault
+                  :col="[4, 8]"
                   :type="showPassword == false ? 'password' : 'text'"
-                  autocomplete="old-password"
+                  title="Old Password"
                   v-model="form_data.oldPassword"
-                  :invalid-feedback="required.oldPassword.message"
-                  :add-input-classes="{
-                    'is-invalid': required.oldPassword.error,
-                  }"
-                /> </CCol
-            ></CRow>
-            <CRow
-              ><CCol md="6"> New Password </CCol>
-              <CCol md="6">
-                <CInput
-                  placeholder="New Password"
-                  :type="showPassword == false ? 'password' : 'text'"
-                  autocomplete="bew-password"
-                  v-model="form_data.newPassword"
-                  :invalid-feedback="required.newPassword.message"
                   :is-valid="
-                    !form_data.newPassword ? null : !required.newPassword.error
+                    !form_data.oldPassword ? null : !required.oldPassword.error
                   "
+                  :invalid_feedback="required.oldPassword.message"
                 />
               </CCol>
             </CRow>
             <CRow>
-              <CCol md="6"> Confirm New Password </CCol>
-              <CCol md="6">
-                <CInput
-                  placeholder="Confirm Password"
+              <CCol md="12">
+                <InputDefault
+                  :col="[4, 8]"
                   :type="showPassword == false ? 'password' : 'text'"
-                  autocomplete="confirm-password"
-                  v-model="form_data.confirmPassword"
-                  :invalid-feedback="
-                    !form_data.confirmPassword
-                      ? 'Confirm password is required'
-                      : 'Confirmation password does not match'
+                  title="New Password"
+                  v-model="form_data.newPassword"
+                  :is-valid="
+                    !form_data.newPassword ? null : !required.newPassword.error
                   "
+                  :invalid_feedback="required.newPassword.message"
+                />
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md="12">
+                <InputDefault
+                  :col="[4, 8]"
+                  :type="showPassword == false ? 'password' : 'text'"
+                  title="Confirm Password"
+                  v-model="form_data.confirmPassword"
                   :is-valid="
                     !form_data.newPassword
                       ? null
                       : form_data.newPassword === form_data.confirmPassword
+                  "
+                  :invalid_feedback="
+                    !form_data.confirmPassword
+                      ? 'Confirm password is required'
+                      : 'Confirmation password does not match'
                   "
                 />
               </CCol>

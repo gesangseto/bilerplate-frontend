@@ -10,135 +10,103 @@
           <CCardBody>
             <CForm>
               <CCol sm="12">
-                <CInput :disabled="true" horizontal v-model="formData.id">
-                  <template #label>
-                    <p class="col-form-label col-sm-3">ID</p>
-                  </template>
-                </CInput>
+                <InputDefault
+                  :disabled="true"
+                  :col="[3, 9]"
+                  title="ID"
+                  v-model="formData.id"
+                />
               </CCol>
               <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="action == 'Read' ? true : false"
-                  horizontal
+                  required
+                  :col="[3, 9]"
+                  title="Global ID"
                   placeholder="Enter Global ID"
                   v-model="formData.employee_id"
                   :is-valid="
                     initial_load ? null : formData.employee_id ? true : false
                   "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Global ID
-                      <span class="text-danger"><strong>*</strong></span>
-                    </p>
-                  </template>
-                </CInput>
+                />
               </CCol>
               <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="action == 'Read' ? true : false"
-                  horizontal
+                  :col="[3, 9]"
+                  required
+                  title="Username"
                   placeholder="Enter username"
                   v-model="formData.username"
                   :is-valid="
                     initial_load ? null : formData.username ? true : false
                   "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Username
-                      <span class="text-danger"><strong>*</strong></span>
-                    </p>
-                  </template>
-                </CInput>
+                />
               </CCol>
               <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="action == 'Read' ? true : false"
-                  horizontal
+                  :col="[3, 9]"
+                  required
+                  title="Full Name"
                   placeholder="Enter full name"
                   v-model="formData.full_name"
                   :is-valid="
                     initial_load ? null : formData.full_name ? true : false
                   "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Full Name
-                      <span class="text-danger"><strong>*</strong></span>
-                    </p>
-                  </template>
-                </CInput>
+                />
               </CCol>
               <CCol sm="12">
-                <table style="width: 100%">
-                  <tr>
-                    <td style="width: 25%">
-                      Phone Number
-                      <span class="text-danger"><strong>*</strong></span>
-                    </td>
-                    <td>
-                      <table style="width: 100%">
-                        <tr style="">
-                          <td style="width: 40%; padding-bottom: 15px">
-                            <v-select
-                              :disabled="action === 'Read' ? true : false"
-                              placeholder="- Country -"
-                              :options="CountryCode"
-                              :reduce="(opt) => opt.value"
-                              v-model="temp_data.tlp_code"
-                              @input="handleChangeInput(temp_data.tlp_code)"
-                            >
-                            </v-select>
-                            <small
-                              v-if="required.tlp_code.error"
-                              style="color: red"
-                            >
-                              {{ required.tlp_code.message }}
-                            </small>
-                          </td>
-                          <td>
-                            <CInput
-                              :disabled="action == 'Read' ? true : false"
-                              placeholder="Enter phone number (Example : 81211223344)"
-                              type="number"
-                              horizontal
-                              v-model="formData.tlp"
-                              :add-input-classes="{
-                                'is-invalid': required.tlp.error,
-                              }"
-                              :is-invalid="required.tlp.error"
-                              :invalid-feedback="required.tlp.message"
-                            >
-                            </CInput>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </CCol>
-              <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  title="Phone Number"
+                  validasi="numeric"
+                  v-model="formData.tlp"
+                  :max="12"
+                  :is-valid="initial_load ? null : !required.tlp.error"
+                  :invalid_feedback="required.tlp.message"
+                  placeholder="Enter phone number (Example : 81211223344)"
+                >
+                  <template #prepend>
+                    <div style="width: 350px; margin-bottom: -50px">
+                      <SelectOption
+                        :disabled="action == 'Read' ? true : false"
+                        required
+                        :options="CountryCode"
+                        v-on:onchange="temp_data.tlp_code = $event"
+                        :value="temp_data.tlp_code"
+                        @change="handleChangeInput(temp_data.tlp_code)"
+                      />
+                    </div>
+                  </template>
+                </InputDefault>
+              </CCol>
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  required
+                  validasi="email"
+                  title="Email"
                   placeholder="email.address@email.com"
-                  horizontal
                   v-model="formData.email"
                   :is-valid="
                     initial_load ? null : formData.email ? true : false
                   "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Email <span class="text-danger"><strong>*</strong></span>
-                    </p>
-                  </template>
-                </CInput>
+                />
               </CCol>
               <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
                   :type="showPassword == false ? 'password' : 'text'"
+                  title="Password"
+                  v-model="formData.pwd"
+                  :is-valid="
+                    !formData.pwd ? null : !needPassword && !required.pwd.error
+                  "
+                  :invalid_feedback="required.pwd.message"
                   :placeholder="
                     action === 'Update'
                       ? `Leave it blank if you don't want to change password.`
@@ -146,32 +114,31 @@
                       ? '<hidden>'
                       : 'Enter password'
                   "
-                  horizontal
-                  v-model="formData.pwd"
-                  :invalid-feedback="required.pwd.message"
-                  :add-input-classes="{
-                    'is-invalid': needPassword && required.pwd.error,
-                  }"
                 >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Password
-                      <span class="text-danger"><strong>*</strong></span>
-                    </p> </template
-                  ><template #append-content>
-                    <CButton
-                      style="font-size: 10pt; margin: -10pt"
-                      @click="showPassword = !showPassword"
-                    >
+                  <template #append>
+                    <CButton @click="showPassword = !showPassword">
                       <v-icon v-if="!showPassword" name="eye-slash" />
                       <v-icon v-if="showPassword" name="eye" />
                     </CButton>
                   </template>
-                </CInput>
+                </InputDefault>
               </CCol>
               <CCol sm="12" v-if="action != 'Read'">
-                <CInput
-                  type="password"
+                <InputDefault
+                  :col="[3, 9]"
+                  :type="showPassword == false ? 'password' : 'text'"
+                  title="Confirm Password"
+                  v-model="formData.re_pwd"
+                  :is-valid="
+                    formData.re_pwd || formData.pwd
+                      ? formData.re_pwd == formData.pwd
+                      : null
+                  "
+                  :invalid_feedback="
+                    !formData.re_pwd
+                      ? 'Confirm password is required'
+                      : 'Confirmation password does not match'
+                  "
                   :placeholder="
                     action === 'Update'
                       ? `Re-enter the same new password. Leave it blank if you don't want to change password.`
@@ -179,70 +146,39 @@
                       ? '<hidden>'
                       : 'Enter confirm password'
                   "
-                  horizontal
-                  v-model="formData.re_pwd"
-                  :invalid-feedback="
-                    !formData.re_pwd
-                      ? 'Confirm password is required'
-                      : 'Confirmation password does not match'
-                  "
-                  :add-input-classes="{
-                    'is-invalid': formData.re_pwd !== formData.pwd,
-                  }"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Confirm Password
-                      <span class="text-danger"><strong>*</strong></span>
-                    </p>
-                  </template>
-                </CInput>
+                />
               </CCol>
               <CCol sm="12">
-                <CSelect
+                <SelectOption
                   :disabled="action == 'Read' ? true : false"
-                  id="select-department"
-                  @change="onDepartmentChange()"
+                  :col="[3, 9]"
+                  title="Department"
+                  required
                   :options="departmentOptions"
-                  placeholder="--Select--"
-                  horizontal
-                  :value.sync="formData.mst_department_id"
-                  :is-valid="
+                  v-on:onchange="formData.mst_department_id = $event"
+                  :value="formData.mst_department_id"
+                  :isValid="
                     initial_load
                       ? null
                       : formData.mst_department_id
                       ? true
                       : false
                   "
-                >
-                  >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Department
-                      <span class="text-danger"><strong>*</strong></span>
-                    </p>
-                  </template>
-                </CSelect>
+                />
               </CCol>
               <CCol sm="12">
-                <CSelect
+                <SelectOption
                   :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  title="Section"
+                  required
                   :options="optionSections"
-                  placeholder="--Select--"
-                  horizontal
-                  :value.sync="formData.mst_section_id"
-                  :is-valid="
+                  v-on:onchange="formData.mst_section_id = $event"
+                  :value="formData.mst_section_id"
+                  :isValid="
                     initial_load ? null : formData.mst_section_id ? true : false
                   "
-                >
-                  >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Section
-                      <span class="text-danger"><strong>*</strong></span>
-                    </p>
-                  </template>
-                </CSelect>
+                />
               </CCol>
               <CCol sm="12">
                 <CRow form class="form-group">
@@ -502,6 +438,12 @@ export default {
         }
       },
     },
+    'formData.mst_department_id': {
+      deep: true,
+      handler(data) {
+        this.onDepartmentChange();
+      },
+    },
   },
   mounted() {
     this.reformatCountryCode();
@@ -542,6 +484,7 @@ export default {
         pwd: '',
         re_pwd: '',
         email: '',
+        error: null,
       },
       temp_data: { tlp_code: '' },
       statusOptions: [
@@ -644,6 +587,12 @@ export default {
           label: it.name,
           value: `${it.id}`,
         });
+      }
+      let findSection = this.optionSections.find(
+        (it) => it.value == this.formData.mst_section_id
+      );
+      if (!findSection) {
+        this.formData.mst_section_id = '';
       }
     },
     checkValidation() {

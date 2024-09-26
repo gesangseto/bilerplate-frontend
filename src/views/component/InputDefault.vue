@@ -9,9 +9,13 @@
       </CCol>
       <CCol :md="title ? col[1] : '12'">
         <div class="input-wrapper">
+          <!-- Slot untuk prepend -->
+          <slot name="prepend"></slot>
+
           <input
             :disabled="disabled"
             class="form-control"
+            :type="type"
             v-model="internalValue"
             @keypress="validateInput"
             @input="handleInput"
@@ -33,15 +37,14 @@
           v-if="
             isValid === null
               ? false
-              : isValid && invalid_feedback
+              : !isValid && invalid_feedback
               ? true
               : false
           "
           class="mb-0 mt-0"
-          style="font-size: smaller; color: red"
-        >
-          {{ invalid_feedback }}
-        </p>
+          style="font-size: x-small; color: red"
+          v-html="formattedInvalidFeedback"
+        ></p>
 
         <p
           class="mb-0 mt-0"
@@ -66,6 +69,7 @@ export default {
       default: () => ({ uppercase: false, nospace: false }),
     },
     invalid_feedback: { type: String, default: null },
+    type: { type: String, default: 'text' },
     validasi: { type: String, default: null },
     max: { type: Number, default: null },
     title: { type: String, default: 'No Title' },
@@ -149,6 +153,14 @@ export default {
         this.regex = /[^-?\d*.\d+]/g;
         this.regexValidation = /^-?\d*\.?\d*$/; // Menerima float dengan atau tanpa angka di depan titik
       }
+    },
+  },
+  computed: {
+    formattedInvalidFeedback() {
+      // Mengganti karakter newline (\n) dengan <br>
+      return this.invalid_feedback
+        ? this.invalid_feedback.replace(/\n/g, '<br>')
+        : '';
     },
   },
 };

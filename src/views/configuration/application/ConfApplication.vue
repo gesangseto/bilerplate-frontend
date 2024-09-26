@@ -255,52 +255,38 @@
                 <CCardBody>
                   <CRow form class="form-group">
                     <CCol sm="6">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="4" class="col-form-label">
-                          Min Character
-                        </CCol>
-                        <CCol sm="8">
-                          <CInput
-                            horizontal
-                            type="number"
-                            v-model="data.password_pattern.min"
-                            :is-valid="
-                              data.password_pattern.max &&
-                              data.password_pattern.min
-                                ? parseInt(data.password_pattern.min) >
-                                  parseInt(data.password_pattern.max)
-                                  ? false
-                                  : true
-                                : true
-                            "
-                            invalid-feedback="Min value must smaller than Max value"
-                          />
-                        </CCol>
-                      </CRow>
+                      <InputDefault
+                        :col="[4, 6]"
+                        title="Min Character"
+                        :validasi="'numeric'"
+                        v-model="data.password_pattern.min"
+                        :is-valid="
+                          data.password_pattern.max && data.password_pattern.min
+                            ? parseInt(data.password_pattern.min) >
+                              parseInt(data.password_pattern.max)
+                              ? false
+                              : true
+                            : true
+                        "
+                        invalid_feedback="Min value must smaller than Max value"
+                      />
                     </CCol>
                     <CCol sm="6">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="4" class="col-form-label">
-                          Max Character
-                        </CCol>
-                        <CCol sm="8">
-                          <CInput
-                            horizontal
-                            type="number"
-                            v-model="data.password_pattern.max"
-                            :is-valid="
-                              data.password_pattern.max &&
-                              data.password_pattern.min
-                                ? parseInt(data.password_pattern.min) >
-                                  parseInt(data.password_pattern.max)
-                                  ? false
-                                  : true
-                                : true
-                            "
-                            invalid-feedback="Max value must greater than Min value"
-                          />
-                        </CCol>
-                      </CRow>
+                      <InputDefault
+                        :col="[4, 6]"
+                        title="Max Character"
+                        :validasi="'numeric'"
+                        v-model="data.password_pattern.max"
+                        :is-valid="
+                          data.password_pattern.max && data.password_pattern.min
+                            ? parseInt(data.password_pattern.min) >
+                              parseInt(data.password_pattern.max)
+                              ? false
+                              : true
+                            : true
+                        "
+                        invalid_feedback="Max value must greater than Min value"
+                      />
                     </CCol>
                   </CRow>
 

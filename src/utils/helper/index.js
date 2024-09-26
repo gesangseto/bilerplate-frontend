@@ -188,21 +188,14 @@ export function validationPassword(input) {
     if (pattern.regex) {
       let regex = new RegExp(pattern.regex, 'gm');
       if (!regex.test(input)) {
-        let msg = `Password must`;
-        if (pattern.min && pattern.max)
-          msg += ` be ${pattern.min}-${pattern.max} characters long and`;
-        else if (pattern.min)
-          msg += ` be ${pattern.min} characters min long and`;
-        else if (pattern.max) msg += `be ${pattern.max} characters long and `;
+        let msg = `Password must meet the following criteria: `;
+        if (pattern.min) msg += `\n- Min. ${pattern.min} characters`;
+        if (pattern.max) msg += `\n- Max. ${pattern.max} characters`;
 
-        if (pattern.alphabet_lower) msg += ` contain one lowercase and`;
-        if (pattern.alphabet_upper) msg += ` contain one uppercase and`;
-        if (pattern.numeric) msg += ` contain one numeric and`;
-        if (pattern.symbol) msg += ` contain one symbol and`;
-
-        if (msg.endsWith('and')) {
-          msg = msg.slice(0, -3).trim();
-        }
+        if (pattern.alphabet_lower) msg += `\n- Contain lowercase letters`;
+        if (pattern.alphabet_upper) msg += `\n- Contain uppercase letters`;
+        if (pattern.numeric) msg += `\n- Contain numbers`;
+        if (pattern.symbol) msg += `\n- Contain symbols`;
         return msg;
       }
     }
