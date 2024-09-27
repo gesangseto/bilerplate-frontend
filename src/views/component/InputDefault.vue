@@ -72,7 +72,7 @@ export default {
     type: { type: String, default: 'text' },
     validasi: { type: String, default: null },
     max: { type: Number, default: null },
-    title: { type: String, default: 'No Title' },
+    title: { type: String, default: null },
     description: { type: String, default: '' },
     placeholder: { type: String },
     required: { type: Boolean, default: false },

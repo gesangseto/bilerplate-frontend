@@ -340,16 +340,55 @@
     <!-- KUMPULAN MODAL DIDALAM FORMS PROCESS ORDER -->
 
     <!-- MODAL UNTUK MELIHAT WEIGHT -->
-    <ProductWeight
-      :readonly="true"
-      :product="formData"
-      :showModal="viewModalWeight"
-      v-on:onCloseModal="viewModalWeight = false"
-    />
+    <CModal
+      title="Weight Configuration"
+      color="warning"
+      :show.sync="viewModalWeight"
+    >
+      <CRow>
+        <CCol sm="12" md="12" lg="12">
+          <div>
+            <table class="table">
+              <tr style="text-align: center; font-weight: bold">
+                <td>Packaging Level</td>
+                <td>Min (Kg)</td>
+                <td>Max (Kg)</td>
+                <td>Required</td>
+              </tr>
+              <tbody>
+                <tr
+                  v-for="(number, index) in [1, 2, 3, 4]"
+                  :key="index"
+                  style="text-align: center"
+                >
+                  <td>{{ number }}</td>
+                  <td>{{ formData[`weight_l${number}`].min }}</td>
+                  <td>{{ formData[`weight_l${number}`].max }}</td>
+                  <td>
+                    {{ formData[`weight_l${number}`].required ? 'Yes' : 'No' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </CCol>
+      </CRow>
+      <template #footer>
+        <CButton
+          size="sm"
+          color="danger"
+          type="button"
+          @click="viewModalWeight = false"
+        >
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
+
     <!-- Modal untuk menambahkan data Request Additional Serial-->
     <CModal
       title="Request Additional Serial"
-      color="warning"
+      color="success"
       :show.sync="viewModalRequestSerial"
     >
       <CRow>
@@ -404,7 +443,7 @@
     <!-- Modal untuk melihat view history dari request additional serial-->
     <CModal
       title="History Request Serial"
-      color="warning"
+      color="info"
       :show.sync="viewModalHistory"
     >
       <CDataTable
@@ -435,7 +474,7 @@
     <!-- MODAL VIEW SERIAL -->
     <CModal
       title="View Serial"
-      color="warning"
+      color="primary"
       :show.sync="viewModalSerial"
       size="lg"
     >
@@ -500,6 +539,7 @@ import {
   capitalizeFirstLetter,
   getConfig,
   getProfile,
+  isJsonString,
   onlyNumber,
 } from '../../../utils';
 export default {
@@ -597,6 +637,10 @@ export default {
           getConfig().additional_serial_for_sample || 0,
         generate_count_additional: [],
         history: [],
+        weight_l1: {},
+        weight_l2: {},
+        weight_l3: {},
+        weight_l4: {},
       },
       initial_load: true,
       today: moment().format('DD-MMM-YYYY'),
@@ -816,6 +860,17 @@ export default {
           getConfig().min_count_generated_serial || 0;
         this.formData.additional_serial_for_sample =
           this.formData.additional_serial_for_sample || 0;
+        for (var level = 1; level <= 4; level++) {
+          let weight = { min: '-', max: '-', required: false };
+          if (isJsonString(this.formData[`weight_l${level}`])) {
+            weight = {
+              ...weight,
+              ...JSON.parse(this.formData[`weight_l${level}`]),
+            };
+          }
+          console.log(weight);
+          this.formData[`weight_l${level}`] = weight;
+        }
       }
     },
     limitNumber({ event, data, max }) {
@@ -973,10 +1028,15 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let res = null;
-        if (this.formData.id) {
-          res = await updateProcessOrder(this.formData);
+        let param = JSON.parse(JSON.stringify(this.formData));
+        delete param.weight_l1;
+        delete param.weight_l2;
+        delete param.weight_l3;
+        delete param.weight_l4;
+        if (param.id) {
+          res = await updateProcessOrder(param);
         } else {
-          res = await insertProcessOrder(this.formData);
+          res = await insertProcessOrder(param);
         }
         this.$isLoading(false);
         this.$toast.open({
@@ -1047,7 +1107,6 @@ export default {
       let res = await closeBatchPO({
         id: this.formData.id,
         type: type == 'Partial' ? 'partial' : 'final',
-        weight_l2: getRandomMinMax(2.1),
       });
       this.$isLoading(false);
       this.$toast.open({
