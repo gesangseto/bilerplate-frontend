@@ -127,7 +127,7 @@
 
 <script>
 import bwipjs from 'bwip-js';
-import { parsingDataToBarcode, isValidEpcKey } from '../../utils';
+import { parsingDataToBarcode, isValidEpcKey, isValidNie } from '../../utils';
 import invalid_barcode from '../../assets/invalid_barcode.png';
 import moment from 'moment';
 // import $axiosMertrack from "../../apiMertrack";
@@ -138,7 +138,7 @@ export default {
   watch: {
     result: {
       deep: true,
-      handler() {
+      handler(data) {
         this.handleValidation();
       },
     },
@@ -185,7 +185,6 @@ export default {
       let initial = {
         sscc: null,
         gtin: null,
-        company_prefix: null,
         serial: null,
         epc_type: null,
         exp: null,
@@ -218,7 +217,6 @@ export default {
         epc_key: null,
         batch_no: null,
         exp: null,
-        company_prefix: null,
         serial: null,
         epc_type: null,
       };
@@ -273,6 +271,7 @@ export default {
     handleValidation() {
       this.required = this.initial_required();
       this.is_error = false;
+
       if (!this.result.epc_key) {
         this.is_error = true;
         this.required.epc_key.valid = false;
@@ -294,13 +293,14 @@ export default {
         }
       } else if (this.result.epc_type == 'nie') {
         if (
-          !isValidEpcKey(this.result.epc_key) ||
+          !isValidNie(this.result.epc_key) ||
           this.result.epc_key.length > 15
         ) {
           this.is_error = true;
           this.required.epc_key.valid = false;
         }
       }
+
       if (this.result.epc_type != 'sscc' && !this.result.serial) {
         this.is_error = true;
         this.required.serial.valid = false;

@@ -53,6 +53,23 @@ export function isValidEpcKey(epc_key = String) {
   }
   return result;
 }
+export function isValidNie(epc_key = String) {
+  let result = false;
+  if (!epc_key) {
+    result = false;
+  } else {
+    if (
+      isAlphaNumeric(epc_key) &&
+      epc_key.length >= 15 &&
+      epc_key.length <= 16
+    ) {
+      result = true;
+    } else {
+      result = false;
+    }
+  }
+  return result;
+}
 export function gs1CheckDigit(input) {
   let array = input.split('').reverse();
   let total = 0;
