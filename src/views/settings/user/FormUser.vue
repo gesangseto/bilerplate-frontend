@@ -64,7 +64,7 @@
                   validasi="numeric"
                   v-model="formData.tlp"
                   :max="12"
-                  :is-valid="initial_load ? null : !required.tlp.error"
+                  :is-valid="initial_load ? null : checkPhone(formData.tlp)"
                   :invalid_feedback="required.tlp.message"
                   placeholder="Enter phone number (Example : 81211223344)"
                 >
@@ -74,9 +74,8 @@
                         :disabled="action == 'Read' ? true : false"
                         required
                         :options="CountryCode"
-                        v-on:onchange="temp_data.tlp_code = $event"
-                        :value="temp_data.tlp_code"
-                        @change="handleChangeInput(temp_data.tlp_code)"
+                        v-on:onchange="handleChangeInput($event)"
+                        :value="formData.tlp_code"
                       />
                     </div>
                   </template>
@@ -486,7 +485,6 @@ export default {
         email: '',
         error: null,
       },
-      temp_data: { tlp_code: '' },
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
@@ -523,7 +521,6 @@ export default {
   },
   methods: {
     handleChangeInput($value) {
-      this.temp_data.tlp_code = $value;
       this.formData.tlp_code = $value;
     },
     async loadDepartment() {
@@ -557,7 +554,7 @@ export default {
       let _res = await getMstUser({ id: this.$route.params.id });
       if (_res) {
         let data = _res.data[0];
-        this.formData = data;
+        this.formData = { ...data };
         this.formData.mst_department_id =
           this.formData.mst_department_id || this.formData.department_id;
         this.formData.mst_section_id =
@@ -622,6 +619,8 @@ export default {
         have_error = true;
       }
       // Check Phone Number
+      console.log(this.formData.tlp);
+
       if (!isPhone(this.formData.tlp)) {
         have_error = true;
         this.required.tlp.error = true;
@@ -648,15 +647,23 @@ export default {
       }
       return;
     },
+    checkPhone(val) {
+      return isPhone(val);
+    },
+    checkEmail(val) {
+      return isEmail(val);
+    },
     isValid() {
+      console.log(this.formData);
+
       if (this.formData.error_metadata) return false;
       if (!this.formData.username) return false;
       if (!this.formData.employee_id) return false;
       if (!this.formData.full_name) return false;
       if (!this.formData.mst_department_id) return false;
       if (!this.formData.mst_section_id) return false;
-      if (!isPhone(this.formData.tlp)) return false;
-      if (!isEmail(this.formData.email)) return false;
+      if (!this.checkPhone(this.formData.tlp)) return false;
+      if (!this.checkEmail(this.formData.email)) return false;
       if (this.formData.pwd || this.formData.re_pwd)
         if (this.formData.re_pwd != this.formData.pwd) return false;
       return true;
@@ -664,7 +671,6 @@ export default {
     async save() {
       this.formData.mst_position_id = 1;
       this.initial_load = false;
-      this.isValid();
 
       if (!this.isValid()) {
         this.$toast.open({
@@ -682,6 +688,7 @@ export default {
       if (_form_data.tlp && _form_data.tlp_code) {
         dataPost.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;
       }
+
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
