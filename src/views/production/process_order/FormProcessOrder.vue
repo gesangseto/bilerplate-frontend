@@ -24,25 +24,18 @@
                 "
               />
 
-              <div class="form-group row mb-12">
-                <label
-                  for="product-name"
-                  class="col-sm-3 col-md-3 col-lg-3 form-label"
-                >
-                  Product Name <strong class="text-danger">*</strong>
-                </label>
-                <div class="col-sm-9 col-md-9 col-lg-9">
-                  <v-select
-                    :disabled="action != 'Create'"
-                    key="value"
-                    placeholder="--Select--"
-                    :options="productOptions"
-                    :reduce="(opt) => opt.value"
-                    v-model="formData.product_id"
-                  >
-                  </v-select>
-                </div>
-              </div>
+              <SelectOption
+                title="Product Name"
+                :disabled="action == 'Read' ? true : false"
+                required
+                :options="productOptions"
+                v-on:onchange="formData.product_id = $event"
+                :value="formData.product_id"
+                :isValid="
+                  initialLoad ? null : !formData.product_id ? false : true
+                "
+                :col="[3, 9]"
+              />
 
               <InputDefault
                 :disabled="true"
@@ -54,13 +47,6 @@
                 :disabled="true"
                 title="NIE"
                 v-model="formData.nie"
-              />
-
-              <InputDefault
-                :disabled="action != 'Create' && action != 'Update'"
-                title="HET"
-                v-model="formData.het"
-                :max="25"
               />
 
               <InputDefault
@@ -126,6 +112,12 @@
                 "
               />
 
+              <InputDefault
+                :disabled="action != 'Create' && action != 'Update'"
+                title="HET"
+                v-model="formData.het"
+                :max="25"
+              />
               <InputDefault
                 v-if="action != 'Create'"
                 :disabled="true"
@@ -868,7 +860,6 @@ export default {
               ...JSON.parse(this.formData[`weight_l${level}`]),
             };
           }
-          console.log(weight);
           this.formData[`weight_l${level}`] = weight;
         }
       }
@@ -989,31 +980,20 @@ export default {
       }
     },
     isValid() {
-      let required = [
-        'process_order_erp',
-        'generate_count_level_1',
-        'lot_no',
-        'batch_no',
-        'product_id',
-        // 'exp_date',
-        // 'mfg_date',
-      ];
-      for (const key of required) {
-        if (!this.formData[key]) {
-          return false;
-        }
-      }
-      // if (!this.formData.het) {
-      //   return false;
-      // }
-      if (!this.formData.buff && this.formData.buff != 0) {
-        return false;
-      }
+      console.log(this.formData);
+
+      if (!this.formData.process_order_erp) return false;
+      if (!this.formData.product_id) return false;
+      if (!this.formData.batch_no) return false;
+      if (!this.formData.lot_no) return false;
+      if (!this.formData.mfg_date) return false;
+      if (!this.formData.exp_date) return false;
+      if (!this.formData.generate_count_level_1) return false;
     },
     async save() {
       this.initialLoad = false;
       // // cek semua input yang mandatory
-      if (!this.isValid) {
+      if (!this.isValid()) {
         return this.$toast.open({
           message: 'Please complete all required data',
           type: 'error',

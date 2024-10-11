@@ -566,9 +566,13 @@ export default {
         let tlp = '';
         if (data.tlp) {
           tlp = data.tlp.split('-');
-          this.formData.tlp_code = tlp[0];
-          this.temp_data.tlp_code = tlp[0];
-          this.formData.tlp = tlp[1];
+          if (tlp.length == 2) {
+            this.formData.tlp_code = tlp[0];
+            this.formData.tlp = tlp[1];
+          } else {
+            this.formData.tlp_code = '+62';
+            this.formData.tlp = tlp[0];
+          }
         }
         this.onDepartmentChange();
       }

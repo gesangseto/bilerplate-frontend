@@ -2,7 +2,7 @@
   <a :href="href ? href : null">
     <CButton
       :class="property.class"
-      v-c-tooltip="property.tooltip"
+      v-c-tooltip="property.tooltip ? property.tooltip : ''"
       style="margin: 2px; text-align: center"
       v-if="is_visible"
       size="sm"
