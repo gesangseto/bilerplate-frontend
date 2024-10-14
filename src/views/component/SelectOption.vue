@@ -26,7 +26,7 @@
               style="color: red; font-size: x-small"
               v-if="!description && isValid === false ? true : false"
             >
-              {{ title }} is required
+              {{ title ? `${title} is required` : 'This field is required' }}
             </div>
             <div
               :style="`color: ${

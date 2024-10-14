@@ -76,6 +76,9 @@
                         :options="CountryCode"
                         v-on:onchange="handleChangeInput($event)"
                         :value="formData.tlp_code"
+                        :is-valid="
+                          initial_load ? null : formData.tlp_code ? true : false
+                        "
                       />
                     </div>
                   </template>
@@ -666,6 +669,7 @@ export default {
       if (!this.formData.full_name) return false;
       if (!this.formData.mst_department_id) return false;
       if (!this.formData.mst_section_id) return false;
+      if (!this.formData.tlp_code) return false;
       if (!this.checkPhone(this.formData.tlp)) return false;
       if (!this.checkEmail(this.formData.email)) return false;
       if (this.formData.pwd || this.formData.re_pwd)
