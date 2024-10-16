@@ -980,8 +980,6 @@ export default {
       }
     },
     isValid() {
-      console.log(this.formData);
-
       if (!this.formData.process_order_erp) return false;
       if (!this.formData.product_id) return false;
       if (!this.formData.batch_no) return false;
@@ -989,6 +987,7 @@ export default {
       if (!this.formData.mfg_date) return false;
       if (!this.formData.exp_date) return false;
       if (!this.formData.generate_count_level_1) return false;
+      return true;
     },
     async save() {
       this.initialLoad = false;
