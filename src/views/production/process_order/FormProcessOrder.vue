@@ -474,8 +474,8 @@
         <CCol md="10">
           <CTabs :active-tab.sync="activeTab">
             <CTab title="Available" active> </CTab>
-            <CTab title="Booking"> </CTab>
-            <CTab title="Production"> </CTab>
+            <CTab title="Reserved"> </CTab>
+            <CTab title="Production Outcome"> </CTab>
           </CTabs>
         </CCol>
         <CCol md="2">
