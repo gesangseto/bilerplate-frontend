@@ -39,7 +39,7 @@
                       @click="handleClickDelete(item, index)"
                     />
                     <ButtonPermission
-                      v-if="item.status == 0"
+                      v-if="item.status == 0 || item.status == 4"
                       :id="item.id"
                       :useHref="true"
                       :permission="'update'"

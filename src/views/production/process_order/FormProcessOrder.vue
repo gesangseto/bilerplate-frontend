@@ -194,7 +194,7 @@
                 style="font-size: 12px"
               />
               <CButton
-                v-if="formData.status == '4'"
+                v-if="formData.status == '4' && action == 'Update'"
                 type="submit"
                 size="sm"
                 @click="requestSerial()"
