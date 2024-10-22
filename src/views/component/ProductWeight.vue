@@ -245,10 +245,7 @@ export default {
       valid_weight: { l1: true, l2: true, l3: true, l4: true, all: true },
       showModalDialog: false,
       list_weight_type: [
-        {
-          value: 'predefined',
-          label: 'Predefined',
-        },
+        // { value: 'predefined', label: 'Predefined' },
         { value: 'average', label: 'Average' },
       ],
       weight_config: {

@@ -26,7 +26,9 @@
 
               <SelectOption
                 title="Product Name"
-                :disabled="action == 'Read' ? true : false"
+                :disabled="
+                  action == 'Read' || formData.status == '4' ? true : false
+                "
                 required
                 :options="productOptions"
                 v-on:onchange="formData.product_id = $event"
@@ -50,7 +52,10 @@
               />
 
               <InputDefault
-                :disabled="action != 'Create' && action != 'Update'"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 title="Batch No"
                 :validasi="'alphanumeric'"
                 v-model="formData.batch_no"
@@ -63,7 +68,10 @@
               />
 
               <InputDefault
-                :disabled="action != 'Create' && action != 'Update'"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 title="Lot No"
                 :validasi="'alphanumeric'"
                 v-model="formData.lot_no"
@@ -74,7 +82,10 @@
               />
 
               <InputDateDefault
-                :disabled="action != 'Create' && action != 'Update'"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 title="Mfg Date"
                 v-model="formData.mfg_date"
                 :options="{ format: 'dd/mm/yyyy' }"
@@ -87,7 +98,10 @@
                   <InputDefault
                     :title="null"
                     style="width: 400px"
-                    :disabled="action != 'Create' && action != 'Update'"
+                    :disabled="
+                      action != 'Create' &&
+                      (action != 'Update' || formData.status == '4')
+                    "
                     :validasi="'numeric'"
                     v-model="formData.shelf_life"
                     :description="formData.shelf_life ? 'Shelf Life' : null"
@@ -101,7 +115,10 @@
               </InputDateDefault>
 
               <InputDateDefault
-                :disabled="action != 'Create' && action != 'Update'"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 title="Exp Date"
                 v-model="formData.exp_date"
                 :options="{ format: 'dd/mm/yyyy' }"
@@ -113,7 +130,10 @@
               />
 
               <InputDefault
-                :disabled="action != 'Create' && action != 'Update'"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 title="HET"
                 v-model="formData.het"
                 :max="25"
@@ -143,7 +163,10 @@
             </CCol>
             <CCol sm="6" md="6" lg="6">
               <InputDefault
-                :disabled="action != 'Create' && action != 'Update'"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 title="Target L1 Qty"
                 :validasi="'numeric'"
                 v-model="formData.generate_count_level_1"
@@ -160,7 +183,10 @@
               />
 
               <InputDefault
-                :disabled="action != 'Create' && action != 'Update'"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 title="Buff (%)"
                 :validasi="'numeric'"
                 v-model="formData.buff"
@@ -335,36 +361,74 @@
     <CModal
       title="Weight Configuration"
       color="warning"
+      size="lg"
       :show.sync="viewModalWeight"
     >
-      <CRow>
-        <CCol sm="12" md="12" lg="12">
-          <div>
-            <table class="table">
-              <tr style="text-align: center; font-weight: bold">
-                <td>Packaging Level</td>
-                <td>Min (Kg)</td>
-                <td>Max (Kg)</td>
-                <td>Required</td>
-              </tr>
-              <tbody>
-                <tr
-                  v-for="(number, index) in [1, 2, 3, 4]"
-                  :key="index"
-                  style="text-align: center"
-                >
-                  <td>{{ number }}</td>
-                  <td>{{ formData[`weight_l${number}`].min }}</td>
-                  <td>{{ formData[`weight_l${number}`].max }}</td>
-                  <td>
-                    {{ formData[`weight_l${number}`].required ? 'Yes' : 'No' }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </CCol>
-      </CRow>
+      <table style="width: 100%">
+        <tr style="border-bottom: 2px solid rgb(101, 101, 101)">
+          <td style="width: 5%; text-align: center"><strong>Level</strong></td>
+          <td style="width: 20%; text-align: center"><strong>Type</strong></td>
+          <td style="width: 75%; text-align: center">
+            <strong>Config</strong>
+          </td>
+        </tr>
+        <tr
+          v-for="level in formData.current_pack ? formData.current_pack : 4"
+          :key="level"
+        >
+          <td style="text-align: center">
+            {{ level }}
+          </td>
+          <td style="text-align: center">
+            <label>
+              {{
+                formData[`weight_l${level}`].type
+                  ? formData[`weight_l${level}`].type
+                  : '-'
+              }}
+            </label>
+          </td>
+          <td>
+            <CRow style="align-items: center">
+              <CCol md="2">
+                <label>Required: </label>
+              </CCol>
+              <CCol md="1">
+                <label>
+                  {{ formData[`weight_l${level}`].required ? 'Yes' : 'No' }}
+                </label>
+              </CCol>
+              <!-- JIKA TYPE = PREDEFINED -->
+              <CCol md="9">
+                <CRow style="align-items: center">
+                  <CCol md="3">
+                    <label>Min (Kg): </label>
+                  </CCol>
+                  <CCol md="3">
+                    <CInput
+                      :disabled="true"
+                      class="mb-0"
+                      size="sm"
+                      v-model="formData[`weight_l${level}`].min"
+                    />
+                  </CCol>
+                  <CCol md="3">
+                    <label>Max (Kg): </label>
+                  </CCol>
+                  <CCol md="3">
+                    <CInput
+                      :disabled="true"
+                      class="mb-0"
+                      size="sm"
+                      v-model="formData[`weight_l${level}`].max"
+                    />
+                  </CCol>
+                </CRow>
+              </CCol>
+            </CRow>
+          </td>
+        </tr>
+      </table>
       <template #footer>
         <CButton
           size="sm"
@@ -611,6 +675,7 @@ export default {
         all: true,
       },
       formData: {
+        current_pack: 0,
         items: [],
         product_id: null,
         batch_no: '',
@@ -853,6 +918,7 @@ export default {
         this.formData.additional_serial_for_sample =
           this.formData.additional_serial_for_sample || 0;
         for (var level = 1; level <= 4; level++) {
+          // Merubah String weight menjadi JSON
           let weight = { min: '-', max: '-', required: false };
           if (isJsonString(this.formData[`weight_l${level}`])) {
             weight = {
@@ -861,6 +927,11 @@ export default {
             };
           }
           this.formData[`weight_l${level}`] = weight;
+
+          // Mencari packaging yang digunakan
+          if (this.formData.product[`packagingl${level}_id`]) {
+            this.formData.current_pack = level;
+          }
         }
       }
     },
