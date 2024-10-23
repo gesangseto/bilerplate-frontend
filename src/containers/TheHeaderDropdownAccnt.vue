@@ -52,8 +52,8 @@ export default {
     this.full_name = this.profile ? this.profile.full_name : '-';
     this.email = this.profile ? this.profile.email : '';
     this.avatar_path =
-      this.profile && this.profile.path
-        ? `img/avatars/${this.profile.path}`
+      this.profile && this.profile.mst_avatar_id
+        ? `img/avatars/${this.profile.mst_avatar_id}.png`
         : getLogo();
   },
   methods: {
