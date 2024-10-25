@@ -131,7 +131,7 @@ export default {
         this.title = 'GTIN (14 digits)';
         this.role.disabled_serial = false;
       } else if (this.result.epc_type == 'nie') {
-        this.title = 'NIE (Max 15 character)';
+        this.title = 'NIE (Max 16 character)';
         this.role.disabled_serial = false;
       } else if (this.result.epc_type == 'sscc') {
         this.role.disabled_serial = true;
@@ -166,7 +166,7 @@ export default {
       } else if (this.result.epc_type == 'nie') {
         if (
           !isValidEpcKey(this.result.epc_key) ||
-          this.result.epc_key.length > 15
+          this.result.epc_key.length > 16
         ) {
           this.is_error = true;
           this.valid.epc_key = false;
@@ -202,7 +202,7 @@ export default {
             event.preventDefault();
           if (data && data.length === 14) event.preventDefault();
         } else if (epc_type === 'nie') {
-          if (data && data.length === 15) event.preventDefault();
+          if (data && data.length === 16) event.preventDefault();
         }
       }
       return true;

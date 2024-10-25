@@ -37,7 +37,10 @@ export function isValidEpcKey(epc_key = String) {
   if (!epc_key) {
     result = false;
   } else {
-    if (isAlphaNumeric(epc_key) && epc_key.length < 15) {
+    if (
+      isAlphaNumeric(epc_key) &&
+      (epc_key.length == 15 || epc_key.length == 16)
+    ) {
       result = true;
     } else if (isNumeric(epc_key)) {
       if (epc_key.length === 18 || epc_key.length === 14) {
