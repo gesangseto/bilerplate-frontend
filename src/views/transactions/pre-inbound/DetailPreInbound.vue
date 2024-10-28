@@ -112,6 +112,16 @@
                   </td>
                 </tr>
                 <tr>
+                  <td>Remark</td>
+                  <td>
+                    <textarea
+                      class="form-control"
+                      readonly
+                      v-model="formData.remark"
+                    />
+                  </td>
+                </tr>
+                <tr>
                   <td>Status</td>
                   <td>
                     <input
