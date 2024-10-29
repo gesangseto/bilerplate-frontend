@@ -167,6 +167,7 @@ const DetailQueueBpom = () =>
 // ========================REPORT========================
 const ReportProductBatch = () => import('@/views/reports/ReportProductBatch');
 const ReportStock = () => import('@/views/reports/ReportStock');
+const ItemStock = () => import('@/views/reports/ItemStock');
 const ListAuditTrail = () =>
   import('@/views/reports/AuditTrail/ListAuditTrail');
 const DetailAuditTrail = () =>
@@ -856,6 +857,13 @@ function configRoutes() {
           name: 'Product Stock',
           meta: { login: true },
           component: ReportStock,
+        },
+        // Item Stock
+        {
+          path: 'item-stock',
+          name: 'Item Stock',
+          meta: { login: true },
+          component: ItemStock,
         },
       ],
     },
