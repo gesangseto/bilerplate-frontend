@@ -349,6 +349,8 @@ export default {
         url += `/transaction/disposal/approve/${item.trx_ref_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'sampling') {
         url += `/transaction/indirect_request/approve/${item.trx_ref_id}`;
+      } else if (item.trx_ref_name.toLowerCase() == 'indirect request') {
+        url += `/transaction/indirect_request/approve/${item.trx_ref_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'rework') {
         url += `/transaction/rework/approve/${item.trx_ref_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'decommission') {

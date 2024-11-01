@@ -107,6 +107,15 @@ export function getUserId() {
   }
 }
 
+export function getSectionId() {
+  try {
+    let user = getProfile();
+    return parseInt(user.mst_section_id);
+  } catch (error) {
+    return null;
+  }
+}
+
 export function getToken() {
   try {
     let user = getProfile();

@@ -82,10 +82,10 @@ export default {
           label: 'Transaction',
           _classes: 'font-weight-bold',
         },
-        { key: 'approval_1_full_name', label: 'Approval 1' },
-        { key: 'approval_2_full_name', label: 'Approval 2' },
-        { key: 'approval_3_full_name', label: 'Approval 3' },
-        { key: 'approval_4_full_name', label: 'Approval 4' },
+        { key: 'approval_1_section_name', label: 'Approval 1' },
+        { key: 'approval_2_section_name', label: 'Approval 2' },
+        { key: 'approval_3_section_name', label: 'Approval 3' },
+        { key: 'approval_4_section_name', label: 'Approval 4' },
         {
           key: 'action',
           label: 'Action',
@@ -142,10 +142,10 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          ['approval_1_full_name']: item['approval_1_full_name'] ?? '-',
-          ['approval_2_full_name']: item['approval_2_full_name'] ?? '-',
-          ['approval_3_full_name']: item['approval_3_full_name'] ?? '-',
-          ['approval_4_full_name']: item['approval_4_full_name'] ?? '-',
+          ['approval_1_section_name']: item['approval_1_section_name'] ?? '-',
+          ['approval_2_section_name']: item['approval_2_section_name'] ?? '-',
+          ['approval_3_section_name']: item['approval_3_section_name'] ?? '-',
+          ['approval_4_section_name']: item['approval_4_section_name'] ?? '-',
           nomor: (no += 1),
         };
       });
