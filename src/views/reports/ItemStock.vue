@@ -32,6 +32,15 @@
                   v-if="item.packaging_level > 1"
                   :type="'read'"
                   @click="rowClicked(item, index)"
+                  class="float-right"
+                />
+                <Button
+                  :type="'read'"
+                  v-if="item.lock_trx_id"
+                  v-c-tooltip="btn_2_prop.tooltip"
+                  :buttonProperty="btn_2_prop"
+                  v-on:click="showLockedStatus(item, index)"
+                  class="float-left"
                 />
               </td>
             </template>
@@ -72,6 +81,11 @@
         </CButton>
       </template>
     </CModal>
+
+    <ShowLockedStatus
+      :property="property_lock_status"
+      v-on:handleSubmit="handleCancel()"
+    />
   </CRow>
 </template>
 
@@ -87,6 +101,18 @@ export default {
   },
   data() {
     return {
+      property_lock_status: {
+        modal: false,
+        item: {},
+      },
+      btn_2_prop: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'exclamation-circle',
+        text: '',
+        tooltip: 'Show Locking Trx',
+      },
       filter: {
         page: 1,
         limit: 10,
@@ -149,7 +175,7 @@ export default {
         {
           key: 'action',
           label: 'Action',
-          _style: 'width:5%',
+          _style: 'width:10%',
           sorter: false,
           filter: false,
         },
@@ -173,6 +199,10 @@ export default {
       this.detail_item = {};
       this.datas = [];
       this.viewModal = false;
+    },
+    showLockedStatus(item) {
+      this.property_lock_status.modal = true;
+      this.property_lock_status.item = item;
     },
     rowClicked(item) {
       this.datas = [];

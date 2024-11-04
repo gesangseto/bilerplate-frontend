@@ -29,7 +29,7 @@
           />
           <CInput
             horizontal
-            v-model="property.item.gtin_cp"
+            v-model="property.item.epc_key"
             label="EPC Key"
             readonly
           />

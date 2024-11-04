@@ -63,13 +63,13 @@
                     <td>
                       <Button
                         v-c-tooltip="btn_1_prop.tooltip"
-                        :key="item.gtin_cp"
+                        :key="item.epc_key"
                         v-if="item.packaging_level > 1"
                         :buttonProperty="btn_1_prop"
                         v-on:click="rowClicked(item, index)"
                       />
                       <CButton
-                        :key="item.gtin_cp"
+                        :key="item.epc_key"
                         v-if="item.packaging_level == 1"
                         style="
                           margin-bottom: -1px;
@@ -279,7 +279,7 @@ export default {
     rowClicked(item) {
       // if (item.status != 1) {
       //   this.$toast.open({
-      //     message: `This item SN [${item.gtin_cp}] ${
+      //     message: `This item SN [${item.epc_key}] ${
       //       item.serial
       //     } is currently on pending proccess in ${convertTableName(
       //       item.locked_trx
