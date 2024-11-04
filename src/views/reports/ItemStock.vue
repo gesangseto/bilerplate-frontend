@@ -45,7 +45,7 @@
               @update:activePage="pageChange"
             />
           </template>
-          <!-- <ButtonPermission
+          <ButtonPermission
             exportType="excel"
             :permission="'print'"
             @click="handleClickExport('xls')"
@@ -54,7 +54,7 @@
             exportType="pdf"
             :permission="'print'"
             @click="handleClickExport('pdf')"
-          /> -->
+          />
         </CCardBody>
       </CCard>
     </CCol>
@@ -201,7 +201,7 @@ export default {
         alert: true,
         param: this.filter,
         exportType: type,
-        url: '/v3/report/stock',
+        url: '/v4/report/item-stock',
       });
     },
     pageChange(page) {
