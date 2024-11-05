@@ -17,7 +17,7 @@
       size="lg"
     >
       <template #header>
-        <h5><strong>About Mertrack&reg; Warehouse</strong></h5>
+        <h5><strong>About Mertrack&reg; Integra</strong></h5>
       </template>
       <CCardBody>
         <CRow>
@@ -35,12 +35,12 @@
               <tr>
                 <td>Mertrack Core</td>
                 <td>:</td>
-                <td>3.0</td>
+                <td>4.0</td>
               </tr>
               <tr>
                 <td>Mobile</td>
                 <td>:</td>
-                <td>3.0</td>
+                <td>4.0</td>
               </tr>
             </table>
           </CCol>
@@ -50,16 +50,16 @@
                 <td colspan="3">&nbsp;</td>
               </tr>
               <tr>
-              <tr>
+                <!-- <tr>
                 <td>Connector EPCIS OSM</td>
                 <td>:</td>
                 <td>1.0</td>
-              </tr>
-              <tr>
+              </tr> -->
+                <!-- <tr>
                 <td>Connector EPCIS EML</td>
                 <td>:</td>
                 <td>1.0</td>
-              </tr>
+              </tr> -->
                 <td>Connector BPOM</td>
                 <td>:</td>
                 <td>3.0.1</td>
@@ -132,7 +132,7 @@ export default {
   mounted() {
     this.data = getConfig();
     this.data.about = `
-    This copy of <strong>Mertrack® Warehouse</strong> is licensed to:
+    This copy of <strong>Mertrack® Integra</strong> is licensed to:
     <br/>
     <br/>
     Number of Entity: 1
