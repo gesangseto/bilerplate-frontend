@@ -99,7 +99,6 @@ import {
   calculatePaginationV3,
   exportDataV3,
   getSectionId,
-  getUserId,
 } from '../../../utils';
 import { dateFilter } from '../../../constants';
 export default {

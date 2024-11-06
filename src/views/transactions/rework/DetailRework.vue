@@ -141,7 +141,7 @@
           <CButton
             v-if="
               rework.status == 0 &&
-              rework.approval_id == user_id &&
+              rework.approval_id == section_id &&
               $route.params.type == 'approve'
             "
             type="submit"
@@ -154,7 +154,7 @@
           <CButton
             v-if="
               rework.status == 0 &&
-              rework.approval_id == user_id &&
+              rework.approval_id == section_id &&
               $route.params.type == 'approve'
             "
             type="button"
@@ -202,7 +202,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3, getUserId } from '../../../utils';
+import { exportDataV3, getSectionId, getUserId } from '../../../utils';
 
 export default {
   name: 'DetailRework',
@@ -232,7 +232,7 @@ export default {
       rejectProperty: { title: 'Rework', modal: false, id: null, reason: '' },
       action: '',
       detail_item: {},
-      user_id: getUserId(),
+      section_id: getSectionId(),
       packaging_level: [],
       datas: [],
       viewModal: false,

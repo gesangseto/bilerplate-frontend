@@ -84,7 +84,7 @@
                     <ButtonPermission
                       :id="item.id"
                       :useHref="true"
-                      v-if="item.approval_id == user_id && item.status == 0"
+                      v-if="item.approval_id == section_id && item.status == 0"
                       :permission="'approve'"
                       @click="rowUpdateClicked(item, index)"
                     />
@@ -120,7 +120,12 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { calculatePaginationV3, exportDataV3, getUserId } from '../../../utils';
+import {
+  calculatePaginationV3,
+  exportDataV3,
+  getSectionId,
+  getUserId,
+} from '../../../utils';
 import { dateFilter } from '../../../constants';
 export default {
   name: 'ListReturn',
@@ -137,7 +142,7 @@ export default {
         StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
         EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
       },
-      user_id: getUserId(),
+      section_id: getSectionId(),
       items: [],
       tempItems: [],
       buttonStatus: null,
@@ -179,7 +184,7 @@ export default {
           _classes: 'font-weight-bold',
         },
         {
-          key: 'approval_full_name',
+          key: 'approval_name',
           label: 'Next Approval',
         },
         {
@@ -242,8 +247,9 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          status_desc: item.status_desc || 'Unkwon Status',
           created_full_name: item.created_full_name || '-',
-          approval_full_name: item.approval_full_name || '-',
+          approval_name: item.approval_name || '-',
         };
       });
     },
