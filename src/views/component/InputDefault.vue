@@ -103,7 +103,7 @@ export default {
     validateInput(event) {
       const char = String.fromCharCode(event.keyCode || event.which);
       let isValid = true;
-      if (this.validasi) {
+      if (this.validasi && this.regexValidation) {
         isValid = this.regexValidation.test(char);
       }
       if (!isValid || (this.max && this.internalValue.length >= this.max)) {

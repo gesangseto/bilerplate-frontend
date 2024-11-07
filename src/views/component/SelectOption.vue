@@ -17,35 +17,51 @@
           v-model="localValue"
           @input="handleChange($event)"
           :required="required"
+          :class="{
+            'style-invalid': isValid === false,
+            'style-valid': isValid === true,
+          }"
         >
           <template #no-options="{ search, searching, loading }">
             Sorry, no matching item.
           </template>
-          <template #footer>
-            <div
-              style="color: red; font-size: x-small"
-              v-if="!description && isValid === false ? true : false"
-            >
-              {{ title ? `${title} is required` : 'This field is required' }}
-            </div>
-            <div
-              :style="`color: ${
-                isValid === false ? 'red' : 'grey'
-              }; font-size: x-small`"
-            >
-              {{ description }}
-            </div>
-          </template>
         </v-select>
+        <div
+          style="color: red; font-size: x-small"
+          v-if="!description && isValid === false ? true : false"
+        >
+          {{
+            invalid_feedback
+              ? invalid_feedback
+              : title
+              ? `${title} is required`
+              : 'This field is required'
+          }}
+        </div>
+        <div
+          :style="`color: ${
+            isValid === false ? 'red' : 'grey'
+          }; font-size: x-small`"
+        >
+          {{ description }}
+        </div>
       </CCol>
     </CRow>
     <br />
   </div>
 </template>
 
+<style>
+.style-invalid {
+  border: 1px solid red;
+  border-radius: 5px;
+}
+.style-valid {
+  border: 0.5px solid #0be30f;
+  border-radius: 5px;
+}
+</style>
 <script>
-import { CCol } from '@coreui/vue';
-
 export default {
   name: 'SelectOption',
   props: {
@@ -58,6 +74,7 @@ export default {
     placeholder: { type: String },
     required: { type: Boolean, default: false },
     isValid: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
+    invalid_feedback: { type: String, default: null },
     disabled: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
     col: { type: Array, default: () => [3, 9] }, // Properti isValid untuk menentukan validasi input
   },

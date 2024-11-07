@@ -60,6 +60,7 @@
                 <InputDefault
                   :disabled="action == 'Read' ? true : false"
                   :col="[3, 9]"
+                  required
                   title="Phone Number"
                   validasi="numeric"
                   v-model="formData.tlp"
@@ -79,6 +80,9 @@
                         :is-valid="
                           initial_load ? null : formData.tlp_code ? true : false
                         "
+                        :invalid_feedback="
+                          checkPhone(formData.tlp) ? null : '   '
+                        "
                       />
                     </div>
                   </template>
@@ -93,20 +97,23 @@
                   title="Email"
                   placeholder="email.address@email.com"
                   v-model="formData.email"
-                  :is-valid="
-                    initial_load ? null : formData.email ? true : false
-                  "
+                  :is-valid="initial_load ? null : checkEmail(formData.email)"
                 />
               </CCol>
               <CCol sm="12">
                 <InputDefault
                   :disabled="action == 'Read' ? true : false"
                   :col="[3, 9]"
+                  :required="action == 'Create' ? true : false"
                   :type="showPassword == false ? 'password' : 'text'"
                   title="Password"
                   v-model="formData.pwd"
                   :is-valid="
-                    !formData.pwd ? null : !needPassword && !required.pwd.error
+                    initial_load
+                      ? null
+                      : !formData.pwd && action !== 'Create'
+                      ? null
+                      : !needPassword && !required.pwd.error
                   "
                   :invalid_feedback="required.pwd.message"
                   :placeholder="
@@ -437,6 +444,10 @@ export default {
             this.required.pwd.error = true;
             this.required.pwd.message = check;
           }
+        } else if (this.action == 'Create') {
+          this.needPassword = true;
+          this.required.pwd.error = true;
+          this.required.pwd.message = check;
         }
       },
     },
@@ -487,6 +498,8 @@ export default {
         re_pwd: '',
         email: '',
         error: null,
+        mst_department_id: null,
+        mst_section_id: null,
       },
       statusOptions: [
         { value: 'Active', label: 'Active' },
@@ -626,8 +639,6 @@ export default {
         have_error = true;
       }
       // Check Phone Number
-      console.log(this.formData.tlp);
-
       if (!isPhone(this.formData.tlp)) {
         have_error = true;
         this.required.tlp.error = true;
@@ -661,8 +672,6 @@ export default {
       return isEmail(val);
     },
     isValid() {
-      console.log(this.formData);
-
       if (this.formData.error_metadata) return false;
       if (!this.formData.username) return false;
       if (!this.formData.employee_id) return false;
@@ -674,6 +683,8 @@ export default {
       if (!this.checkEmail(this.formData.email)) return false;
       if (this.formData.pwd || this.formData.re_pwd)
         if (this.formData.re_pwd != this.formData.pwd) return false;
+      this.checkValidation();
+      if (this.formData.have_error) return false;
       return true;
     },
     async save() {
