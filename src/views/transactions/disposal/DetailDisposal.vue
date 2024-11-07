@@ -140,7 +140,7 @@
           <CButton
             v-if="
               disposal.status == 0 &&
-              disposal.approval_id == user_id &&
+              disposal.approval_id == section_id &&
               $route.params.type == 'approve'
             "
             type="submit"
@@ -153,7 +153,7 @@
           <CButton
             v-if="
               disposal.status == 0 &&
-              disposal.approval_id == user_id &&
+              disposal.approval_id == section_id &&
               $route.params.type == 'approve'
             "
             type="button"
@@ -201,7 +201,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3, getUserId } from '../../../utils';
+import { exportDataV3, getSectionId, getUserId } from '../../../utils';
 
 export default {
   name: 'DetailDisposal',
@@ -231,7 +231,7 @@ export default {
       action: '',
       rejectProperty: { title: 'Disposal', modal: false, id: null, reason: '' },
       detail_item: {},
-      user_id: getUserId(),
+      section_id: getSectionId(),
       datas: [],
       viewModal: false,
       view: {

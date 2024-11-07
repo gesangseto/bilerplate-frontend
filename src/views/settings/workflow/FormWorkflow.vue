@@ -8,91 +8,56 @@
           </CCardHeader>
           <CCardBody>
             <CForm>
-              <!-- <CInput
-                readonly
-                horizontal
-                placeholder="ID"
-        
-                invalid-feedback="ID is required"
-
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    ID
-                    <span class="text-danger"><strong>*</strong></span>
-                  </p>
-                </template>
-              </CInput> -->
-              <CInput
-                label="Transaction"
-                readonly
-                placeholder="--Select--"
-                horizontal
-                :value.sync="workflow['transaction_label']"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Transaction
-                    <span class="text-danger"><strong>*</strong></span>
-                  </p>
-                </template>
-              </CInput>
-              <CSelect
+              <InputDefault
+                :disabled="true"
+                title="Transaction"
+                v-model="workflow['transaction_label']"
+              />
+              <SelectOption
+                title="Approval 1"
                 :disabled="action == 'Read' ? true : false"
-                label="Approval 1"
-                :options="users"
-                placeholder="--Select--"
-                horizontal
-                @change="onSetApproval()"
-                :value.sync="workflow.approval_1"
-                :is-valid="err_workflow.approval_1"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Approval 1</p>
-                </template>
-              </CSelect>
-              <CSelect
+                :options="section"
+                required
+                v-on:onchange="workflow.approval_1 = $event"
+                :value="workflow.approval_1"
+                :col="[3, 9]"
+                :isValid="err_workflow.approval_1 == false ? false : true"
+                :description="
+                  err_workflow.approval_1 == false
+                    ? 'Approval 1 have an error'
+                    : null
+                "
+              />
+              <SelectOption
+                title="Approval 2"
                 :disabled="action == 'Read' ? true : false"
-                label="Approval 2"
-                :options="users"
-                placeholder="--Select--"
-                horizontal
-                :value.sync="workflow.approval_2"
-                @change="onSetApproval()"
-                :is-valid="err_workflow.approval_2"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Approval 2</p>
-                </template>
-              </CSelect>
-              <CSelect
+                :options="section"
+                v-on:onchange="workflow.approval_2 = $event"
+                :value="workflow.approval_2"
+                :col="[3, 9]"
+                :isValid="err_workflow.approval_2 == false ? false : true"
+                :description="
+                  err_workflow.approval_2 == false
+                    ? 'Approval 2 have an error'
+                    : null
+                "
+              />
+              <SelectOption
+                title="Approval 3"
                 :disabled="action == 'Read' ? true : false"
-                label="Approval 3"
-                :options="users"
-                placeholder="--Select--"
-                horizontal
-                :value.sync="workflow.approval_3"
-                @change="onSetApproval()"
-                :is-valid="err_workflow.approval_3"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Approval 3</p>
-                </template>
-              </CSelect>
-              <CSelect
+                :options="section"
+                v-on:onchange="workflow.approval_3 = $event"
+                :value="workflow.approval_3"
+                :col="[3, 9]"
+              />
+              <SelectOption
+                title="Approval 4"
                 :disabled="action == 'Read' ? true : false"
-                @change="onSetApproval()"
-                label="Approval 4"
-                :options="users"
-                placeholder="--Select--"
-                horizontal
-                :value.sync="workflow.approval_4"
-                :is-valid="err_workflow.approval_4"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Approval 4</p>
-                </template>
-              </CSelect>
+                :options="section"
+                v-on:onchange="workflow.approval_4 = $event"
+                :value="workflow.approval_4"
+                :col="[3, 9]"
+              />
             </CForm>
           </CCardBody>
           <CCardFooter>
@@ -116,19 +81,21 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
+import { getMstSection } from '../../../resource/MstSection';
 import { capitalizeFirstLetter } from '../../../utils';
 
 export default {
   name: 'FormWorkflow',
   mounted() {
     this.loadWorkflowList();
-    this.loadUser();
+    this.loadSection();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
   },
   data() {
     return {
+      initialLoad: true,
       action: '',
       route_action: '',
       usedTransaction: [],
@@ -147,7 +114,7 @@ export default {
         id: null,
       },
       userValidation: false,
-      users: [],
+      section: [],
       menuOptions: [],
     };
   },
@@ -256,18 +223,17 @@ export default {
       }
       return;
     },
-    loadUser() {
-      $axiosMertrack.get(`/v3/master/user?status=Active`).then((res) => {
-        var userMapping = res.data.data.map((item) => {
-          return {
-            label: item.full_name,
-            value: item.id,
-          };
-        });
-        userMapping.push({ label: 'Empty', value: null });
-        this.users = userMapping;
-      });
-
+    async loadSection() {
+      let _res = await getMstSection({ status: 'Active' });
+      if (_res && !_res.error) {
+        let data = _res.data;
+        for (const it of data) {
+          this.section.push({
+            label: it.name,
+            value: it.id,
+          });
+        }
+      }
       return;
     },
     onSetApproval() {
@@ -281,6 +247,7 @@ export default {
         });
       }
     },
+
     cancel() {
       this.$router.back();
     },

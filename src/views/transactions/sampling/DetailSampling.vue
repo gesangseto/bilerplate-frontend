@@ -141,7 +141,7 @@
           <CButton
             v-if="
               sampling.status == 0 &&
-              sampling.approval_id == user_id &&
+              sampling.approval_id == section_id &&
               $route.params.type == 'approve'
             "
             type="submit"
@@ -154,7 +154,7 @@
           <CButton
             v-if="
               sampling.status == 0 &&
-              sampling.approval_id == user_id &&
+              sampling.approval_id == section_id &&
               $route.params.type == 'approve'
             "
             type="button"
@@ -202,7 +202,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3, getUserId } from '../../../utils';
+import { exportDataV3, getSectionId, getUserId } from '../../../utils';
 
 export default {
   name: 'DetailSampling',
@@ -237,7 +237,7 @@ export default {
       },
       action: '',
       detail_item: {},
-      user_id: getUserId(),
+      section_id: getSectionId(),
       datas: [],
       viewModal: false,
       view: {
