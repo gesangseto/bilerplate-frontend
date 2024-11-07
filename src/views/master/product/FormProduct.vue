@@ -19,7 +19,7 @@
 
               <CCol sm="12">
                 <InputDefault
-                  :disabled="!product.flag_upd_del"
+                  :disabled="action == 'Read'"
                   title="Item No ERP"
                   placeholder="Enter item no erp"
                   v-model="product.no"

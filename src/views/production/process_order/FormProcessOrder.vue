@@ -815,7 +815,11 @@ export default {
         ? 'EDIT'
         : 'APPROVE';
     // get product
-    let _product = await getMstProduct({ product_type: 0, show_status: true });
+    let _product = await getMstProduct({
+      product_type: 0,
+      show_status: true,
+      status: 'Active',
+    });
     if (_product) {
       for (const it of _product.data) {
         this.productOptions.push({
