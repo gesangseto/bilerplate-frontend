@@ -22,11 +22,7 @@
                 :value="workflow.approval_1"
                 :col="[3, 9]"
                 :isValid="err_workflow.approval_1 == false ? false : true"
-                :description="
-                  err_workflow.approval_1 == false
-                    ? 'Approval 1 have an error'
-                    : null
-                "
+                invalid_feedback="Approval 1 have an error"
               />
               <SelectOption
                 title="Approval 2"
@@ -36,11 +32,7 @@
                 :value="workflow.approval_2"
                 :col="[3, 9]"
                 :isValid="err_workflow.approval_2 == false ? false : true"
-                :description="
-                  err_workflow.approval_2 == false
-                    ? 'Approval 2 have an error'
-                    : null
-                "
+                invalid_feedback="Approval 2 have an error"
               />
               <SelectOption
                 title="Approval 3"

@@ -28,21 +28,11 @@
         </v-select>
         <div
           style="color: red; font-size: x-small"
-          v-if="!description && isValid === false ? true : false"
+          v-if="invalid_feedback && isValid === false ? true : false"
         >
-          {{
-            invalid_feedback
-              ? invalid_feedback
-              : title
-              ? `${title} is required`
-              : 'This field is required'
-          }}
+          {{ invalid_feedback }}
         </div>
-        <div
-          :style="`color: ${
-            isValid === false ? 'red' : 'grey'
-          }; font-size: x-small`"
-        >
+        <div v-if="description" style="color: grey; font-size: x-small">
           {{ description }}
         </div>
       </CCol>
