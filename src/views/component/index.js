@@ -25,6 +25,7 @@ import ButtonDownloadFilePath from './ButtonDownloadFilePath';
 import InputDefault from './InputDefault';
 import InputDateDefault from './InputDateDefault';
 import ButtonPopover from './ButtonPopover';
+import TextareaDefault from './TextareaDefault';
 
 export {
   VirtualKeyboard,
@@ -54,4 +55,5 @@ export {
   InputDefault,
   InputDateDefault,
   ButtonPopover,
+  TextareaDefault,
 };

@@ -9,204 +9,129 @@
 
           <CCardBody>
             <CForm>
-              <CInput :disabled="true" horizontal v-model="formData.id">
-                <template #label>
-                  <p class="col-form-label col-sm-3">ID</p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter supplier name"
-                v-model="formData.name"
-                :is-valid="initial_load ? null : formData.name ? true : false"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                label="Pic *"
-                placeholder="Enter supplier PIC name"
-                horizontal
-                v-model="formData.pic"
-                :is-valid="initial_load ? null : formData.pic ? true : false"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    PIC Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-
-              <CTextarea
-                :disabled="action == 'Read' ? true : false"
-                placeholder="Enter supplier address"
-                horizontal
-                v-model="formData.address"
-                :is-valid="
-                  initial_load ? null : formData.address ? true : false
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Address
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CTextarea>
-
-              <div class="form-group">
-                <table style="width: 100%">
-                  <tr>
-                    <td style="width: 25%">
-                      Phone Number
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </td>
-                    <td>
-                      <table style="width: 100%">
-                        <tr>
-                          <td style="width: 40%; padding-bottom: 15px">
-                            <v-select
-                              :disabled="action === 'Read' ? true : false"
-                              placeholder="- Country -"
-                              :options="CountryCode"
-                              :reduce="(opt) => opt.value"
-                              v-model="formData.tlp_code"
-                              @input="handleChangeInput(formData.tlp_code)"
-                            >
-                            </v-select>
-                            <small
-                              v-if="!initial_load && !formData.tlp_code"
-                              style="color: red"
-                            >
-                              Code Country is required
-                            </small>
-                          </td>
-
-                          <td>
-                            <CInput
-                              :disabled="action == 'Read' ? true : false"
-                              placeholder="Enter phone number (Example : 81211223344)"
-                              horizontal
-                              v-model="formData.tlp"
-                              invalid-feedback="Please provide 7-12 digits phone number"
-                              :is-valid="
-                                initial_load
-                                  ? null
-                                  : checkValidPhone(formData.tlp)
-                                  ? true
-                                  : false
-                              "
-                              @keypress="
-                                limitPhone({
-                                  event: $event,
-                                  data: formData.tlp,
-                                  max: 12,
-                                })
-                              "
-                            >
-                            </CInput>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-              <div class="form-group">
-                <table style="width: 100%">
-                  <tr>
-                    <td style="width: 25%">Alternative Phone Number</td>
-                    <td>
-                      <table style="width: 100%">
-                        <tr>
-                          <td style="width: 40%; padding-bottom: 15px">
-                            <v-select
-                              :disabled="action === 'Read' ? true : false"
-                              placeholder="- Country -"
-                              :options="CountryCode"
-                              :reduce="(opt) => opt.value"
-                              v-model="formData.tlp_alt_code"
-                              @input="
-                                handleChangeInput(
-                                  formData.tlp_alt_code,
-                                  'alt_code'
-                                )
-                              "
-                            >
-                            </v-select>
-                          </td>
-                          <td>
-                            <CInput
-                              :disabled="action == 'Read' ? true : false"
-                              placeholder="Enter alternative phone number (Example : 81211223344)"
-                              horizontal
-                              v-model="formData.tlp_alt"
-                              @keypress="
-                                limitPhone({
-                                  event: $event,
-                                  data: formData.tlp_alt,
-                                  max: 12,
-                                })
-                              "
-                            />
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                placeholder="email.address@email.com"
-                horizontal
-                v-model="formData.email"
-                invalid-feedback="Please provide valid email address"
-                :is-valid="
-                  initial_load
-                    ? null
-                    : checkValidEmail(formData.email)
-                    ? true
-                    : false
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Email
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="true"
+                  :col="[3, 9]"
+                  title="ID"
+                  v-model="formData.id"
                 />
-              </CRow>
+              </CCol>
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  required
+                  title="Name"
+                  placeholder="Enter supplier name"
+                  v-model="formData.name"
+                  :is-valid="initial_load ? null : formData.name ? true : false"
+                />
+              </CCol>
+              <CCol sm="12">
+                <TextareaDefault
+                  :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  required
+                  title="Address"
+                  placeholder="Enter supplier address"
+                  v-model="formData.address"
+                  :is-valid="
+                    initial_load ? null : formData.address ? true : false
+                  "
+                />
+              </CCol>
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  required
+                  title="Phone Number"
+                  validasi="numeric"
+                  v-model="formData.tlp"
+                  :max="12"
+                  :is-valid="initial_load ? null : checkPhone(formData.tlp)"
+                  :invalid_feedback="'Please provide 7-12 digits phone number'"
+                  placeholder="Enter phone number (Example : 81211223344)"
+                >
+                  <template #prepend>
+                    <div style="width: 350px; margin-bottom: -50px">
+                      <SelectOption
+                        :disabled="action == 'Read' ? true : false"
+                        required
+                        :options="CountryCode"
+                        v-on:onchange="handleChangeInput($event)"
+                        :value="formData.tlp_code"
+                        :is-valid="
+                          initial_load ? null : formData.tlp_code ? true : false
+                        "
+                        :invalid_feedback="
+                          checkPhone(formData.tlp) ? null : '   '
+                        "
+                      />
+                    </div>
+                  </template>
+                </InputDefault>
+              </CCol>
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  title="Alternative Phone Number"
+                  validasi="numeric"
+                  v-model="formData.tlp_alt"
+                  :max="12"
+                  :is-valid="
+                    initial_load
+                      ? null
+                      : formData.tlp_alt_code && !checkPhone(formData.tlp_alt)
+                      ? false
+                      : true
+                  "
+                  :invalid_feedback="
+                    formData.tlp_alt_code
+                      ? 'Please provide 7-12 digits phone number'
+                      : null
+                  "
+                >
+                  <template #prepend>
+                    <div style="width: 350px; margin-bottom: -50px">
+                      <SelectOption
+                        :disabled="action == 'Read' ? true : false"
+                        :options="CountryCode"
+                        v-on:onchange="handleChangeInput($event, 'alt_code')"
+                        :value="formData.tlp_alt_code"
+                      />
+                    </div>
+                  </template>
+                </InputDefault>
+              </CCol>
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  required
+                  validasi="email"
+                  title="Email"
+                  placeholder="email.address@email.com"
+                  v-model="formData.email"
+                  :is-valid="initial_load ? null : checkEmail(formData.email)"
+                  :invalid_feedback="
+                    formData.email ? 'Please provide valid email address' : null
+                  "
+                />
+              </CCol>
+              <CCol sm="12">
+                <CRow form class="form-group">
+                  <CCol sm="3"> Status </CCol>
+                  <SwitchStatusMaster
+                    :disabled="action == 'Read'"
+                    :show_label="true"
+                    :default_value="formData.status"
+                    v-on:onChange="formData.status = $event"
+                  />
+                </CRow>
+              </CCol>
             </CForm>
             <Metadata
               :defaultMetadata="formData.metadata"
@@ -277,6 +202,12 @@ export default {
   },
   validations: {},
   methods: {
+    checkEmail(val) {
+      return isEmail(val);
+    },
+    checkPhone(val) {
+      return isPhone(val);
+    },
     limitPhone({ event, data, max }) {
       onlyNumber({ event, data, max });
     },
@@ -334,6 +265,11 @@ export default {
       } else if (!this.formData.tlp_code) {
         return false;
       } else if (!this.formData.tlp || !isPhone(this.formData.tlp)) {
+        return false;
+      } else if (
+        this.formData.tlp_alt_code &&
+        !isPhone(this.formData.tlp_alt)
+      ) {
         return false;
       } else if (!this.formData.email || !isEmail(this.formData.email)) {
         return false;

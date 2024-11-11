@@ -41,13 +41,12 @@
                 />
               </CCol>
               <CCol sm="12">
-                <CTextarea
+                <TextareaDefault
                   :disabled="action == 'Read'"
-                  label="Description"
+                  title="Description"
                   placeholder="Enter product description"
-                  @keyup="validationData()"
-                  horizontal
                   v-model="product.description"
+                  :col="[3, 9]"
                 />
               </CCol>
 
@@ -76,7 +75,7 @@
                   title="Min Stock"
                   placeholder="Enter minimum L1 stock treshold"
                   v-model="product.minimum"
-                  :validasi="'numeric'"
+                  :validasi="'integer'"
                 />
               </CCol>
 
@@ -86,7 +85,7 @@
                   title="Max Stock"
                   placeholder="Enter maximum L1 stock treshold"
                   v-model="product.maximum"
-                  :validasi="'numeric'"
+                  :validasi="'integer'"
                 />
               </CCol>
 
@@ -192,61 +191,43 @@
               </CCol>
 
               <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="!product.flag_upd_del"
-                  label="Company Prefix"
-                  horizontal
+                  :col="[3, 9]"
+                  title="Company Prefix"
                   v-model="product.company_prefix"
-                  placeholder="Company Prefix"
-                  @keyup="handleChangeGtin()"
-                  @keypress="
-                    limitNumber({
-                      event: $event,
-                      data: product.company_prefix,
-                      max:
-                        12 - product.item_reference.length >= 9
-                          ? 9
-                          : 12 - product.item_reference.length,
-                    })
+                  validasi="numeric"
+                  :max="9"
+                  :is-valid="
+                    initial_load ? null : validasiCPIR() ? true : false
                   "
-                  :add-input-classes="{
-                    'is-invalid': !initial_load && !validationNieOrGtin('gtin'),
-                  }"
-                  :invalid-feedback="'Company prefix and Item Reference must be 13 digits'"
-                  :readonly="
-                    disabled &&
-                    product.flag_upd_del == 0 &&
-                    validationNieOrGtin('gtin')
-                  "
+                  invalid_feedback="Company prefix and Item Reference must be 12 digits"
                 >
                   <template #append>
-                    <CInput
+                    <InputDefault
                       :disabled="!product.flag_upd_del"
-                      prepend="Item Reference"
-                      class="ml-1"
-                      horizontal
+                      :useBr="false"
+                      :title="null"
+                      style="width: 400px; margin-left: 10px"
+                      validasi="numeric"
+                      :max="5"
                       v-model="product.item_reference"
-                      @keyup="handleChangeGtin()"
-                      @keypress="
-                        limitNumber({
-                          event: $event,
-                          data: product.item_reference,
-                          max: 12 - product.company_prefix.length,
-                        })
+                      placeholder="Company prefix"
+                      :is-valid="
+                        initial_load ? null : validasiCPIR() ? true : false
                       "
-                      :add-input-classes="{
-                        'is-invalid':
-                          !initial_load && !validationNieOrGtin('gtin'),
-                      }"
-                      :readonly="
-                        (disabled &&
-                          product.flag_upd_del == 0 &&
-                          validationNieOrGtin('gtin')) ||
-                        !product.company_prefix
-                      "
-                    />
+                    >
+                      <template #prepend>
+                        <InputDefault
+                          :useBr="false"
+                          disabled
+                          style="min-width: 120px"
+                          placeholder="Item Reference"
+                        />
+                      </template>
+                    </InputDefault>
                   </template>
-                </CInput>
+                </InputDefault>
               </CCol>
 
               <CCol sm="12">
@@ -277,7 +258,6 @@
                   @keyup="validationData()"
                   horizontal
                   v-model="product.print_name"
-                  invalid-feedback="Product name (print) is required"
                   placeholder="Enter product name for label printing"
                   :add-input-classes="{
                     'is-invalid': error.print_name,
@@ -310,7 +290,6 @@
                   @keyup="validationData()"
                   horizontal
                   v-model="product.suhu"
-                  invalid-feedback="Storage temperature is required"
                   :add-input-classes="{
                     'is-invalid': error.suhu,
                   }"
@@ -403,6 +382,21 @@ export default {
         let id1 = null;
         if (this.product.gtin) id1 = Array.from(this.product.gtin)[0];
         if (pid && pid.id1 != id1) this.handleChangeGtin();
+        else if (!pid) {
+          this.product.gtin = null;
+        }
+      },
+      deep: true,
+    },
+    'product.company_prefix': {
+      handler(item) {
+        this.handleChangeGtin();
+      },
+      deep: true,
+    },
+    'product.item_reference': {
+      handler(item) {
+        this.handleChangeGtin();
       },
       deep: true,
     },
@@ -498,6 +492,18 @@ export default {
   },
 
   methods: {
+    validasiCPIR() {
+      if (!this.product.company_prefix && !this.product.item_reference) {
+        return true;
+      }
+      let lenght_cp = this.product.company_prefix.length;
+      let lenght_ir = this.product.item_reference.length;
+      if (lenght_cp + lenght_ir !== 12) {
+        return false;
+      } else {
+        return `${this.product.company_prefix}${this.product.item_reference}`;
+      }
+    },
     handleChangeWeight(item) {
       this.product = { ...this.product, ...item };
     },
@@ -540,7 +546,11 @@ export default {
       if (pid_l1) id1 = pid_l1.id1;
       let item_reference = this.product.item_reference;
       let company_prefix = this.product.company_prefix;
-      if (item_reference && company_prefix && id1) {
+      if (item_reference && company_prefix) {
+        let gtin = `${id1}${company_prefix}${item_reference}`;
+        gtin = `${gtin}${checkDigit(gtin)}`;
+        this.product.gtin = gtin;
+      } else if (item_reference && company_prefix && id1) {
         let gtin = `${id1}${company_prefix}${item_reference}`;
         gtin = `${gtin}${checkDigit(gtin)}`;
         this.product.gtin = gtin;
@@ -624,8 +634,12 @@ export default {
       }
     },
     isValidNIE() {
-      const regex = /^.{15,16}$/;
-      return regex.test(this.product.nie);
+      if (!this.product.nie && this.product.gtin) {
+        return true;
+      } else {
+        const regex = /^.{15,16}$/;
+        return regex.test(this.product.nie);
+      }
     },
     isValidGTIN() {
       if (this.product.gtin) {
@@ -641,6 +655,7 @@ export default {
       }
       let company_prefix = this.product.company_prefix;
       let item_reference = this.product.item_reference;
+
       let mst_pid = JSON.parse(JSON.stringify(this.product.mst_pid));
       let have_nie = mst_pid.find((it) => it.epc_type == 'nie');
       let have_gtin_sscc = mst_pid.find(
@@ -666,6 +681,12 @@ export default {
         return false;
       }
       if (this.product.error_metadata) {
+        return false;
+      }
+      if (!this.validasiCPIR()) {
+        return false;
+      }
+      if (!this.isValidNIE()) {
         return false;
       }
       let required = [];

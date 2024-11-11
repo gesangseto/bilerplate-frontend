@@ -174,41 +174,41 @@
                     :col="[3, 7]"
                     title="Maximum Warehouse"
                     v-model="data.total_wh"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     :max="100"
                   />
                   <InputDefault
                     :col="[3, 7]"
                     title="Maximum Department"
                     v-model="data.total_department"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     :max="100"
                   />
                   <InputDefault
                     :col="[3, 7]"
                     title="Maximum Section"
                     v-model="data.total_section"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     :max="100"
                   />
                   <InputDefault
                     :col="[3, 7]"
                     title="Maximum Config Layout"
                     v-model="data.total_conf_layout"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     :max="100"
                   />
                   <InputDefault
                     :col="[3, 7]"
                     title="Maximum Config Date"
                     v-model="data.total_conf_date"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     :max="100"
                   />
                   <InputDefault
                     :col="[3, 7]"
                     title="Maximum Android Device"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     v-model="data.total_device"
                     :max="100"
                   />
@@ -242,7 +242,7 @@
                   <InputDefault
                     :col="[3, 7]"
                     :title="'Login attempts exceeded'"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     v-model="data.login_attempt"
                     :max="50"
                   />
@@ -258,7 +258,7 @@
                       <InputDefault
                         :col="[4, 6]"
                         title="Min Character"
-                        :validasi="'numeric'"
+                        :validasi="'integer'"
                         v-model="data.password_pattern.min"
                         :is-valid="
                           data.password_pattern.max && data.password_pattern.min
@@ -275,7 +275,7 @@
                       <InputDefault
                         :col="[4, 6]"
                         title="Max Character"
-                        :validasi="'numeric'"
+                        :validasi="'integer'"
                         v-model="data.password_pattern.max"
                         :is-valid="
                           data.password_pattern.max && data.password_pattern.min
@@ -386,7 +386,7 @@
                         :col="[3, 7]"
                         title="ID Location (BPOM)"
                         v-model="data.id_location"
-                        :validasi="'numeric'"
+                        :validasi="'integer'"
                         :max="100"
                         :isValid="
                           initialLoad ? null : !data.id_location ? false : true
@@ -681,14 +681,14 @@
                     :col="[3, 7]"
                     title="Min. Count Generated Serial"
                     v-model="data.min_count_generated_serial"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     :max="10000"
                   />
                   <InputDefault
                     :col="[3, 7]"
                     title="Additional EPC for ref Sample"
                     v-model="data.additional_serial_for_sample"
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     :max="10000"
                   />
                 </CCardBody>

@@ -27,7 +27,7 @@
                   </p>
                 </template>
               </CInput>
-              <CInput
+              <CTextarea
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Enter department description"
@@ -42,7 +42,7 @@
                     <span class="text-danger"><strong>*</strong></span>
                   </p>
                 </template>
-              </CInput>
+              </CTextarea>
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
                 <SwitchStatusMaster
@@ -93,6 +93,7 @@ export default {
   name: 'FormDepartment',
   data() {
     return {
+      initial_load: true,
       route_action: '',
       action: 'Edit',
       formData: { name: '', description: '', status: 'Active' },
@@ -121,8 +122,17 @@ export default {
   },
   methods: {
     async save() {
+      this.initial_load = false;
       this.$v.$touch();
       if (this.$v.$invalid) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
         return;
       }
       var message = this.$route.params.id

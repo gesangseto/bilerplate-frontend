@@ -41,6 +41,7 @@ import {
   InputDateDefault,
   InputDefault,
   ButtonPopover,
+  TextareaDefault,
 } from './views/component';
 Vue.use(
   VueFab /* {
@@ -81,6 +82,7 @@ Vue.component('Metadata', Metadata);
 Vue.component('ButtonDownloadFilePath', ButtonDownloadFilePath);
 Vue.component('InputDefault', InputDefault);
 Vue.component('InputDateDefault', InputDateDefault);
+Vue.component('TextareaDefault', TextareaDefault);
 
 export default {
   name: 'App',

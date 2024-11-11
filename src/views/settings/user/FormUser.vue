@@ -78,10 +78,11 @@
                         v-on:onchange="handleChangeInput($event)"
                         :value="formData.tlp_code"
                         :is-valid="
-                          initial_load ? null : formData.tlp_code ? true : false
-                        "
-                        :invalid_feedback="
-                          checkPhone(formData.tlp) ? null : '   '
+                          initial_load
+                            ? null
+                            : !formData.tlp_code
+                            ? false
+                            : true
                         "
                       />
                     </div>
@@ -98,6 +99,9 @@
                   placeholder="email.address@email.com"
                   v-model="formData.email"
                   :is-valid="initial_load ? null : checkEmail(formData.email)"
+                  :invalid_feedback="
+                    formData.email ? 'Please provide valid email address' : null
+                  "
                 />
               </CCol>
               <CCol sm="12">
@@ -143,11 +147,7 @@
                       ? formData.re_pwd == formData.pwd
                       : null
                   "
-                  :invalid_feedback="
-                    !formData.re_pwd
-                      ? 'Confirm password is required'
-                      : 'Confirmation password does not match'
-                  "
+                  :invalid_feedback="'Confirmation password does not match'"
                   :placeholder="
                     action === 'Update'
                       ? `Re-enter the same new password. Leave it blank if you don't want to change password.`
@@ -490,7 +490,7 @@ export default {
       avatars: [],
       formData: {
         status: 'Active',
-        tlp_code: '',
+        tlp_code: null,
         tlp: '',
         have_error: false,
         mst_avatar_id: '1',
@@ -509,7 +509,7 @@ export default {
         username: { error: false, message: 'Username is required' },
         full_name: { error: false, message: 'Full name is required' },
         email: { error: false, message: 'Please provide valid email address' },
-        pwd: { error: false, message: 'Password is required' },
+        pwd: { error: false, message: ' ' },
         mst_department_id: { error: false, message: 'Department is required' },
         mst_section_id: { error: false, message: 'Section is required' },
         tlp_code: { error: false, message: 'Country code is required' },
@@ -538,6 +538,7 @@ export default {
   methods: {
     handleChangeInput($value) {
       this.formData.tlp_code = $value;
+      this.$forceUpdate(); // Memaksa update komponen
     },
     async loadDepartment() {
       this.departmentOptions = [];

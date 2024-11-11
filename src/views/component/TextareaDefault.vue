@@ -6,16 +6,13 @@
         <span v-if="required" class="text-danger">
           <strong>*</strong>
         </span>
-        <span v-if="optional" class="text-danger">
-          <strong>***</strong>
-        </span>
       </CCol>
       <CCol :md="title ? col[1] : '12'">
         <div class="input-wrapper">
           <!-- Slot untuk prepend -->
           <slot name="prepend"></slot>
 
-          <input
+          <textarea
             :disabled="disabled"
             class="form-control"
             :type="type"
@@ -49,8 +46,6 @@
           v-html="formattedInvalidFeedback"
         ></div>
 
-        <!-- Slot untuk description -->
-        <slot name="description"></slot>
         <p
           class="mb-0 mt-0"
           style="font-size: smaller; color: rgb(143, 143, 143)"
@@ -60,13 +55,13 @@
         </p>
       </CCol>
     </CRow>
-    <br v-if="useBr" />
+    <br />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'InputDefault',
+  name: 'TextareaDefault',
   props: {
     value: { type: [String, Number], default: '' }, // Menerima tipe String atau Number
     options: {
@@ -80,8 +75,6 @@ export default {
     title: { type: String, default: null },
     description: { type: String, default: '' },
     placeholder: { type: String },
-    optional: { type: Boolean, default: null },
-    useBr: { type: Boolean, default: true },
     required: { type: Boolean, default: false },
     isValid: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
     disabled: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
@@ -134,7 +127,7 @@ export default {
       if (this.options.nodoublespace) {
         cleanedValue = cleanedValue.replace(/\s\s+/g, ' ');
       }
-      if (this.validasi == 'integer') {
+      if (this.validasi == 'numeric') {
         cleanedValue = cleanedValue.replace(/^0+/, '');
       }
       this.internalValue = cleanedValue;
@@ -154,9 +147,6 @@ export default {
         this.regex = /[^a-zA-Z0-9]/g;
         this.regexValidation = /^[a-zA-Z0-9]*$/;
       } else if (this.validasi === 'numeric') {
-        this.regex = /\D/g; // Hanya mengizinkan angka
-        this.regexValidation = /^\d+$/; // Hanya angka, tanpa spasi atau karakter lain
-      } else if (this.validasi === 'integer') {
         this.regex = /[^0-9]/g;
         this.regexValidation = /^[0-9]$/;
       } else if (this.validasi === 'float') {

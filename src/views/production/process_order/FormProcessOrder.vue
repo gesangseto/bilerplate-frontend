@@ -102,7 +102,7 @@
                       action != 'Create' &&
                       (action != 'Update' || formData.status == '4')
                     "
-                    :validasi="'numeric'"
+                    :validasi="'integer'"
                     v-model="formData.shelf_life"
                     :description="formData.shelf_life ? 'Shelf Life' : null"
                     placeholder="Shelf Life"
@@ -168,7 +168,7 @@
                   (action != 'Update' || formData.status == '4')
                 "
                 title="Target L1 Qty"
-                :validasi="'numeric'"
+                :validasi="'integer'"
                 v-model="formData.generate_count_level_1"
                 :options="{ uppercase: true }"
                 :required="true"
@@ -188,7 +188,7 @@
                   (action != 'Update' || formData.status == '4')
                 "
                 title="Buff (%)"
-                :validasi="'numeric'"
+                :validasi="'integer'"
                 v-model="formData.buff"
                 :max="2"
                 :is-valid="
@@ -454,7 +454,7 @@
               v-if="product[`qty_packagingl${index + 1}`] || index == 0"
               :disabled="additionalSerial.all && index >= 1"
               :title="`Pack Level ${index + 1}`"
-              :validasi="'numeric'"
+              :validasi="'integer'"
               v-model="additionalSerial[`generate_count_level_${index + 1}`]"
               :max="7"
             />

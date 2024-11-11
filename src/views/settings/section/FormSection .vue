@@ -15,7 +15,7 @@
               </CInput>
               <CSelect
                 :disabled="action == 'Read' ? true : false"
-                label="Type Of Temperature *"
+                label="Department *"
                 :options="departmentOptions"
                 horizontal
                 placeholder="--Select--"
@@ -28,7 +28,6 @@
                     $v.section.mst_department_id.$error &&
                     !$v.section.mst_department_id.required,
                 }"
-                invalid-feedback="Department is required"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -51,7 +50,6 @@
                   'is-invalid':
                     $v.section.name.$error && !$v.section.name.required,
                 }"
-                invalid-feedback="Section name is required"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -75,7 +73,6 @@
                     $v.section.description.$error &&
                     !$v.section.description.required,
                 }"
-                invalid-feedback="Section description is required"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -186,6 +183,14 @@ export default {
     async save() {
       this.$v.$touch();
       if (this.$v.$invalid) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
         return;
       }
       var message = this.$route.params.id

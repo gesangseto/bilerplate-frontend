@@ -500,7 +500,7 @@ export default {
       });
     },
     validation() {
-      let message = 'Please complete required data field.';
+      let message = 'Please input all the required data.';
       let error = false;
       for (var i = 1; i <= 3; i++) {
         switch (this.data[`field${i}_type`]) {
