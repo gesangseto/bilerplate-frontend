@@ -103,10 +103,10 @@ export default {
     };
   },
   methods: {
-    protectCreateData() {
+    protectCreateData(_res) {
       let conf = getConfig();
       if (conf.total_department) {
-        if (conf.total_department <= this.items.length) {
+        if (conf.total_department <= _res.grand_total) {
           this.can_create = false;
         }
       }
@@ -120,7 +120,7 @@ export default {
           item: _res,
         });
       }
-      this.protectCreateData();
+      this.protectCreateData(_res);
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);

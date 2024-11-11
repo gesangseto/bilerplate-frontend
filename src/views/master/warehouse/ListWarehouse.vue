@@ -142,25 +142,25 @@ export default {
     };
   },
   methods: {
-    protectCreateData() {
+    protectCreateData(_res) {
       let conf = getConfig();
       // console.log(conf);
       if (conf.total_wh) {
-        if (conf.total_wh <= this.items.length) {
+        if (conf.total_wh <= _res.grand_total) {
           this.can_create = false;
         }
       }
     },
     async loadData() {
-      let res = await getMstWarehouse(this.filter);
-      if (!res.error) {
-        this.items = res.data;
+      let _res = await getMstWarehouse(this.filter);
+      if (!_res.error) {
+        this.items = _res.data;
         this.filter = calculatePaginationV3({
           filter: this.filter,
-          item: res,
+          item: _res,
         });
       }
-      this.protectCreateData();
+      this.protectCreateData(_res);
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
