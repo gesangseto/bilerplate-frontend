@@ -141,7 +141,7 @@
             <CRow>
               <CCol sm="12">
                 <InputDefault
-                  required
+                  :required="butuh.nie"
                   :disabled="
                     action == 'Read' ||
                     (product.flag_upd_del == 0 && action != 'Create')
@@ -178,6 +178,7 @@
 
               <CCol sm="12">
                 <InputDefault
+                  :required="butuh.gtin"
                   :disabled="true"
                   validasi="alphanumeric"
                   title="L1 GTIN"
@@ -192,15 +193,14 @@
 
               <CCol sm="12">
                 <InputDefault
+                  :required="butuh.gtin"
                   :disabled="!product.flag_upd_del"
                   :col="[3, 9]"
                   title="Company Prefix"
                   v-model="product.company_prefix"
                   validasi="numeric"
                   :max="9"
-                  :is-valid="
-                    initial_load ? null : validasiCPIR() ? true : false
-                  "
+                  :is-valid="initial_load ? null : isValidCPIR() ? true : false"
                   invalid_feedback="Company prefix and Item Reference must be 12 digits"
                 >
                   <template #append>
@@ -214,7 +214,7 @@
                       v-model="product.item_reference"
                       placeholder="Company prefix"
                       :is-valid="
-                        initial_load ? null : validasiCPIR() ? true : false
+                        initial_load ? null : isValidCPIR() ? true : false
                       "
                     >
                       <template #prepend>
@@ -251,48 +251,46 @@
             <h4>Print Detail</h4>
             <br />
             <CRow>
-              <CCol md="12">
-                <CInput
+              <CCol sm="12">
+                <InputDefault
                   :disabled="action == 'Read'"
-                  label="Product Name *"
-                  @keyup="validationData()"
-                  horizontal
+                  :required="true"
+                  title="Product Name"
+                  placeholder="Enter product anme for label printing"
                   v-model="product.print_name"
-                  placeholder="Enter product name for label printing"
-                  :add-input-classes="{
-                    'is-invalid': error.print_name,
-                  }"
-                />
-              </CCol>
-              <CCol md="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Description 1"
-                  placeholder="Enter product description 1 for label printing"
-                  horizontal
-                  v-model="product.print_desc1"
-                />
-              </CCol>
-              <CCol md="12">
-                <CInput
-                  :disabled="action == 'Read'"
-                  label="Description 2"
-                  placeholder="Enter product description 2 for label printing"
-                  horizontal
-                  v-model="product.print_desc2"
+                  :isValid="
+                    initial_load ? null : product.print_name ? true : false
+                  "
+                  :col="[3, 9]"
                 />
               </CCol>
               <CCol sm="12">
-                <CInput
+                <InputDefault
                   :disabled="action == 'Read'"
-                  label="Storage Temperature *"
+                  title="Description 1"
+                  placeholder="Enter product description 1 for label printing"
+                  v-model="product.print_desc1"
+                  :col="[3, 9]"
+                />
+              </CCol>
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="action == 'Read'"
+                  title="Description 2"
+                  placeholder="Enter product description 2 for label printing"
+                  v-model="product.print_desc2"
+                  :col="[3, 9]"
+                />
+              </CCol>
+              <CCol sm="12">
+                <InputDefault
+                  :disabled="action == 'Read'"
+                  :required="true"
+                  title="Storage Temperature"
                   placeholder="Enter product storage temperature for label printing"
-                  @keyup="validationData()"
-                  horizontal
                   v-model="product.suhu"
-                  :add-input-classes="{
-                    'is-invalid': error.suhu,
-                  }"
+                  :isValid="initial_load ? null : product.suhu ? true : false"
+                  :col="[3, 9]"
                 />
               </CCol>
             </CRow>
@@ -357,7 +355,7 @@ import {
   updateMstProduct,
 } from '../../../resource/MstProduct';
 import { getMstProductCategory } from '../../../resource/MstProductCategory';
-import { capitalizeFirstLetter, checkDigit, onlyNumber } from '../../../utils';
+import { capitalizeFirstLetter, checkDigit } from '../../../utils';
 
 export default {
   watch: {
@@ -439,6 +437,7 @@ export default {
         weight_min_l4: null,
         weight_max_l4: null,
       },
+      butuh: { nie: false, gtin: false },
       product: {
         id: null,
         nie: '',
@@ -465,7 +464,6 @@ export default {
         weight_min_l4: null,
         weight_max_l4: null,
       },
-      error: this.initial_error(),
       listPackaging: [],
       listCategory: [],
       pid_level_1: {},
@@ -492,8 +490,12 @@ export default {
   },
 
   methods: {
-    validasiCPIR() {
-      if (!this.product.company_prefix && !this.product.item_reference) {
+    vaidasiCPIR() {
+      if (
+        !this.product.company_prefix &&
+        !this.product.item_reference &&
+        !this.butuh.nie
+      ) {
         return true;
       }
       let lenght_cp = this.product.company_prefix.length;
@@ -506,24 +508,6 @@ export default {
     },
     handleChangeWeight(item) {
       this.product = { ...this.product, ...item };
-    },
-    initial_error() {
-      // Inisialisasi error untuk PRODUCT
-      let tmp = {
-        no: false,
-        name: false,
-        print_name: false,
-        gtin: false,
-        nie: false,
-        kemasan_nie: false,
-        mst_product_category_id: false,
-        suhu: false,
-        product_type: false,
-        packagingl1_id: false,
-        packagingl2_id: false,
-        qty_packagingl2: '',
-      };
-      return tmp;
     },
     async loadData() {
       let _res = await getMstProduct({ id: this.$route.params.id });
@@ -558,72 +542,6 @@ export default {
         this.product.gtin = null;
       }
     },
-    handleResultPid({ result, level }) {
-      if (level == 1) {
-        this.pid_level_1 = result[0];
-      }
-      this.ResultPid[`level_${level}`] = result;
-    },
-
-    limitGtin({ event, data, max }) {
-      onlyNumber({ event, data, max });
-    },
-    limitNumber({ event, data, max }) {
-      onlyNumber({ event, data, max });
-    },
-    limitString({ event, data, max }) {
-      event = event ? event : window.event;
-      if (data && max && data.toString().length >= max) {
-        event.preventDefault();
-      }
-    },
-    gtinCheckDigit(s) {
-      let result = 0,
-        i = 1;
-      for (let counter = s.length - 1; counter >= 0; counter--) {
-        result = result + parseInt(s.charAt(counter)) * (1 + 2 * (i % 2));
-        i++;
-      }
-      return (10 - (result % 10)) % 10;
-    },
-    validateGtin() {
-      let value = this.product.gtin;
-      if (value) {
-        if (value.length != 14) {
-          this.error.gtin = 'GTIN must be 14 digits numeric';
-          return false;
-        }
-        var barcode = value.substring(0, value.length - 1);
-        var checksum = parseInt(value.substring(value.length - 1), 10);
-        var calcSum = 0;
-        var calcChecksum = 0;
-
-        barcode.split('').map(function (number, index) {
-          number = parseInt(number, 10);
-          if (value.length % 2 === 0) {
-            index += 1;
-          }
-          if (index % 2 === 0) {
-            calcSum += number;
-          } else {
-            calcSum += number * 3;
-          }
-        });
-
-        calcSum %= 10;
-        calcChecksum = calcSum === 0 ? 0 : 10 - calcSum;
-
-        if (calcChecksum !== checksum) {
-          this.error.gtin = 'GTIN number is not valid';
-          return false;
-        }
-        this.error.gtin = false;
-        return true;
-      } else {
-        this.error.gtin = 'L1 GTIN is required';
-        return false;
-      }
-    },
     async loadProductCategory() {
       let _res = await getMstProductCategory({ status: 'Active' });
       for (const it of _res['data']) {
@@ -634,20 +552,22 @@ export default {
       }
     },
     isValidNIE() {
-      if (!this.product.nie && this.product.gtin) {
+      if (!this.butuh.nie) {
         return true;
+      } else if (!this.product.nie) {
+        return false;
       } else {
         const regex = /^.{15,16}$/;
         return regex.test(this.product.nie);
       }
     },
     isValidGTIN() {
-      if (this.product.gtin) {
-        if (this.product.gtin.length == 14) return true;
-      } else if (!this.product.gtin) {
-        return null;
+      if (!this.butuh.gtin) {
+        return true;
+      } else if (!this.product.gtin || this.product.gtin.length != 14) {
+        return false;
       }
-      return false;
+      return true;
     },
     validationNieOrGtin(type = 'all') {
       if (type == 'all' && !this.product.gtin && !this.product.nie) {
@@ -675,55 +595,91 @@ export default {
       }
       return true;
     },
-
+    isValidCPIR() {
+      if (!this.butuh.gtin) {
+        return true;
+      }
+      let lenght_cp = this.product.company_prefix.length || 0;
+      let lenght_ir = this.product.item_reference.length || 0;
+      if (lenght_cp + lenght_ir !== 12) {
+        return false;
+      } else {
+        return `${this.product.company_prefix}${this.product.item_reference}`;
+      }
+    },
     validationData() {
       if (this.initial_load) {
         return false;
       }
+      // Pengecekan normal
+      let required = [
+        'name',
+        'no',
+        'mst_product_category_id',
+        'kemasan_nie',
+        'print_name',
+        'suhu',
+      ];
+      for (const it of required) {
+        if (!this.product[it]) {
+          console.log('Required: ', it);
+          return false;
+        }
+      }
+
+      // Metadata
       if (this.product.error_metadata) {
+        console.log('Required: Metadata');
         return false;
-      }
-      if (!this.validasiCPIR()) {
-        return false;
-      }
-      if (!this.isValidNIE()) {
-        return false;
-      }
-      let required = [];
-      this.error = this.initial_error();
-      let is_error = false;
-      // CHeck Company prefix and item reference / NIE
-      if (!this.validationNieOrGtin()) {
-        is_error = true;
       }
 
-      // CHECK PRODUCT
-      for (var key in this.error) {
-        if (!this.product[key] && this.product[key] != '0') {
-          this.error[key] = `Product ${key} is required`;
-          is_error = true;
-          if (key == 'gtin' || key == 'nie' || key == 'company_prefix') {
-            is_error = false;
-          }
-          required.push(capitalizeFirstLetter(key));
-        }
-      }
-      // Check Error PID
+      // Pengecekan NIE/GTIN dilakukan saat pengecekan mst_pid dengan acuan epc_type (nie,sgtin,sscc)
+      this.butuh.nie = false;
+      this.butuh.gtin = false;
+      let type = [];
       for (const it of this.product.mst_pid) {
+        type = [...type, it.epc_type];
+        // JIKA NIE
+        if (it.epc_type == 'nie') {
+          this.butuh.nie = true;
+          if (!this.isValidNIE()) {
+            console.log(`INVALID NIE: Pak Level ${it.packaging_level}`);
+            return false;
+          }
+        }
+        // JIKA SGTIN/SSCC
+        else if (it.epc_type == 'sgtin' || it.epc_type == 'sscc') {
+          this.butuh.gtin = true;
+          if (!this.isValidCPIR()) {
+            console.log(`INVALID SGTIN/SSCC: Pak Level ${it.packaging_level}`);
+            return false;
+          } else if (!this.isValidGTIN()) {
+            console.log(`INVALID SGTIN/SSCC: Pak Level ${it.packaging_level}`);
+            return false;
+          }
+        }
+        // Jika ada error *ini bawaan form mst pid
         if (it.error) {
-          is_error = true;
-          break;
+          console.log(`Required: Config Pak Level ${it.packaging_level}`);
+          return false;
         }
       }
+      console.log('EPC Yang Digunakan: ', type);
 
+      // Company Prefix dan Item Ref
+      if (!this.isValidCPIR()) {
+        console.log('Required: CP - IR');
+        return false;
+      }
       // CHECK PACKAGING
       for (var i = 1; lvl <= this.product.current_pack; lvl++) {
         if (!this.product[`packagingl${i}_id`]) {
-          is_error = true;
-          break;
+          console.log(`Required: Packaging ${i}`);
+          return false;
         }
       }
-      // Check Quantity
+
+      // Checking Quantity
       for (var lvl = 2; lvl <= this.product.current_pack; lvl++) {
         let thisQty = this.product[`qty_packagingl${lvl}`];
         let childQty = 1;
@@ -731,13 +687,11 @@ export default {
           childQty = this.product[`qty_packagingl${lvl - 1}`];
         }
         if (thisQty % childQty != 0 || !thisQty) {
-          is_error = true;
-          break;
+          console.log(`Required: Quantity ${i}`);
+          return false;
         }
       }
-      if (is_error) {
-        return false;
-      }
+      console.log(this.product);
       return true;
     },
 
@@ -760,6 +714,8 @@ export default {
 
     async save() {
       this.initial_load = false;
+      console.log(this.product);
+
       if (!this.validationData()) {
         this.$toast.open({
           message: 'Please input all the required data',

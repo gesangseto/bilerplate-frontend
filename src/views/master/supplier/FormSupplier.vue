@@ -29,6 +29,17 @@
                 />
               </CCol>
               <CCol sm="12">
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  :col="[3, 9]"
+                  required
+                  title="PIC"
+                  placeholder="Enter pic name"
+                  v-model="formData.pic"
+                  :is-valid="initial_load ? null : formData.pic ? true : false"
+                />
+              </CCol>
+              <CCol sm="12">
                 <TextareaDefault
                   :disabled="action == 'Read' ? true : false"
                   :col="[3, 9]"
