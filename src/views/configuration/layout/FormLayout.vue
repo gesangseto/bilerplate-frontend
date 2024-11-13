@@ -631,16 +631,18 @@ export default {
         let sama = oldData.items.filter((it) =>
           itf_var_name.includes(it.itf_var_name)
         );
+        // Jika data tidak sama
         if (sama.length !== oldData.items.length) {
           var message = `Your itf file does not match the current parameters. This will replace the parameters with new ones. Would you like to continue?`;
           if (confirm(message)) {
             this.formData.items = listLayout;
           } else {
-            this.formData.items = oldData.items;
-            this.formData.itf_content = oldData.itf_content;
-            this.formData.itf_name = oldData.itf_name;
-            this.formData.name = oldData.name;
+            this.formData = oldData;
           }
+        } else {
+          // Jika sama
+          this.formData.items = oldData.items;
+          this.formData.itf_content = oldData.itf_content;
         }
       }
       return;
