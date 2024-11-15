@@ -185,6 +185,30 @@ export function getConfig() {
   return JSON.parse(decryptData(localStorage.getItem('configuration')));
 }
 
+export function setLimitation(data = {}) {
+  let limit = {
+    total_conf_date: data.total_conf_date || null,
+    total_conf_layout: data.total_conf_layout || null,
+    total_department: data.total_department || null,
+    total_section: data.total_section || null,
+    total_wh: data.total_wh || null,
+    total_device: data.total_device || null,
+  };
+  localStorage.setItem('limitation', encryptData(JSON.stringify(limit)));
+}
+
+export function getLimitation(type) {
+  let data = null;
+  try {
+    data = JSON.parse(decryptData(localStorage.getItem('limitation')));
+  } catch (error) {
+    data = null;
+  }
+  if (type && data[type]) {
+    return data[type];
+  } else return data;
+}
+
 export function setLoginTimeout(data) {
   let time = moment().add(data, 'minutes').format('DD/MM/YYYY HH:mm:ss:SSS');
   localStorage.setItem('time_out', time);

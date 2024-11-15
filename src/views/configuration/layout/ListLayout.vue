@@ -87,7 +87,11 @@
 <script>
 import moment from 'moment';
 import { deleteConfLayout, getConfLayout } from '../../../resource/ConfLayout';
-import { calculatePaginationV3, exportData, getConfig } from '../../../utils';
+import {
+  calculatePaginationV3,
+  exportData,
+  getLimitation,
+} from '../../../utils';
 
 export default {
   name: 'Customer',
@@ -163,9 +167,9 @@ export default {
   },
   methods: {
     protectCreateData(_res) {
-      let conf = getConfig();
-      if (conf.total_conf_layout) {
-        if (conf.total_conf_layout <= _res.grand_total) {
+      let max = getLimitation('total_conf_layout');
+      if (max) {
+        if (max <= _res.grand_total) {
           this.can_create = false;
         }
       }

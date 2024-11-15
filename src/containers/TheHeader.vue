@@ -145,8 +145,11 @@ import {
   getRole,
   getProfile,
   clearStorage,
+  setLimitation,
+  getLimitation,
 } from '../utils';
 import moment from 'moment';
+import { getSysConfig } from '../resource/SysConfig';
 export default {
   name: 'TheHeader',
   components: {
@@ -188,6 +191,7 @@ export default {
         this.current_route = route;
         this.getNotif();
         this.checkPermission(route);
+        this.getLimitationConfig();
       },
     },
     timeout: {
@@ -244,7 +248,11 @@ export default {
       }
       return;
     },
-
+    async getLimitationConfig() {
+      let data = await getSysConfig({ without_logo: true });
+      setLimitation(data.data[0]);
+      getLimitation();
+    },
     getDifferentSecond() {
       let time_out = getLoginTimeout();
       let time_now = moment(new Date())

@@ -70,7 +70,11 @@ import {
   deleteMstDepartment,
   getMstDepartment,
 } from '../../../resource/MstDepartment';
-import { exportData, calculatePaginationV3, getConfig } from '../../../utils';
+import {
+  exportData,
+  calculatePaginationV3,
+  getLimitation,
+} from '../../../utils';
 
 export default {
   name: 'ListDepartment',
@@ -104,9 +108,9 @@ export default {
   },
   methods: {
     protectCreateData(_res) {
-      let conf = getConfig();
-      if (conf.total_department) {
-        if (conf.total_department <= _res.grand_total) {
+      let max = getLimitation('total_department');
+      if (max) {
+        if (max <= _res.grand_total) {
           this.can_create = false;
         }
       }

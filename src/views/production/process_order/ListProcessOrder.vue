@@ -36,6 +36,7 @@
                     <ButtonPermission
                       v-if="[0, 3].includes(item.status)"
                       :permission="'delete'"
+                      :buttonProperty="btn_delete_prop"
                       @click="handleClickDelete(item, index)"
                     />
                     <ButtonPermission
@@ -120,6 +121,14 @@ export default {
         modal: false,
         id: null,
         reason: '',
+      },
+      btn_delete_prop: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'trash-alt',
+        text: '',
+        tooltip: 'Cancel',
       },
       approve_property: {
         size: 'sm',

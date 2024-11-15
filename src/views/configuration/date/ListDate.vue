@@ -78,7 +78,11 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportData, getConfig } from '../../../utils';
+import {
+  calculatePaginationV3,
+  exportData,
+  getLimitation,
+} from '../../../utils';
 import { deleteConfDate, getConfDate } from '../../../resource/ConfDate';
 import moment from 'moment';
 
@@ -135,9 +139,9 @@ export default {
   },
   methods: {
     protectCreateData(_res) {
-      let conf = getConfig();
-      if (conf.total_conf_date) {
-        if (conf.total_conf_date <= _res.grand_total) {
+      let max = getLimitation('total_conf_date');
+      if (max) {
+        if (max <= _res.grand_total) {
           this.can_create = false;
         }
       }

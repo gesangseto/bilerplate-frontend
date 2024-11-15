@@ -67,7 +67,11 @@
 
 <script>
 import { deleteMstSection, getMstSection } from '../../../resource/MstSection';
-import { exportData, calculatePaginationV3, getConfig } from '../../../utils';
+import {
+  exportData,
+  calculatePaginationV3,
+  getLimitation,
+} from '../../../utils';
 
 export default {
   name: 'Department',
@@ -102,9 +106,9 @@ export default {
   },
   methods: {
     protectCreateData(_res) {
-      let conf = getConfig();
-      if (conf.total_section) {
-        if (conf.total_section <= _res.grand_total) {
+      let max = getLimitation('total_section');
+      if (max) {
+        if (max <= _res.grand_total) {
           this.can_create = false;
         }
       }

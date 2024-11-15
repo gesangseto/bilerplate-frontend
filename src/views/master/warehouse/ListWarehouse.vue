@@ -76,7 +76,11 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportDataV3, getConfig } from '../../../utils';
+import {
+  calculatePaginationV3,
+  exportDataV3,
+  getLimitation,
+} from '../../../utils';
 import {
   deleteMstWarehouse,
   getMstWarehouse,
@@ -143,10 +147,9 @@ export default {
   },
   methods: {
     protectCreateData(_res) {
-      let conf = getConfig();
-      // console.log(conf);
-      if (conf.total_wh) {
-        if (conf.total_wh <= _res.grand_total) {
+      let max = getLimitation('total_wh');
+      if (max) {
+        if (max <= _res.grand_total) {
           this.can_create = false;
         }
       }
