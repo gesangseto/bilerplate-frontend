@@ -15,22 +15,16 @@ export function getFilterTable(url) {
   if (stringHistory) history = JSON.parse(stringHistory);
   let backHistory = history[history.length - 2];
   let lastHistory = history[history.length - 1];
-  if (backHistory) {
+  if (backHistory && backHistory.url == url) {
     // jika url sebelumnya sama dengan url yang di check dianggap sedang HIT BACK BUTTON
-    if (backHistory.url === url) {
-      // maka hapus history terakhir
-      history.pop();
-      // kembalikan nilai backHistory
-      result = backHistory.filter;
-    }
-  } else if (lastHistory) {
+    // maka hapus history terakhir
+    history.pop();
+    // kembalikan nilai backHistory
+    result = backHistory.filter;
+  } else if (lastHistory && lastHistory.url == url) {
     // jika url terakhir sama dengan url yang di check
-    if (lastHistory.url === url) {
-      // kembalikan nilai lastHistory
-      result = lastHistory.filter;
-    }
-  } else {
-    history.push({ url: url, filter: {} });
+    // kembalikan nilai lastHistory
+    result = lastHistory.filter;
   }
   sessionStorage.setItem(`filter`, JSON.stringify(history));
   return result;
