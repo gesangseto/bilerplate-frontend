@@ -19,7 +19,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' ? true : false"
+                  :disabled="action == 'Read' || formData.is_sys ? true : false"
                   required
                   :col="[3, 9]"
                   title="Global ID"
@@ -32,7 +32,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' ? true : false"
+                  :disabled="action == 'Read' || formData.is_sys ? true : false"
                   :col="[3, 9]"
                   required
                   title="Username"
@@ -45,7 +45,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' ? true : false"
+                  :disabled="action == 'Read' || formData.is_sys ? true : false"
                   :col="[3, 9]"
                   required
                   title="Full Name"
@@ -58,7 +58,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' ? true : false"
+                  :disabled="action == 'Read' || formData.is_sys ? true : false"
                   :col="[3, 9]"
                   required
                   title="Phone Number"
@@ -72,7 +72,9 @@
                   <template #prepend>
                     <div style="width: 350px; margin-bottom: -50px">
                       <SelectOption
-                        :disabled="action == 'Read' ? true : false"
+                        :disabled="
+                          action == 'Read' || formData.is_sys ? true : false
+                        "
                         required
                         :options="CountryCode"
                         v-on:onchange="handleChangeInput($event)"
@@ -91,7 +93,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' ? true : false"
+                  :disabled="action == 'Read' || formData.is_sys ? true : false"
                   :col="[3, 9]"
                   required
                   validasi="email"
@@ -106,7 +108,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' ? true : false"
+                  :disabled="action == 'Read' || formData.is_sys ? true : false"
                   :col="[3, 9]"
                   :required="action == 'Create' ? true : false"
                   :type="showPassword == false ? 'password' : 'text'"
@@ -138,6 +140,7 @@
               </CCol>
               <CCol sm="12" v-if="action != 'Read'">
                 <InputDefault
+                  :disabled="action == 'Read' || formData.is_sys"
                   :col="[3, 9]"
                   :type="showPassword == false ? 'password' : 'text'"
                   title="Confirm Password"
@@ -159,7 +162,7 @@
               </CCol>
               <CCol sm="12">
                 <SelectOption
-                  :disabled="action == 'Read' ? true : false"
+                  :disabled="action == 'Read' || formData.is_sys ? true : false"
                   :col="[3, 9]"
                   title="Department"
                   required
@@ -177,7 +180,7 @@
               </CCol>
               <CCol sm="12">
                 <SelectOption
-                  :disabled="action == 'Read' ? true : false"
+                  :disabled="action == 'Read' || formData.is_sys ? true : false"
                   :col="[3, 9]"
                   title="Section"
                   required
@@ -193,7 +196,7 @@
                 <CRow form class="form-group">
                   <CCol sm="3"> Status </CCol>
                   <SwitchStatusMaster
-                    :disabled="action == 'Read'"
+                    :disabled="action == 'Read' || formData.is_sys"
                     :show_label="true"
                     :default_value="formData.status"
                     v-on:onChange="formData.status = $event"
@@ -208,7 +211,10 @@
                     <span class="text-danger"><strong>*</strong></span></CCol
                   >
                   <CCol sm="9">
-                    <CRow class="form-group" v-if="action == 'Read'">
+                    <CRow
+                      class="form-group"
+                      v-if="action == 'Read' || formData.is_sys"
+                    >
                       <CCol sm="12">
                         <CRow class="justify-content-left">
                           <label>
@@ -385,7 +391,7 @@
           </CCardBody>
           <CCardFooter>
             <CButton
-              v-if="action == 'Read' ? false : true"
+              v-if="action == 'Read' || formData.is_sys ? false : true"
               type="submit"
               size="sm"
               color="primary"
