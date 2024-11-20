@@ -417,6 +417,7 @@ import {
   coutryCode,
   isEmail,
   validationPassword,
+  getUserId,
 } from '../../../utils';
 import {
   getMstUser,
@@ -586,6 +587,7 @@ export default {
         if (this.$route.params.id !== undefined) {
           delete this.formData.pwd;
         }
+        if (getUserId() == 0) this.formData.is_sys = 0;
         let tlp = '';
         if (data.tlp) {
           tlp = data.tlp.split('-');

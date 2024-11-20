@@ -84,7 +84,7 @@ export default {
     useBr: { type: Boolean, default: true },
     required: { type: Boolean, default: false },
     isValid: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
-    disabled: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
+    disabled: { default: null }, // Properti isValid untuk menentukan validasi input
     col: { type: Array, default: () => [3, 9] }, // Properti isValid untuk menentukan validasi input
   },
   data() {
