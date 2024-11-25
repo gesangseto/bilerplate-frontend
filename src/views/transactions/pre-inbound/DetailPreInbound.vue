@@ -210,7 +210,7 @@
           <ButtonPopover
             permission="print"
             exportType="pdf"
-            :popover_list="['Summary', 'Timbangan', 'Details']"
+            :popover_list="['Summary', 'Details', 'Weighing']"
             @handleClick="handleExportPdf($event)"
             mt="-10"
           />
@@ -365,7 +365,7 @@ export default {
       this.$router.back();
     },
     handleExportPdf(type) {
-      if (type == 'Timbangan') type = 'timbangan';
+      if (type == 'Weighing') type = 'timbangan';
       if (type == 'Details') type = 'detail';
       if (type == 'Summary') type = 'summary';
       exportDataV3({
