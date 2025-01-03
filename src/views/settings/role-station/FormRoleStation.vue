@@ -72,6 +72,7 @@
                     </th>
                     <th style="text-align: center">Child Menu</th>
                     <th style="text-align: center">Access</th>
+                    <th style="text-align: center">Approve</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -112,9 +113,25 @@
                         <CInputCheckbox
                           v-if="child.show_update === 1"
                           :disabled="action == 'Read' ? true : false"
-                          @click="clickUpdate(child, key)"
+                          @click="clickUpdate('edit', key)"
                           size="sm"
                           :checked="child.can_edit"
+                          style="margin-bottom: 30px; margin-top: 5px"
+                        />
+                      </td>
+                      <td
+                        :style="
+                          child.count + child.start_menu_count == key + 1
+                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
+                            : 'text-align: center;'
+                        "
+                      >
+                        <CInputCheckbox
+                          v-if="child.show_update === 1"
+                          :disabled="action == 'Read' ? true : false"
+                          @click="clickUpdate('approve', key)"
+                          size="sm"
+                          :checked="child.can_approve"
                           style="margin-bottom: 30px; margin-top: 5px"
                         />
                       </td>
@@ -319,9 +336,14 @@ export default {
       this.defaultMenu = nestedMenu;
       this.menu = nestedMenu;
     },
-    clickUpdate(item, key) {
-      this.menu[key].can_edit = !this.menu[key].can_edit;
-      this.defaultMenu[key].can_edit = this.menu[key].can_edit;
+    clickUpdate(type, key) {
+      if (type == 'edit') {
+        this.menu[key].can_edit = !this.menu[key].can_edit;
+        this.defaultMenu[key].can_edit = this.menu[key].can_edit;
+      } else if (type == 'approve') {
+        this.menu[key].can_approve = !this.menu[key].can_approve;
+        this.defaultMenu[key].can_approve = this.menu[key].can_approve;
+      }
     },
     checkAll() {
       let newMenu = [];
