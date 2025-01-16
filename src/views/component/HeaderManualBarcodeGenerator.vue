@@ -225,6 +225,8 @@ export default {
     handleChangeEpc() {
       this.required = this.initial_required();
       this.role = this.initial_role();
+      this.result.epc_key = null;
+      this.result.serial = null;
       if (this.result.epc_type == 'sgtin') {
         this.title = 'GTIN (14 digits)';
         this.role.disabled_serial = false;

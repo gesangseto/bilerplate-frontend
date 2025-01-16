@@ -664,7 +664,6 @@ export default {
           return false;
         }
       }
-      console.log('EPC Yang Digunakan: ', type);
 
       // Company Prefix dan Item Ref
       if (!this.isValidCPIR()) {
