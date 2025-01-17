@@ -161,6 +161,8 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
+          product_nie: item.product_nie || '-',
+          product_gtin: item.product_gtin || '-',
           number: this.getNumber(index + 1),
         };
       });
