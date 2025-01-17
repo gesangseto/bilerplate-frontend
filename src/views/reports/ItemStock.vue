@@ -184,6 +184,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.items = [];
       let param = `${new URLSearchParams(this.filter).toString()}`;
       let url = `/v4/report/item-stock?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {

@@ -266,7 +266,7 @@ export default {
       this.initial_data();
     },
     formatDate(item) {
-      return moment.utc(item).calendar();
+      return moment.utc(item).format('YYYY-MM-DD HH:MM:ss');
     },
     getData() {
       let param = `${new URLSearchParams(this.result).toString()}`;

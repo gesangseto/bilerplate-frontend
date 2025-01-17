@@ -411,7 +411,7 @@ export default {
       exportDataV3({
         alert: true,
         param: {
-          trx_ref_id: this.$route.params.id,
+          trx_ref_id: this.formData.trx_ref_id,
         },
         exportType: type,
         url: '/v3/transaction/queue-bpom',

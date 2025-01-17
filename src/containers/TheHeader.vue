@@ -361,7 +361,15 @@ export default {
         url += `/transaction/indirect_request/approve/${item.trx_ref_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'rework') {
         url += `/transaction/rework/approve/${item.trx_ref_id}`;
-      } else if (item.trx_ref_name.toLowerCase() == 'decommission') {
+      } else if (
+        item.trx_ref_name.toLowerCase() == 'decommission' ||
+        item.trx_ref_name.toLowerCase() == 'decommissioning'
+      ) {
+        url += `/transaction/comm-decomm/approve/${item.trx_ref_id}`;
+      } else if (
+        item.trx_ref_name.toLowerCase() == 'commission' ||
+        item.trx_ref_name.toLowerCase() == 'commissioning'
+      ) {
         url += `/transaction/comm-decomm/approve/${item.trx_ref_id}`;
       }
       return url;

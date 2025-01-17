@@ -132,23 +132,21 @@ export default {
   mounted() {
     this.data = getConfig();
     this.data.about = `
-    This copy of <strong>Mertrack® Integra</strong> is licensed to:
+    This copy of <strong>Mertrack® Integra</strong> is licensed to: <br/>
     <br/>
+    Number of Entity: 1 <br/>
+    Entity Name: ${this.data.identity_name} <br/>
+    Entity Address: ${this.data.entity_address} <br/>
     <br/>
-    Number of Entity: 1
-    <br/>
-    Entity Name: ${this.data.identity_name}
-    <br/>
-    Entity Address: ${this.data.entity_address}
-    <br/>
-    Number of Mobile Device: ${this.data.total_device}
-    <br/>
-    Number of User: unlimited
-    <br/>
-    Number of User Access: unlimited
-    <br/>
-    Number of Warehouse: ${this.data.total_wh}
-    <br/>
+    <strong>License Limitation</strong><br/>
+    Warehouse: ${this.data.total_wh}<br/>
+    Date Format: ${this.data.total_conf_date}<br/>
+    Layout: ${this.data.total_conf_layout}<br/>
+    Department: ${this.data.total_department}<br/>
+    Section: ${this.data.total_section} <br/>
+    User: unlimited <br/>
+    User access: unlimited <br/>
+    Android Device: ${this.data.total_device} <br/>
     <br/>
     <strong>Warning</strong>
     <br/>
