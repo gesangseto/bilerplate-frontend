@@ -443,7 +443,7 @@ export default {
               this.$toast.open({
                 message: res.error
                   ? `${res.message}`
-                  : 'Data has been saved succesfully ',
+                  : 'Data has been saved successfully ',
                 type: res.error ? 'error' : 'success',
                 dissmissible: true,
                 position: 'top-right',
@@ -462,7 +462,7 @@ export default {
               this.$toast.open({
                 message: res.error
                   ? `${res.message}`
-                  : 'Data has been saved succesfully ',
+                  : 'Data has been saved successfully ',
                 type: res.error ? 'error' : 'success',
                 dissmissible: true,
                 position: 'top-right',

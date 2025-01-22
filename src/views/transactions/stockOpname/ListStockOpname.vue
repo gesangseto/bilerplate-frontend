@@ -142,7 +142,7 @@ export default {
           this.$toast.open({
             message: result.data.error
               ? result.data.message
-              : `Transaction has been canceled succesfully`,
+              : `Transaction has been canceled successfully`,
             type: result.data.error == true ? 'error' : 'success',
             dissmissible: true,
             position: 'top-right',

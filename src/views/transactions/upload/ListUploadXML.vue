@@ -352,7 +352,7 @@ export default {
             this.$toast.open({
               message: result.data.error
                 ? result.data.message
-                : 'Data has been saved succesfully',
+                : 'Data has been saved successfully',
               type: result.data.error ? 'error' : 'success',
               dissmissible: true,
               position: 'top-right',
@@ -386,7 +386,7 @@ export default {
           this.$toast.open({
             message: result.data.error
               ? result.data.message
-              : 'Transaction has been canceled succesfully',
+              : 'Transaction has been canceled successfully',
             type: result.data.error ? 'error' : 'success',
             dissmissible: true,
             position: 'top-right',

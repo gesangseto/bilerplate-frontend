@@ -244,7 +244,7 @@ export default {
       this.$toast.open({
         message: _res.error
           ? `${_res.message}`
-          : 'Data has been canceled succesfully',
+          : 'Data has been canceled successfully',
         type: _res.error ? 'error' : 'success',
         dissmissible: true,
         position: 'top-right',
