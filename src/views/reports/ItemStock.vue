@@ -11,6 +11,7 @@
             :save_filtering="true"
             :filter="['All', 'product_id', 'warehouse_id']"
             status_code="product_stock_serial"
+            status_code_default="1"
             v-on:handleClickFilter="handleClickFilter($event)"
             v-on:handleChangeSize="handleChangeSize($event)"
           />
@@ -118,8 +119,8 @@ export default {
         limit: 10,
         totalPages: 1,
         totalData: 0,
-        StatusCode: '',
-        StatusCodeText: '',
+        StatusCode: 1,
+        StatusCodeText: 'Active',
         StartDate: '',
         EndDate: '',
       },

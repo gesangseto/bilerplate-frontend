@@ -141,7 +141,7 @@
             <CRow>
               <CCol sm="12">
                 <InputDefault
-                  :required="butuh.nie"
+                  :required="true"
                   :disabled="
                     action == 'Read' ||
                     (product.flag_upd_del == 0 && action != 'Create')
@@ -552,9 +552,10 @@ export default {
       }
     },
     isValidNIE() {
-      if (!this.butuh.nie) {
+      /* if (!this.butuh.nie) {
         return true;
-      } else if (!this.product.nie) {
+      } else */
+      if (!this.product.nie) {
         return false;
       } else {
         const regex = /^.{15,16}$/;
@@ -616,20 +617,19 @@ export default {
         'name',
         'no',
         'mst_product_category_id',
+        'nie',
         'kemasan_nie',
         'print_name',
         'suhu',
       ];
       for (const it of required) {
         if (!this.product[it]) {
-          console.log('Required: ', it);
           return false;
         }
       }
 
       // Metadata
       if (this.product.error_metadata) {
-        console.log('Required: Metadata');
         return false;
       }
 
@@ -643,7 +643,7 @@ export default {
         if (it.epc_type == 'nie') {
           this.butuh.nie = true;
           if (!this.isValidNIE()) {
-            console.log(`INVALID NIE: Pak Level ${it.packaging_level}`);
+            // console.log(`INVALID NIE: Pak Level ${it.packaging_level}`);
             return false;
           }
         }
@@ -651,29 +651,29 @@ export default {
         else if (it.epc_type == 'sgtin' || it.epc_type == 'sscc') {
           this.butuh.gtin = true;
           if (!this.isValidCPIR()) {
-            console.log(`INVALID SGTIN/SSCC: Pak Level ${it.packaging_level}`);
+            // console.log(`INVALID SGTIN/SSCC: Pak Level ${it.packaging_level}`);
             return false;
           } else if (!this.isValidGTIN()) {
-            console.log(`INVALID SGTIN/SSCC: Pak Level ${it.packaging_level}`);
+            // console.log(`INVALID SGTIN/SSCC: Pak Level ${it.packaging_level}`);
             return false;
           }
         }
         // Jika ada error *ini bawaan form mst pid
         if (it.error) {
-          console.log(`Required: Config Pak Level ${it.packaging_level}`);
+          // console.log(`Required: Config Pak Level ${it.packaging_level}`);
           return false;
         }
       }
 
       // Company Prefix dan Item Ref
       if (!this.isValidCPIR()) {
-        console.log('Required: CP - IR');
+        // console.log('Required: CP - IR');
         return false;
       }
       // CHECK PACKAGING
       for (var i = 1; lvl <= this.product.current_pack; lvl++) {
         if (!this.product[`packagingl${i}_id`]) {
-          console.log(`Required: Packaging ${i}`);
+          // console.log(`Required: Packaging ${i}`);
           return false;
         }
       }
@@ -686,11 +686,10 @@ export default {
           childQty = this.product[`qty_packagingl${lvl - 1}`];
         }
         if (thisQty % childQty != 0 || !thisQty) {
-          console.log(`Required: Quantity ${i}`);
+          // console.log(`Required: Quantity ${i}`);
           return false;
         }
       }
-      console.log(this.product);
       return true;
     },
 
@@ -713,8 +712,6 @@ export default {
 
     async save() {
       this.initial_load = false;
-      console.log(this.product);
-
       if (!this.validationData()) {
         this.$toast.open({
           message: 'Please input all the required data',

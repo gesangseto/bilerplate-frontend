@@ -164,8 +164,8 @@ export default {
     //   deep: true,
     // },
   },
-  mounted() {
-    this.getSatusCode();
+  async mounted() {
+    await this.getSatusCode();
     if (this.filter && this.filter.constructor === Array) {
       let new_list = [];
       for (const it of this.listFilter) {
@@ -853,10 +853,13 @@ export default {
         return;
       }
       let _res = await getStatusDesc({ table_name: this.status_code });
+
       for (const it of _res.data) {
         let tmp = it;
+
         if (this.status_code_default == it.status_code) {
           this.result.StatusCodeText = it.status_desc;
+          this.result.StatusCode = it.status_code;
         }
         tmp.value = it.status_code;
         tmp.label = it.status_desc;

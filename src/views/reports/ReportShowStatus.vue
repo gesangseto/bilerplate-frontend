@@ -30,7 +30,7 @@
               <h5>Product</h5>
               <table width="100%" class="table table-hover">
                 <tr>
-                  <td>Item No</td>
+                  <td>Item No ERP</td>
                   <td>:</td>
                   <td>{{ detailData.product_no }}</td>
                 </tr>
@@ -63,11 +63,9 @@
 
               <CCard>
                 <timeline>
-                  <timeline-title
-                    >History: {{ detailData.epc_key }} [{{
-                      detailData.serial
-                    }}]</timeline-title
-                  >
+                  <timeline-title>
+                    History: [{{ detailData.epc_key }}] {{ detailData.serial }}
+                  </timeline-title>
                   <div v-for="item in detailData.history" :key="item">
                     <timeline-item
                       :bg-color="
