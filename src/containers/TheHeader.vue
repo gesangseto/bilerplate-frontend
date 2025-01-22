@@ -309,9 +309,7 @@ export default {
       }
       let _res = await updateMstNotification({ id: checkedIds });
       this.$toast.open({
-        message: _res.error
-          ? _res.message
-          : 'Data has been saved successfully ',
+        message: _res.error ? _res.message : 'Data has been saved succesfully ',
         type: _res.error ? 'error' : 'success',
         dissmissible: true,
         position: 'top-right',
@@ -327,9 +325,7 @@ export default {
       let checkedIds = this.notif.filter((it) => it.checked).map((it) => it.id);
       let _res = await deleteMstNotification({ id: checkedIds });
       this.$toast.open({
-        message: _res.error
-          ? _res.message
-          : 'Data has been saved successfully ',
+        message: _res.error ? _res.message : 'Data has been saved succesfully ',
         type: _res.error ? 'error' : 'success',
         dissmissible: true,
         position: 'top-right',
