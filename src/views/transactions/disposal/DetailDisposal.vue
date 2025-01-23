@@ -205,27 +205,6 @@ import { exportDataV3, getSectionId, getUserId } from '../../../utils';
 
 export default {
   name: 'DetailDisposal',
-  mounted() {
-    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
-    if (this.$route.params.id !== undefined) {
-      let url = `/v3/transaction/disposal?id=${this.$route.params.id}`;
-      $axiosMertrack.get(url).then((response) => {
-        let data = response.data.data[0];
-        this.disposal = data;
-        if (data.items.length > 0) {
-          this.items = data.items;
-        } else {
-          this.$toast.open({
-            message: `No data to be viewed`,
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-        }
-      });
-    }
-  },
   data() {
     return {
       action: '',
@@ -323,13 +302,37 @@ export default {
     $route: {
       immediate: true,
       handler(route) {
+        if (route.params && route.params.id) this.loadData();
         if (route.query && route.query.page) {
           this.activePage = Number(route.query.page);
         }
       },
     },
   },
+  mounted() {
+    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
+  },
   methods: {
+    loadData() {
+      this.disposal = {};
+      this.items = [];
+      let url = `/v3/transaction/disposal?id=${this.$route.params.id}`;
+      $axiosMertrack.get(url).then((response) => {
+        let data = response.data.data[0];
+        this.disposal = data;
+        if (data.items.length > 0) {
+          this.items = data.items;
+        } else {
+          this.$toast.open({
+            message: `No data to be viewed`,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+        }
+      });
+    },
     save() {
       let message = `You are about to approve this transaction (ID: ${this.disposal.id}). This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {

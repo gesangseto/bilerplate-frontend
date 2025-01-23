@@ -325,6 +325,7 @@ export default {
     $route: {
       immediate: true,
       handler(route) {
+        if (route.params && route.params.id) this.loadData();
         if (route.query && route.query.page) {
           this.activePage = Number(route.query.page);
         }
@@ -333,7 +334,11 @@ export default {
   },
   mounted() {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
-    if (this.$route.params.id !== undefined) {
+  },
+  methods: {
+    loadData() {
+      this.returnDetail = {};
+      this.items = [];
       let url = `/v3/transaction/return?id=${this.$route.params.id}`;
       $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
@@ -350,9 +355,7 @@ export default {
           });
         }
       });
-    }
-  },
-  methods: {
+    },
     save() {
       let message = `You are about to approve this transaction (ID: ${this.returnDetail.id}). This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
