@@ -151,7 +151,7 @@ export default {
   name: 'DetailQueueBpom',
   mounted() {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
-    this.loadData();
+    // this.loadData();
     this.loadMenu();
   },
   data() {
@@ -230,6 +230,7 @@ export default {
     $route: {
       immediate: true,
       handler(route) {
+        if (route.params && route.params.id) this.loadData();
         if (route.query && route.query.page) {
           this.activePage = Number(route.query.page);
         }
@@ -246,6 +247,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.formData = {};
       this.items = [];
       this.formConnector.data.trx_ref_id = this.$route.params.id;
       this.formForceUpdate.trx_ref_id = this.$route.params.id;
