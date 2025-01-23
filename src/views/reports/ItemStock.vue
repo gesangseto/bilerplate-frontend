@@ -98,10 +98,11 @@ export default {
   name: 'ReportStock',
   mounted() {
     this.page = 1;
-    this.loadData();
+    // this.loadData();
   },
   data() {
     return {
+      load_count: 0,
       property_lock_status: {
         modal: false,
         item: {},
@@ -185,11 +186,17 @@ export default {
   },
   methods: {
     loadData() {
+      this.load_count += 1;
       this.items = [];
       let param = `${new URLSearchParams(this.filter).toString()}`;
       let url = `/v4/report/item-stock?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
+        if (this.items.length == 0 && this.load_count == 2) {
+          this.filter.StatusCode = null;
+          this.filter.StatusCodeText = 'All';
+          this.loadData();
+        }
         this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
