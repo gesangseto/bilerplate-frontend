@@ -120,8 +120,8 @@ export default {
         limit: 10,
         totalPages: 1,
         totalData: 0,
-        StatusCode: 1,
-        StatusCodeText: 'Active',
+        StatusCode: null,
+        StatusCodeText: 'All',
         StartDate: '',
         EndDate: '',
       },
@@ -192,15 +192,13 @@ export default {
       let url = `/v4/report/item-stock?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         this.items = res.data.data;
-        if (this.items.length == 0 && this.load_count == 2) {
-          this.filter.StatusCode = null;
-          this.filter.StatusCodeText = 'All';
-          this.loadData();
-        }
         this.filter = calculatePaginationV3({
           filter: this.filter,
           item: res,
         });
+        if (this.items.length == 0 && this.load_count == 2) {
+          this.handleClickFilter({ StatusCode: null, StatusCodeText: 'All' });
+        }
       });
     },
 

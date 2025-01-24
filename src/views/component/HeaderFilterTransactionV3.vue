@@ -493,7 +493,7 @@ export default {
       let initial = {
         page: 1,
         limit: 10,
-        StatusCode: this.status_code_default ?? '',
+        StatusCode: '',
         StatusCodeText: 'All',
         SearchType: 'All',
         SearchTypeText: 'All',
@@ -856,7 +856,6 @@ export default {
 
       for (const it of _res.data) {
         let tmp = it;
-
         if (this.status_code_default == it.status_code) {
           this.result.StatusCodeText = it.status_desc;
           this.result.StatusCode = it.status_code;

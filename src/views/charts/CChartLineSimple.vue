@@ -53,7 +53,13 @@ export default {
   computed: {
     computedDatasets() {
       for (const it of this.datasets) {
-        it.borderColor = `#` + ((Math.random() * 0xffffff) << 0).toString(16);
+        let color = `#` + ((Math.random() * 0xffffff) << 0).toString(16);
+        if (it.label == 'Inbound') {
+          color = '#ff0000';
+        } else if (it.label == 'Outbound') {
+          color = '#00ff0d';
+        }
+        it.borderColor = color;
         it.backgroundColor = 'transparent';
       }
 
