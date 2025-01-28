@@ -1,5 +1,5 @@
 <template>
-  <!-- Bacth No -->
+  <!-- Batch No -->
   <div>
     <CRow>
       <CCol v-if="title" :md="col[0]">

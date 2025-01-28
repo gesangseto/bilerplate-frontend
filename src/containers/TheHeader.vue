@@ -354,27 +354,27 @@ export default {
       if (!item.trx_ref_name) return null;
       let url = '#';
       if (item.trx_ref_name.toLowerCase() == 'bpom') {
-        url += `/transaction/queue-bpom/read/${item.trx_ref_id}`;
+        url += `/transaction/queue-bpom/read/${item.trx_ref_id || item.trx_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'return') {
-        url += `/transaction/return/approve/${item.trx_ref_id}`;
+        url += `/transaction/return/approve/${item.trx_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'disposal') {
-        url += `/transaction/disposal/approve/${item.trx_ref_id}`;
+        url += `/transaction/disposal/approve/${item.trx_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'sampling') {
-        url += `/transaction/indirect_request/approve/${item.trx_ref_id}`;
+        url += `/transaction/indirect_request/approve/${item.trx_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'indirect request') {
-        url += `/transaction/indirect_request/approve/${item.trx_ref_id}`;
+        url += `/transaction/indirect_request/approve/${item.trx_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'rework') {
-        url += `/transaction/rework/approve/${item.trx_ref_id}`;
+        url += `/transaction/rework/approve/${item.trx_id}`;
       } else if (
         item.trx_ref_name.toLowerCase() == 'decommission' ||
         item.trx_ref_name.toLowerCase() == 'decommissioning'
       ) {
-        url += `/transaction/comm-decomm/approve/${item.trx_ref_id}`;
+        url += `/transaction/comm-decomm/approve/${item.trx_id}`;
       } else if (
         item.trx_ref_name.toLowerCase() == 'commission' ||
         item.trx_ref_name.toLowerCase() == 'commissioning'
       ) {
-        url += `/transaction/comm-decomm/approve/${item.trx_ref_id}`;
+        url += `/transaction/comm-decomm/approve/${item.trx_id}`;
       }
       return url;
     },

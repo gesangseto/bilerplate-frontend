@@ -16,7 +16,7 @@
         </v-select>
       </div>
     </div>
-    <!-- Bacth No -->
+    <!-- Batch No -->
     <div class="form-group row mb-2">
       <label for="product-name" class="col-sm-2 col-md-2 col-lg-2 form-label">
         Batch No <strong class="text-danger">*</strong>
