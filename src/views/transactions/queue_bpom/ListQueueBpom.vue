@@ -141,7 +141,7 @@ export default {
         },
         {
           key: 'product_name_batch',
-          label: 'Product Name [Batch]',
+          label: 'Product Name [Batch No]',
         },
         {
           key: 'status',

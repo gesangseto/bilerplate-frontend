@@ -36,7 +36,7 @@
                 <CCol md="6">
                   <table style="width: 100%">
                     <tr style="height: 50px">
-                      <td>Product Name [Batch]</td>
+                      <td>Product Name [Batch No]</td>
                       <td>
                         <textarea
                           class="form-control"
