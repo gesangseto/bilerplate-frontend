@@ -309,6 +309,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           ['_created.full_name']: item['_created.full_name'] || '-',
         };
       });

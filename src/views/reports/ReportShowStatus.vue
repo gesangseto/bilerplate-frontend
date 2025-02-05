@@ -42,12 +42,12 @@
                 <tr>
                   <td>L1 GTIN</td>
                   <td>:</td>
-                  <td>{{ detailData.gtin }}</td>
+                  <td>{{ detailData.gtin || '-' }}</td>
                 </tr>
                 <tr>
                   <td>NIE</td>
                   <td>:</td>
-                  <td>{{ detailData.product_nie }}</td>
+                  <td>{{ detailData.product_nie || detailData.nie || '-' }}</td>
                 </tr>
                 <tr>
                   <td>Storage Temperature</td>
@@ -336,6 +336,8 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           no: index + 1,
         };
       });

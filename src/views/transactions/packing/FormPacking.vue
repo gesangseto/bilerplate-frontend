@@ -504,6 +504,8 @@ export default {
       return this.item.map((item) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
         };
       });
     },

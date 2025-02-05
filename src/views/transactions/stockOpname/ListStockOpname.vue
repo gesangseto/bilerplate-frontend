@@ -213,6 +213,8 @@ export default {
         }
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           status_desc: status,
         };
       });

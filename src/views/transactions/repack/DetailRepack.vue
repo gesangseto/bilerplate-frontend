@@ -295,7 +295,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          gtin: item.gtin ? item.gtin : '',
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
         };
       });
     },

@@ -633,6 +633,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           no: (no += 1),
           gtin_cp:
             item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,

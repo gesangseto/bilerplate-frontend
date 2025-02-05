@@ -277,6 +277,8 @@ export default {
         let type = item.epc_type ? item.epc_type.toLowerCase() : null;
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           gtin_cp: type == 'sscc' ? item.company_prefix : item.gtin_sscc,
         };
       });

@@ -310,6 +310,8 @@ export default {
         // END OF EDITED BY GESANG
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           ['_created.full_name']: item['_created.full_name'] || '-',
         };
       });

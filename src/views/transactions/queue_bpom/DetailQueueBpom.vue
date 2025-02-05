@@ -431,6 +431,8 @@ export default {
         }
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           modified_by_full_name: item.modified_by_full_name || '',
           type: humanize(item.type),
           level: humanize(level),

@@ -231,6 +231,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           status_desc: item.status_desc || 'Unkwon Status',
           created_full_name: item.created_full_name || '-',
           approval_name: item.approval_name || '-',

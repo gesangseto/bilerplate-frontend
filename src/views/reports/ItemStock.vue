@@ -260,6 +260,8 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           warehouse_name: item.warehouse_name ? item.warehouse_name : '-',
           no: this.getNumber(index + 1),
         };

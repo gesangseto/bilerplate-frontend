@@ -235,6 +235,8 @@ export default {
         let source = toTitleCase(item.source);
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           trx_ref_id: item.trx_ref_id || '-',
           source: source,
           '_created.full_name': created_by || '-',

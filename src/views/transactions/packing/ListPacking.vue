@@ -209,6 +209,8 @@ export default {
         }
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           epc_key: epc_key,
           serial: serial,
           ['_created.full_name']: item['_created.full_name'] || '-',

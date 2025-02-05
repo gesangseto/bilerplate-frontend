@@ -512,6 +512,8 @@ export default {
         return {
           no: (no += 1),
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
         };
       });
     },

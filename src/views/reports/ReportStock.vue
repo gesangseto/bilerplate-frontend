@@ -180,6 +180,8 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           no: this.getNumber(index + 1),
         };
       });

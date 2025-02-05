@@ -341,6 +341,8 @@ export default {
         }
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           is_same: operator,
           actual_quantity: item.actual_quantity ?? 0,
         };

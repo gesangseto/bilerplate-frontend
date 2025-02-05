@@ -272,6 +272,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           so_date: moment(item.so_date).format('YYYY-MM-DD'),
         };
       });

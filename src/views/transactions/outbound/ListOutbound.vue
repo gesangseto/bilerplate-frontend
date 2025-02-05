@@ -210,6 +210,8 @@ export default {
         let type = toTitleCase(item.type);
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           created_full_name: item.created_full_name || '-',
           type: type,
         };

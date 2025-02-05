@@ -295,6 +295,8 @@ export default {
           .format('YYYY-MM-DD HH:mm');
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           // transaction_desc: item.transaction_desc.charAt(0).toUpperCase(),
           modified_date: lastUpdate,
           status: humanize(item.status),

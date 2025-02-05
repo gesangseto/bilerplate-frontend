@@ -57,16 +57,16 @@
 </template>
 
 <script>
-import $axiosMertrack from "../../apiMertrack";
+import $axiosMertrack from '../../apiMertrack';
 import {
   capitalizeFirstLetter,
   exportDataReport,
   calculatePaginationV3,
-} from "../../utils";
-import { dateFilter } from "../../constants";
+} from '../../utils';
+import { dateFilter } from '../../constants';
 
 export default {
-  name: "ReportAuditTrail",
+  name: 'ReportAuditTrail',
   mounted() {
     this.page = 1;
     this.loadData();
@@ -83,33 +83,33 @@ export default {
       items: [],
       fields: [
         {
-          key: "no",
-          label: "No",
+          key: 'no',
+          label: 'No',
         },
         {
-          key: "created_date",
-          label: "Created",
-          _classes: "font-weight-bold",
+          key: 'created_date',
+          label: 'Created',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "created_by",
-          label: "Created By",
-          _classes: "font-weight-bold",
+          key: 'created_by',
+          label: 'Created By',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "val1",
-          label: "Client",
-          _classes: "font-weight-bold",
+          key: 'val1',
+          label: 'Client',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "val2",
-          label: "API",
-          _classes: "font-weight-bold",
+          key: 'val2',
+          label: 'API',
+          _classes: 'font-weight-bold',
         },
         {
-          key: "action",
-          label: "Action",
-          _style: "width:10%",
+          key: 'action',
+          label: 'Action',
+          _style: 'width:10%',
           sorter: false,
           filter: false,
         },
@@ -158,9 +158,11 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
+          nie: item.nie || '-',
+          gtin: item.gtin || '-',
           no: this.getNumber(index + 1),
           type: capitalizeFirstLetter(item.type),
-          dep_sec: item.department_name + " - " + item.section_name,
+          dep_sec: item.department_name + ' - ' + item.section_name,
         };
       });
     },
