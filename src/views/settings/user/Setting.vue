@@ -51,7 +51,7 @@
                   title="Old Password"
                   v-model="form_data.oldPassword"
                   :is-valid="
-                    !form_data.oldPassword ? null : !required.oldPassword.error
+                    !initial_load && !form_data.oldPassword ? false : null
                   "
                   :invalid_feedback="required.oldPassword.message"
                 />
@@ -65,7 +65,11 @@
                   title="New Password"
                   v-model="form_data.newPassword"
                   :is-valid="
-                    !form_data.newPassword ? null : !required.newPassword.error
+                    !initial_load && !form_data.newPassword
+                      ? false
+                      : !form_data.newPassword
+                      ? null
+                      : !required.newPassword.error
                   "
                   :invalid_feedback="required.newPassword.message"
                 />
@@ -79,7 +83,9 @@
                   title="Confirm Password"
                   v-model="form_data.confirmPassword"
                   :is-valid="
-                    !form_data.newPassword
+                    !initial_load && !form_data.confirmPassword
+                      ? false
+                      : !form_data.newPassword
                       ? null
                       : form_data.newPassword === form_data.confirmPassword
                   "
