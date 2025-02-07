@@ -155,7 +155,13 @@
           </CCardBody>
 
           <CCardFooter>
-            <CButton type="submit" size="sm" color="primary" @click="save()">
+            <CButton
+              v-if="action != 'Read'"
+              type="submit"
+              size="sm"
+              color="primary"
+              @click="save()"
+            >
               <CIcon name="cil-check-circle" /> Submit
             </CButton>
             <ButtonBack />

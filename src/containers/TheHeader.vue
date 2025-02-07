@@ -329,7 +329,7 @@ export default {
       this.$toast.open({
         message: _res.error
           ? _res.message
-          : 'Data has been saved successfully ',
+          : 'Data has been deleted successfully ',
         type: _res.error ? 'error' : 'success',
         dissmissible: true,
         position: 'top-right',

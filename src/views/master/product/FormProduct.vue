@@ -256,7 +256,7 @@
                   :disabled="action == 'Read'"
                   :required="true"
                   title="Product Name"
-                  placeholder="Enter product anme for label printing"
+                  placeholder="Enter product name for label printing"
                   v-model="product.print_name"
                   :isValid="
                     initial_load ? null : product.print_name ? true : false
