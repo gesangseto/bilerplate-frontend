@@ -26,9 +26,7 @@
 
               <SelectOption
                 title="Product Name"
-                :disabled="
-                  action == 'Read' || formData.status == '4' ? true : false
-                "
+                :disabled="action == 'Create' ? false : true"
                 required
                 :options="productOptions"
                 v-on:onchange="formData.product_id = $event"
@@ -52,10 +50,7 @@
               />
 
               <InputDefault
-                :disabled="
-                  action != 'Create' &&
-                  (action != 'Update' || formData.status == '4')
-                "
+                :disabled="action == 'Create' ? false : true"
                 title="Batch No"
                 :validasi="'alphanumeric'"
                 v-model="formData.batch_no"
@@ -68,10 +63,7 @@
               />
 
               <InputDefault
-                :disabled="
-                  action != 'Create' &&
-                  (action != 'Update' || formData.status == '4')
-                "
+                :disabled="action == 'Create' ? false : true"
                 title="Lot No"
                 :validasi="'alphanumeric'"
                 v-model="formData.lot_no"
@@ -163,10 +155,7 @@
             </CCol>
             <CCol sm="6" md="6" lg="6">
               <InputDefault
-                :disabled="
-                  action != 'Create' &&
-                  (action != 'Update' || formData.status == '4')
-                "
+                :disabled="action == 'Create' ? false : true"
                 title="Target L1 Qty"
                 :validasi="'integer'"
                 v-model="formData.generate_count_level_1"
