@@ -115,8 +115,8 @@ export default {
         class: 'float-right',
         color: 'secondary',
         icon: 'download',
-        text: 'Bpom',
-        tooltip: 'Export BPOM Report',
+        text: 'BPOM Report',
+        tooltip: 'BPOM Report',
       },
     };
   },

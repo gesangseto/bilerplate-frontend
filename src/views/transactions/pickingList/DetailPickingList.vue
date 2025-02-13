@@ -232,6 +232,7 @@
 
           <ButtonBack />
           <ButtonPermission
+            v-if="picking.status == 1"
             exportType="bpom-report"
             :permission="'print'"
             @click="handleClickExportBPOM()"
