@@ -317,7 +317,8 @@ export default {
       this.MfgPostfix.item = item;
       this.MfgPostfix.id = item.id;
       this.MfgPostfix.mfg_date = new Date();
-      this.MfgPostfix.het = '';
+      this.MfgPostfix.het = null;
+      this.MfgPostfix.mfg_postfix = null;
       this.warningModal = true;
     },
 
