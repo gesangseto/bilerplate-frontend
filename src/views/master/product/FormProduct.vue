@@ -310,7 +310,11 @@
             <br />
             <br />
             <div>
-              <MasterPid :product="product" :packaging_level="'1'" />
+              <MasterPid
+                :product="product"
+                :packaging_level="'1'"
+                :action="action"
+              />
             </div>
           </CForm>
           <br /><br /><br />

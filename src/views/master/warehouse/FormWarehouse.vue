@@ -126,7 +126,11 @@
                 placeholder="--Select--"
                 :value.sync="formData.temperature"
                 :is-valid="
-                  initial_load ? null : formData.temperature ? true : false
+                  initial_load
+                    ? null
+                    : formData.temperature == 0 || formData.temperature == 1
+                    ? true
+                    : false
                 "
               >
                 <template #label>

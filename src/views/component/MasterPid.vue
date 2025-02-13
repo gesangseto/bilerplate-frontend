@@ -269,6 +269,7 @@
       </CCardBody>
     </CCard>
     <Button
+      v-if="action != 'Read'"
       :disabled="product.mst_pid.length == 7 || !product.flag_upd_del"
       :buttonProperty="{
         size: 'sm',
@@ -281,6 +282,7 @@
       @click="addPackaging()"
     />
     <Button
+      v-if="action != 'Read'"
       :disabled="product.mst_pid.length == 1 || !product.flag_upd_del"
       :buttonProperty="{
         size: 'sm',
@@ -304,6 +306,7 @@ export default {
     item: Object,
     product: Object,
     packaging_level: String,
+    action: String,
   },
   beforeMount() {
     if (this.product.mst_pid.length === 0) {
