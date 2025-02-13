@@ -116,7 +116,6 @@ export default {
       } else {
         this.useKeyboard = false;
       }
-      console.log(this.useKeyboard);
     });
   },
   watch: {
@@ -136,7 +135,6 @@ export default {
   methods: {
     accept(text) {
       this.hide();
-      console.log(text, '<==========Hasil Text');
     },
 
     hide() {

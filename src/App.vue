@@ -36,6 +36,7 @@ import {
   ProductWeight,
   VirtualKeyboard,
   SelectOption,
+  Metadata,
 } from './views/component';
 Vue.use(
   VueFab /* {
@@ -71,6 +72,7 @@ Vue.component('SwitchStatusTrx', SwitchStatusTrx);
 Vue.component('SwitchDefault', SwitchDefault);
 Vue.component('ProductWeight', ProductWeight);
 Vue.component('SelectOption', SelectOption);
+Vue.component('Metadata', Metadata);
 
 export default {
   name: 'App',

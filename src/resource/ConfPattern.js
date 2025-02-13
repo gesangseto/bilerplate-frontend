@@ -1,8 +1,8 @@
 import $axiosMertrack from '../apiMertrack';
 
-let url = `/v3/production/proccess-order`;
+let url = `/v4/configuration/pattern`;
 
-export const getProccessOrder = async (param = Object) => {
+export const getConfPattern = async (param = Object) => {
   var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
@@ -21,26 +21,7 @@ export const getProccessOrder = async (param = Object) => {
   });
 };
 
-export const getAvalaibleSerial = async (param = Object) => {
-  var query_string = '';
-  if (param) {
-    query_string = new URLSearchParams(param).toString();
-  }
-  return new Promise((resolve) => {
-    $axiosMertrack
-      .get(`${url}/avalaible-serial?${query_string}`)
-      .then((result) => {
-        let res = result.data;
-        return resolve(res);
-      })
-      .catch((e) => {
-        console.log('ERROR => ', e);
-        return resolve(false);
-      });
-  });
-};
-
-export const insertProccessOrder = async (param = Object) => {
+export const insertConfPattern = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -58,11 +39,10 @@ export const insertProccessOrder = async (param = Object) => {
   });
 };
 
-export const generateProccessOrder = async (param = Object) => {
+export const updateConfPattern = async (param = Object) => {
   if (!param) {
     return false;
   }
-
   return new Promise((resolve) => {
     $axiosMertrack
       .post(url, param)
@@ -76,26 +56,8 @@ export const generateProccessOrder = async (param = Object) => {
       });
   });
 };
-export const requestAdditionalSerial = async (param = Object) => {
-  if (!param) {
-    return false;
-  }
 
-  return new Promise((resolve) => {
-    $axiosMertrack
-      .post(`${url}/request-additional-serial`, param)
-      .then((result) => {
-        let res = result.data;
-        return resolve(res);
-      })
-      .catch((e) => {
-        console.log('ERROR => ', e);
-        return resolve(false);
-      });
-  });
-};
-
-export const deleteProccessOrder = async (param = Object) => {
+export const deleteConfPattern = async (param = Object) => {
   if (!param.id) return false;
   param = { data: { ...param } };
   return new Promise((resolve) => {

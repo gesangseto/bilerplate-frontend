@@ -3,7 +3,7 @@
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
       <CCard>
         <CCardHeader>
-          <h5>Proccess Order [{{ route_action }}]</h5>
+          <h5>Process Order [{{ route_action }}]</h5>
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -11,11 +11,11 @@
               <CInput
                 :disabled="action != 'Create'"
                 horizontal
-                :value.sync="formData.procces_order_erp"
+                :value.sync="formData.process_order_erp"
                 :is-valid="
                   initialLoad
                     ? null
-                    : !formData.procces_order_erp
+                    : !formData.process_order_erp
                     ? false
                     : true
                 "
@@ -287,46 +287,43 @@
                 @click="viewModalHistory = true"
                 class="mr-2"
                 color="info"
-                ><CIcon name="cil-check-circle" /> View History</CButton
+              >
+                <CIcon name="cil-check-circle" /> View History</CButton
               >
               <CButton
-                v-if="[3, 4].includes(formData.status)"
+                v-if="[1, 3, 4, 10].includes(formData.status)"
                 type="submit"
                 size="sm"
-                @click="viewModalSerial = true"
+                @click="handleViewSerial"
                 class="mr-2"
                 color="primary"
-                ><CIcon name="cil-check-circle" /> View Serial</CButton
+              >
+                <CIcon name="cil-check-circle" /> View Serial</CButton
+              >
+              <CButton
+                v-if="[1, 3, 4, 10].includes(formData.status)"
+                type="submit"
+                size="sm"
+                @click="viewModalWeight = true"
+                class="mr-2"
+                color="warning"
+              >
+                <CIcon name="cil-check-circle" /> Weight Config</CButton
               >
             </CCol>
           </CRow>
-          <!-- DATA TABLE untuk menampilkan semua data yang sudah berhasil di production - aggregatio oleh pihak ke 3 -->
+          <!-- DATA TABLE untuk menampilkan semua HISTORY Station-->
           <CDataTable
             hover
             striped
             sorter
             tableFilter
-            border
             :pagination="true"
             :items-per-page="50"
-            :items="detailItems"
-            :fields="fieldItems"
+            :items="detailHistory"
+            :fields="fieldStationHistory"
             style="font-size: 12px"
           >
-            <template #action="{ item, index }">
-              <td>
-                <CButton
-                  v-if="item.packaging_level > 1 && item.quantity != '-'"
-                  size="sm"
-                  color="info"
-                  style="font-size: 12px"
-                  class="px-2 my-2"
-                  @click="rowClicked(item, index)"
-                >
-                  <v-icon name="eye" />
-                </CButton>
-              </td>
-            </template>
           </CDataTable>
         </CCardBody>
         <CCardFooter>
@@ -353,151 +350,159 @@
           <!-- Buton Cancel-->
           <ButtonBack />
         </CCardFooter>
-        <!-- Modal untuk menambahkan data Request Additional Serial-->
-        <CModal
-          title="Request Additional Serial"
-          color="warning"
-          :show.sync="viewModalRequestSerial"
-        >
-          <CRow>
-            <CCol sm="12" md="12" lg="12">
-              <div v-for="(item, index) in itemGenerateCount" :key="index">
-                <CInput
-                  v-if="product[`qty_packagingl${index + 1}`] || index == 0"
-                  :disabled="additionalSerial.all && index >= 1"
-                  horizontal
-                  :value.sync="
-                    additionalSerial[`generate_count_level_${index + 1}`]
-                  "
-                  type="number"
-                  @keypress="limitNumber({ event: $event, max: 7 })"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Pack Level {{ index + 1 }}
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInput>
-              </div>
-              <CRow form class="form-group">
-                <CCol tag="label" sm="3" class="col-form-label"> All </CCol>
-                <CCol sm="9">
-                  <CSwitch
-                    class="mr-1"
-                    color="success"
-                    :checked.sync="additionalSerial.all"
-                  />
-                </CCol>
-              </CRow>
-            </CCol>
-          </CRow>
-          <template #footer>
-            <CButton
-              size="sm"
-              color="success"
-              type="button"
-              @click="submitAdditionSerial()"
-            >
-              <CIcon name="cil-check-circle" /> Request
-            </CButton>
-            <CButton
-              size="sm"
-              color="danger"
-              type="button"
-              @click="closeModal()"
-            >
-              <CIcon name="cil-x-circle" /> Close
-            </CButton>
-          </template>
-        </CModal>
-
-        <!-- Modal untuk melihat detail aggregasi item stock setelah berhasil di closed / partial closed-->
-        <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
-          <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
-          <template #footer>
-            <CButton
-              size="sm"
-              color="danger"
-              type="button"
-              @click="closeModal()"
-            >
-              <CIcon name="cil-x-circle" /> Close
-            </CButton>
-          </template>
-        </CModal>
-
-        <!-- Modal untuk melihat view history dari request additional serial-->
-        <CModal
-          title="History Request Serial"
-          color="warning"
-          :show.sync="viewModalHistory"
-        >
-          <table style="width: 100%">
-            <tr>
-              <td><strong>Request Time</strong></td>
-              <td><strong>Level 1</strong></td>
-              <td><strong>Level 2</strong></td>
-              <td><strong>Level 3</strong></td>
-              <td><strong>Level 4</strong></td>
-            </tr>
-            <tr
-              v-for="(item, index) in formData.generate_count_additional"
-              :key="index"
-            >
-              <td>{{ item.modified_date }}</td>
-              <td>{{ item.generate_count_level_1 }}</td>
-              <td>{{ item.generate_count_level_2 }}</td>
-              <td>{{ item.generate_count_level_3 }}</td>
-              <td>{{ item.generate_count_level_4 }}</td>
-            </tr>
-          </table>
-          <template #footer>
-            <CButton
-              size="sm"
-              color="danger"
-              type="button"
-              @click="viewModalHistory = false"
-            >
-              <CIcon name="cil-x-circle" /> Close
-            </CButton>
-          </template>
-        </CModal>
-        <!-- Modal untuk melihat semua serial yang tersedia-->
-        <CModal
-          title="View Generated Serial"
-          color="warning"
-          :show.sync="viewModalSerial"
-          size="lg"
-        >
-          <CDataTable
-            hover
-            striped
-            sorter
-            tableFilter
-            border
-            :pagination="true"
-            :items-per-page="10"
-            :items="detailSerial"
-            :fields="fieldSerial"
-            style="font-size: 12px"
-          />
-
-          <template #footer>
-            <CButton
-              size="sm"
-              color="danger"
-              type="button"
-              @click="viewModalSerial = false"
-            >
-              <CIcon name="cil-x-circle" /> Close
-            </CButton>
-          </template>
-        </CModal>
       </CCard>
     </div>
+
+    <!-- KUMPULAN MODAL DIDALAM FORMS PROCESS ORDER -->
+
+    <!-- MODAL UNTUK MELIHAT WEIGHT -->
+    <ProductWeight
+      :readonly="true"
+      :product="formData"
+      :showModal="viewModalWeight"
+      v-on:onCloseModal="viewModalWeight = false"
+    />
+    <!-- Modal untuk menambahkan data Request Additional Serial-->
+    <CModal
+      title="Request Additional Serial"
+      color="warning"
+      :show.sync="viewModalRequestSerial"
+    >
+      <CRow>
+        <CCol sm="12" md="12" lg="12">
+          <div v-for="(item, index) in itemGenerateCount" :key="index">
+            <CInput
+              v-if="product[`qty_packagingl${index + 1}`] || index == 0"
+              :disabled="additionalSerial.all && index >= 1"
+              horizontal
+              :value.sync="
+                additionalSerial[`generate_count_level_${index + 1}`]
+              "
+              type="number"
+              @keypress="limitNumber({ event: $event, max: 7 })"
+            >
+              <template #label>
+                <p class="col-form-label col-sm-3">
+                  Pack Level {{ index + 1 }}
+                  <span class="text-danger">
+                    <strong>*</strong>
+                  </span>
+                </p>
+              </template>
+            </CInput>
+          </div>
+          <CRow form class="form-group">
+            <CCol tag="label" sm="3" class="col-form-label"> All </CCol>
+            <CCol sm="9">
+              <CSwitch
+                class="mr-1"
+                color="success"
+                :checked.sync="additionalSerial.all"
+              />
+            </CCol>
+          </CRow>
+        </CCol>
+      </CRow>
+      <template #footer>
+        <CButton
+          size="sm"
+          color="success"
+          type="button"
+          @click="submitAdditionSerial()"
+        >
+          <CIcon name="cil-check-circle" /> Request
+        </CButton>
+        <CButton size="sm" color="danger" type="button" @click="closeModal()">
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
+
+    <!-- Modal untuk melihat detail aggregasi item stock setelah berhasil di closed / partial closed-->
+    <CModal title="Detail" color="warning" :show.sync="viewModal" size="xl">
+      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
+      <template #footer>
+        <CButton size="sm" color="danger" type="button" @click="closeModal()">
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
+
+    <!-- Modal untuk melihat view history dari request additional serial-->
+    <CModal
+      title="History Request Serial"
+      color="warning"
+      :show.sync="viewModalHistory"
+    >
+      <CDataTable
+        hover
+        striped
+        sorter
+        tableFilter
+        border
+        :pagination="true"
+        :items-per-page="10"
+        :items="dataFieldHistory"
+        :fields="fieldHistory"
+        style="font-size: 12px"
+      />
+
+      <template #footer>
+        <CButton
+          size="sm"
+          color="danger"
+          type="button"
+          @click="viewModalHistory = false"
+        >
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
+
+    <!-- MODAL VIEW SERIAL -->
+    <CModal
+      title="View Serial"
+      color="warning"
+      :show.sync="viewModalSerial"
+      size="lg"
+    >
+      <CRow>
+        <CCol md="10">
+          <CTabs :active-tab.sync="activeTab">
+            <CTab title="Available" active> </CTab>
+            <CTab title="Booking"> </CTab>
+            <CTab title="Production"> </CTab>
+          </CTabs>
+        </CCol>
+        <CCol md="2">
+          <p class="float-right">
+            Quantity L1: {{ tabData.quantity_l1 }}<br />
+          </p>
+        </CCol>
+      </CRow>
+      <CDataTable
+        hover
+        striped
+        sorter
+        tableFilter
+        border
+        :pagination="true"
+        :items-per-page="10"
+        :items="detailSerial"
+        :fields="fieldSerial"
+        style="font-size: 12px"
+      />
+      <template #footer>
+        <CButton
+          size="sm"
+          color="danger"
+          type="button"
+          @click="viewModalSerial = false"
+        >
+          <CIcon name="cil-x-circle" /> Close
+        </CButton>
+      </template>
+    </CModal>
   </div>
 </template>
 
@@ -507,16 +512,22 @@ import 'vue-select/dist/vue-select.css';
 import moment from 'moment';
 import { getMstProduct } from '../../../resource/MstProduct';
 import {
-  generateProccessOrder,
-  getAvalaibleSerial,
-  getProccessOrder,
-  insertProccessOrder,
+  generateProcessOrder,
+  getAllSerials,
+  getProcessOrder,
+  insertProcessOrder,
   requestAdditionalSerial,
-} from '../../../resource/ProccessOrder';
+} from '../../../resource/ProcessOrder';
 import { capitalizeFirstLetter, getConfig, onlyNumber } from '../../../utils';
 export default {
   name: 'FormPacking',
   watch: {
+    activeTab: {
+      deep: true,
+      handler(item) {
+        this.filterSerials();
+      },
+    },
     'formData.shelf_life': {
       deep: true,
       handler(item) {
@@ -527,19 +538,6 @@ export default {
       deep: true,
       handler(item) {
         this.reformatExp();
-      },
-    },
-    viewModalSerial: {
-      deep: true,
-      async handler(item) {
-        if (item && this.serials.length == 0) {
-          let _serials = await getAvalaibleSerial({
-            id: this.$route.params.id,
-          });
-          if (_serials && !_serials.error) {
-            this.serials = _serials.data[0].items;
-          }
-        }
       },
     },
     additionalSerial: {
@@ -581,6 +579,7 @@ export default {
   },
   data() {
     return {
+      activeTab: 0,
       initialLoad: true,
       additionalSerial: {
         id: this.$route.params.id,
@@ -598,13 +597,15 @@ export default {
         exp_date: null,
         mfg_date: null,
         het: null,
-        procces_order_erp: '',
-        buff: null,
+        process_order_erp: '',
+        buff: 0,
         generate_count_level_1: null,
         generate_count_level_2: null,
         generate_count_level_3: null,
         generate_count_level_4: null,
         min_count_generated_serial: getConfig().min_count_generated_serial || 0,
+        generate_count_additional: [],
+        history: [],
       },
       initial_load: true,
       today: moment().format('DD-MMM-YYYY'),
@@ -630,32 +631,23 @@ export default {
           label: 'Count',
         },
       ],
-      fieldItems: [
+      fieldStationHistory: [
         {
-          key: 'epc_key',
-          label: 'EPC Key',
+          key: 'conf_station_name',
+          label: 'Station Name',
         },
         {
-          key: 'serial',
-          label: 'SN',
+          key: 'transaction',
+          label: 'Transaction',
         },
         {
-          key: 'packaging_level',
-          label: 'Pkg Level',
-        },
-        {
-          key: 'packaging_name',
-          label: 'Pkg Name',
-        },
-        {
-          key: 'quantity',
-          label: 'L1 Qty',
+          key: 'created_date',
+          label: 'Created Date',
         },
         {
           key: 'status_name',
           label: 'Status',
         },
-        { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
       fieldSerial: [
         {
@@ -674,14 +666,49 @@ export default {
           key: 'epc_type',
           label: 'Epc Type',
         },
+        {
+          key: 'status_name',
+          label: 'Status',
+        },
+      ],
+      fieldHistory: [
+        {
+          key: 'modified_date',
+          label: 'Request Time',
+        },
+        {
+          key: 'generate_count_level_1',
+          label: 'Level 1',
+        },
+        {
+          key: 'generate_count_level_2',
+          label: 'Level 2',
+        },
+        {
+          key: 'generate_count_level_3',
+          label: 'Level 3',
+        },
+        {
+          key: 'generate_count_level_4',
+          label: 'Level 4',
+        },
       ],
       serials: [],
+      selectedSerials: [],
+      tabData: {
+        quantity_l1: 0,
+        quantity_l2: 0,
+        quantity_l3: 0,
+        quantity_l4: 0,
+        serials: [],
+      },
       itemGenerateCount: [],
       detail_item: {},
       viewModal: false,
       viewModalRequestSerial: false,
       viewModalHistory: false,
       viewModalSerial: false,
+      viewModalWeight: false,
     };
   },
   async mounted() {
@@ -726,8 +753,67 @@ export default {
           .format('YYYY-MM-DD');
       }
     },
+    filterSerials() {
+      let status = {
+        active: 1,
+        inactive: 5,
+        in_progress: 6,
+        disposal: 3,
+        sampling: 15,
+        destroy_number: 201,
+        rework: 202,
+        picking_done: 203,
+        sold: 204,
+        available: 25,
+        reserved: 12,
+        used: 205,
+        destroy_return: 206,
+        active_preinbound: 207,
+        unused: 26,
+      };
+      this.tabData.serials = [];
+      if (this.activeTab == 0) {
+        // AVAILABLE
+        this.tabData.serials = this.serials.filter(
+          (it) => it.status == status.available
+        );
+      } else if (this.activeTab == 1) {
+        // RESERVED
+        this.tabData.serials = this.serials.filter(
+          (it) => it.status == status.reserved
+        );
+      } else if (this.activeTab == 2) {
+        this.tabData.serials = this.serials.filter(
+          (it) => it.status != status.available && it.status != status.reserved
+        );
+      }
+      this.tabData.quantity_l1 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 1
+      ).length;
+      this.tabData.quantity_l2 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 2
+      ).length;
+      this.tabData.quantity_l3 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 3
+      ).length;
+      this.tabData.quantity_l4 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 4
+      ).length;
+    },
+    async handleViewSerial() {
+      if (this.serials.length == 0) {
+        let _serials = await getAllSerials({
+          id: this.$route.params.id,
+        });
+        if (_serials && !_serials.error) {
+          this.serials = _serials.data;
+        }
+        this.filterSerials();
+      }
+      this.viewModalSerial = true;
+    },
     async loadData() {
-      let _res = await getProccessOrder({ id: this.$route.params.id });
+      let _res = await getProcessOrder({ id: this.$route.params.id });
       if (_res && !_res.error) {
         this.formData = _res.data[0];
         this.formData.min_count_generated_serial =
@@ -780,12 +866,12 @@ export default {
       this.checkedSerials.splice(index, 1);
       this.chekcedBatch.splice(index, 1);
       if (this.items.length == 0) {
-        this.can_proccess = false;
+        this.can_process = false;
       }
     },
     async generate_serial() {
       this.$isLoading(true);
-      let res = await generateProccessOrder({
+      let res = await generateProcessOrder({
         id: this.formData.id,
         approve: true,
         mfg_date: this.formData.mfg_date,
@@ -841,7 +927,7 @@ export default {
       this.initialLoad = false;
       // // cek semua input yang mandatory
       let required = [
-        'procces_order_erp',
+        'process_order_erp',
         'generate_count_level_1',
         'lot_no',
         'batch_no',
@@ -863,7 +949,7 @@ export default {
       }
 
       this.$isLoading(true);
-      let res = await insertProccessOrder(this.formData);
+      let res = await insertProcessOrder(this.formData);
       this.$isLoading(false);
       this.$toast.open({
         message: res['error']
@@ -905,6 +991,17 @@ export default {
     },
   },
   computed: {
+    dataFieldHistory() {
+      return this.formData.generate_count_additional.map((item) => {
+        return {
+          ...item,
+          generate_count_level_1: item.generate_count_level_1 || 0,
+          generate_count_level_2: item.generate_count_level_2 || 0,
+          generate_count_level_3: item.generate_count_level_3 || 0,
+          generate_count_level_4: item.generate_count_level_4 || 0,
+        };
+      });
+    },
     detailItems() {
       return this.formData.items.map((item) => {
         return {
@@ -914,9 +1011,19 @@ export default {
       });
     },
     detailSerial() {
-      return this.serials.map((item) => {
+      return this.tabData.serials.map((item) => {
         return {
           ...item,
+        };
+      });
+    },
+    detailHistory() {
+      return this.formData.history.map((item) => {
+        return {
+          ...item,
+          created_date: moment
+            .parseZone(item.created_date)
+            .format('YYYY-MM-DD HH:mm'),
         };
       });
     },

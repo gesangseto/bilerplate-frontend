@@ -9,7 +9,7 @@
 
           <CCardBody>
             <CForm>
-              <CInput :disabled="true" horizontal v-model="department.id">
+              <CInput :disabled="true" horizontal v-model="formData.id">
                 <template #label>
                   <p class="col-form-label col-sm-3">ID</p>
                 </template>
@@ -18,13 +18,8 @@
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Enter department name"
-                v-model="department.name"
-                invalid-feedback="Department name is required"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.department.name.$error && $v.department.name.required,
-                  'is-invalid': $v.department.name.$error,
-                }"
+                v-model="formData.name"
+                :is-valid="initial_load ? null : formData.name ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -36,14 +31,10 @@
                 :disabled="action == 'Read' ? true : false"
                 horizontal
                 placeholder="Enter department description"
-                v-model="department.description"
-                invalid-feedback="Department description is required"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.department.description.$error &&
-                    $v.department.description.required,
-                  'is-invalid': $v.department.description.$error,
-                }"
+                v-model="formData.description"
+                :is-valid="
+                  initial_load ? null : formData.description ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -57,11 +48,19 @@
                 <SwitchStatusMaster
                   :disabled="action == 'Read'"
                   :show_label="true"
-                  :default_value="department.status"
-                  v-on:onChange="department.status = $event"
+                  :default_value="formData.status"
+                  v-on:onChange="formData.status = $event"
                 />
               </CRow>
             </CForm>
+            <Metadata
+              :defaultMetadata="formData.metadata"
+              v-on:handleChange="
+                (formData.metadata = $event.result),
+                  (formData.error = $event.error)
+              "
+              model="mst_customer"
+            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -96,7 +95,7 @@ export default {
     return {
       route_action: '',
       action: 'Edit',
-      department: { name: '', description: '', status: 'Active' },
+      formData: { name: '', description: '', status: 'Active' },
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
@@ -104,7 +103,7 @@ export default {
     };
   },
   validations: {
-    department: {
+    formData: {
       name: { required },
       description: { required },
     },
@@ -116,7 +115,7 @@ export default {
     if (this.$route.params.id !== undefined) {
       let _res = await getMstDepartment({ id: this.$route.params.id });
       if (_res) {
-        this.department = _res.data[0];
+        this.formData = _res.data[0];
       }
     }
   },
@@ -131,7 +130,7 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let dataPost = this.department;
+        let dataPost = this.formData;
         let res = {};
         if (dataPost.id) {
           res = await updateMstDepartment(dataPost);

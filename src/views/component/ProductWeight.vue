@@ -11,13 +11,18 @@
         <td style="width: 25%; text-align: center"><strong>Type</strong></td>
         <td style="width: 70%; text-align: center"><strong>Config</strong></td>
       </tr>
-      <tr v-for="level in product.current_pack" :key="level" style="">
+      <tr
+        v-for="level in product.current_pack ? product.current_pack : 4"
+        :key="level"
+        style=""
+      >
         <td>
           {{ level }}
         </td>
         <td>
           <v-select
-            placeholder="--Select--"
+            :disabled="readonly"
+            :placeholder="readonly ? 'Not set' : '--Select--'"
             :options="list_weight_type"
             :reduce="(opt) => opt.value"
             v-model="weight_config[`weight_l${level}`].type"
@@ -33,6 +38,7 @@
             </CCol>
             <CCol md="1">
               <CSwitch
+                :disabled="readonly"
                 class="mb-0"
                 color="success"
                 size="sm"
@@ -53,6 +59,7 @@
                 </CCol>
                 <CCol md="3">
                   <CInput
+                    :disabled="readonly"
                     class="mb-0"
                     size="sm"
                     v-model="weight_config[`weight_l${level}`].min"
@@ -72,6 +79,7 @@
                 </CCol>
                 <CCol md="3">
                   <CInput
+                    :disabled="readonly"
                     class="mb-0"
                     size="sm"
                     v-model="weight_config[`weight_l${level}`].max"
@@ -102,6 +110,7 @@
                 </CCol>
                 <CCol md="3">
                   <CInput
+                    :disabled="readonly"
                     class="mb-0"
                     size="sm"
                     v-model="weight_config[`weight_l${level}`].average_of_first"
@@ -118,6 +127,7 @@
                 </CCol>
                 <CCol md="3">
                   <CInput
+                    :disabled="readonly"
                     class="mb-0"
                     size="sm"
                     v-model="weight_config[`weight_l${level}`].offset"
@@ -135,7 +145,18 @@
       </tr>
     </table>
     <template #footer>
+      <!-- Buton Cancel-->
       <CButton
+        type="reset"
+        size="sm"
+        color="danger"
+        class="m-1"
+        @click="showModalDialog = false"
+      >
+        <CIcon name="cil-ban" /> Cancel
+      </CButton>
+      <CButton
+        v-if="!readonly"
         size="sm"
         color="success"
         type="button"
@@ -149,27 +170,28 @@
 </template>
 
 <script>
+import { isJsonString } from '../../utils';
 export default {
   name: 'ProductWeight',
   props: {
     product: Object,
+    readonly: Boolean,
     showModal: Boolean,
   },
   beforeMount() {},
   watch: {
     product: {
       handler(item) {
-        if (item.weight_l1) {
-          this.weight_config.weight_l1 = item.weight_l1;
-        }
-        if (item.weight_l2) {
-          this.weight_config.weight_l2 = item.weight_l2;
-        }
-        if (item.weight_l3) {
-          this.weight_config.weight_l3 = item.weight_l3;
-        }
-        if (item.weight_l4) {
-          this.weight_config.weight_l4 = item.weight_l4;
+        for (let i = 1; i <= 4; i++) {
+          if (item[`weight_l${i}`]) {
+            if (isJsonString(item[`weight_l${i}`])) {
+              this.weight_config[`weight_l${i}`] = JSON.parse(
+                item[`weight_l${i}`]
+              );
+            } else {
+              this.weight_config[`weight_l${i}`] = item[`weight_l${i}`];
+            }
+          }
         }
       },
       deep: true,

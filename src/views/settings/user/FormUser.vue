@@ -10,7 +10,7 @@
           <CCardBody>
             <CForm>
               <CCol sm="12">
-                <CInput :disabled="true" horizontal v-model="user.id">
+                <CInput :disabled="true" horizontal v-model="formData.id">
                   <template #label>
                     <p class="col-form-label col-sm-3">ID</p>
                   </template>
@@ -21,9 +21,9 @@
                   :disabled="action == 'Read' ? true : false"
                   horizontal
                   placeholder="Enter Global ID"
-                  v-model="user.employee_id"
+                  v-model="formData.employee_id"
                   :is-valid="
-                    initial_load ? null : user.employee_id ? true : false
+                    initial_load ? null : formData.employee_id ? true : false
                   "
                 >
                   <template #label>
@@ -39,8 +39,10 @@
                   :disabled="action == 'Read' ? true : false"
                   horizontal
                   placeholder="Enter username"
-                  v-model="user.username"
-                  :is-valid="initial_load ? null : user.username ? true : false"
+                  v-model="formData.username"
+                  :is-valid="
+                    initial_load ? null : formData.username ? true : false
+                  "
                 >
                   <template #label>
                     <p class="col-form-label col-sm-3">
@@ -55,9 +57,9 @@
                   :disabled="action == 'Read' ? true : false"
                   horizontal
                   placeholder="Enter full name"
-                  v-model="user.full_name"
+                  v-model="formData.full_name"
                   :is-valid="
-                    initial_load ? null : user.full_name ? true : false
+                    initial_load ? null : formData.full_name ? true : false
                   "
                 >
                   <template #label>
@@ -101,7 +103,7 @@
                               placeholder="Enter phone number (Example : 81211223344)"
                               type="number"
                               horizontal
-                              v-model="user.tlp"
+                              v-model="formData.tlp"
                               :add-input-classes="{
                                 'is-invalid': required.tlp.error,
                               }"
@@ -121,8 +123,10 @@
                   :disabled="action == 'Read' ? true : false"
                   placeholder="email.address@email.com"
                   horizontal
-                  v-model="user.email"
-                  :is-valid="initial_load ? null : user.email ? true : false"
+                  v-model="formData.email"
+                  :is-valid="
+                    initial_load ? null : formData.email ? true : false
+                  "
                 >
                   <template #label>
                     <p class="col-form-label col-sm-3">
@@ -143,7 +147,7 @@
                       : 'Enter password'
                   "
                   horizontal
-                  v-model="user.pwd"
+                  v-model="formData.pwd"
                   :invalid-feedback="required.pwd.message"
                   :add-input-classes="{
                     'is-invalid': needPassword && required.pwd.error,
@@ -176,14 +180,14 @@
                       : 'Enter confirm password'
                   "
                   horizontal
-                  v-model="user.re_pwd"
+                  v-model="formData.re_pwd"
                   :invalid-feedback="
-                    !user.re_pwd
+                    !formData.re_pwd
                       ? 'Confirm password is required'
                       : 'Confirmation password does not match'
                   "
                   :add-input-classes="{
-                    'is-invalid': user.re_pwd !== user.pwd,
+                    'is-invalid': formData.re_pwd !== formData.pwd,
                   }"
                 >
                   <template #label>
@@ -202,9 +206,13 @@
                   :options="departmentOptions"
                   placeholder="--Select--"
                   horizontal
-                  :value.sync="user.mst_department_id"
+                  :value.sync="formData.mst_department_id"
                   :is-valid="
-                    initial_load ? null : user.mst_department_id ? true : false
+                    initial_load
+                      ? null
+                      : formData.mst_department_id
+                      ? true
+                      : false
                   "
                 >
                   >
@@ -222,9 +230,9 @@
                   :options="optionSections"
                   placeholder="--Select--"
                   horizontal
-                  :value.sync="user.mst_section_id"
+                  :value.sync="formData.mst_section_id"
                   :is-valid="
-                    initial_load ? null : user.mst_section_id ? true : false
+                    initial_load ? null : formData.mst_section_id ? true : false
                   "
                 >
                   >
@@ -242,8 +250,8 @@
                   <SwitchStatusMaster
                     :disabled="action == 'Read'"
                     :show_label="true"
-                    :default_value="user.status"
-                    v-on:onChange="user.status = $event"
+                    :default_value="formData.status"
+                    v-on:onChange="formData.status = $event"
                   />
                 </CRow>
               </CCol>
@@ -262,7 +270,7 @@
                             <img
                               style="width: 50px; heigth: auto"
                               :src="
-                                require(`../../../../public/img/avatars/${user.mst_avatar_id}.png`)
+                                require(`../../../../public/img/avatars/${formData.mst_avatar_id}.png`)
                               "
                             />
                           </label>
@@ -283,7 +291,7 @@
                               style="margin-left: 18px"
                               :options="[{ value: '1' }]"
                               :inline="false"
-                              :checked.sync="user.mst_avatar_id"
+                              :checked.sync="formData.mst_avatar_id"
                             />
                           </label>
                         </CRow>
@@ -301,7 +309,7 @@
                               style="margin-left: 18px"
                               :options="[{ value: '2' }]"
                               :inline="false"
-                              :checked.sync="user.mst_avatar_id"
+                              :checked.sync="formData.mst_avatar_id"
                             />
                           </label>
                         </CRow>
@@ -318,7 +326,7 @@
                               style="margin-left: 18px"
                               :options="[{ value: '3' }]"
                               :inline="false"
-                              :checked.sync="user.mst_avatar_id"
+                              :checked.sync="formData.mst_avatar_id"
                           /></label>
                         </CRow>
                       </CCol>
@@ -334,7 +342,7 @@
                               style="margin-left: 18px"
                               :options="[{ value: '4' }]"
                               :inline="false"
-                              :checked.sync="user.mst_avatar_id"
+                              :checked.sync="formData.mst_avatar_id"
                             />
                           </label>
                         </CRow>
@@ -358,7 +366,7 @@
                               style="margin-left: 18px"
                               :options="[{ value: '5' }]"
                               :inline="false"
-                              :checked.sync="user.mst_avatar_id"
+                              :checked.sync="formData.mst_avatar_id"
                             />
                           </label>
                         </CRow>
@@ -376,7 +384,7 @@
                               style="margin-left: 18px"
                               :options="[{ value: '6' }]"
                               :inline="false"
-                              :checked.sync="user.mst_avatar_id"
+                              :checked.sync="formData.mst_avatar_id"
                             />
                           </label>
                         </CRow>
@@ -394,7 +402,7 @@
                               style="margin-left: 18px"
                               :options="[{ value: '7' }]"
                               :inline="false"
-                              :checked.sync="user.mst_avatar_id"
+                              :checked.sync="formData.mst_avatar_id"
                             />
                           </label>
                         </CRow>
@@ -411,7 +419,7 @@
                               style="margin-left: 18px"
                               :options="[{ value: '8' }]"
                               :inline="false"
-                              :checked.sync="user.mst_avatar_id"
+                              :checked.sync="formData.mst_avatar_id"
                             />
                           </label>
                         </CRow>
@@ -421,6 +429,14 @@
                 </CRow>
               </CCol>
             </CForm>
+            <Metadata
+              :defaultMetadata="formData.metadata"
+              v-on:handleChange="
+                (formData.metadata = $event.result),
+                  (formData.error = $event.error)
+              "
+              model="mst_user"
+            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -463,7 +479,7 @@ import { getMstSection } from '../../../resource/MstSection';
 export default {
   name: 'FormUser',
   watch: {
-    user: {
+    formData: {
       deep: true,
       handler() {
         if (!this.initial_load) {
@@ -471,7 +487,7 @@ export default {
         }
       },
     },
-    'user.pwd': {
+    'formData.pwd': {
       deep: true,
       handler(data) {
         this.required.pwd.error = false;
@@ -517,7 +533,7 @@ export default {
         { value: 4, label: 'Level 4' },
       ],
       avatars: [],
-      user: {
+      formData: {
         status: 'Active',
         tlp_code: '',
         tlp: '',
@@ -551,7 +567,7 @@ export default {
     };
   },
   validations: {
-    user: {
+    formData: {
       username: { required },
       full_name: { required },
       email: { required, notEmail },
@@ -565,7 +581,7 @@ export default {
   methods: {
     handleChangeInput($value) {
       this.temp_data.tlp_code = $value;
-      this.user.tlp_code = $value;
+      this.formData.tlp_code = $value;
     },
     async loadDepartment() {
       this.departmentOptions = [];
@@ -598,28 +614,28 @@ export default {
       let _res = await getMstUser({ id: this.$route.params.id });
       if (_res) {
         let data = _res.data[0];
-        this.user = data;
-        this.user.mst_department_id =
-          this.user.mst_department_id || this.user.department_id;
-        this.user.mst_section_id =
-          this.user.mst_section_id || this.user.mst_section_id;
-        this.user.mst_avatar_id = '' + data.mst_avatar_id;
+        this.formData = data;
+        this.formData.mst_department_id =
+          this.formData.mst_department_id || this.formData.department_id;
+        this.formData.mst_section_id =
+          this.formData.mst_section_id || this.formData.mst_section_id;
+        this.formData.mst_avatar_id = '' + data.mst_avatar_id;
         if (this.$route.params.id !== undefined) {
-          delete this.user.pwd;
+          delete this.formData.pwd;
         }
         let tlp = '';
         if (data.tlp) {
           tlp = data.tlp.split('-');
-          this.user.tlp_code = tlp[0];
+          this.formData.tlp_code = tlp[0];
           this.temp_data.tlp_code = tlp[0];
-          this.user.tlp = tlp[1];
+          this.formData.tlp = tlp[1];
         }
         this.onDepartmentChange();
       }
     },
     async onDepartmentChange() {
       let _res = await getMstSection({
-        mst_department_id: this.user.mst_department_id,
+        mst_department_id: this.formData.mst_department_id,
         status: 'Active',
       });
       this.optionSections = [];
@@ -632,10 +648,13 @@ export default {
     },
     checkValidation() {
       let have_error = false;
+      if (this.formData.error) {
+        have_error = true;
+      }
       for (const rq in this.required) {
         if (
-          (!this.user[rq] && rq != 'pwd') ||
-          (!this.user[rq] && this.needPassword && rq == 'pwd')
+          (!this.formData[rq] && rq != 'pwd') ||
+          (!this.formData[rq] && this.needPassword && rq == 'pwd')
         ) {
           this.required[rq].error = true;
           have_error = true;
@@ -644,49 +663,48 @@ export default {
         }
       }
       // check validation regex
-      if (validationPassword(this.user.pwd)) {
+      if (validationPassword(this.formData.pwd)) {
         this.required.pwd.error = true;
-        this.required.pwd.message = validationPassword(this.user.pwd);
+        this.required.pwd.message = validationPassword(this.formData.pwd);
         have_error = true;
       }
       // Check Eployee ID
-      if (!this.user.employee_id) {
+      if (!this.formData.employee_id) {
         have_error = true;
       }
       // Check Phone Number
-      if (!isPhone(this.user.tlp)) {
+      if (!isPhone(this.formData.tlp)) {
         have_error = true;
         this.required.tlp.error = true;
       }
       // Check Email
-      if (!isEmail(this.user.email)) {
+      if (!isEmail(this.formData.email)) {
         have_error = true;
         this.required.email.error = true;
       }
       // Check Password
-      if (!this.user.id) {
-        if (!this.user.pwd && !this.user.re_pwd) {
+      if (!this.formData.id) {
+        if (!this.formData.pwd && !this.formData.re_pwd) {
           have_error = true;
           this.required['pwd'].error = true;
-        } else if (this.user.pwd !== this.user.re_pwd) {
+        } else if (this.formData.pwd !== this.formData.re_pwd) {
           have_error = true;
         }
       }
       // If any error
       if (have_error) {
-        this.user.have_error = true;
+        this.formData.have_error = true;
       } else {
-        this.user.have_error = false;
+        this.formData.have_error = false;
       }
       return;
     },
-
     async save() {
-      this.user.mst_position_id = 1;
+      this.formData.mst_position_id = 1;
       this.initial_load = false;
       this.checkValidation();
 
-      if (this.user.have_error) {
+      if (this.formData.have_error) {
         this.$toast.open({
           message: 'Please input all the required data',
           type: 'error',
@@ -696,7 +714,7 @@ export default {
         });
         return;
       }
-      let _form_data = JSON.parse(JSON.stringify(this.user));
+      let _form_data = JSON.parse(JSON.stringify(this.formData));
 
       let dataPost = _form_data;
       if (_form_data.tlp && _form_data.tlp_code) {

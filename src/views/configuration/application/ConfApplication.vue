@@ -898,7 +898,6 @@ export default {
             : this.password_pattern,
         };
         this.devicesLooping = data.total_device;
-        console.log(this.data);
       }
       if (epcStatus) {
         this.epcStatusOptions = epcStatus.data.map((it) => {
@@ -948,7 +947,6 @@ export default {
             return false;
           }
         }
-        console.log(patt);
       }
       for (const it of required) {
         if (!this.data[it]) {

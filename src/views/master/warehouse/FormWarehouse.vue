@@ -8,7 +8,7 @@
           </CCardHeader>
           <CCardBody>
             <CForm novalidate>
-              <CInput :disabled="true" horizontal v-model="warehouse.id">
+              <CInput :disabled="true" horizontal v-model="formData.id">
                 <template #label>
                   <p class="col-form-label col-sm-3">ID</p>
                 </template>
@@ -18,14 +18,8 @@
                 horizontal
                 placeholder="Enter warehouse name"
                 autocomplete="name"
-                v-model="warehouse.name"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.warehouse.name.$error && $v.warehouse.name.required,
-                  'is-invalid':
-                    $v.warehouse.name.$error && !$v.warehouse.name.required,
-                }"
-                invalid-feedback="Warehouse name is required"
+                v-model="formData.name"
+                :is-valid="initial_load ? null : formData.name ? true : false"
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -41,16 +35,10 @@
                 :disabled="action == 'Read' ? true : false"
                 placeholder="Enter warehouse address"
                 horizontal
-                v-model="warehouse.address"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.warehouse.address.$error &&
-                    $v.warehouse.address.required,
-                  'is-invalid':
-                    $v.warehouse.address.$error &&
-                    !$v.warehouse.address.required,
-                }"
-                invalid-feedback="Warehouse address is required"
+                v-model="formData.address"
+                :is-valid="
+                  initial_load ? null : formData.address ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -62,29 +50,16 @@
                 </template>
               </CTextarea>
 
-              <!-- <CSelect
-                :disabled="action == 'Read' ? true : false"
-                :options="listProvince"
-                placeholder="- Country -"
-                horizontal
-                :value.sync="warehouse.mst_province_id"
-              ></CSelect> -->
               <CSelect
                 :disabled="action == 'Read' ? true : false"
                 label="Province *"
                 :options="listProvince"
                 horizontal
                 placeholder="--Select--"
-                :value.sync="warehouse.mst_province_id"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.warehouse.mst_province_id.$error &&
-                    $v.warehouse.mst_province_id.required,
-                  'is-invalid':
-                    $v.warehouse.mst_province_id.$error &&
-                    !$v.warehouse.mst_province_id.required,
-                }"
-                invalid-feedback="Province is required"
+                :value.sync="formData.mst_province_id"
+                :is-valid="
+                  initial_load ? null : formData.mst_province_id ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -102,16 +77,14 @@
                 :options="listEntity"
                 horizontal
                 placeholder="--Select--"
-                :value.sync="warehouse.mst_warehouse_entity_id"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.warehouse.mst_warehouse_entity_id.$error &&
-                    $v.warehouse.mst_warehouse_entity_id.required,
-                  'is-invalid':
-                    $v.warehouse.mst_warehouse_entity_id.$error &&
-                    !$v.warehouse.mst_warehouse_entity_id.required,
-                }"
-                invalid-feedback="Entity is required"
+                :value.sync="formData.mst_warehouse_entity_id"
+                :is-valid="
+                  initial_load
+                    ? null
+                    : formData.mst_warehouse_entity_id
+                    ? true
+                    : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -129,17 +102,11 @@
                 :options="listWhCategory"
                 horizontal
                 placeholder="--Select--"
-                v-model="warehouse.category_id"
-                :value.sync="warehouse.category_id"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.warehouse.category_id.$error &&
-                    $v.warehouse.category_id.required,
-                  'is-invalid':
-                    $v.warehouse.category_id.$error &&
-                    !$v.warehouse.category_id.required,
-                }"
-                invalid-feedback="Warehouse category is required"
+                v-model="formData.category_id"
+                :value.sync="formData.category_id"
+                :is-valid="
+                  initial_load ? null : formData.category_id ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -157,16 +124,10 @@
                 :options="temperaturOptions"
                 horizontal
                 placeholder="--Select--"
-                :value.sync="warehouse.temperature"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.warehouse.temperature.$error &&
-                    $v.warehouse.temperature.required,
-                  'is-invalid':
-                    $v.warehouse.temperature.$error &&
-                    !$v.warehouse.temperature.required,
-                }"
-                invalid-feedback="Temperature is required"
+                :value.sync="formData.temperature"
+                :is-valid="
+                  initial_load ? null : formData.temperature ? true : false
+                "
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
@@ -183,11 +144,19 @@
                 <SwitchStatusMaster
                   :disabled="action == 'Read'"
                   :show_label="true"
-                  :default_value="warehouse.status"
-                  v-on:onChange="warehouse.status = $event"
+                  :default_value="formData.status"
+                  v-on:onChange="formData.status = $event"
                 />
               </CRow>
             </CForm>
+            <Metadata
+              :defaultMetadata="formData.metadata"
+              v-on:handleChange="
+                (formData.metadata = $event.result),
+                  (formData.error_metadata = $event.error_metadata)
+              "
+              model="mst_warehouse"
+            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -223,19 +192,17 @@ export default {
   name: 'FormWarehouse',
   data() {
     return {
+      initial_load: true,
       route_action: '',
       action: 'Edit',
-      warehouse: {
+      formData: {
         status: 'Active',
-        entity: {
-          id: undefined,
-        },
-        province: {
-          id: undefined,
-        },
-        temperature: '',
-        // category: { id: '',},
-        categoryId: '',
+        name: '',
+        address: '',
+        category_id: null,
+        mst_warehouse_entity_id: null,
+        mst_province_id: null,
+        temperature: null,
       },
       temperaturOptions: [
         {
@@ -264,21 +231,11 @@ export default {
     this.loadProvince();
     this.loadEntity();
   },
-  validations: {
-    warehouse: {
-      mst_warehouse_entity_id: { required },
-      mst_province_id: { required },
-      name: { required },
-      address: { required },
-      temperature: { required },
-      category_id: { required },
-    },
-  },
   methods: {
     async loadData() {
       let _res = await getMstWarehouse({ id: this.$route.params.id });
-      this.warehouse = _res.data[0];
-      this.warehouse['category_id'] = this.warehouse['category_id'].toString();
+      this.formData = _res.data[0];
+      this.formData['category_id'] = this.formData['category_id'].toString();
     },
     async loadEntity() {
       let _res = await getMstWarehouseEntity({ status: 'Active' });
@@ -307,9 +264,33 @@ export default {
         });
       }
     },
+    valid() {
+      console.log(this.formData);
+      if (!this.formData.name) {
+        return false;
+      } else if (!this.formData.address) {
+        return false;
+      } else if (!this.formData.mst_province_id) {
+        return false;
+      } else if (!this.formData.mst_warehouse_entity_id) {
+        return false;
+      } else if (!this.formData.category_id) {
+        return false;
+      } else if (this.formData.error_metadata) {
+        return false;
+      }
+      return true;
+    },
     async save() {
-      this.$v.$touch();
-      if (this.$v.$invalid) {
+      this.initial_load = false;
+      if (!this.valid()) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
       var message = this.$route.params.id
@@ -317,7 +298,7 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let dataPost = this.warehouse;
+        let dataPost = this.formData;
         let res = {};
         if (dataPost.id) {
           res = await updateMstWarehouse(dataPost);

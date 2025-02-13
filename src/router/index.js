@@ -38,7 +38,7 @@ const FormProduct = () =>
   // getUserId() == 0
   // ? import("@/views/master/product/FormProduct_v2")
   //   : import("@/views/master/product/FormProduct");
-  import('@/views/master/product/FormProduct_v2');
+  import('@/views/master/product/FormProduct');
 // Packaging
 const ListPackaging = () => import('@/views/master/packaging/ListPackaging');
 const FormPackaging = () => import('@/views/master/packaging/FormPackaging');
@@ -66,12 +66,12 @@ const FormSection = () => import('@/views/settings/section/FormSection ');
 // ========================SETTING========================
 
 // ========================PRODUCTION========================
-// Proccess Order
-const ListProccessOrder = () =>
-  import('@/views/production/proccess_order/ListProccessOrder');
+// Process Order
+const ListProcessOrder = () =>
+  import('@/views/production/process_order/ListProcessOrder');
 // Picking List
-const FormProccessOrder = () =>
-  import('@/views/production/proccess_order/FormProccessOrder');
+const FormProcessOrder = () =>
+  import('@/views/production/process_order/FormProcessOrder');
 // ========================TRANSACTION========================
 // Picking List
 const ListPickingList = () =>
@@ -171,6 +171,17 @@ const ReportShowStatus = () => import('@/views/reports/ReportShowStatus');
 // ========================CONFIGURATION========================
 const ConfApplication = () =>
   import('@/views/configuration/application/ConfApplication');
+// Station
+const ListStation = () => import('@/views/configuration/station/ListStation');
+const FormStation = () => import('@/views/configuration/station/FormStation');
+// Pattern
+const ListPattern = () => import('@/views/configuration/pattern/ListPattern');
+const FormPattern = () => import('@/views/configuration/pattern/FormPattern');
+// Metadata
+const ListMetadata = () =>
+  import('@/views/configuration/metadata/ListMetadata');
+const FormMetadata = () =>
+  import('@/views/configuration/metadata/FormMetadata');
 // Conf Date
 const ListDate = () => import('@/views/configuration/date/ListDate');
 const FormDate = () => import('@/views/configuration/date/FormDate');
@@ -205,43 +216,6 @@ let router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  // menuToRouter(localStorage.getItem("menu"));
-  // return next("/dashboard");
-  //   if (to.meta.login) {
-  //     if (localStorage.hasOwnProperty("is_login")) {
-  //       // if (to.meta.check) return next()
-  //       if (localStorage.getItem("super_admin") == "true") {
-  //         return next();
-  //       } else {
-  //         if (to.path == "/setting/configuration") {
-  //           return next("/dashboard");
-  //         }
-  //       }
-  // let getChildMenu = JSON.parse(localStorage.getItem("userRole"));
-  //       let findMenu = getChildMenu.find((el) => el.linkNew == to.path);
-  //       if (findMenu != undefined) {
-  //         if (findMenu.canView == "true") {
-  //           return next();
-  //         } else {
-  //           if (to.path == "/dashboard") return next("/oops");
-  //           return next("/dashboard");
-  //         }
-  //       } else {
-  //         // let explodeLink = to.path.split('/')
-  //         // let makeNewLink = `/${explodeLink[1]}/${explodeLink[2]}`
-  //         // let findMenu = getChildMenu.filter((e) => to.path.split(e.linkNew) > 1)
-  //         // return next('/dashboard');
-  //         return next();
-  //       }
-  //     } else {
-  //       return next("/login");
-  //     }
-  //   } else {
-  //     if (localStorage.hasOwnProperty("token")) {
-  //       if (to.path == "/oops") return next();
-  //       return next("/dashboard");
-  //     }
-  //   }
   return next();
 });
 
@@ -854,6 +828,63 @@ function configRoutes() {
           meta: { login: true },
           component: ListDate,
         },
+        // STATION
+        {
+          path: 'station/:type/:id',
+          name: 'Station',
+          component: FormStation,
+          meta: { login: true },
+        },
+        {
+          path: 'station/:type',
+          name: 'Add Station',
+          component: FormStation,
+          meta: { login: true },
+        },
+        {
+          path: 'station',
+          name: 'Station',
+          meta: { login: true },
+          component: ListStation,
+        },
+        // PATTERN
+        {
+          path: 'pattern/:type/:id',
+          name: 'Pattern',
+          component: FormPattern,
+          meta: { login: true },
+        },
+        {
+          path: 'pattern/:type',
+          name: 'Add Pattern',
+          component: FormPattern,
+          meta: { login: true },
+        },
+        {
+          path: 'pattern',
+          name: 'Pattern',
+          meta: { login: true },
+          component: ListPattern,
+        },
+        // METADATA
+        {
+          path: 'metadata/:type/:id',
+          name: 'Metadata',
+          component: FormMetadata,
+          meta: { login: true },
+        },
+        {
+          path: 'metadata/:type',
+          name: 'Metadata',
+          component: FormMetadata,
+          meta: { login: true },
+        },
+        {
+          path: 'metadata',
+          name: 'Metadata',
+          meta: { login: true },
+          component: ListMetadata,
+        },
         // CONF LAYOUT
         {
           path: 'layout/:type/:id',
@@ -952,23 +983,23 @@ function configRoutes() {
         },
       },
       children: [
-        // Proccess Order
+        // Process Order
         {
-          path: 'proccess-order/:type/:id',
-          name: 'Proccess Order (Details) ',
-          component: FormProccessOrder,
+          path: 'process-order/:type/:id',
+          name: 'Process Order (Details) ',
+          component: FormProcessOrder,
           meta: { login: true },
         },
         {
-          path: 'proccess-order/:type',
-          name: 'Proccess Order (Details)',
-          component: FormProccessOrder,
+          path: 'process-order/:type',
+          name: 'Process Order (Details)',
+          component: FormProcessOrder,
           meta: { login: true },
         },
         {
-          path: 'proccess-order',
-          name: 'Proccess Order (Home)',
-          component: ListProccessOrder,
+          path: 'process-order',
+          name: 'Process Order (Home)',
+          component: ListProcessOrder,
           meta: { login: true },
         },
       ],
