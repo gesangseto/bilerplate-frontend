@@ -139,11 +139,11 @@ export default {
     Entity Address: ${this.data.entity_address} <br/>
     <br/>
     <strong>License Limitation</strong><br/>
-    Warehouse: ${this.data.total_wh}<br/>
-    Date Format: ${this.data.total_conf_date}<br/>
-    Layout: ${this.data.total_conf_layout}<br/>
-    Department: ${this.data.total_department}<br/>
-    Section: ${this.data.total_section} <br/>
+    Warehouse: ${this.data.total_wh || 'unlimited'}<br/>
+    Date Format: ${this.data.total_conf_date || 'unlimited'}<br/>
+    Layout: ${this.data.total_conf_layout || 'unlimited'}<br/>
+    Department: ${this.data.total_department || 'unlimited'}<br/>
+    Section: ${this.data.total_section || 'unlimited'} <br/>
     User: unlimited <br/>
     User access: unlimited <br/>
     Android Device: ${this.data.total_device} <br/>

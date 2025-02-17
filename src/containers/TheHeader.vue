@@ -147,6 +147,7 @@ import {
   clearStorage,
   setLimitation,
   getLimitation,
+  setConfig,
 } from '../utils';
 import moment from 'moment';
 import { getSysConfig } from '../resource/SysConfig';
@@ -250,7 +251,9 @@ export default {
     },
     async getLimitationConfig() {
       let data = await getSysConfig({ without_logo: true });
-      setLimitation(data.data[0]);
+      data = data.data[0];
+      setConfig(data);
+      setLimitation(data);
       getLimitation();
     },
     getDifferentSecond() {

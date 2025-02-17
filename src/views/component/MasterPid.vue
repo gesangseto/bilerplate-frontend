@@ -269,7 +269,7 @@
       </CCardBody>
     </CCard>
     <Button
-      v-if="action != 'Read'"
+      v-if="action != 'Read' && product.flag_upd_del"
       :disabled="product.mst_pid.length == 7 || !product.flag_upd_del"
       :buttonProperty="{
         size: 'sm',
@@ -282,7 +282,7 @@
       @click="addPackaging()"
     />
     <Button
-      v-if="action != 'Read'"
+      v-if="action != 'Read' && product.flag_upd_del"
       :disabled="product.mst_pid.length == 1 || !product.flag_upd_del"
       :buttonProperty="{
         size: 'sm',
