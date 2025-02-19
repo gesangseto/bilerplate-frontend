@@ -92,7 +92,8 @@
 import $axiosMertrack from '../../apiMertrack';
 import 'vue-select/dist/vue-select.css';
 import moment from 'moment';
-import { getConfig } from '../../utils';
+import { setConfig } from '../../utils';
+import { getSysConfig } from '../../resource/SysConfig';
 export default {
   name: 'FormAddItemV3',
   props: { currentItem: Array, filter: Object, useDeliveryDayLimit: Boolean },
@@ -193,7 +194,7 @@ export default {
       this.formData.batch_no = null;
       this.alertExpired = false;
     },
-    handleChangeProduct() {
+    async handleChangeProduct() {
       this.alertExpired = false;
       this.getBatchNo();
     },
@@ -204,9 +205,11 @@ export default {
       let sisa = Math.ceil(moment.duration(date_exp.diff(date_now)).asDays());
       return sisa;
     },
-    checkDeliveryLimit() {
+    async checkDeliveryLimit() {
+      let data = await getSysConfig({ without_logo: true });
+      let config = data.data[0];
+      setConfig(config);
       this.alertExpired = false;
-      let config = getConfig();
       let day_limit = config.delivery_day_limit ?? 0;
 
       for (const it of this.listBatchNo) {
@@ -225,9 +228,9 @@ export default {
         // }
       }
     },
-    handleChangeBatch() {
+    async handleChangeBatch() {
       if (this.useDeliveryDayLimit) {
-        this.checkDeliveryLimit();
+        await this.checkDeliveryLimit();
       }
       this.getProductStockSerial();
     },
