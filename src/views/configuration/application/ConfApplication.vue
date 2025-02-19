@@ -349,6 +349,40 @@
                     </CCol>
                   </CRow>
                 </CCardBody>
+
+                <CCardHeader style="font-weight: bold">
+                  Password Option
+                </CCardHeader>
+                <CCardBody>
+                  <CRow form class="form-group">
+                    <CCol sm="6">
+                      <InputDefault
+                        :col="[4, 6]"
+                        title="Default Password User"
+                        v-model="data.password_default"
+                        :is-valid="data.password_default"
+                      />
+                    </CCol>
+                    <CCol sm="6">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="4" class="col-form-label">
+                          Must Change Password
+                        </CCol>
+                        <CCol sm="8">
+                          <SwitchDefault
+                            :default_value="data.password_must_change"
+                            v-on:onChange="data.password_must_change = $event"
+                            :description="
+                              data.password_must_change
+                                ? `The user must change their password upon account creation or after a password reset.`
+                                : null
+                            "
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+                </CCardBody>
               </CCard>
 
               <CCard>
@@ -790,6 +824,7 @@ export default {
         symbol: false,
       },
       data: {
+        password_must_change: false, // Nilai awal,
         Username: '',
         UserPassword: '',
         IdentityName: '',

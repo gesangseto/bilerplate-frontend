@@ -11,10 +11,10 @@
       style="margin-top: -5px; font-size: 12px; text-align: center"
       v-if="show_label"
     >
-      {{ show_label ? status_text : '' }}
+      {{ show_label ? (this.status ? 'Yes' : 'No') : '' }}
     </p>
-    <p v-if="description" style="font-size: smaller; color: rgb(143, 143, 143)">
-      {{ description }}
+    <p style="font-size: smaller; color: rgb(143, 143, 143)">
+      {{ description || '' }}
     </p>
   </div>
 </template>
@@ -22,32 +22,30 @@
 <script>
 export default {
   name: 'SwitchDefault',
-  props: ['show_label', 'default_value', 'disabled', 'description'],
+  props: {
+    show_label: { type: Boolean, default: false },
+    default_value: { type: [Boolean, Number], default: true },
+    disabled: { type: Boolean, default: false },
+    description: { type: String, default: null },
+  },
   mounted() {},
   data() {
     return {
-      status_text: 'Yes',
-      status: true,
+      status: this.default_value ? true : false, // Pastikan selalu boolean
     };
   },
   watch: {
-    default_value: {
-      handler(n) {
-        this.status = n;
-      },
-      deep: true,
-    },
     status: {
-      handler() {
-        this.status_text = this.status ? 'Yes' : 'No';
-        this.handleChange();
+      handler(newVal) {
+        this.handleChange(newVal);
       },
       deep: true,
     },
   },
   methods: {
-    handleChange() {
-      this.$emit('onChange', this.status);
+    handleChange(value) {
+      let res = typeof this.default_value === 'boolean' ? value : value ? 1 : 0;
+      this.$emit('onChange', res);
     },
   },
 };
