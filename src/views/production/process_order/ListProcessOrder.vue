@@ -32,7 +32,7 @@
                 style="font-size: 12px"
               >
                 <template #action="{ item, index }">
-                  <td>
+                  <td :key="item.id">
                     <ButtonPermission
                       v-if="[0, 3].includes(item.status)"
                       :permission="'delete'"
