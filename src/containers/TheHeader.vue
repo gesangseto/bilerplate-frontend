@@ -288,12 +288,16 @@ export default {
           }
         }
       }
-      let allow_access = ['/setting/user-setting', '/home'];
+      let allow_access = ['/setting/user-setting', '/home', '/change-password'];
       if (allow_access.includes(route.path)) {
         can_access = true;
       }
       if (can_access === 'false' || !can_access) {
         this.$router.push({ path: `/oops` });
+      }
+      let profile = getProfile();
+      if (profile && profile.password_must_change) {
+        this.$router.push({ path: `/change-password?p-key=${profile.token}` });
       }
     },
     async readNotif(item, alert = false) {

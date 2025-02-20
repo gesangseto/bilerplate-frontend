@@ -9,6 +9,9 @@ const TheContainer = () => import('@/containers/TheContainer');
 const Home = () => import('@/views/Home');
 
 // Views
+const ChangePassword = () => import('@/views/pages/ChangePassword');
+
+// Views
 const Dashboard = () => import('@/views/Dashboard');
 
 // Views - Pages
@@ -1133,6 +1136,12 @@ function configRoutes() {
           path: '/login',
           name: 'Login',
           component: Login,
+          meta: { login: false },
+        },
+        {
+          path: '/change-password',
+          name: 'ChangePassword',
+          component: ChangePassword,
           meta: { login: false },
         },
         {
