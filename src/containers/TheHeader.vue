@@ -296,7 +296,7 @@ export default {
         this.$router.push({ path: `/oops` });
       }
       let profile = getProfile();
-      if (profile && profile.password_must_change) {
+      if (profile && profile.id != 0 && profile.password_must_change) {
         this.$router.push({ path: `/change-password?p-key=${profile.token}` });
       }
     },

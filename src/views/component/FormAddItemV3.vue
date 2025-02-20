@@ -200,9 +200,9 @@ export default {
     },
 
     getDifferentDays(exp_date) {
-      var date_exp = moment(new Date(exp_date), 'YYYY-MM-DD');
-      var date_now = moment(new Date(), 'YYYY-MM-DD');
-      let sisa = Math.ceil(moment.duration(date_exp.diff(date_now)).asDays());
+      var date_exp = moment(new Date(exp_date)).format('YYYY-MM-DD');
+      var date_now = moment(new Date()).format('YYYY-MM-DD');
+      let sisa = moment(date_exp).diff(moment(date_now), 'days');
       return sisa;
     },
     async checkDeliveryLimit() {

@@ -418,6 +418,7 @@ import {
   isEmail,
   validationPassword,
   getUserId,
+  getConfig,
 } from '../../../utils';
 import {
   getMstUser,
@@ -441,11 +442,11 @@ export default {
     // },
     'formData.pwd': {
       deep: true,
-      handler(data) {
+      handler(string) {
         this.required.pwd.error = false;
         this.needPassword = false;
-        if (data) {
-          let check = validationPassword(data);
+        if (string) {
+          let check = this.userValidationPassword(string);
           if (typeof check === 'string') {
             this.needPassword = true;
             this.required.pwd.error = true;
@@ -479,6 +480,7 @@ export default {
   },
   data() {
     return {
+      configuration: getConfig(),
       initial_load: true,
       action: '',
       route_action: '',
@@ -501,8 +503,8 @@ export default {
         tlp: '',
         have_error: false,
         mst_avatar_id: '1',
-        pwd: '',
-        re_pwd: '',
+        pwd: getConfig().password_default || '',
+        re_pwd: getConfig().password_default || '',
         email: '',
         error: null,
         mst_department_id: null,
@@ -543,6 +545,14 @@ export default {
     },
   },
   methods: {
+    userValidationPassword(string) {
+      if (this.configuration.password_default && string) {
+        if (this.configuration.password_default == string) {
+          return null;
+        }
+      }
+      return validationPassword(string);
+    },
     handleChangeInput($value) {
       this.formData.tlp_code = $value;
       this.$forceUpdate(); // Memaksa update komponen
@@ -638,9 +648,10 @@ export default {
         }
       }
       // check validation regex
-      if (validationPassword(this.formData.pwd)) {
+      let is_valid_pwd = this.userValidationPassword(this.formData.pwd);
+      if (is_valid_pwd) {
         this.required.pwd.error = true;
-        this.required.pwd.message = validationPassword(this.formData.pwd);
+        this.required.pwd.message = is_valid_pwd;
         have_error = true;
       }
       // Check Eployee ID
