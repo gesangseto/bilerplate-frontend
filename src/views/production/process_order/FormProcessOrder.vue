@@ -860,19 +860,21 @@ export default {
         unused: 26,
       };
       this.tabData.serials = [];
+
       if (this.activeTab == 0) {
         // AVAILABLE
         this.tabData.serials = this.serials.filter(
-          (it) => it.status == status.available
+          (it) => it.status_sync == 'available'
         );
       } else if (this.activeTab == 1) {
         // RESERVED
         this.tabData.serials = this.serials.filter(
-          (it) => it.status == status.reserved
+          (it) =>
+            it.status_sync != 'available' && it.status_sync != 'preinbound'
         );
       } else if (this.activeTab == 2) {
         this.tabData.serials = this.serials.filter(
-          (it) => it.status != status.available && it.status != status.reserved
+          (it) => it.status_sync == 'preinbound'
         );
       }
       this.tabData.quantity_l1 = this.tabData.serials.filter(
