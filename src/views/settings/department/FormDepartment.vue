@@ -57,9 +57,9 @@
               :defaultMetadata="formData.metadata"
               v-on:handleChange="
                 (formData.metadata = $event.result),
-                  (formData.error = $event.error)
+                  (formData.error_metadata = $event.error_metadata)
               "
-              model="mst_customer"
+              model="mst_department"
             />
           </CCardBody>
           <CCardFooter>
@@ -103,12 +103,6 @@ export default {
       ],
     };
   },
-  validations: {
-    formData: {
-      name: { required },
-      description: { required },
-    },
-  },
   async mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
@@ -121,10 +115,19 @@ export default {
     }
   },
   methods: {
+    valid() {
+      if (!this.formData.name) {
+        return false;
+      } else if (!this.formData.description) {
+        return false;
+      } else if (this.formData.error_metadata) {
+        return false;
+      }
+      return true;
+    },
     async save() {
       this.initial_load = false;
-      this.$v.$touch();
-      if (this.$v.$invalid) {
+      if (!this.valid()) {
         this.$toast.open({
           message: 'Please input all the required data',
           type: 'error',
@@ -133,8 +136,8 @@ export default {
           duration: 5000,
         });
         return;
-        return;
       }
+
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
