@@ -725,6 +725,11 @@
                     :validasi="'integer'"
                     :max="10000"
                   />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Pattern for Generating Serial Number"
+                    v-model="data.serial_pattern"
+                  />
                 </CCardBody>
               </CCard>
 
