@@ -517,99 +517,6 @@
               </CCard>
 
               <CCard>
-                <CCardHeader style="font-weight: bold">
-                  Serial Config (Deprecated)
-                </CCardHeader>
-                <CCardBody>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.level_indicator_box_gtin"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          GTIN Indicator - L2 - Box
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.sscc_no_box_sn"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          SSCC Ext - L2 - Box (Serial)
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.sscc_no_box_non_sn"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          SSCC Ext - L2 - Box (Non-Serial)
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.sscc_no_pallet_sn"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          SSCC Ext - L3 - Pallet (Serial)
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.sscc_no_pallet_non_sn"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          SSCC Ext - L3 - Pallet (Non-Serial)
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                </CCardBody>
-              </CCard>
-
-              <CCard>
                 <CCardHeader style="font-weight: bold"
                   >Transaction Option</CCardHeader
                 >
@@ -727,17 +634,30 @@
                   />
                 </CCardBody>
               </CCard>
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  Long Process Configuration
+                </CCardHeader>
+                <CCardBody>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Retrying Attempt"
+                    v-model="data.retry_attempt"
+                    :validasi="'integer'"
+                    :max="10000"
+                    description="The strategy used to retry a failed operation."
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Retrying Time Interval"
+                    v-model="data.retry_interval"
+                    :validasi="'integer'"
+                    :max="10000"
+                    description="The time interval between retry attempts in a retrying strategy in milli second."
+                  />
+                </CCardBody>
+              </CCard>
 
-              <CCol sm="10">
-                <CSelect
-                  :options="periodicBackupOptions"
-                  :value.sync="data.backup_frequent"
-                  placeholder="--SELECT--"
-                  label="Periodic Backups"
-                  horizontal
-                >
-                </CSelect>
-              </CCol>
               <CCol sm="10">
                 <CInput
                   label=" Delivery Limit Before Expiry Date"
