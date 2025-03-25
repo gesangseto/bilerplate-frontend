@@ -793,6 +793,10 @@ export default {
     };
   },
   async mounted() {
+    this.action = capitalizeFirstLetter(this.$route.params.type);
+    // if (this.action != "Create") this.loadData();
+    if (this.$route.params.id !== undefined) this.loadData();
+
     // cek parameter url
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
@@ -804,6 +808,12 @@ export default {
         ? 'EDIT'
         : 'APPROVE';
     // get product
+
+    this.page = 1;
+    if (this.action == 'Create' && this.$route.params.id) {
+      this.is_copy = true;
+    }
+
     let _product = await getMstProduct({
       product_type: 0,
       show_status: true,
@@ -818,9 +828,6 @@ export default {
           item: it,
         });
       }
-    }
-    if (this.action !== 'Create') {
-      this.loadData();
     }
   },
   methods: {
@@ -1076,6 +1083,9 @@ export default {
         delete param.weight_l2;
         delete param.weight_l3;
         delete param.weight_l4;
+        if (this.action === 'Create' && param.id) {
+          delete param.id;
+        }
         if (param.id) {
           res = await updateProcessOrder(param);
         } else {

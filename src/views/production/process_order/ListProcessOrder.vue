@@ -60,6 +60,13 @@
                       :permission="'read'"
                       @click="rowRead(item, index)"
                     />
+                    <ButtonPermission
+                      :buttonProperty="btn_copyProp"
+                      :permission="'create'"
+                      @click="addNew()"
+                      :id="item.id"
+                      :useHref="true"
+                    />
                   </td>
                 </template>
               </CDataTable>
@@ -116,6 +123,14 @@ export default {
   },
   data() {
     return {
+      btn_copyProp: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'copy',
+        text: '',
+        tooltip: 'Copy data',
+      },
       rejectProperty: {
         title: 'Process Order',
         modal: false,
