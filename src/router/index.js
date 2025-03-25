@@ -216,6 +216,8 @@ const ManualBarcodeGenerator = () =>
   import(
     '@/views/development_tools/ManualBarcodeGenerator/ManualBarcodeGenerator'
   );
+const BpomCompareTool = () =>
+  import('@/views/development_tools/BpomCompareTool/BpomCompareTool');
 // ========================CONFIGURATION========================
 Vue.use(Router);
 let router = new Router({
@@ -1048,6 +1050,12 @@ function configRoutes() {
           name: 'Manual Barcode Generator (Home)',
           meta: { login: true },
           component: ManualBarcodeGenerator,
+        },
+        {
+          path: 'bpom_compare_tool',
+          name: 'BPOM Compare Tool (Home)',
+          meta: { login: true },
+          component: BpomCompareTool,
         },
       ],
     },
