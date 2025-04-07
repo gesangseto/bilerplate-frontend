@@ -909,6 +909,7 @@ export default {
     },
     async loadData() {
       let _res = await getProcessOrder({ id: this.$route.params.id });
+
       if (_res && !_res.error) {
         this.formData = _res.data[0];
         this.formData.het = this.formData.het || '';
@@ -932,6 +933,9 @@ export default {
           if (this.formData.product[`packagingl${level}_id`]) {
             this.formData.current_pack = level;
           }
+        }
+        if (this.is_copy) {
+          this.formData.history = [];
         }
       }
     },
