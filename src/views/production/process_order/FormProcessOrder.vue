@@ -490,6 +490,7 @@
       title="History Request Serial"
       color="info"
       :show.sync="viewModalHistory"
+      size="lg"
     >
       <CDataTable
         hover
@@ -587,6 +588,7 @@ import {
   isJsonString,
   onlyNumber,
 } from '../../../utils';
+
 export default {
   name: 'FormPacking',
   watch: {
@@ -756,6 +758,10 @@ export default {
         {
           key: 'modified_date',
           label: 'Request Time',
+        },
+        {
+          key: 'finish_date',
+          label: 'Finish Time',
         },
         {
           key: 'generate_count_level_1',
@@ -1224,6 +1230,9 @@ export default {
       return this.formData.generate_count_additional.map((item) => {
         return {
           ...item,
+          finish_date: item.finish_date
+            ? moment(item.finish_date).format('YYYY-MM-DD HH:mm:ss')
+            : '-',
           generate_count_level_1: item.generate_count_level_1 || 0,
           generate_count_level_2: item.generate_count_level_2 || 0,
           generate_count_level_3: item.generate_count_level_3 || 0,
