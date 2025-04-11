@@ -10,7 +10,7 @@
       style="margin: 2px; text-align: center"
     >
       <v-icon
-        style="margin-bottom: -1px"
+        style="vertical-align: -0.175em"
         v-if="property.icon"
         :name="property.icon"
       />

@@ -112,7 +112,7 @@
                     :disabled="barcode === item.epc_hr"
                     @click="handleClickRow(item, index)"
                   >
-                    <v-icon style="margin-bottom: -1px" name="qrcode" />
+                    <v-icon style="vertical-align: -0.175em" name="qrcode" />
                   </CButton>
                 </td>
               </template>
