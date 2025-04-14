@@ -9,7 +9,7 @@
       v-on:click="!useHref ? $emit('click', $event.target.value) : null"
     >
       <v-icon
-        style="margin-bottom: -1px"
+        style="vertical-align: -0.175em"
         v-if="property.icon"
         :name="property.icon"
       />
