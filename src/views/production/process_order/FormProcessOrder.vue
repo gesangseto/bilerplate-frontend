@@ -229,7 +229,7 @@
                 <CIcon name="cil-check-circle" /> View History</CButton
               >
               <CButton
-                v-if="[1, 3, 4, 10].includes(formData.status)"
+                v-if="[1, 3, 4, 10].includes(formData.status) && !is_copy"
                 type="submit"
                 size="sm"
                 @click="handleViewSerial"
@@ -239,7 +239,7 @@
                 <CIcon name="cil-check-circle" /> View Serial</CButton
               >
               <CButton
-                v-if="[1, 3, 4, 10].includes(formData.status)"
+                v-if="[1, 3, 4, 10].includes(formData.status) && !is_copy"
                 type="submit"
                 size="sm"
                 @click="viewModalWeight = true"
@@ -306,7 +306,9 @@
           />
           <ButtonPermission
             v-if="
-              (formData.status == 3 || formData.status == 4) && userInfo.id == 0
+              (formData.status == 3 || formData.status == 4) &&
+              userInfo.id == 0 &&
+              !is_copy
             "
             :buttonProperty="{
               color: 'warning',
@@ -610,6 +612,7 @@ export default {
         this.reformatExp();
       },
     },
+
     additionalSerial: {
       deep: true,
       handler(item) {
@@ -799,6 +802,7 @@ export default {
     };
   },
   async mounted() {
+    await this.loadProduct();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     // if (this.action != "Create") this.loadData();
     if (this.$route.params.id !== undefined) this.loadData();
@@ -819,24 +823,26 @@ export default {
     if (this.action == 'Create' && this.$route.params.id) {
       this.is_copy = true;
     }
-
-    let _product = await getMstProduct({
-      product_type: 0,
-      show_status: true,
-      status: 'Active',
-    });
-    if (_product) {
-      for (const it of _product.data) {
-        this.productOptions.push({
-          value: it.id,
-          name: it.name,
-          label: `[${it.no}] ${it.name}`,
-          item: it,
-        });
-      }
-    }
   },
   methods: {
+    async loadProduct() {
+      let param = {
+        product_type: 0,
+        show_status: true,
+        status: 'Active',
+      };
+      let _product = await getMstProduct(param);
+      if (_product) {
+        for (const it of _product.data) {
+          this.productOptions.push({
+            value: it.id,
+            name: it.name,
+            label: `[${it.no}] ${it.name}`,
+            item: it,
+          });
+        }
+      }
+    },
     handleInputEXP($event) {
       if ($event) this.formData.shelf_life = null;
     },
