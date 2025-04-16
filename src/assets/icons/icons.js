@@ -1,5 +1,6 @@
 import {
   cibFacebook,
+  cibWhatsapp,
   cibTwitter,
   cibLinkedin,
   cibFlickr,
@@ -185,6 +186,7 @@ export const iconsSet = Object.assign(
   },
   {
     cibFacebook,
+    cibWhatsapp,
     cibTwitter,
     cibLinkedin,
     cibFlickr,

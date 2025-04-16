@@ -236,6 +236,61 @@
               </CCard>
               <CCard>
                 <CCardHeader style="font-weight: bold">
+                  Third-Party Messenger
+                </CCardHeader>
+                <CCardBody>
+                  <strong>
+                    <CIcon name="cib-whatsapp" /> &nbsp; Whatsapp
+                  </strong>
+                  <br />
+                  <small>{{ whatsappStatus.message }}</small>
+                  <hr />
+                  <CForm v-if="!whatsappStatus.error"
+                    ><CCol class="md-4">
+                      <img
+                        v-bind:src="whatsappStatus.qr_base64"
+                        style="width: 150px; heigth: auto"
+                      />
+                    </CCol>
+                  </CForm>
+                  <CForm v-if="whatsappStatus.error">
+                    <InputDefault
+                      :col="[3, 7]"
+                      :title="'To'"
+                      :validasi="'integer'"
+                      v-model="whatsappMessage.to"
+                      :max="14"
+                    />
+                    <InputDefault
+                      :col="[3, 7]"
+                      :title="'Message'"
+                      v-model="whatsappMessage.message"
+                      :max="200"
+                    />
+                    <CButton size="sm" color="success" @click="sendWhatsapp()">
+                      Send Test Message
+                    </CButton>
+                    <CButton
+                      class="ml-1"
+                      size="sm"
+                      color="danger"
+                      @click="deleteWhatsapp()"
+                    >
+                      Delete Session
+                    </CButton>
+                    <br />
+                    <small
+                      :class="
+                        whatsappMessage.error ? 'text-danger' : 'text-muted'
+                      "
+                    >
+                      {{ whatsappMessage.response }}
+                    </small>
+                  </CForm>
+                </CCardBody>
+              </CCard>
+              <CCard>
+                <CCardHeader style="font-weight: bold">
                   Authentication
                 </CCardHeader>
                 <CCardBody>
@@ -806,6 +861,11 @@ import $axiosMertrack from '../../../apiMertrack';
 import moment from 'moment';
 import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
 import { getSysConfig } from '../../../resource/SysConfig';
+import {
+  getWhatsappQr,
+  sendWhatsappMessage,
+  deleteWhatsappSession,
+} from '../../../resource/Whatsapp';
 import { setConfig } from '../../../utils';
 export default {
   name: 'ConfigApplication',
@@ -827,6 +887,13 @@ export default {
         alphabet_upper: false,
         numeric: false,
         symbol: false,
+      },
+      whatsappStatus: { error: false, message: null, qr_base64: null },
+      whatsappMessage: {
+        to: null,
+        message: null,
+        response: null,
+        error: false,
       },
       data: {
         password_must_change: false, // Nilai awal,
@@ -891,6 +958,7 @@ export default {
   },
   mounted() {
     this.loadConfig();
+    this.loadWhatsapp();
   },
   methods: {
     async loadConfig() {
@@ -912,6 +980,37 @@ export default {
         });
       }
       return;
+    },
+    async sendWhatsapp() {
+      let _res = await sendWhatsappMessage(this.whatsappMessage);
+      if (_res) {
+        this.whatsappMessage.error = _res.error;
+        this.whatsappMessage.response = _res.message;
+      }
+    },
+    async deleteWhatsapp() {
+      let _res = await deleteWhatsappSession();
+      this.whatsappStatus = { error: false, message: null, qr_base64: null };
+      this.whatsappMessage = {
+        to: null,
+        message: null,
+        response: null,
+        error: false,
+      };
+      this.loadWhatsapp();
+    },
+    async loadWhatsapp() {
+      let _res = await getWhatsappQr();
+      if (_res && _res.error) {
+        this.whatsappStatus.qr_base64 = null;
+        this.whatsappStatus.error = true;
+        this.whatsappStatus.message = _res.message;
+      } else if (_res && !_res.error) {
+        this.whatsappStatus.qr_base64 = _res.data[0].qr_base64;
+        this.whatsappStatus.error = false;
+        this.whatsappStatus.message = null;
+      }
+      console.log(this.whatsappStatus);
     },
     formatDate(date) {
       return moment(date).format('yyyy/MM/DD');
