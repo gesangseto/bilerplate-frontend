@@ -6,7 +6,6 @@ import {
   cibTumblr,
   cibXing,
   cibGithub,
-  cibStackOverflow,
   cibYoutube,
   cibDribbble,
   cibInstagram,
@@ -22,6 +21,7 @@ import {
   cibPaypal,
   cibGooglePay,
   cibCcAmex,
+  cibSuperuser,
 } from '@coreui/icons';
 import { cifUs, cifBr, cifIn, cifFr, cifEs, cifPl } from '@coreui/icons';
 import {
@@ -185,13 +185,14 @@ export const iconsSet = Object.assign(
   },
   {
     cibFacebook,
+    cibSuperuser,
     cibTwitter,
     cibLinkedin,
     cibFlickr,
     cibTumblr,
     cibXing,
     cibGithub,
-    cibStackOverflow,
+    cibSuperuser,
     cibYoutube,
     cibDribbble,
     cibInstagram,
