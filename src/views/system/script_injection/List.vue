@@ -3,11 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ButtonPermission
-            :permission="'create'"
-            @click="addNew()"
-            :useHref="true"
-          />
+          <ButtonPermission :permission="'create'" :useHref="true" />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -39,13 +35,26 @@
                     :id="item.id"
                     :useHref="true"
                     :permission="'update'"
-                    @click="rowUpdate(item, index)"
                   />
                   <ButtonPermission
                     :id="item.id"
                     :useHref="true"
                     :permission="'read'"
-                    @click="rowRead(item, index)"
+                  />
+                  <ButtonPermission
+                    v-if="item.status == 'Active' && userInfo.id == 0"
+                    :id="item.id"
+                    class="float-right"
+                    :permission="'approve'"
+                    :useHref="true"
+                    :buttonProperty="{
+                      size: 'sm',
+                      class: 'float-right',
+                      color: 'success',
+                      icon: 'clipboard-check',
+                      text: '',
+                      tooltip: 'Execute',
+                    }"
                   />
                 </td>
               </template>
@@ -77,19 +86,20 @@
 </template>
 
 <script>
-import { calculatePaginationV3, exportData, humanize } from '../../../utils';
+import { calculatePaginationV3, exportData, getProfile } from '../../../utils';
 import {
-  deleteConfStation,
-  getConfStation,
-} from '../../../resource/ConfStation';
+  deleteSysScriptInj,
+  getSysScriptInj,
+} from '../../../resource/SysScriptInj';
 
 export default {
-  name: 'ListStation',
+  name: 'ListSysScriptInj',
   mounted() {
     this.page = 1;
   },
   data() {
     return {
+      userInfo: getProfile(),
       filter: {
         page: 1,
         limit: 10,
@@ -112,22 +122,23 @@ export default {
           label: 'Desc',
         },
         {
-          key: 'code',
+          key: 'last_execute',
           label: 'Code',
         },
         {
-          key: 'station_type',
-          label: 'Station Type',
+          key: 'schedule',
+          label: 'Schedule',
         },
         {
           key: 'status',
           label: 'Status',
+          _style: 'width:10%',
           _classes: 'font-weight-bold',
         },
         {
           key: 'action',
           label: 'Action',
-          _style: 'width:15%',
+          _style: 'width:20%',
           sorter: false,
           filter: false,
         },
@@ -146,7 +157,7 @@ export default {
   },
   methods: {
     async loadData() {
-      let _res = await getConfStation(this.filter);
+      let _res = await getSysScriptInj(this.filter);
       if (_res) {
         this.items = _res.data;
         this.filter = calculatePaginationV3({
@@ -197,7 +208,7 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let _param = { id: item.id };
-        let res = await deleteConfStation(_param);
+        let res = await deleteSysScriptInj(_param);
         this.$isLoading(false);
         this.$toast.open({
           message: res.error
@@ -217,7 +228,9 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          station_type: humanize(item.station_type),
+          description: item.description || '-',
+          last_execute: item.last_execute || '-',
+          schedule: item.schedule || '-',
         };
       });
     },

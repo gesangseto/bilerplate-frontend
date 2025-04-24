@@ -177,6 +177,10 @@ export default {
       } else if (this.validasi === 'float') {
         this.regex = /[^-?\d*.\d+]/g;
         this.regexValidation = /^-?\d*\.?\d*$/; // Menerima float dengan atau tanpa angka di depan titik
+      } else if (this.validasi === 'cron') {
+        // Karakter umum cron: angka, *, /, -, , dan spasi
+        this.regex = /[^*\/,\-\d\s]/g;
+        this.regexValidation = /^[\d*/,\-\s]+$/;
       }
     },
   },

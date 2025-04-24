@@ -7,111 +7,111 @@
             <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
           </CCardHeader>
           <CCardBody>
-            <strong
-              v-if="formData.production_batch_list_id"
-              style="color: red; font-size: x-small"
-            >
-              Station {{ formData.station_status_name }} by Process Order ID [{{
-                formData.production_batch_list_id
-              }}]
-              </br>
-              </br>
-            </strong>
-            <CForm novalidate>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter station code"
-                v-model="formData.code"
-                :is-valid="initialLoad ? null : !formData.code ? false : true"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Code
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter station name"
-                v-model="formData.name"
-                :is-valid="initialLoad ? null : !formData.name ? false : true"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CTextarea
-                :disabled="action == 'Read' ? true : false"
-                placeholder="Enter connector description"
-                horizontal
-                v-model="formData.description"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Description</p>
-                </template>
-              </CTextarea>
-              <CInput v-if="profile.id ==0"
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Device ID"
-                v-model="formData.device_id"
-                :is-valid="
-                  initialLoad ? null : !formData.device_id ? false : true
+            <CCardBody>
+              <CForm>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="true"
+                    :col="[3, 9]"
+                    title="ID"
+                    v-model="formData.id"
+                  />
+                </CCol>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="action == 'Read' ? true : false"
+                    :col="[3, 9]"
+                    required
+                    title="Name"
+                    placeholder="Enter script name"
+                    v-model="formData.name"
+                    :is-valid="
+                      initial_load ? null : formData.name ? true : false
+                    "
+                  />
+                </CCol>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="action == 'Read' ? true : false"
+                    :col="[3, 9]"
+                    title="Description"
+                    placeholder="Enter Description"
+                    v-model="formData.description"
+                  />
+                </CCol>
+                <CCol sm="12">
+                  <TextareaDefault
+                    :disabled="action == 'Read' ? true : false"
+                    :col="[3, 9]"
+                    required
+                    title="Script"
+                    placeholder="Enter script"
+                    v-model="formData.script"
+                    :is-valid="
+                      initial_load ? null : formData.script ? true : false
+                    "
+                  />
+                </CCol>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="action == 'Read' ? true : false"
+                    :col="[3, 9]"
+                    title="Schedule"
+                    validasi="cron"
+                    placeholder="* * * * * *"
+                    v-model="formData.schedule"
+                    :is-valid="
+                      initial_load
+                        ? null
+                        : !formData.schedule
+                        ? null
+                        : testCron(formData.schedule)
+                    "
+                    :invalid_feedback="'Invalid cron expression. Please visit https://crontab.guru/ for assistance.'"
+                  />
+                </CCol>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="true"
+                    :col="[3, 9]"
+                    title="Last Execute"
+                    v-model="formData.last_execute"
+                  />
+                </CCol>
+
+                <CCol sm="12">
+                  <CRow form class="form-group">
+                    <CCol sm="3"> Status </CCol>
+                    <SwitchStatusMaster
+                      :disabled="action == 'Read'"
+                      :show_label="true"
+                      :default_value="formData.status"
+                      v-on:onChange="formData.status = $event"
+                    />
+                  </CRow>
+                </CCol>
+              </CForm>
+              <Metadata
+                :defaultMetadata="formData.metadata"
+                v-on:handleChange="
+                  (formData.metadata = $event.result),
+                    (formData.error_metadata = $event.error_metadata)
                 "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Device ID
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CSelect
-                :disabled="action == 'Read'"
-                placeholder="-Select-"
-                :options="listStation"
-                horizontal
-                :value.sync="formData.station_type"
-                @change="handleChangeConnector()"
-                :is-valid="
-                  initialLoad ? null : !formData.station_type ? false : true
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Station Type
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
-                />
-              </CRow>
-            </CForm>
+                model="mst_customer"
+              />
+            </CCardBody>
           </CCardBody>
           <CCardFooter>
             <CButton
-              v-if="action == 'Read' ? false : true"
+              v-if="action == 'Approve' && userInfo.id == 0"
+              color="warning"
+              size="sm"
+              @click="execution()"
+            >
+              <CIcon size="sm" name="cil-warning" /> Execute
+            </CButton>
+            <CButton
+              v-if="action == 'Create' || action == 'Update'"
               type="submit"
               size="sm"
               color="primary"
@@ -128,32 +128,28 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter, getProfile, humanize } from '../../../utils';
+import { capitalizeFirstLetter, getProfile, isValidCron } from '../../../utils';
 import {
-  getConfStation,
-  updateConfStation,
-  insertConfStation,
-} from '../../../resource/ConfStation';
+  getSysScriptInj,
+  updateSysScriptInj,
+  insertSysScriptInj,
+  executeSysScriptInj,
+} from '../../../resource/SysScriptInj';
+import moment from 'moment';
 
 export default {
   name: 'FormStation',
-  watch: {
-  },
+  watch: {},
   data() {
     return {
-      profile:getProfile(),
-      initialLoad: true,
+      userInfo: getProfile(),
+      initial_load: true,
       route_action: '',
       // category: '',
       action: 'Edit',
       formData: {},
       connection: { ip: null, username: null, password: null, port: null },
       detailConnector: { params: [] },
-      listStation: [
-        { label: 'Serialization', value: 'serialization' },
-        { label: 'Aggregation', value: 'aggregation' },
-        { label: 'Online', value: 'online' },
-      ],
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
@@ -170,24 +166,48 @@ export default {
   },
   methods: {
     async loadData() {
-      let _res = await getConfStation({ id: this.$route.params.id });
+      let _res = await getSysScriptInj({ id: this.$route.params.id });
       if (_res) {
         this.formData = _res.data[0];
-        if (this.formData.production_batch_list_id) this.action = 'Read';
+        this.formData.last_execute = moment(this.formData.last_execute)
+          .utc()
+          .format('YYYY-MM-DD HH:mm:ss');
       }
     },
+    async execution() {
+      var message = `You are about to execute this script. This operation cannot be undone. Would you like to continue?`;
+      if (confirm(message)) {
+        this.$isLoading(true);
+        let res = await executeSysScriptInj({ id: this.formData.id });
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved successfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        if (!res['error']) this.$router.back();
+      }
+    },
+    testCron(string) {
+      if (!string) string = this.formData.schedule;
+      return isValidCron(string);
+    },
     validation() {
-      if (!this.formData.code) {
+      if (!this.formData.name) {
         return false;
-      } else if (!this.formData.name) {
+      } else if (!this.formData.script) {
         return false;
-      }else if (!this.formData.station_type) {
+      } else if (this.formData.schedule && !this.testCron()) {
         return false;
       }
       return true;
     },
     async save() {
-      this.initialLoad = false;
+      this.initial_load = false;
       if (!this.validation()) {
         this.$toast.open({
           message: 'Please input all the required data.',
@@ -202,16 +222,16 @@ export default {
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
-        let dataPost = this.formData;
+        let formData = this.formData;
         this.$isLoading(true);
         let res = {};
-        if (this.action === 'Create' && dataPost.id) {
-          delete dataPost.id;
+        if (this.action === 'Create' && formData.id) {
+          delete formData.id;
         }
-        if (dataPost.id) {
-          res = await updateConfStation(dataPost);
+        if (formData.id) {
+          res = await updateSysScriptInj(formData);
         } else {
-          res = await insertConfStation(dataPost);
+          res = await insertSysScriptInj(formData);
         }
         this.$isLoading(false);
         this.$toast.open({
