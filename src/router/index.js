@@ -478,19 +478,19 @@ function configRoutes() {
         // ROLES-STATION
         {
           path: 'role-station/:type/:id',
-          name: 'Role (Details) ',
+          name: 'Role Station (Details) ',
           component: FormRoleStation,
           meta: { login: true },
         },
         {
           path: 'role-station/:type',
-          name: 'Role (Details)',
+          name: 'Role Station (Details)',
           component: FormRoleStation,
           meta: { login: true },
         },
         {
           path: 'role-station',
-          name: 'Role (Home)',
+          name: 'Role Station (Home)',
           component: ListRoleStation,
           meta: { login: true },
         },
@@ -1051,19 +1051,19 @@ function configRoutes() {
         // SYSTEM SCRIPT INJECTION
         {
           path: 'script-injection/:type/:id',
-          name: 'Manage Layout',
+          name: 'Script Injection (Details)',
           component: FormSystemScriptInj,
           meta: { login: true },
         },
         {
           path: 'script-injection/:type',
-          name: 'Add Layout',
+          name: 'Script Injection (Create)',
           component: FormSystemScriptInj,
           meta: { login: true },
         },
         {
           path: 'script-injection',
-          name: 'List Layout',
+          name: 'Script Injection (Home)',
           component: ListSystemScriptInj,
           meta: { login: true },
         },

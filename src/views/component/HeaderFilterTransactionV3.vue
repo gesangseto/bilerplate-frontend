@@ -149,7 +149,7 @@ export default {
     filter: Array,
     status_code: String,
     status_code_default: String,
-    remove_all_status_code: String,
+    remove_all_status_code: Boolean,
     costume_filter: Array,
     removeTrxDate: Boolean,
     order: Array,

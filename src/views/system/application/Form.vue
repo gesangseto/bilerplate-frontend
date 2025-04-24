@@ -278,7 +278,10 @@
                         :validasi="'integer'"
                         v-model="data.password_pattern.max"
                         :is-valid="
-                          data.password_pattern.max && data.password_pattern.min
+                          !data.password_pattern
+                            ? null
+                            : data.password_pattern.max &&
+                              data.password_pattern.min
                             ? parseInt(data.password_pattern.min) >
                               parseInt(data.password_pattern.max)
                               ? false
@@ -360,7 +363,7 @@
                         :col="[4, 6]"
                         title="Default Password User"
                         v-model="data.password_default"
-                        :is-valid="data.password_default"
+                        :is-valid="data.password_default ? true : null"
                       />
                     </CCol>
                     <CCol sm="6">
@@ -735,14 +738,7 @@ export default {
         home: 'Choose file...',
       },
       epcStatusOptions: [],
-      password_pattern: {
-        min: null,
-        max: null,
-        alphabet_lower: false,
-        alphabet_upper: false,
-        numeric: false,
-        symbol: false,
-      },
+
       data: {
         password_must_change: false, // Nilai awal,
         Username: '',
@@ -771,7 +767,7 @@ export default {
         Latitude: '',
         Longitude: '',
         list_device: [],
-        password_pattern: this.password_pattern,
+        password_pattern: this.initial_password_pattern(),
       },
       devicesLooping: 0,
       periodicBackupOptions: [
@@ -808,16 +804,28 @@ export default {
     this.loadConfig();
   },
   methods: {
+    initial_password_pattern() {
+      return {
+        min: null,
+        max: null,
+        alphabet_lower: false,
+        alphabet_upper: false,
+        numeric: false,
+        symbol: false,
+      };
+    },
     async loadConfig() {
       let _res = await getSysConfig();
       let epcStatus = await getMstEpcStatus({ is_final_status: true });
       if (_res) {
         let data = _res.data[0];
+        let pattern = data.password_pattern;
         this.data = {
           ...data,
-          password_pattern: data.password_pattern
-            ? JSON.parse(data.password_pattern)
-            : this.password_pattern,
+          return_ext_aggregation: data.return_ext_aggregation ? true : false,
+          password_pattern: pattern
+            ? JSON.parse(pattern)
+            : this.initial_password_pattern(),
         };
         this.devicesLooping = data.total_device;
       }
@@ -905,6 +913,10 @@ export default {
       let total = this.data.total_device;
       this.data.list_device = this.data.list_device.slice(0, total);
       this.data.password_pattern = JSON.stringify(this.data.password_pattern);
+      let parameter = JSON.parse(JSON.stringify(this.data));
+      parameter.return_ext_aggregation = parameter.return_ext_aggregation
+        ? 1
+        : 0;
       $axiosMertrack
         .post(`v3/configuration/application`, this.data)
         .then((result) => {
