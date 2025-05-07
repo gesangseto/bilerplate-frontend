@@ -282,3 +282,58 @@ export function decryptData(data) {
     return null;
   }
 }
+export function isValidCron(cron) {
+  if (!cron) return false;
+  if (cron && typeof cron !== 'string') cron = cron.toString();
+  const cronParts = cron.trim().split(/\s+/);
+  if (cronParts.length !== 5) return false;
+
+  const validators = [
+    { name: 'minute', min: 0, max: 59 },
+    { name: 'hour', min: 0, max: 23 },
+    { name: 'dayOfMonth', min: 1, max: 31 },
+    { name: 'month', min: 1, max: 12 },
+    { name: 'dayOfWeek', min: 0, max: 7 },
+  ];
+
+  return cronParts.every((part, index) => {
+    return validateCronField(
+      part,
+      validators[index].min,
+      validators[index].max
+    );
+  });
+}
+
+function validateCronField(field, min, max) {
+  // Bintang (*)
+  if (field === '*') return true;
+
+  // Daftar nilai (1,2,3)
+  if (/^\d+(,\d+)*$/.test(field)) {
+    return field.split(',').every((num) => {
+      const n = Number(num);
+      return !isNaN(n) && n >= min && n <= max;
+    });
+  }
+
+  // Range nilai (1-5)
+  if (/^\d+-\d+$/.test(field)) {
+    const [start, end] = field.split('-').map(Number);
+    return start >= min && end <= max && start <= end;
+  }
+
+  // Step (*/5 atau 1-10/2)
+  if (/^(\*|\d+-\d+)\/\d+$/.test(field)) {
+    const [base, step] = field.split('/');
+    return validateCronField(base, min, max) && !isNaN(Number(step));
+  }
+
+  // Nilai tunggal
+  if (/^\d+$/.test(field)) {
+    const num = Number(field);
+    return num >= min && num <= max;
+  }
+
+  return false; // Tidak cocok
+}

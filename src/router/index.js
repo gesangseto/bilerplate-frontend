@@ -178,9 +178,15 @@ const DetailAuditTrail = () =>
 const ReportShowStatus = () => import('@/views/reports/ReportShowStatus');
 // ========================REPORT========================
 
+// ========================SYSTEM========================
+const SystemApplication = () => import('@/views/system/application/Form');
+const ListSystemScriptInj = () =>
+  import('@/views/system/script_injection/List');
+const FormSystemScriptInj = () =>
+  import('@/views/system/script_injection/Form');
 // ========================CONFIGURATION========================
-const ConfApplication = () =>
-  import('@/views/configuration/application/ConfApplication');
+// const ConfApplication = () =>
+//   import('@/views/configuration/application/ConfApplication');
 // Station
 const ListStation = () => import('@/views/configuration/station/ListStation');
 const FormStation = () => import('@/views/configuration/station/FormStation');
@@ -474,19 +480,19 @@ function configRoutes() {
         // ROLES-STATION
         {
           path: 'role-station/:type/:id',
-          name: 'Role (Details) ',
+          name: 'Role Station (Details) ',
           component: FormRoleStation,
           meta: { login: true },
         },
         {
           path: 'role-station/:type',
-          name: 'Role (Details)',
+          name: 'Role Station (Details)',
           component: FormRoleStation,
           meta: { login: true },
         },
         {
           path: 'role-station',
-          name: 'Role (Home)',
+          name: 'Role Station (Home)',
           component: ListRoleStation,
           meta: { login: true },
         },
@@ -884,13 +890,13 @@ function configRoutes() {
         },
       },
       children: [
-        // CONF APPLICATION
-        {
-          path: 'application',
-          name: 'Configuration (Details)',
-          meta: { login: true },
-          component: ConfApplication,
-        },
+        // // CONF APPLICATION
+        // {
+        //   path: 'application',
+        //   name: 'Configuration (Details)',
+        //   meta: { login: true },
+        //   component: ConfApplication,
+        // },
         // CONF DATE
         {
           path: 'date/:type/:id',
@@ -1022,6 +1028,45 @@ function configRoutes() {
           path: 'connector_action',
           name: 'List Connector Action',
           component: ListConnectorAct,
+          meta: { login: true },
+        },
+      ],
+    },
+    // SYSTEM
+    {
+      path: 'system',
+      redirect: '/dashboard',
+      name: 'System',
+      meta: { login: true },
+      component: {
+        render(c) {
+          return c('router-view');
+        },
+      },
+      children: [
+        {
+          path: 'application',
+          name: 'System Configuration (Details)',
+          meta: { login: true },
+          component: SystemApplication,
+        },
+        // SYSTEM SCRIPT INJECTION
+        {
+          path: 'script-injection/:type/:id',
+          name: 'Script Injection (Details)',
+          component: FormSystemScriptInj,
+          meta: { login: true },
+        },
+        {
+          path: 'script-injection/:type',
+          name: 'Script Injection (Create)',
+          component: FormSystemScriptInj,
+          meta: { login: true },
+        },
+        {
+          path: 'script-injection',
+          name: 'Script Injection (Home)',
+          component: ListSystemScriptInj,
           meta: { login: true },
         },
       ],

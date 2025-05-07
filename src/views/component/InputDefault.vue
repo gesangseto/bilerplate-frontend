@@ -118,6 +118,9 @@ export default {
       }
     },
     handleInput(event) {
+      const input = event.target;
+      const cursorPosition = input.selectionStart; // Simpan posisi kursor
+
       let cleanedValue = event.target.value;
       if (this.validasi) {
         cleanedValue = cleanedValue.replace(this.regex, '');
@@ -137,8 +140,20 @@ export default {
       if (this.validasi == 'integer') {
         cleanedValue = cleanedValue.replace(/^0+/, '');
       }
+
+      // Hitung perbedaan panjang sebelum dan sesudah modifikasi
+      const lengthDiff = cleanedValue.length - this.internalValue.length;
+      // Emit event input untuk v-model
       this.internalValue = cleanedValue;
-      this.$emit('input', this.internalValue); // Emit event input untuk v-model
+      this.$emit('input', this.internalValue);
+      // // Pulihkan posisi kursor setelah nilai diperbarui
+      this.$nextTick(() => {
+        const newCursorPosition = cursorPosition + lengthDiff;
+        input.selectionStart = input.selectionEnd = Math.max(
+          0,
+          newCursorPosition
+        );
+      });
     },
     convertValueToString() {
       if (this.value || this.value == 0) {
@@ -162,6 +177,10 @@ export default {
       } else if (this.validasi === 'float') {
         this.regex = /[^-?\d*.\d+]/g;
         this.regexValidation = /^-?\d*\.?\d*$/; // Menerima float dengan atau tanpa angka di depan titik
+      } else if (this.validasi === 'cron') {
+        // Karakter umum cron: angka, *, /, -, , dan spasi
+        this.regex = /[^*\/,\-\d\s]/g;
+        this.regexValidation = /^[\d*/,\-\s]+$/;
       }
     },
   },

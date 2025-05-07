@@ -333,7 +333,10 @@
                         :validasi="'integer'"
                         v-model="data.password_pattern.max"
                         :is-valid="
-                          data.password_pattern.max && data.password_pattern.min
+                          !data.password_pattern
+                            ? null
+                            : data.password_pattern.max &&
+                              data.password_pattern.min
                             ? parseInt(data.password_pattern.min) >
                               parseInt(data.password_pattern.max)
                               ? false
@@ -415,7 +418,7 @@
                         :col="[4, 6]"
                         title="Default Password User"
                         v-model="data.password_default"
-                        :is-valid="data.password_default"
+                        :is-valid="data.password_default ? true : null"
                       />
                     </CCol>
                     <CCol sm="6">
@@ -572,99 +575,6 @@
               </CCard>
 
               <CCard>
-                <CCardHeader style="font-weight: bold">
-                  Serial Config (Deprecated)
-                </CCardHeader>
-                <CCardBody>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.level_indicator_box_gtin"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          GTIN Indicator - L2 - Box
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.sscc_no_box_sn"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          SSCC Ext - L2 - Box (Serial)
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.sscc_no_box_non_sn"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          SSCC Ext - L2 - Box (Non-Serial)
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.sscc_no_pallet_sn"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          SSCC Ext - L3 - Pallet (Serial)
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                  <CCol sm="12">
-                    <CInput
-                      label=""
-                      horizontal
-                      type="number"
-                      v-model="data.sscc_no_pallet_non_sn"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">
-                          SSCC Ext - L3 - Pallet (Non-Serial)
-                          <span class="text-danger">
-                            <strong>*</strong>
-                          </span>
-                        </p>
-                      </template></CInput
-                    >
-                  </CCol>
-                </CCardBody>
-              </CCard>
-
-              <CCard>
                 <CCardHeader style="font-weight: bold"
                   >Transaction Option</CCardHeader
                 >
@@ -787,17 +697,30 @@
                   />
                 </CCardBody>
               </CCard>
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  Long Process Configuration
+                </CCardHeader>
+                <CCardBody>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Retrying Attempt"
+                    v-model="data.retry_attempt"
+                    :validasi="'integer'"
+                    :max="10000"
+                    description="The strategy used to retry a failed operation."
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Retrying Time Interval"
+                    v-model="data.retry_interval"
+                    :validasi="'integer'"
+                    :max="10000"
+                    description="The time interval between retry attempts in a retrying strategy in milli second."
+                  />
+                </CCardBody>
+              </CCard>
 
-              <CCol sm="10">
-                <CSelect
-                  :options="periodicBackupOptions"
-                  :value.sync="data.backup_frequent"
-                  placeholder="--SELECT--"
-                  label="Periodic Backups"
-                  horizontal
-                >
-                </CSelect>
-              </CCol>
               <CCol sm="10">
                 <CInput
                   label=" Delivery Limit Before Expiry Date"
@@ -895,6 +818,7 @@ export default {
         response: null,
         error: false,
       },
+
       data: {
         password_must_change: false, // Nilai awal,
         Username: '',
@@ -923,7 +847,7 @@ export default {
         Latitude: '',
         Longitude: '',
         list_device: [],
-        password_pattern: this.password_pattern,
+        password_pattern: this.initial_password_pattern(),
       },
       devicesLooping: 0,
       periodicBackupOptions: [
@@ -961,16 +885,28 @@ export default {
     this.loadWhatsapp();
   },
   methods: {
+    initial_password_pattern() {
+      return {
+        min: null,
+        max: null,
+        alphabet_lower: false,
+        alphabet_upper: false,
+        numeric: false,
+        symbol: false,
+      };
+    },
     async loadConfig() {
       let _res = await getSysConfig();
       let epcStatus = await getMstEpcStatus({ is_final_status: true });
       if (_res) {
         let data = _res.data[0];
+        let pattern = data.password_pattern;
         this.data = {
           ...data,
-          password_pattern: data.password_pattern
-            ? JSON.parse(data.password_pattern)
-            : this.password_pattern,
+          return_ext_aggregation: data.return_ext_aggregation ? true : false,
+          password_pattern: pattern
+            ? JSON.parse(pattern)
+            : this.initial_password_pattern(),
         };
         this.devicesLooping = data.total_device;
       }
@@ -1089,6 +1025,10 @@ export default {
       let total = this.data.total_device;
       this.data.list_device = this.data.list_device.slice(0, total);
       this.data.password_pattern = JSON.stringify(this.data.password_pattern);
+      let parameter = JSON.parse(JSON.stringify(this.data));
+      parameter.return_ext_aggregation = parameter.return_ext_aggregation
+        ? 1
+        : 0;
       $axiosMertrack
         .post(`v3/configuration/application`, this.data)
         .then((result) => {

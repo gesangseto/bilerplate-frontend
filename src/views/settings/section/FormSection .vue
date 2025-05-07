@@ -8,9 +8,9 @@
           </CCardHeader>
           <CCardBody>
             <CForm novalidate>
-              <CInput :disabled="true" horizontal v-model="section.id">
+              <CInput :disabled="true" horizontal v-model="formData.id">
                 <template #label>
-                  <p class="col-form-label col-sm-3">ID</p>
+                  <p class="col-form-label col-sm-3">IDs</p>
                 </template>
               </CInput>
               <CSelect
@@ -19,14 +19,14 @@
                 :options="departmentOptions"
                 horizontal
                 placeholder="--Select--"
-                :value.sync="section.mst_department_id"
+                :value.sync="formData.mst_department_id"
                 :add-input-classes="{
                   'is-valid':
-                    !$v.section.mst_department_id.$error &&
-                    $v.section.mst_department_id.required,
+                    !$v.formData.mst_department_id.$error &&
+                    $v.formData.mst_department_id.required,
                   'is-invalid':
-                    $v.section.mst_department_id.$error &&
-                    !$v.section.mst_department_id.required,
+                    $v.formData.mst_department_id.$error &&
+                    !$v.formData.mst_department_id.required,
                 }"
               >
                 <template #label>
@@ -43,12 +43,12 @@
                 horizontal
                 placeholder="Enter section name"
                 autocomplete="name"
-                v-model="section.name"
+                v-model="formData.name"
                 :add-input-classes="{
                   'is-valid':
-                    !$v.section.name.$error && $v.section.name.required,
+                    !$v.formData.name.$error && $v.formData.name.required,
                   'is-invalid':
-                    $v.section.name.$error && !$v.section.name.required,
+                    $v.formData.name.$error && !$v.formData.name.required,
                 }"
               >
                 <template #label>
@@ -64,14 +64,14 @@
                 :disabled="action == 'Read' ? true : false"
                 placeholder="Enter section description"
                 horizontal
-                v-model="section.description"
+                v-model="formData.description"
                 :add-input-classes="{
                   'is-valid':
-                    !$v.section.description.$error &&
-                    $v.section.description.required,
+                    !$v.formData.description.$error &&
+                    $v.formData.description.required,
                   'is-invalid':
-                    $v.section.description.$error &&
-                    !$v.section.description.required,
+                    $v.formData.description.$error &&
+                    !$v.formData.description.required,
                 }"
               >
                 <template #label>
@@ -88,11 +88,20 @@
                 <SwitchStatusMaster
                   :disabled="action == 'Read'"
                   :show_label="true"
-                  :default_value="section.status"
-                  v-on:onChange="section.status = $event"
+                  :default_value="formData.status"
+                  v-on:onChange="formData.status = $event"
                 />
               </CRow>
             </CForm>
+
+            <Metadata
+              :defaultMetadata="formData.metadata"
+              v-on:handleChange="
+                (formData.metadata = $event.result),
+                  (formData.error_metadata = $event.error_metadata)
+              "
+              model="mst_section"
+            />
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -126,6 +135,7 @@ export default {
   name: 'WareHouseForm',
   data() {
     return {
+      initial_load: true,
       route_action: '',
       // category: '',
       action: 'Edit',
@@ -139,7 +149,7 @@ export default {
           label: 'Ready To Sell',
         },
       ],
-      section: { status: 'Active' },
+      formData: { status: 'Active' },
       departmentOptions: [],
       statusOptions: ['Active', 'Inactive'],
       listProvince: [],
@@ -156,7 +166,7 @@ export default {
     this.loadDepartment();
   },
   validations: {
-    section: {
+    formData: {
       mst_department_id: { required },
       name: { required },
       description: { required },
@@ -166,7 +176,7 @@ export default {
     async loadData() {
       let _res = await getMstSection({ id: this.$route.params.id });
       if (_res) {
-        this.section = _res.data[0];
+        this.formData = _res.data[0];
       }
     },
     async loadDepartment() {
@@ -180,9 +190,21 @@ export default {
         }
       }
     },
+    valid() {
+      if (!this.formData.mst_department_id) {
+        return false;
+      } else if (!this.formData.name) {
+        return false;
+      } else if (!this.formData.description) {
+        return false;
+      } else if (this.formData.error_metadata) {
+        return false;
+      }
+      return true;
+    },
     async save() {
-      this.$v.$touch();
-      if (this.$v.$invalid) {
+      this.initial_load = false;
+      if (!this.valid()) {
         this.$toast.open({
           message: 'Please input all the required data',
           type: 'error',
@@ -191,14 +213,13 @@ export default {
           duration: 5000,
         });
         return;
-        return;
       }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let dataPost = this.section;
+        let dataPost = this.formData;
         let res = {};
         if (dataPost.id) {
           res = await updateMstSection(dataPost);

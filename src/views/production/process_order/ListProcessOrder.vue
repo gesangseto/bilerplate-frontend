@@ -60,6 +60,14 @@
                       :permission="'read'"
                       @click="rowRead(item, index)"
                     />
+                    <ButtonPermission
+                      v-if="user_id == 0"
+                      :buttonProperty="btn_copyProp"
+                      :permission="'create'"
+                      @click="addNew()"
+                      :id="item.id"
+                      :useHref="true"
+                    />
                   </td>
                 </template>
               </CDataTable>
@@ -102,7 +110,7 @@ import {
   deleteProcessOrder,
   getProcessOrder,
 } from '../../../resource/ProcessOrder';
-import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { calculatePaginationV3, exportDataV3, getUserId } from '../../../utils';
 import { dateFilter } from '../../../constants';
 
 export default {
@@ -116,6 +124,15 @@ export default {
   },
   data() {
     return {
+      user_id: getUserId(),
+      btn_copyProp: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'copy',
+        text: '',
+        tooltip: 'Copy data',
+      },
       rejectProperty: {
         title: 'Process Order',
         modal: false,

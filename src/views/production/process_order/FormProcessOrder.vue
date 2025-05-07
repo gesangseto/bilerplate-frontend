@@ -229,7 +229,7 @@
                 <CIcon name="cil-check-circle" /> View History</CButton
               >
               <CButton
-                v-if="[1, 3, 4, 10].includes(formData.status)"
+                v-if="[1, 3, 4, 10].includes(formData.status) && !is_copy"
                 type="submit"
                 size="sm"
                 @click="handleViewSerial"
@@ -239,7 +239,7 @@
                 <CIcon name="cil-check-circle" /> View Serial</CButton
               >
               <CButton
-                v-if="[1, 3, 4, 10].includes(formData.status)"
+                v-if="[1, 3, 4, 10].includes(formData.status) && !is_copy"
                 type="submit"
                 size="sm"
                 @click="viewModalWeight = true"
@@ -306,7 +306,9 @@
           />
           <ButtonPermission
             v-if="
-              (formData.status == 3 || formData.status == 4) && userInfo.id == 0
+              (formData.status == 3 || formData.status == 4) &&
+              userInfo.id == 0 &&
+              !is_copy
             "
             :buttonProperty="{
               color: 'warning',
@@ -490,6 +492,7 @@
       title="History Request Serial"
       color="info"
       :show.sync="viewModalHistory"
+      size="lg"
     >
       <CDataTable
         hover
@@ -537,16 +540,26 @@
           </p>
         </CCol>
       </CRow>
+      <CRow>
+        <CCol md="6">
+          <CInput
+            placeholder="Filter data..."
+            v-model="filterKeyword"
+            @keyup.enter="applyFilter"
+            class="mb-2 mt-2"
+            size="sm"
+          />
+        </CCol>
+      </CRow>
       <CDataTable
+        :items="filteredItems"
+        :fields="fieldSerial"
         hover
         striped
-        sorter
-        tableFilter
         border
+        sorter
         :pagination="true"
         :items-per-page="10"
-        :items="detailSerial"
-        :fields="fieldSerial"
         style="font-size: 12px"
       />
       <template #footer>
@@ -587,6 +600,7 @@ import {
   isJsonString,
   onlyNumber,
 } from '../../../utils';
+
 export default {
   name: 'FormPacking',
   watch: {
@@ -608,6 +622,7 @@ export default {
         this.reformatExp();
       },
     },
+
     additionalSerial: {
       deep: true,
       handler(item) {
@@ -652,6 +667,7 @@ export default {
   },
   data() {
     return {
+      is_copy: false,
       userInfo: getProfile(),
       activeTab: 0,
       initialLoad: true,
@@ -758,6 +774,10 @@ export default {
           label: 'Request Time',
         },
         {
+          key: 'finish_date',
+          label: 'Finish Time',
+        },
+        {
           key: 'generate_count_level_1',
           label: 'Level 1',
         },
@@ -783,6 +803,8 @@ export default {
         quantity_l4: 0,
         serials: [],
       },
+      filterKeyword: '', // Input user
+      filteredItems: [], // Data hasil filter
       itemGenerateCount: [],
       detail_item: {},
       viewModal: false,
@@ -793,6 +815,11 @@ export default {
     };
   },
   async mounted() {
+    await this.loadProduct();
+    this.action = capitalizeFirstLetter(this.$route.params.type);
+    // if (this.action != "Create") this.loadData();
+    if (this.$route.params.id !== undefined) this.loadData();
+
     // cek parameter url
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
@@ -804,26 +831,39 @@ export default {
         ? 'EDIT'
         : 'APPROVE';
     // get product
-    let _product = await getMstProduct({
-      product_type: 0,
-      show_status: true,
-      status: 'Active',
-    });
-    if (_product) {
-      for (const it of _product.data) {
-        this.productOptions.push({
-          value: it.id,
-          name: it.name,
-          label: `[${it.no}] ${it.name}`,
-          item: it,
-        });
-      }
-    }
-    if (this.action !== 'Create') {
-      this.loadData();
+
+    this.page = 1;
+    if (this.action == 'Create' && this.$route.params.id) {
+      this.is_copy = true;
     }
   },
   methods: {
+    async loadProduct() {
+      let param = {
+        product_type: 0,
+        show_status: true,
+        status: 'Active',
+      };
+      let _product = await getMstProduct(param);
+      if (_product) {
+        for (const it of _product.data) {
+          this.productOptions.push({
+            value: it.id,
+            name: it.name,
+            label: `[${it.no}] ${it.name}`,
+            item: it,
+          });
+        }
+      }
+    },
+    applyFilter() {
+      const keyword = this.filterKeyword.toLowerCase();
+      this.filteredItems = this.tabData.serials.filter((item) =>
+        Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(keyword)
+        )
+      );
+    },
     handleInputEXP($event) {
       if ($event) this.formData.shelf_life = null;
     },
@@ -889,6 +929,7 @@ export default {
       this.tabData.quantity_l4 = this.tabData.serials.filter(
         (it) => it.packaging_level == 4
       ).length;
+      this.applyFilter();
     },
     async handleViewSerial() {
       if (this.serials.length == 0) {
@@ -904,6 +945,7 @@ export default {
     },
     async loadData() {
       let _res = await getProcessOrder({ id: this.$route.params.id });
+
       if (_res && !_res.error) {
         this.formData = _res.data[0];
         this.formData.het = this.formData.het || '';
@@ -927,6 +969,9 @@ export default {
           if (this.formData.product[`packagingl${level}_id`]) {
             this.formData.current_pack = level;
           }
+        }
+        if (this.is_copy) {
+          this.formData.history = [];
         }
       }
     },
@@ -1078,6 +1123,9 @@ export default {
         delete param.weight_l2;
         delete param.weight_l3;
         delete param.weight_l4;
+        if (this.action === 'Create' && param.id) {
+          delete param.id;
+        }
         if (param.id) {
           res = await updateProcessOrder(param);
         } else {
@@ -1212,6 +1260,9 @@ export default {
       return this.formData.generate_count_additional.map((item) => {
         return {
           ...item,
+          finish_date: item.finish_date
+            ? moment(item.finish_date).format('YYYY-MM-DD HH:mm:ss')
+            : '-',
           generate_count_level_1: item.generate_count_level_1 || 0,
           generate_count_level_2: item.generate_count_level_2 || 0,
           generate_count_level_3: item.generate_count_level_3 || 0,
