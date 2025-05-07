@@ -540,16 +540,26 @@
           </p>
         </CCol>
       </CRow>
+      <CRow>
+        <CCol md="6">
+          <CInput
+            placeholder="Filter data..."
+            v-model="filterKeyword"
+            @keyup.enter="applyFilter"
+            class="mb-2 mt-2"
+            size="sm"
+          />
+        </CCol>
+      </CRow>
       <CDataTable
+        :items="filteredItems"
+        :fields="fieldSerial"
         hover
         striped
-        sorter
-        tableFilter
         border
+        sorter
         :pagination="true"
         :items-per-page="10"
-        :items="detailSerial"
-        :fields="fieldSerial"
         style="font-size: 12px"
       />
       <template #footer>
@@ -657,6 +667,7 @@ export default {
   },
   data() {
     return {
+      is_copy: false,
       userInfo: getProfile(),
       activeTab: 0,
       initialLoad: true,
@@ -792,6 +803,8 @@ export default {
         quantity_l4: 0,
         serials: [],
       },
+      filterKeyword: '', // Input user
+      filteredItems: [], // Data hasil filter
       itemGenerateCount: [],
       detail_item: {},
       viewModal: false,
@@ -842,6 +855,14 @@ export default {
           });
         }
       }
+    },
+    applyFilter() {
+      const keyword = this.filterKeyword.toLowerCase();
+      this.filteredItems = this.tabData.serials.filter((item) =>
+        Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(keyword)
+        )
+      );
     },
     handleInputEXP($event) {
       if ($event) this.formData.shelf_life = null;
@@ -906,6 +927,7 @@ export default {
       this.tabData.quantity_l4 = this.tabData.serials.filter(
         (it) => it.packaging_level == 4
       ).length;
+      this.applyFilter();
     },
     async handleViewSerial() {
       if (this.serials.length == 0) {
