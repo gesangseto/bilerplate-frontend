@@ -1,5 +1,6 @@
 import { isAlphaNumeric, isNumeric } from '../costumUtils';
 import { getConfig } from '../storage';
+import cronstrue from 'cronstrue';
 const CryptoJs = require('crypto-js');
 
 export function calculatePagination({ filter = Object, item = Object }) {
@@ -282,58 +283,85 @@ export function decryptData(data) {
     return null;
   }
 }
+
+export function readCron(cron) {
+  const parts = cron.split(' ');
+  let humanReadable = '';
+  if (parts.length === 6) {
+    const [sec, ...rest] = parts;
+    humanReadable = cronstrue.toString(rest.join(' '));
+    humanReadable = `Every ${sec} seconds, ${humanReadable}`;
+  } else {
+    humanReadable = cronstrue.toString(parts.join(' '));
+  }
+  return humanReadable;
+}
+
 export function isValidCron(cron) {
   if (!cron) return false;
-  if (cron && typeof cron !== 'string') cron = cron.toString();
-  const cronParts = cron.trim().split(/\s+/);
-  if (cronParts.length !== 5) return false;
 
+  // Pastikan cron adalah string
+  if (typeof cron !== 'string') cron = cron.toString();
+
+  const cronParts = cron.trim().split(/\s+/);
+
+  // Cron dapat memiliki 5 atau 6 bagian (tahun ditambahkan di bagian terakhir)
+  if (cronParts.length !== 5 && cronParts.length !== 6) return false;
+
+  // Definisikan validator untuk setiap bagian
   const validators = [
     { name: 'minute', min: 0, max: 59 },
     { name: 'hour', min: 0, max: 23 },
     { name: 'dayOfMonth', min: 1, max: 31 },
     { name: 'month', min: 1, max: 12 },
-    { name: 'dayOfWeek', min: 0, max: 7 },
+    { name: 'dayOfWeek', min: 0, max: 7 }, // 0 dan 7 untuk Minggu, yang keduanya valid
+    { name: 'year', min: 1970, max: 2099 }, // Untuk cron yang mencakup tahun
   ];
 
-  return cronParts.every((part, index) => {
-    return validateCronField(
-      part,
-      validators[index].min,
-      validators[index].max
-    );
-  });
+  // Periksa apakah ada bagian tambahan untuk tahun
+  const numParts = cronParts.length;
+  const limit = numParts === 6 ? 6 : 5; // Hanya validasi tahun jika ada 6 bagian
+
+  // Validasi setiap bagian cron
+  for (let i = 0; i < limit; i++) {
+    if (
+      !validateCronField(cronParts[i], validators[i].min, validators[i].max)
+    ) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
+// Fungsi validasi untuk setiap field cron
 function validateCronField(field, min, max) {
-  // Bintang (*)
-  if (field === '*') return true;
-
-  // Daftar nilai (1,2,3)
-  if (/^\d+(,\d+)*$/.test(field)) {
-    return field.split(',').every((num) => {
-      const n = Number(num);
-      return !isNaN(n) && n >= min && n <= max;
-    });
+  // Mengizinkan penggunaan wildcard '*', angka, dan rentang angka (misalnya '1-5')
+  const regex = /^(?:\*|([0-9]+(-[0-9]+)?(\/[0-9]+)?))$/;
+  if (field === '*' || regex.test(field)) {
+    return true;
   }
 
-  // Range nilai (1-5)
-  if (/^\d+-\d+$/.test(field)) {
-    const [start, end] = field.split('-').map(Number);
-    return start >= min && end <= max && start <= end;
+  // Jika bukan '*' dan tidak sesuai regex, pastikan nilainya berada dalam rentang yang valid
+  const parts = field.split('/');
+  const baseField = parts[0];
+  const step = parts[1] ? parseInt(parts[1], 10) : 1;
+
+  // Validasi nilai dasar (misalnya '5-10')
+  if (baseField.includes('-')) {
+    const [start, end] = baseField.split('-').map((num) => parseInt(num, 10));
+    if (start < min || end > max || start > end) {
+      return false;
+    }
+  } else {
+    const value = parseInt(baseField, 10);
+    if (value < min || value > max) {
+      return false;
+    }
   }
 
-  // Step (*/5 atau 1-10/2)
-  if (/^(\*|\d+-\d+)\/\d+$/.test(field)) {
-    const [base, step] = field.split('/');
-    return validateCronField(base, min, max) && !isNaN(Number(step));
-  }
+  // Validasi langkah (misalnya '*/5')
+  if (step && step < 1) return false;
 
-  // Nilai tunggal
-  if (/^\d+$/.test(field)) {
-    const num = Number(field);
-    return num >= min && num <= max;
-  }
-
-  return false; // Tidak cocok
+  return true;
 }

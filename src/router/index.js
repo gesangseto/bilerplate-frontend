@@ -193,6 +193,9 @@ const FormStation = () => import('@/views/configuration/station/FormStation');
 // Pattern
 const ListPattern = () => import('@/views/configuration/pattern/ListPattern');
 const FormPattern = () => import('@/views/configuration/pattern/FormPattern');
+// Cron Schedule
+const ListCron = () => import('@/views/configuration/cron_schedule/List');
+const FormCron = () => import('@/views/configuration/cron_schedule/Form');
 // Metadata
 const ListMetadata = () =>
   import('@/views/configuration/metadata/ListMetadata');
@@ -972,6 +975,25 @@ function configRoutes() {
           name: 'Metadata',
           meta: { login: true },
           component: ListMetadata,
+        },
+        // CRON SCHEDULE
+        {
+          path: 'cron-schedule/:type/:id',
+          name: 'Cron Details',
+          component: FormCron,
+          meta: { login: true },
+        },
+        {
+          path: 'cron-schedule/:type',
+          name: 'Cron Add',
+          component: FormCron,
+          meta: { login: true },
+        },
+        {
+          path: 'cron-schedule',
+          name: 'Cron',
+          meta: { login: true },
+          component: ListCron,
         },
         // CONF LAYOUT
         {
