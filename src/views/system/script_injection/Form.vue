@@ -53,21 +53,12 @@
                   />
                 </CCol>
                 <CCol sm="12">
-                  <InputDefault
-                    :disabled="action == 'Read' ? true : false"
+                  <SelectOption
+                    title="Running Schedule"
+                    :options="listCron"
+                    v-on:onchange="formData.schedule = $event"
+                    :value="formData.schedule"
                     :col="[3, 9]"
-                    title="Schedule"
-                    validasi="cron"
-                    placeholder="* * * * * *"
-                    v-model="formData.schedule"
-                    :is-valid="
-                      initial_load
-                        ? null
-                        : !formData.schedule
-                        ? null
-                        : testCron(formData.schedule)
-                    "
-                    :invalid_feedback="'Invalid cron expression. Please visit https://crontab.guru/ for assistance.'"
                   />
                 </CCol>
                 <CCol sm="12">
@@ -136,6 +127,7 @@ import {
   executeSysScriptInj,
 } from '../../../resource/SysScriptInj';
 import moment from 'moment';
+import { getConfCron } from '../../../resource/ConfCron';
 
 export default {
   name: 'FormStation',
@@ -147,13 +139,8 @@ export default {
       route_action: '',
       // category: '',
       action: 'Edit',
-      formData: {},
-      connection: { ip: null, username: null, password: null, port: null },
-      detailConnector: { params: [] },
-      statusOptions: [
-        { value: 'Active', label: 'Active' },
-        { value: 'Inactive', label: 'Inactive' },
-      ],
+      formData: { status: 'Active' },
+      listCron: [],
     };
   },
   mounted() {
@@ -163,6 +150,7 @@ export default {
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
+    this.loadCron();
   },
   methods: {
     async loadData() {
@@ -173,6 +161,15 @@ export default {
           .utc()
           .format('YYYY-MM-DD HH:mm:ss');
       }
+    },
+    async loadCron() {
+      let cron = await getConfCron();
+      if (cron) {
+        this.listCron = cron.data.map((it) => {
+          return { value: it.cron, label: it.name };
+        });
+      }
+      return;
     },
     async execution() {
       var message = `You are about to execute this script. This operation cannot be undone. Would you like to continue?`;

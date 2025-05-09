@@ -702,21 +702,12 @@
                   Long Process Configuration
                 </CCardHeader>
                 <CCardBody>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Retrying Attempt"
-                    v-model="data.retry_attempt"
-                    :validasi="'integer'"
-                    :max="10000"
-                    description="The strategy used to retry a failed operation."
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
+                  <SelectOption
                     title="Retrying Time Interval"
-                    v-model="data.retry_interval"
-                    :validasi="'integer'"
-                    :max="10000"
-                    description="The time interval between retry attempts in a retrying strategy in milli second."
+                    :options="listCron"
+                    v-on:onchange="data.retry_interval = $event"
+                    :value="data.retry_interval"
+                    :col="[3, 7]"
                   />
                 </CCardBody>
               </CCard>
@@ -790,6 +781,7 @@ import {
   deleteWhatsappSession,
 } from '../../../resource/Whatsapp';
 import { setConfig } from '../../../utils';
+import { getConfCron } from '../../../resource/ConfCron';
 export default {
   name: 'ConfigApplication',
   components: {},
@@ -856,6 +848,7 @@ export default {
         { value: 14, label: '14 Day' },
         { value: 30, label: '30 Day' },
       ],
+      listCron: [],
       message: {
         errorAdmin: '',
         errorPassword: '',
@@ -882,6 +875,8 @@ export default {
   },
   mounted() {
     this.loadConfig();
+    this.loadEpcStatus();
+    this.loadCron();
     this.loadWhatsapp();
   },
   methods: {
@@ -897,7 +892,6 @@ export default {
     },
     async loadConfig() {
       let _res = await getSysConfig();
-      let epcStatus = await getMstEpcStatus({ is_final_status: true });
       if (_res) {
         let data = _res.data[0];
         let pattern = data.password_pattern;
@@ -910,9 +904,22 @@ export default {
         };
         this.devicesLooping = data.total_device;
       }
+      return;
+    },
+    async loadEpcStatus() {
+      let epcStatus = await getMstEpcStatus({ is_final_status: true });
       if (epcStatus) {
         this.epcStatusOptions = epcStatus.data.map((it) => {
           return { value: parseInt(it.id), label: it.name };
+        });
+      }
+      return;
+    },
+    async loadCron() {
+      let cron = await getConfCron();
+      if (cron) {
+        this.listCron = cron.data.map((it) => {
+          return { value: it.cron, label: it.name };
         });
       }
       return;
@@ -1022,15 +1029,12 @@ export default {
           return;
         }
       }
-      let total = this.data.total_device;
-      this.data.list_device = this.data.list_device.slice(0, total);
-      this.data.password_pattern = JSON.stringify(this.data.password_pattern);
-      let parameter = JSON.parse(JSON.stringify(this.data));
-      parameter.return_ext_aggregation = parameter.return_ext_aggregation
-        ? 1
-        : 0;
+      let param = JSON.parse(JSON.stringify(this.data));
+      param.list_device = param.list_device.slice(0, param.total_device);
+      param.password_pattern = JSON.stringify(param.password_pattern);
+      param.return_ext_aggregation = param.return_ext_aggregation ? 1 : 0;
       $axiosMertrack
-        .post(`v3/configuration/application`, this.data)
+        .post(`v3/configuration/application`, param)
         .then((result) => {
           let res = result.data;
           this.$toast.open({
@@ -1043,7 +1047,6 @@ export default {
             duration: 5000,
           });
           if (!res.error) {
-            delete this.data.password_pattern;
             setConfig(this.data);
             this.$router.back();
           }
