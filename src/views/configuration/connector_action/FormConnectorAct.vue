@@ -63,19 +63,13 @@
                   <p class="col-form-label col-sm-3">Archive Folder Path</p>
                 </template>
               </CInput>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter time interval (in minute). Leave blank or set value to 0 to disable."
-                v-model="form.schedule"
-                type="number"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Auto Execution Time Interval
-                  </p>
-                </template>
-              </CInput>
+              <SelectOption
+                title="Running Schedule"
+                :options="listCron"
+                v-on:onchange="form.schedule = $event"
+                :value="form.schedule"
+                :col="[3, 9]"
+              />
               <CRow form class="form-group">
                 <CCol sm="3"> Using Connection </CCol>
                 <SwitchDefault
@@ -264,6 +258,7 @@
 <script>
 import { capitalizeFirstLetter } from '../../../utils';
 import $axiosMertrack from '../../../apiMertrack';
+import { getConfCron } from '../../../resource/ConfCron';
 
 export default {
   name: 'Connector',
@@ -292,6 +287,7 @@ export default {
       detailConnector: { params: [] },
       listConnector: [],
       listConnectorProperty: [],
+      listCron: [],
       databaseList: [[], [], [], [], [], [], [], [], [], []],
       temp_selected_row: null,
       statusOptions: [
@@ -307,6 +303,7 @@ export default {
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
+    this.loadCron();
     this.loadConnector();
   },
   methods: {
@@ -330,6 +327,15 @@ export default {
             idx += 1;
           }
         });
+    },
+    async loadCron() {
+      let cron = await getConfCron();
+      if (cron) {
+        this.listCron = cron.data.map((it) => {
+          return { value: it.cron, label: it.name };
+        });
+      }
+      return;
     },
     loadConnector() {
       $axiosMertrack.get(`/v3/connector/connector-list`).then((response) => {
