@@ -67,6 +67,17 @@ export function getFiltering(url) {
   return filtering;
 }
 
+export function setLastUrl(url) {
+  localStorage.setItem('last_url', url);
+}
+export function getLastUrl() {
+  try {
+    return localStorage.getItem('last_url');
+  } catch (error) {
+    return null;
+  }
+}
+
 export function setProfile(data = {}) {
   delete data.role_menu;
   delete data.identity_logo_path;

@@ -148,6 +148,7 @@ import {
   setLimitation,
   getLimitation,
   setConfig,
+  setLastUrl,
 } from '../utils';
 import moment from 'moment';
 import { getSysConfig } from '../resource/SysConfig';
@@ -178,6 +179,7 @@ export default {
     this.getNotif();
   },
   beforeCreate() {
+    setLastUrl(this.$route.path);
     if (!getProfile()) {
       clearStorage();
       return this.$router.push({ path: `/login` });
@@ -387,7 +389,6 @@ export default {
     },
     sessionExpired() {
       let message = 'Your login session has expired, please login again.';
-      localStorage.setItem('current_url', this.current_route.path);
       localStorage.setItem('message', message);
       clearStorage();
       this.timeout = null;

@@ -126,6 +126,7 @@ import {
   getProfile,
   setMenu,
   getLoginLogo,
+  getLastUrl,
 } from '../../utils';
 import { logoMertrack } from '../../constants';
 import { getSysConfig } from '../../resource/SysConfig';
@@ -166,10 +167,6 @@ export default {
 
   beforeMount() {
     if (getProfile()) {
-      if (localStorage.getItem('current_url')) {
-        this.$router.push({ path: localStorage.getItem('current_url') });
-        return;
-      }
       this.redirectReload();
     }
   },
@@ -187,16 +184,13 @@ export default {
       );
     },
     redirectReload() {
-      if (localStorage.getItem('current_url')) {
-        this.$router
-          .push({ path: localStorage.getItem('current_url') })
-          .then(() => {
-            // this.$router.go();
-          });
+      let lastUrl = getLastUrl();
+      if (lastUrl) {
+        this.$router.push({ path: lastUrl });
+        return;
       } else {
-        this.$router.push({ path: '/home' }).then(() => {
-          // this.$router.go();
-        });
+        this.$router.push({ path: '/home' });
+        return;
       }
     },
     async loadConfig() {
