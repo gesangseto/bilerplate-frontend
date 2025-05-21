@@ -10,70 +10,18 @@
           />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
-        <CCardBody
-          ><!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-          <HeaderFilterDefault
-            :save_filtering="true"
-            status_code="mst_product_category"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
+        <CCardBody>
+          <TableDefault
+            :totalData="totalData"
+            :fields="fields"
+            :items="reformatDatas"
+            :status_code="'mst_product'"
+            :action="['read', 'update', 'delete']"
+            v-on:handleDelete="deleteRow($event)"
+            v-on:handleUpdate="rowUpdate($event)"
+            v-on:handleCopy="addNew($event)"
+            v-on:handleReload="loadData($event)"
           />
-          <!-- INI BATAS HEADER TABLE -->
-          <div id="printMe">
-            <CDataTable
-              hover
-              striped
-              sorter
-              border
-              :items="items"
-              :fields="fields"
-              style="font-size: 12px"
-            >
-              <template #action="{ item, index }">
-                <td>
-                  <ButtonPermission
-                    :permission="'delete'"
-                    @click="deleteRow(item, index)"
-                  />
-                  <ButtonPermission
-                    :id="item.id"
-                    :useHref="true"
-                    :permission="'update'"
-                    @click="rowUpdate(item, index)"
-                  />
-                  <ButtonPermission
-                    :id="item.id"
-                    :useHref="true"
-                    :permission="'read'"
-                    @click="rowRead(item, index)"
-                  />
-                </td>
-              </template>
-            </CDataTable>
-          </div>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
           <ButtonPermission
             exportType="excel"
             :permission="'print'"
@@ -92,26 +40,18 @@
 
 <script>
 import {
-  getMstProductCategory,
   deleteMstProductCategory,
+  getMstProductCategory,
 } from '../../../resource/MstProductCategory';
-import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { exportDataV3 } from '../../../utils';
 
 export default {
   name: 'ListProductCategory',
 
-  mounted() {
-    this.page = 1;
-  },
+  mounted() {},
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        StartDate: '',
-        EndDate: '',
-      },
+      totalData: 0,
       items: [],
       fields: [
         {
@@ -139,37 +79,31 @@ export default {
       ],
     };
   },
+  watch: {
+    $route: {
+      deep: true,
+      handler(route) {
+        let query = route.query;
+        this.loadData({ ...query });
+      },
+    },
+  },
   methods: {
-    async loadData() {
-      let res = await getMstProductCategory(this.filter);
-
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let res = await getMstProductCategory(filter);
       if (!res.error) {
+        this.totalData = res.grand_total;
         this.items = res.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
       }
     },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
-    },
+
     handleClickExport(type) {
       exportDataV3({
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/master/product-category',
       });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
     },
     rowUpdate(item) {
       this.$router.push({
@@ -202,6 +136,16 @@ export default {
         });
         if (!_res.error) this.loadData();
       }
+    },
+  },
+  computed: {
+    reformatDatas() {
+      return this.items.map((item) => {
+        return {
+          ...item,
+          code: item.code || '',
+        };
+      });
     },
   },
 };

@@ -176,7 +176,6 @@ export default {
   },
   mounted() {
     this.timeout = this.getDifferentSecond();
-    this.getNotif();
   },
   beforeCreate() {
     setLastUrl(this.$route.path);
@@ -187,8 +186,11 @@ export default {
   },
   watch: {
     $route: {
-      immediate: true,
+      // immediate: true,
       handler(route) {
+        // console.log('==========LOAD NOTIF VIA ROUTE============');
+        // console.log(route.query);
+
         this.path_url = route.matched || null;
         this.timeoutModal = false;
         this.current_route = route;
@@ -198,7 +200,7 @@ export default {
       },
     },
     timeout: {
-      immediate: true,
+      // immediate: true,
       handler(val) {
         let isNan = isNaN(parseFloat(val));
         if (!isNan && val != null && val > 0 && this.next_count) {

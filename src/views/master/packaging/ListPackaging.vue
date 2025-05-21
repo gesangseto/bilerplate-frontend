@@ -11,53 +11,17 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <!-- INI BATAS HEADER TABLE -->
-          <HeaderFilterDefault
-            :save_filtering="true"
-            status_code="mst_customer"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
-          />
-          <!-- INI BATAS HEADER TABLE -->
-          <CDataTable
-            hover
-            striped
-            sorter
-            border
-            :items="reformatDatas"
+          <TableDefault
+            :totalData="totalData"
             :fields="fields"
-            style="font-size: 12px"
-          >
-            <template #action="{ item, index }">
-              <td>
-                <ButtonPermission
-                  :permission="'delete'"
-                  @click="deleteRow(item, index)"
-                />
-                <ButtonPermission
-                  :id="item.id"
-                  :useHref="true"
-                  :permission="'update'"
-                  @click="rowUpdate(item, index)"
-                />
-                <ButtonPermission
-                  :id="item.id"
-                  :useHref="true"
-                  :permission="'read'"
-                  @click="rowRead(item, index)"
-                />
-              </td>
-            </template>
-          </CDataTable>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
+            :items="reformatDatas"
+            :status_code="'mst_product'"
+            :action="['read', 'update', 'delete']"
+            v-on:handleDelete="deleteRow($event)"
+            v-on:handleUpdate="rowUpdate($event)"
+            v-on:handleCopy="addNew($event)"
+            v-on:handleReload="loadData($event)"
+          />
           <ButtonPermission
             exportType="excel"
             :permission="'print'"
@@ -79,23 +43,15 @@ import {
   deleteMstPackaging,
   getMstPackaging,
 } from '../../../resource/MstPackaging';
-import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { exportDataV3 } from '../../../utils';
 
 export default {
   name: 'ListPackaging',
 
-  mounted() {
-    this.page = 1;
-  },
+  mounted() {},
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        StartDate: '',
-        EndDate: '',
-      },
+      totalData: 0,
       items: [],
       fields: [
         {
@@ -128,36 +84,30 @@ export default {
       ],
     };
   },
-  methods: {
-    async loadData() {
-      let res = await getMstPackaging(this.filter);
-      if (!res.error) {
-        this.items = res.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
-      }
+  watch: {
+    $route: {
+      deep: true,
+      handler(route) {
+        let query = route.query;
+        this.loadData({ ...query });
+      },
     },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
+  },
+  methods: {
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let res = await getMstPackaging(filter);
+      if (!res.error) {
+        this.totalData = res.grand_total;
+        this.items = res.data;
+      }
     },
     handleClickExport(type) {
       exportDataV3({
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/master/packaging',
       });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
     },
     rowUpdate(item) {
       this.$router.push({

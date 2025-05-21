@@ -36,6 +36,8 @@ export default {
   },
   methods: {
     cancel() {
+      this.$router.go(-1);
+      return;
       const path = this.$route.path;
       const params = this.$route.params;
       const { type, id } = params;
