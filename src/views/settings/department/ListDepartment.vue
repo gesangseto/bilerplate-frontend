@@ -12,53 +12,17 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <!-- INI BATAS HEADER TABLE -->
-          <HeaderFilterDefault
-            :save_filtering="true"
-            status_code="mst_customer"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
-          />
-          <!-- INI BATAS HEADER TABLE -->
-          <CDataTable
-            hover
-            striped
-            sorter
-            border
-            :items="items"
+          <TableDefault
+            :totalData="totalData"
             :fields="fields"
-            style="font-size: 12px"
-          >
-            <template #action="{ item, index }">
-              <td>
-                <ButtonPermission
-                  :permission="'delete'"
-                  @click="deleteRow(item, index)"
-                />
-                <ButtonPermission
-                  :id="item.id"
-                  :useHref="true"
-                  :permission="'update'"
-                  @click="rowUpdate(item, index)"
-                />
-                <ButtonPermission
-                  :id="item.id"
-                  :useHref="true"
-                  :permission="'read'"
-                  @click="rowRead(item, index)"
-                />
-              </td>
-            </template>
-          </CDataTable>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
+            :items="reformatDatas"
+            :status_code="'mst_product'"
+            :action="['read', 'update', 'delete']"
+            v-on:handleDelete="deleteRow($event)"
+            v-on:handleUpdate="rowUpdate($event)"
+            v-on:handleCopy="addNew($event)"
+            v-on:handleReload="loadData($event)"
+          />
         </CCardBody>
       </CCard>
     </CCol>
@@ -70,28 +34,16 @@ import {
   deleteMstDepartment,
   getMstDepartment,
 } from '../../../resource/MstDepartment';
-import {
-  exportData,
-  calculatePaginationV3,
-  getLimitation,
-} from '../../../utils';
+import { getLimitation } from '../../../utils';
 
 export default {
   name: 'ListDepartment',
 
-  mounted() {
-    this.page = 1;
-  },
+  mounted() {},
   data() {
     return {
       can_create: true,
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        StartDate: '',
-        EndDate: '',
-      },
+      totalData: 0,
       items: [],
       fields: [
         { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
@@ -106,6 +58,15 @@ export default {
       ],
     };
   },
+  watch: {
+    $route: {
+      deep: true,
+      handler(route) {
+        let query = route.query;
+        this.loadData({ ...query });
+      },
+    },
+  },
   methods: {
     protectCreateData(_res) {
       let max = getLimitation('total_department');
@@ -115,32 +76,14 @@ export default {
         }
       }
     },
-    async loadData() {
-      let _res = await getMstDepartment(this.filter);
-      if (_res) {
-        this.items = _res.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: _res,
-        });
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let res = await getMstDepartment(filter);
+      if (res) {
+        this.totalData = res.grand_total;
+        this.items = res.data;
       }
-      this.protectCreateData(_res);
-    },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
-    },
-    handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
+      this.protectCreateData(res);
     },
     rowUpdate(item) {
       this.$router.push({
@@ -173,6 +116,15 @@ export default {
         });
         if (!_res.error) this.loadData();
       }
+    },
+  },
+  computed: {
+    reformatDatas() {
+      return this.items.map((item) => {
+        return {
+          ...item,
+        };
+      });
     },
   },
 };

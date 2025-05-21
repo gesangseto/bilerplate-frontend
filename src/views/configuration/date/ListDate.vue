@@ -12,65 +12,17 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <!-- INI BATAS HEADER TABLE -->
-          <HeaderFilterDefault
-            :save_filtering="true"
-            status_code="mst_customer"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
+          <TableDefault
+            :totalData="totalData"
+            :fields="fields"
+            :items="reformatDatas"
+            :status_code="'mst_product'"
+            :action="['read', 'update', 'delete']"
+            v-on:handleDelete="deleteRow($event)"
+            v-on:handleUpdate="rowUpdate($event)"
+            v-on:handleCopy="addNew($event)"
+            v-on:handleReload="loadData($event)"
           />
-          <!-- INI BATAS HEADER TABLE -->
-          <div class="table-responsive">
-            <CDataTable
-              hover
-              striped
-              sorter
-              :items="list_item"
-              :fields="fields"
-              class="data-table"
-              style="font-size: 12px"
-            >
-              <template #action="{ item, index }">
-                <td>
-                  <ButtonPermission
-                    :permission="'delete'"
-                    @click="deleteRow(item, index)"
-                  />
-                  <ButtonPermission
-                    :id="item.id"
-                    :useHref="true"
-                    :permission="'update'"
-                    @click="rowUpdate(item, index)"
-                  />
-                  <ButtonPermission
-                    :id="item.id"
-                    :useHref="true"
-                    :permission="'read'"
-                    @click="rowRead(item, index)"
-                  />
-                </td>
-              </template>
-            </CDataTable>
-          </div>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
-          <!-- <ButtonPermission
-            exportType="excel"
-            :permission="'print'"
-            @click="handleClickExport('xls')"
-          />
-          <ButtonPermission
-            exportType="pdf"
-            :permission="'print'"
-            @click="handleClickExport('pdf')"
-          /> -->
         </CCardBody>
       </CCard>
     </CCol>
@@ -78,11 +30,7 @@
 </template>
 
 <script>
-import {
-  calculatePaginationV3,
-  exportData,
-  getLimitation,
-} from '../../../utils';
+import { getLimitation } from '../../../utils';
 import { deleteConfDate, getConfDate } from '../../../resource/ConfDate';
 import moment from 'moment';
 
@@ -92,11 +40,7 @@ export default {
   data() {
     return {
       can_create: true,
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-      },
+      totalData: 0,
       items: [],
       fields: [
         {
@@ -137,6 +81,15 @@ export default {
       ],
     };
   },
+  watch: {
+    $route: {
+      deep: true,
+      handler(route) {
+        let query = route.query;
+        this.loadData({ ...query });
+      },
+    },
+  },
   methods: {
     protectCreateData(_res) {
       let max = getLimitation('total_conf_date');
@@ -146,37 +99,14 @@ export default {
         }
       }
     },
-    async loadData() {
-      let _res = await getConfDate(this.filter);
-      if (_res) {
-        this.items = _res.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: _res,
-        });
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let res = await getConfDate(filter);
+      if (res) {
+        this.totalData = res.grand_total;
+        this.items = res.data;
       }
-      this.protectCreateData(_res);
-    },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
-    },
-    handleClickExport(type) {
-      exportData({ param: this.filter, exportType: type });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.page = 1;
-      this.loadData();
-    },
-    pageSizeChange($event) {
-      this.size = $event;
-      this.page = 1;
-      this.loadData();
+      this.protectCreateData(res);
     },
     rowUpdate(item) {
       this.$router.push({
@@ -214,7 +144,7 @@ export default {
     },
   },
   computed: {
-    list_item() {
+    reformatDatas() {
       return this.items.map((item) => {
         let result = '';
         if (item.overwrite === 'last_day_of_month') {
