@@ -11,77 +11,23 @@
           <h5>Process Order</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransactionV3
-            :save_filtering="true"
-            :filter="['All', 'id', 'product_id']"
-            :order="['All', 'id', 'product_id']"
-            status_code="production_batch_list"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
+          <TableTransaction
+            :totalData="totalData"
+            :fields="fields"
+            :items="reformatItems"
+            :status_code="'production_batch_list'"
+            :filterAction="customActionFilter"
+            :action="['copy', 'read', 'update', 'delete', 'approve']"
+            :actionProperty="{
+              delete: btn_delete,
+              copy: btn_copy,
+              approve: btn_approve,
+            }"
+            :filterBy="['All', 'id', 'product_id']"
+            :orderFilter="['All', 'id', 'product_id']"
+            v-on:handleDelete="handleClickDelete($event)"
+            v-on:handleReload="loadData($event)"
           />
-          <!-- INI BATAS HEADER TABLE -->
-          <CRow>
-            <CCol sm="12" md="12" lg="12">
-              <CDataTable
-                hover
-                striped
-                sorter
-                border
-                :items="reformat"
-                :fields="fields"
-                style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td :key="item.id">
-                    <ButtonPermission
-                      v-if="[0, 3].includes(item.status)"
-                      :permission="'delete'"
-                      :buttonProperty="btn_delete_prop"
-                      @click="handleClickDelete(item, index)"
-                    />
-                    <ButtonPermission
-                      v-if="item.status == 0 || item.status == 4"
-                      :id="item.id"
-                      :useHref="true"
-                      :permission="'update'"
-                      @click="rowUpdate(item, index)"
-                    />
-                    <ButtonPermission
-                      :buttonProperty="approve_property"
-                      v-if="item.status == 0"
-                      :id="item.id"
-                      :useHref="true"
-                      :permission="'approve'"
-                      @click="rowUpdate(item, index)"
-                    />
-                    <ButtonPermission
-                      :id="item.id"
-                      :useHref="true"
-                      :permission="'read'"
-                      @click="rowRead(item, index)"
-                    />
-                    <ButtonPermission
-                      v-if="user_id == 0"
-                      :buttonProperty="btn_copyProp"
-                      :permission="'create'"
-                      @click="addNew()"
-                      :id="item.id"
-                      :useHref="true"
-                    />
-                  </td>
-                </template>
-              </CDataTable>
-            </CCol>
-          </CRow>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
           <ButtonPermission
             exportType="excel"
             :permission="'print'"
@@ -110,22 +56,16 @@ import {
   deleteProcessOrder,
   getProcessOrder,
 } from '../../../resource/ProcessOrder';
-import { calculatePaginationV3, exportDataV3, getUserId } from '../../../utils';
-import { dateFilter } from '../../../constants';
+import { exportDataV3, getUserId } from '../../../utils';
 
 export default {
   name: 'ListSupplier',
-
-  mounted() {
-    this.pages = [10, 20, 50, 100];
-    this.page = 1;
-    this.size = this.pages[0];
-    // this.loadData();
-  },
+  watch: {},
+  mounted() {},
   data() {
     return {
       user_id: getUserId(),
-      btn_copyProp: {
+      btn_copy: {
         size: 'sm',
         class: 'float-right',
         color: 'secondary',
@@ -133,13 +73,7 @@ export default {
         text: '',
         tooltip: 'Copy data',
       },
-      rejectProperty: {
-        title: 'Process Order',
-        modal: false,
-        id: null,
-        reason: '',
-      },
-      btn_delete_prop: {
+      btn_delete: {
         size: 'sm',
         class: 'float-right',
         color: 'danger',
@@ -147,7 +81,7 @@ export default {
         text: '',
         tooltip: 'Cancel',
       },
-      approve_property: {
+      btn_approve: {
         size: 'sm',
         class: 'float-right',
         color: 'success',
@@ -155,14 +89,14 @@ export default {
         text: '',
         tooltip: 'Generate Serial',
       },
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalData: 0,
-        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
-        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
+      rejectProperty: {
+        title: 'Process Order',
+        modal: false,
+        id: null,
+        reason: '',
       },
+      totalData: 0,
+      items: [],
       items: [],
       fields: [
         {
@@ -209,36 +143,37 @@ export default {
     };
   },
   methods: {
-    async loadData() {
-      let res = await getProcessOrder(this.filter);
+    customActionFilter(item) {
+      let action = ['read'];
+      if (item.status == 0) {
+        action.push('approve');
+        action.push('delete');
+        action.push('update');
+      } else if (item.status === 3) {
+        action.push('delete');
+      } else if (item.status === 4) {
+        action.push('update');
+      }
+      if (this.user_id == 0) {
+        action.push('copy');
+      }
+      return action;
+    },
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let res = await getProcessOrder(filter);
       this.items = [];
       if (!res.error) {
+        this.totalData = res.grand_total;
         this.items = res.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
       }
-    },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
     },
     handleClickExport(type) {
       exportDataV3({
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v4/production/process-order',
       });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
     },
     rowUpdate() {},
     rowRead() {},
@@ -271,7 +206,7 @@ export default {
     },
   },
   computed: {
-    reformat() {
+    reformatItems() {
       return this.items.map((item) => {
         return {
           ...item,

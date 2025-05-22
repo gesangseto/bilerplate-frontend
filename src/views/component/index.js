@@ -27,8 +27,10 @@ import InputDateDefault from './InputDateDefault';
 import ButtonPopover from './ButtonPopover';
 import TextareaDefault from './TextareaDefault';
 import TableDefault from './TableDefault';
+import TableTransaction from './TableTransaction';
 
 export {
+  TableTransaction,
   TableDefault,
   VirtualKeyboard,
   ProductWeight,

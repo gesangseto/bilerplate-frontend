@@ -16,6 +16,7 @@
             :fields="fields"
             :items="reformatDatas"
             :status_code="'mst_product'"
+            :filterAction="customActionFilter"
             :action="['copy', 'read', 'update', 'delete']"
             :filterBy="['All', 'mst_product_category_id']"
             v-on:handleDelete="deleteRow($event)"
@@ -41,7 +42,7 @@
 
 <script>
 import { deleteMstProduct, getMstProduct } from '../../../resource/MstProduct';
-import { exportDataV3 } from '../../../utils';
+import { exportDataV3, getUserId } from '../../../utils';
 
 export default {
   name: 'ListProduct',
@@ -58,6 +59,7 @@ export default {
   },
   data() {
     return {
+      user_id: getUserId(),
       totalData: 0,
       items: [],
       fields: [
@@ -121,6 +123,13 @@ export default {
     };
   },
   methods: {
+    customActionFilter(item) {
+      let action = ['create', 'read', 'update', 'delete'];
+      if (this.user_id == 0) {
+        action.push('copy');
+      }
+      return action;
+    },
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let res = await getMstProduct(filter);

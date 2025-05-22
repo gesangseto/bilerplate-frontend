@@ -89,41 +89,46 @@
         <template #action="{ item, index }" v-if="action.length > 0">
           <td>
             <ButtonPermission
-              v-if="action.includes('delete')"
+              v-if="getActions(item).includes('delete')"
+              :buttonProperty="actionProperty.delete || null"
               :permission="'delete'"
               @click="rowDelete(item, index)"
             />
             <ButtonPermission
-              v-if="action.includes('update')"
+              v-if="getActions(item).includes('update')"
+              :buttonProperty="actionProperty.update || null"
               :id="item.id"
               :useHref="true"
               :permission="'update'"
               @click="rowUpdate(item, index)"
             />
             <ButtonPermission
-              v-if="action.includes('read')"
+              v-if="getActions(item).includes('read')"
+              :buttonProperty="actionProperty.read || null"
               :id="item.id"
               :useHref="true"
               :permission="'read'"
               @click="rowRead(item, index)"
             />
             <ButtonPermission
-              v-if="action.includes('print')"
+              v-if="getActions(item).includes('print')"
+              :buttonProperty="actionProperty.print || null"
               :id="item.id"
               :useHref="true"
               :permission="'print'"
               @click="rowPrint(item, index)"
             />
             <ButtonPermission
-              v-if="action.includes('approve')"
+              v-if="getActions(item).includes('approve')"
+              :buttonProperty="actionProperty.approve || null"
               :id="item.id"
               :useHref="true"
-              :permission="'print'"
+              :permission="'approve'"
               @click="rowApprove(item, index)"
             />
             <ButtonPermission
-              v-if="action.includes('copy')"
-              :buttonProperty="btn_copyProp"
+              v-if="getActions(item).includes('copy')"
+              :buttonProperty="btn_copy"
               :permission="'create'"
               @click="rowCopy(item, index)"
               :id="item.id"
@@ -158,7 +163,10 @@ export default {
   props: {
     fields: { type: Array },
     items: { type: Array, default: () => [] },
+    // Action Property
     action: { type: Array, default: () => [] },
+    filterAction: { type: Function, default: null },
+    actionProperty: { type: Object, default: () => ({}) },
     // Ini baru
     totalData: { type: Number, default: () => 0 },
     status_code: { type: String },
@@ -222,7 +230,7 @@ export default {
           label: 'Product Category',
         },
       ],
-      btn_copyProp: {
+      btn_copy: {
         size: 'sm',
         class: 'float-right',
         color: 'secondary',
@@ -233,6 +241,12 @@ export default {
     };
   },
   methods: {
+    getActions(item) {
+      if (typeof this.filterAction === 'function') {
+        return this.filterAction(item); // gunakan fungsi dari parent
+      }
+      return this.action || [];
+    },
     async rowCopy(item) {
       this.$emit('handleCopy', item);
     },

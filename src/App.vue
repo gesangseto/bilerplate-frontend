@@ -43,6 +43,7 @@ import {
   ButtonPopover,
   TextareaDefault,
   TableDefault,
+  TableTransaction,
 } from './views/component';
 Vue.use(
   VueFab /* {
@@ -56,6 +57,7 @@ Vue.use(VueCustomTooltip);
 Vue.use(loading);
 Vue.use(vmodal);
 Vue.use(VueTouchKeyboard);
+Vue.component('TableTransaction', TableTransaction);
 Vue.component('TableDefault', TableDefault);
 Vue.component('ButtonPopover', ButtonPopover);
 Vue.component('VirtualKeyboard', VirtualKeyboard);
