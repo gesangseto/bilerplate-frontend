@@ -11,61 +11,21 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransactionV3
-            :save_filtering="true"
-            :filter="['All', 'id', 'warehouse_id', 'customer_id']"
-            status_code="trx_picking"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
+          <TableTransaction
+            :totalData="totalData"
+            :fields="fields"
+            :items="reformatItems"
+            :filterAction="customActionFilter"
+            :actionProperty="{
+              delete: btn_delete,
+              update: btn_update,
+            }"
+            :status_code="'trx_picking'"
+            :action="['read', 'delete']"
+            :filterBy="['All', 'id', 'warehouse_id', 'customer_id']"
+            v-on:handleReload="loadData($event)"
+            v-on:handleDelete="modalCancel($event)"
           />
-          <!-- INI BATAS HEADER TABLE -->
-
-          <div class="table-responsive">
-            <CDataTable
-              hover
-              striped
-              sorter
-              border
-              :items="list"
-              :fields="fields"
-              class="text-left"
-              style="font-size: 12px"
-            >
-              <template #action="{ item, index }">
-                <td>
-                  <ButtonPermission
-                    :id="item.id"
-                    :useHref="true"
-                    :permission="'read'"
-                    @click="rowClicked(item, index)"
-                  />
-                  <ButtonPermission
-                    v-if="item.status === 0 || item.status === 99"
-                    :permission="'delete'"
-                    :buttonProperty="btn_deleteProperty"
-                    @click="modalCancel(item, index)"
-                  />
-                  <ButtonPermission
-                    v-if="item.status === 99"
-                    :id="item.id"
-                    :useHref="true"
-                    :buttonProperty="btn_updateProperty"
-                    :permission="'update'"
-                    @click="rowUpdate(item, index)"
-                  />
-                </td>
-              </template>
-            </CDataTable>
-          </div>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
           <ButtonPermission
             exportType="excel"
             :permission="'print'"
@@ -90,27 +50,22 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
-import { calculatePaginationV3, exportDataV3 } from '../../../utils';
-import { dateFilter } from '../../../constants';
 import moment from 'moment';
+import $axiosMertrack from '../../../apiMertrack';
+import { exportDataV3 } from '../../../utils';
 export default {
   name: 'ListPickingList',
-  mounted() {
-    this.pages = [10, 20, 50, 100];
-    this.page = 1;
-    this.size = this.pages[0];
-  },
+  mounted() {},
   data() {
     return {
-      btn_deleteProperty: {
+      btn_delete: {
         size: 'sm',
         class: 'float-right',
         color: 'danger',
         icon: 'window-close',
         tooltip: 'Cancel',
       },
-      btn_updateProperty: {
+      btn_update: {
         size: 'sm',
         class: 'float-right',
         color: 'success',
@@ -118,21 +73,13 @@ export default {
         text: 'DO',
         tooltip: 'Input DO',
       },
-      path: this.$route.path,
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalData: 0,
-        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
-        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
-      },
       cancelProperty: {
         title: 'Picking List',
         modal: false,
         id: null,
         reason: '',
       },
+      totalData: 0,
       items: [],
       fields: [
         {
@@ -184,47 +131,33 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/picking?raw=true&${param}`;
-
-      $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
-      });
+    customActionFilter(item) {
+      let action = ['read'];
+      if (item.status == 0) {
+        action.push('delete');
+      } else if (item.status == 99) {
+        action.push('delete');
+        action.push('update');
+      }
+      return action;
     },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let param = `${new URLSearchParams(filter).toString()}`;
+      let url = `/v3/transaction/picking?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || 0;
+      });
     },
     handleClickExport(type) {
       exportDataV3({
         alert: true,
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/transaction/picking',
       });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
-    },
-    addNew() {
-      this.$router.push({ path: `${this.path}/create` });
-    },
-    rowClicked(item) {
-      this.$router.push({ path: `${this.path}/read/${item.id}` });
-    },
-    rowUpdate(item) {
-      this.$router.push({ path: `${this.path}/update/${item.id}` });
     },
     modalCancel(item) {
       this.cancelProperty.modal = true;
@@ -268,7 +201,7 @@ export default {
     },
   },
   computed: {
-    list() {
+    reformatItems() {
       return this.items.map((item) => {
         return {
           ...item,

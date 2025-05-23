@@ -8,9 +8,16 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <HeaderFilterTransactionV3
-                :save_filtering="true"
-                :costume_filter="[
+              <TableTransaction
+                :totalData="totalData"
+                :fields="fields"
+                :items="reformatItems"
+                :status_code="'bpom_transaction'"
+                :filterAction="customActionFilter"
+                :actionProperty="{ update: btn_update, read: btn_read }"
+                :action="['read', 'update']"
+                :filterBy="['All']"
+                :costumeFilter="[
                   {
                     value: 'trx_ref_name',
                     code: 'trx_ref_name',
@@ -28,49 +35,9 @@
                     ],
                   },
                 ]"
-                :filter="['All']"
-                status_code="bpom_transaction"
-                v-on:handleClickFilter="handleClickFilter($event)"
-                v-on:handleChangeSize="handleChangeSize($event)"
+                v-on:handleReload="loadData($event)"
+                v-on:handleUpdate="sendToBpom($event)"
               />
-              <!-- INI BATAS HEADER TABLE -->
-              <CDataTable
-                hover
-                striped
-                sorter
-                border
-                :items="dataTableItem"
-                :fields="fields"
-                class="text-left"
-                style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td>
-                    <ButtonPermission
-                      :id="item.trx_ref_id"
-                      :useHref="true"
-                      :permission="'read'"
-                      @click="rowReadClicked(item, index)"
-                    />
-                    <ButtonPermission
-                      v-if="item.can_proccess"
-                      :permission="'update'"
-                      @click="sendToBpom(item, index)"
-                      :buttonProperty="btn_updateProp"
-                    />
-                    &nbsp;
-                  </td>
-                </template>
-              </CDataTable>
-              <template>
-                <CPagination
-                  :activePage.sync="filter.page"
-                  :pages="filter.totalPages"
-                  size="sm"
-                  align="center"
-                  @update:activePage="pageChange"
-                />
-              </template>
             </CCol>
           </CRow>
         </CCardBody>
@@ -80,41 +47,33 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
-import { calculatePaginationV3, getUserId, humanize } from '../../../utils';
-import { dateFilter } from '../../../constants';
 import moment from 'moment';
+import $axiosMertrack from '../../../apiMertrack';
+import { getUserId, humanize } from '../../../utils';
 export default {
   name: 'ListQueueBpom',
   mounted() {
-    this.page = 1;
     this.loadMenu();
   },
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalData: 0,
-        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
-        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
-      },
-      btn_downloadProp: {
-        size: 'sm',
-        class: 'float-right',
-        color: 'secondary',
-        icon: 'download',
-        text: '',
-        tooltip: 'Download csv',
-      },
-      btn_updateProp: {
+      btn_update: {
         size: 'sm',
         class: 'float-right',
         color: 'success',
         icon: 'paper-plane',
         text: '',
         tooltip: 'Send via API now',
+        useHref: false,
+      },
+      btn_read: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'info',
+        icon: 'eye',
+        text: '',
+        tooltip: 'View',
+        id: 'trx_ref_id',
       },
       formData: {
         connector_action_id: null,
@@ -124,10 +83,8 @@ export default {
           created_by: getUserId(),
         },
       },
+      totalData: 0,
       items: [],
-      tempItems: [],
-      buttonStatus: null,
-      dataUsers: [],
       fields: [
         {
           key: 'trx_id',
@@ -170,25 +127,30 @@ export default {
     },
   },
   methods: {
-    loadData() {
-      this.items = [];
-      let param = `${new URLSearchParams(this.filter).toString()}`;
+    customActionFilter(item) {
+      let action = ['read'];
+      if (item.can_proccess) {
+        action.push('update');
+      }
+      return action;
+    },
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v3/transaction/queue-bpom?${param}`;
       $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || 0;
       });
     },
     loadMenu() {
-      let path = this.$route.fullPath;
+      let path = this.$route.path;
       $axiosMertrack
         .get(`/v3/master/menu?link=${path}`)
         .then((res) => {
-          let _data = res.data.data[0];
-          this.formData.data.menu_id = _data.id;
+          res = res.data;
+          if (res.data.length > 0) this.formData.data.menu_id = res.data[0].id;
         })
         .catch((e) => {
           this.$toast.open({
@@ -241,22 +203,11 @@ export default {
           });
         });
     },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
-    },
     sendToBpom(item) {
       let param = this.formData;
       param.data.trx_ref_id = item.trx_ref_id;
+      console.log(param);
+
       $axiosMertrack
         .post('/v3/connector/connector-action/execute', param)
         .then((result) => {
@@ -288,7 +239,7 @@ export default {
     },
   },
   computed: {
-    dataTableItem() {
+    reformatItems() {
       return this.items.map((item) => {
         let lastUpdate = moment
           .utc(item.modified_date)

@@ -1,6 +1,5 @@
 import ButtonPermission from './ButtonPermission';
 import Button from './Button';
-import HeaderFilterDefault from './HeaderFilterDefault';
 import HeaderShowStatus from './HeaderShowStatus';
 import MasterPid from './MasterPid';
 import CancelModal from './CancelModal';
@@ -38,7 +37,6 @@ export {
   ButtonDownloadFilePath,
   Button,
   ButtonBack,
-  HeaderFilterDefault,
   MasterPid,
   HeaderShowStatus,
   CancelModal,

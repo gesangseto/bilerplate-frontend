@@ -97,7 +97,6 @@ export default {
       },
       totalData: 0,
       items: [],
-      items: [],
       fields: [
         {
           key: 'id',

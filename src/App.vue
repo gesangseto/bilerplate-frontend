@@ -18,7 +18,6 @@ import {
   Button,
   ButtonBack,
   ButtonPermission,
-  HeaderFilterDefault,
   MasterPid,
   HeaderShowStatus,
   CancelModal,
@@ -67,7 +66,6 @@ Vue.component('Button', Button);
 Vue.component('ButtonBack', ButtonBack);
 Vue.component('ButtonPermission', ButtonPermission);
 Vue.component('HeaderShowStatus', HeaderShowStatus);
-Vue.component('HeaderFilterDefault', HeaderFilterDefault);
 Vue.component('CancelModal', CancelModal);
 Vue.component('ShowLockedStatus', ShowLockedStatus);
 Vue.component('DetailBarcodeGenerator', DetailBarcodeGenerator);

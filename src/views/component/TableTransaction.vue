@@ -34,7 +34,7 @@
               <v-icon name="broom" /> Reset
             </CButton>
           </CCol>
-          <CCol md="1" v-if="costume_filter.length > 0 || filterBy.length > 0">
+          <CCol md="1" v-if="costumeFilter.length > 0 || filterBy.length > 0">
             <CButton v-on:click="is_visible = !is_visible">
               <v-icon v-if="!is_visible" name="angle-right" />
               <v-icon v-if="is_visible" name="angle-down" />
@@ -153,42 +153,42 @@
             <ButtonPermission
               v-if="getActions(item).includes('update')"
               :buttonProperty="actionProperty.update || null"
-              :id="item.id"
-              :useHref="true"
+              :id="getActionId('update', item)"
+              :useHref="getActionHref('update')"
               :permission="'update'"
               @click="rowUpdate(item, index)"
             />
             <ButtonPermission
               v-if="getActions(item).includes('read')"
               :buttonProperty="actionProperty.read || null"
-              :id="item.id"
-              :useHref="true"
+              :id="getActionId('read', item)"
+              :useHref="getActionHref('read')"
               :permission="'read'"
               @click="rowRead(item, index)"
             />
             <ButtonPermission
               v-if="getActions(item).includes('print')"
               :buttonProperty="actionProperty.print || null"
-              :id="item.id"
-              :useHref="true"
+              :id="getActionId('print', item)"
+              :useHref="getActionHref('print')"
               :permission="'print'"
               @click="rowPrint(item, index)"
             />
             <ButtonPermission
               v-if="getActions(item).includes('approve')"
               :buttonProperty="actionProperty.approve || null"
-              :id="item.id"
-              :useHref="true"
+              :id="getActionId('approve', item)"
+              :useHref="getActionHref('approve')"
               :permission="'approve'"
               @click="rowApprove(item, index)"
             />
             <ButtonPermission
               v-if="getActions(item).includes('copy')"
               :buttonProperty="actionProperty.copy || null"
+              :id="getActionId('copy', item)"
+              :useHref="getActionHref('copy')"
               :permission="'create'"
               @click="rowCopy(item, index)"
-              :id="item.id"
-              :useHref="true"
             />
           </td>
         </template>
@@ -230,10 +230,11 @@ export default {
     // Ini baru
     totalData: { type: Number, default: () => 0 },
     status_code: { type: String },
-    costume_filter: { type: Array, default: () => [] },
+    costumeFilter: { type: Array, default: () => [] },
     orderFilter: { type: Array, default: () => [] },
     filterBy: { type: Array, default: () => [] },
     save_filtering: { type: Boolean, default: false },
+    removeTrxDate: { type: Boolean, default: false },
   },
 
   components: { ModelSelect, DateRangePicker },
@@ -242,7 +243,11 @@ export default {
       deep: true,
       handler(route) {
         let query = route.query;
-        this.$emit('handleReload', query);
+        if (route && Object.keys(query).length > 0) {
+          this.$emit('handleReload', query);
+        } else {
+          this.resetFilter();
+        }
       },
     },
     items: {
@@ -264,17 +269,19 @@ export default {
   },
   async mounted() {
     await this.getSatusCode();
-    if (this.filter && this.filter.constructor === Array) {
+    // Jika disertakan filterBy
+    if (this.filterBy.length > 0) {
       let new_list = [];
       for (const it of this.listFilter) {
         let code = it.code.toLowerCase();
-        let idx = this.filter.findIndex((o) => o.toLowerCase() == code);
+        let idx = this.filterBy.findIndex((o) => o.toLowerCase() == code);
         if (idx >= 0) new_list.push(it);
       }
       this.listFilter = new_list;
     }
-    if (this.costume_filter && this.costume_filter.constructor === Array) {
-      for (const it of this.costume_filter) {
+    // Jika disertakan costumeFilter
+    if (this.costumeFilter.length > 0) {
+      for (const it of this.costumeFilter) {
         if (it.data && it.data.constructor === Array) {
           this.listFilter.push(it);
         }
@@ -288,7 +295,7 @@ export default {
     if (!this.title) {
       this.title = 'Report';
     }
-    if (this.orderFilter && this.orderFilter.constructor === Array) {
+    if (this.orderFilter.length > 0) {
       let temp_arr = this.listFilter;
       this.listFilter = [];
       for (let ord of this.orderFilter) {
@@ -300,7 +307,7 @@ export default {
 
     // Load filter kemudian trigering
     let fil = this.$route.query;
-    if (fil) {
+    if (Object.keys(fil).length > 0) {
       this.filter = { ...fil, page: parseInt(fil.page) };
       this.fill_date(this.filter.StartDate, this.filter.EndDate);
     }
@@ -476,6 +483,26 @@ export default {
     };
   },
   methods: {
+    getActionId(action, item) {
+      if (
+        this.actionProperty &&
+        this.actionProperty[action] &&
+        this.actionProperty[action].hasOwnProperty('id')
+      ) {
+        return item[this.actionProperty[action].id];
+      }
+      return item.id;
+    },
+    getActionHref(action) {
+      if (
+        this.actionProperty &&
+        this.actionProperty[action] &&
+        this.actionProperty[action].hasOwnProperty('useHref')
+      ) {
+        return this.actionProperty[action].useHref;
+      }
+      return true;
+    },
     getActions(item) {
       if (typeof this.filterAction === 'function') {
         return this.filterAction(item); // gunakan fungsi dari parent
@@ -583,7 +610,7 @@ export default {
         */
 
       console.log('================APPLY FILTER================');
-      console.log(targetQuery);
+      // console.log(targetQuery);
       if (!isSameRoute) {
         // console.log('Reload Normal');
         this.$router.push({ path: this.$route.path, query: targetQuery });
@@ -703,8 +730,8 @@ export default {
           this.extendFilter = false;
           this.set_extend_date();
         } else {
-          if (this.costume_filter) {
-            for (const it of this.costume_filter) {
+          if (this.costumeFilter) {
+            for (const it of this.costumeFilter) {
               if (
                 this.filter.SearchType.toLowerCase() == it.value.toLowerCase()
               ) {

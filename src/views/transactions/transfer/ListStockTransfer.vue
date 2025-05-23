@@ -12,56 +12,27 @@
             <h5>{{ $activeMenu.name }}</h5>
           </CCardHeader>
           <CCardBody>
-            <HeaderFilterTransactionV3
-              :save_filtering="true"
-              :filter="[
+            <TableTransaction
+              :totalData="totalData"
+              :fields="fields"
+              :items="reformatItems"
+              :filterAction="customActionFilter"
+              :actionProperty="{
+                delete: btn_delete,
+              }"
+              :status_code="'trx_transfer'"
+              :action="['read', 'delete']"
+              :filterBy="[
                 'All',
                 'id',
                 'product_id',
                 'from_warehouse',
                 'to_warehouse',
               ]"
-              status_code="trx_transfer"
-              v-on:handleClickFilter="handleClickFilter($event)"
-              v-on:handleChangeSize="handleChangeSize($event)"
+              v-on:handleReload="loadData($event)"
+              v-on:handleDelete="modalCancel($event)"
             />
-            <!-- INI BATAS HEADER TABLE -->
-            <CDataTable
-              hover
-              striped
-              sorter
-              border
-              :items="renderList"
-              :fields="fields"
-              class="text-left"
-              style="font-size: 12px"
-            >
-              <template #action="{ item, index }">
-                <td>
-                  <ButtonPermission
-                    :id="item.id"
-                    :useHref="true"
-                    :permission="'read'"
-                    @click="rowClicked(item, index)"
-                  />
-                  <ButtonPermission
-                    v-if="item.status === 0"
-                    :permission="'delete'"
-                    :buttonProperty="btn_deleteProperty"
-                    @click="modalCancel(item, index)"
-                  />
-                </td>
-              </template>
-            </CDataTable>
-            <template>
-              <CPagination
-                :activePage.sync="filter.page"
-                :pages="filter.totalPages"
-                size="sm"
-                align="center"
-                @update:activePage="pageChange"
-              />
-            </template>
+
             <ButtonPermission
               exportType="excel"
               :permission="'print'"
@@ -89,13 +60,10 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { calculatePaginationV3, exportDataV3 } from '../../../utils';
-import { dateFilter } from '../../../constants';
+import { exportDataV3 } from '../../../utils';
 export default {
   name: 'ListStockTransfer',
-  mounted() {
-    this.page = 1;
-  },
+  mounted() {},
   data() {
     return {
       cancelProperty: {
@@ -104,7 +72,7 @@ export default {
         id: null,
         reason: '',
       },
-      btn_deleteProperty: {
+      btn_delete: {
         size: 'sm',
         class: 'float-right',
         color: 'danger',
@@ -112,17 +80,8 @@ export default {
         text: '',
         tooltip: 'Cancel',
       },
-      path: this.$route.path,
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalData: 0,
-        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
-        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
-      },
+      totalData: 0,
       items: [],
-      tempItems: [],
       fields: [
         {
           key: 'id',
@@ -146,43 +105,33 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
+    customActionFilter(item) {
+      let action = ['read'];
+      if (item.status == 0) {
+        action.push('delete');
+      }
+      return action;
+    },
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v3/transaction/transfer?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || 0;
       });
-    },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
     },
     handleClickExport(type) {
       exportDataV3({
         alert: true,
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/transaction/transfer',
       });
     },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
-    },
     addNew() {
       this.$router.push({ path: `${this.path}/create` });
-    },
-    rowClicked(item) {
-      this.$router.push({ path: `${this.path}/read/${item.id}` });
     },
     modalCancel(item, index) {
       this.cancelProperty.modal = true;
@@ -228,7 +177,7 @@ export default {
     },
   },
   computed: {
-    renderList() {
+    reformatItems() {
       return this.items.map((item) => {
         return {
           ...item,

@@ -8,17 +8,25 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <HeaderFilterTransactionV3
-                :save_filtering="true"
-                :costume_filter="[
+              <TableTransaction
+                :totalData="totalData"
+                :fields="fields"
+                :items="reformatItems"
+                :status_code="'trx_inbound'"
+                :action="['read']"
+                :filterBy="[
+                  'All',
+                  'id',
+                  'product_id',
+                  'source_supplier',
+                  'destination_warehouse',
+                ]"
+                :costumeFilter="[
                   {
                     value: 'source',
                     code: 'source',
                     label: 'Type',
                     data: [
-                      // { value: 'Transfer', label: 'Transfer ' },
-                      // { value: 'Return-Internal', label: 'Return ' },
-                      // { value: 'Return-EXTERNAL', label: 'Return-External' },
                       { value: 'Production', label: 'Production ' },
                       { value: 'Import', label: 'Import ' },
                       {
@@ -28,14 +36,7 @@
                     ],
                   },
                 ]"
-                :filter="[
-                  'All',
-                  'id',
-                  'product_id',
-                  'source_supplier',
-                  'destination_warehouse',
-                ]"
-                :order="[
+                :orderFilter="[
                   'All',
                   'id',
                   'product_id',
@@ -43,41 +44,8 @@
                   'source_supplier',
                   'destination_warehouse',
                 ]"
-                status_code="trx_inbound"
-                v-on:handleClickFilter="handleClickFilter($event)"
-                v-on:handleChangeSize="handleChangeSize($event)"
+                v-on:handleReload="loadData($event)"
               />
-              <!-- INI BATAS HEADER TABLE -->
-              <CDataTable
-                hover
-                striped
-                sorter
-                border
-                :items="inbound"
-                :fields="fields"
-                class="text-left"
-                style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td>
-                    <ButtonPermission
-                      :id="item.id"
-                      :useHref="true"
-                      :permission="'read'"
-                      @click="rowClicked(item, index)"
-                    />
-                  </td>
-                </template>
-              </CDataTable>
-              <template>
-                <CPagination
-                  :activePage.sync="filter.page"
-                  :pages="filter.totalPages"
-                  size="sm"
-                  align="center"
-                  @update:activePage="pageChange"
-                />
-              </template>
               <ButtonPermission
                 exportType="excel"
                 :permission="'print'"
@@ -98,30 +66,13 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import {
-  toTitleCase,
-  calculatePaginationV3,
-  exportDataV3,
-} from '../../../utils';
-import { dateFilter } from '../../../constants';
+import { exportDataV3, toTitleCase } from '../../../utils';
 export default {
   name: 'ListInbound',
-  mounted() {
-    this.pages = [10, 20, 50, 100];
-    this.page = 1;
-    this.size = this.pages[0];
-    // this.loadData();
-  },
+  mounted() {},
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalData: 0,
-        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
-        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
-      },
+      totalData: 0,
       items: [],
       fields: [
         {
@@ -181,55 +132,28 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let param = `${new URLSearchParams(filter).toString()}`;
       $axiosMertrack
         .get(`/v3/transaction/inbound?${param}&raw=true`)
         .then((res) => {
-          this.items = res.data.data;
-          this.filter = calculatePaginationV3({
-            filter: this.filter,
-            item: res,
-          });
+          res = res.data;
+          this.totalData = res.grand_total || 0;
+          this.items = res.data || [];
         });
-    },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
     },
     handleClickExport(type) {
       exportDataV3({
         alert: true,
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/transaction/inbound',
       });
     },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
-    },
-    rowClicked(item) {
-      this.$router.push({
-        path: `inbound/read/${item.id}`,
-      });
-    },
-    addNew() {
-      this.$router.push({
-        path: `add-inbound`,
-      });
-    },
-    deleteRow(item, index) {
-      this.dataInbound.splice(index, 1);
-    },
   },
   computed: {
-    inbound() {
+    reformatItems() {
       return this.items.map((item) => {
         let created_by = item['_created.full_name'];
         let source = toTitleCase(item.source);
