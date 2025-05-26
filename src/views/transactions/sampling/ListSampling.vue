@@ -8,24 +8,14 @@
         <CCardBody>
           <CRow>
             <CCol sm="12" md="12" lg="12">
-              <!-- :filter="[
-              'All',
-              'Product',
-              'Warehouse',
-              'Supplier',
-              'Customer',
-              'User',
-              'Approval',
-              'Exp Date',
-              'Min Stock',
-              'Max Stock',
-              'Production',
-              'Distribution',
-              'Release',
-            ]" -->
-              <HeaderFilterTransactionV3
-                :save_filtering="true"
-                :filter="[
+              <TableTransaction
+                :totalData="totalData"
+                :fields="fields"
+                :items="reformatItems"
+                :filterAction="customActionFilter"
+                :status_code="'trx_sampling'"
+                :action="['read', 'approve']"
+                :filterBy="[
                   'All',
                   'id',
                   'product_id',
@@ -33,51 +23,8 @@
                   'requested_by',
                   'approval_id',
                 ]"
-                status_code="trx_sampling"
-                v-on:handleClickFilter="handleClickFilter($event)"
-                v-on:handleChangeSize="handleChangeSize($event)"
+                v-on:handleReload="loadData($event)"
               />
-              <!-- INI BATAS HEADER TABLE -->
-              <CDataTable
-                hover
-                striped
-                sorter
-                border
-                :items="sampling"
-                :fields="fields"
-                class="text-left"
-                style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td>
-                    <ButtonPermission
-                      :id="item.id"
-                      :useHref="true"
-                      :permission="'read'"
-                      @click="rowViewClicked(item, index)"
-                    />
-                    &nbsp;
-                    <ButtonPermission
-                      :id="item.id"
-                      :useHref="true"
-                      v-if="
-                        item.approval_id == section_id && item.status == '0'
-                      "
-                      :permission="'approve'"
-                      @click="rowUpdateClicked(item, index)"
-                    />
-                  </td>
-                </template>
-              </CDataTable>
-              <template>
-                <CPagination
-                  :activePage.sync="filter.page"
-                  :pages="filter.totalPages"
-                  size="sm"
-                  align="center"
-                  @update:activePage="pageChange"
-                />
-              </template>
               <ButtonPermission
                 exportType="excel"
                 :permission="'print'"
@@ -98,29 +45,14 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import {
-  calculatePaginationV3,
-  exportDataV3,
-  getSectionId,
-  getUserId,
-} from '../../../utils';
-import { dateFilter } from '../../../constants';
+import { exportDataV3, getSectionId } from '../../../utils';
 export default {
   name: 'Sampling',
-  mounted() {
-    this.page = 1;
-  },
+  mounted() {},
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalData: 0,
-        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
-        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
-      },
       section_id: getSectionId(),
+      totalData: 0,
       items: [],
       fields: [
         {
@@ -164,38 +96,30 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/sampling?raw=true&${param}`;
-
-      $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
-      });
+    customActionFilter(item) {
+      let action = ['read'];
+      if (item.approval_id == this.section_id && item.status == 0) {
+        action.push('approve');
+      }
+      return action;
     },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let param = `${new URLSearchParams(filter).toString()}`;
+      let url = `/v3/transaction/sampling?raw=true&${param}`;
+      $axiosMertrack.get(url).then((res) => {
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || 0;
+      });
     },
     handleClickExport(type) {
       exportDataV3({
         alert: true,
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/transaction/sampling',
       });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
     },
     rowViewClicked(item) {
       this.$router.push({ path: `indirect_request/read/${item.id}` });
@@ -205,7 +129,7 @@ export default {
     },
   },
   computed: {
-    sampling() {
+    reformatItems() {
       return this.items.map((item) => {
         return {
           ...item,

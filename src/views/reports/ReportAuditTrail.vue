@@ -6,40 +6,13 @@
           <h5>Audit Trail</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransactionV3
-            :filter="['All', 'created_by']"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
-          />
-          <!-- INI BATAS HEADER TABLE -->
-          <CDataTable
-            hover
-            striped
-            sorter
-            border
-            :items="dataTableItem"
+          <TableTransaction
+            :totalData="totalData"
             :fields="fields"
-            class="text-left"
-            style="font-size: 12px"
-          >
-            <template #action="{ item, index }">
-              <td>
-                <ButtonPermission
-                  :permission="'read'"
-                  @click="rowViewClicked(item, index)"
-                />
-              </td>
-            </template>
-          </CDataTable>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
+            :items="reformatItems"
+            :filterBy="['All', 'created_by']"
+            v-on:handleReload="loadData($event)"
+          />
           <ButtonPermission
             exportType="excel"
             :permission="'print'"
@@ -58,12 +31,7 @@
 
 <script>
 import $axiosMertrack from '../../apiMertrack';
-import {
-  capitalizeFirstLetter,
-  exportDataReport,
-  calculatePaginationV3,
-} from '../../utils';
-import { dateFilter } from '../../constants';
+import { capitalizeFirstLetter, exportDataReport } from '../../utils';
 
 export default {
   name: 'ReportAuditTrail',
@@ -73,14 +41,9 @@ export default {
   },
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
-        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
-      },
+      filter: null,
       items: [],
+      totalData: 0,
       fields: [
         {
           key: 'no',
@@ -117,33 +80,20 @@ export default {
     };
   },
   methods: {
-    loadData() {
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      if (filter) this.filter = filter;
       this.items = [];
-      let param = `${new URLSearchParams(this.filter).toString()}`;
+      let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v3/system/audit-trail?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || 0;
       });
     },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
-    },
     handleClickExport(type) {
-      exportDataReport({ param: this.filter, exportType: type });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
+      exportDataReport({ param: this.$route.query, exportType: type });
     },
     getNumber(num) {
       num = (this.filter.page - 1) * this.filter.limit + num;

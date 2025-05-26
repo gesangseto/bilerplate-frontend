@@ -142,7 +142,7 @@
         :fields="fields"
         style="font-size: 12px"
       >
-        <template #action="{ item, index }" v-if="action.length > 0">
+        <template #action="{ item, index }">
           <td>
             <ButtonPermission
               v-if="getActions(item).includes('delete')"
@@ -190,6 +190,7 @@
               :permission="'create'"
               @click="rowCopy(item, index)"
             />
+            <slot name="extra-action" :item="item" :index="index" />
           </td>
         </template>
       </CDataTable>
@@ -230,6 +231,7 @@ export default {
     // Ini baru
     totalData: { type: Number, default: () => 0 },
     status_code: { type: String },
+    status_code_default: { type: String },
     costumeFilter: { type: Array, default: () => [] },
     orderFilter: { type: Array, default: () => [] },
     filterBy: { type: Array, default: () => [] },
@@ -258,7 +260,8 @@ export default {
       deep: true,
     },
   },
-  beforeMount() {
+  async beforeMount() {
+    await this.getStatusCode();
     let query = this.$route.query;
     if (this.$route && Object.keys(query).length > 0) {
       this.filter = { ...query, page: parseInt(query.page || 1) };
@@ -268,7 +271,6 @@ export default {
     }
   },
   async mounted() {
-    await this.getSatusCode();
     // Jika disertakan filterBy
     if (this.filterBy.length > 0) {
       let new_list = [];
@@ -649,6 +651,11 @@ export default {
       this.extendFilter = false;
       this.use_type_date = false;
       this.use_normal_form = false;
+
+      if (this.status_code_default) {
+        this.filter.StatusCode = this.status_code_default;
+        this.handleChangeStatus();
+      }
       this.$emit('handleReload', this.filter);
     },
     handleChangeType(reset = true) {
@@ -878,7 +885,7 @@ export default {
       ];
       this.listExtendFilter = source;
     },
-    async getSatusCode() {
+    async getStatusCode() {
       this.listFilterStatusCode = [];
       if (!this.remove_all_status_code) {
         this.listFilterStatusCode = [{ value: '', label: 'All' }];
@@ -887,7 +894,6 @@ export default {
         return;
       }
       let _res = await getStatusDesc({ table_name: this.status_code });
-
       for (const it of _res.data) {
         let tmp = it;
         if (this.status_code_default == it.status_code) {
@@ -908,20 +914,6 @@ export default {
         frags[i] = frags[i].charAt(0).toUpperCase() + frags[i].slice(1);
       }
       return frags.join(' ');
-    },
-    async getSatusCode() {
-      this.listFilterStatusCode = [{ value: '', label: 'All' }];
-      if (this.status_code) {
-        let _res = await getStatusDesc({ table_name: this.status_code });
-        let data = _res.data || [];
-        for (const it of data) {
-          let tmp = it;
-          tmp.value = it.status_code;
-          tmp.label = it.status_desc;
-          tmp.text = it.status_desc;
-          this.listFilterStatusCode.push(tmp);
-        }
-      }
     },
     async getProductCategory() {
       this.listExtendFilter = [];

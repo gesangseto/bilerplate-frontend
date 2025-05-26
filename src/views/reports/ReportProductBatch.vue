@@ -6,32 +6,13 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransactionV3
-            :filter="['All', 'product_id', 'expired_date', 'mfg_date']"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
-          />
-          <!-- INI BATAS HEADER TABLE -->
-          <CDataTable
-            hover
-            striped
-            sorter
-            border
-            :items="dataTableItem"
+          <TableTransaction
+            :totalData="totalData"
             :fields="fields"
-            class="text-left"
-            style="font-size: 12px"
-          >
-          </CDataTable>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
+            :items="reformatItems"
+            :filterBy="['All', 'product_id', 'expired_date', 'mfg_date']"
+            v-on:handleReload="loadData($event)"
+          />
           <ButtonPermission
             exportType="excel"
             :permission="'print'"
@@ -50,26 +31,16 @@
 
 <script>
 import $axiosMertrack from '../../apiMertrack';
-import { calculatePaginationV3, exportDataV3 } from '../../utils';
-import { dateFilter } from '../../constants';
-import moment from 'moment';
+import { exportDataV3 } from '../../utils';
 
 export default {
   name: 'ReportProductBatch',
-  mounted() {
-    this.page = 1;
-    this.loadData();
-  },
+  mounted() {},
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        StartDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].start,
-        EndDate: dateFilter[process.env.VUE_APP_DEFAULT_DATE_FILTER].end,
-      },
       items: [],
+      totalData: 0,
+      filter: null,
       fields: [
         {
           key: 'number',
@@ -119,37 +90,24 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      if (filter) this.filter = filter;
+      let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v3/report/batch?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || 0;
       });
-    },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
     },
     handleClickExport(type) {
       exportDataV3({
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/report/batch',
         alert: true,
       });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
     },
     getNumber(num) {
       num = (this.filter.page - 1) * this.filter.limit + num;
@@ -157,7 +115,7 @@ export default {
     },
   },
   computed: {
-    dataTableItem() {
+    reformatItems() {
       return this.items.map((item, index) => {
         return {
           ...item,

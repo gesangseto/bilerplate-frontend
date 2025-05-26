@@ -6,54 +6,15 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransactionV3
-            :save_filtering="true"
-            :filter="['All', 'created_by']"
-            status_code="sys_audit_trail"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
-          />
-          <!-- INI BATAS HEADER TABLE -->
-          <CDataTable
-            hover
-            striped
-            sorter
-            border
-            :items="dataTableItem"
+          <TableTransaction
+            :totalData="totalData"
             :fields="fields"
-            class="text-left"
-            style="font-size: 12px"
-          >
-            <template #action="{ item, index }">
-              <td>
-                <ButtonPermission
-                  :id="item.id"
-                  :useHref="true"
-                  :permission="'read'"
-                  @click="rowViewClicked(item, index)"
-                />
-              </td>
-            </template>
-          </CDataTable>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
-          <!-- <ButtonPermission
-            exportType="excel"
-            :permission="'print'"
-            @click="handleClickExport('xls')"
+            :items="reformatItems"
+            :status_code="'sys_audit_trail'"
+            :action="['read']"
+            :filterBy="['All', 'created_by']"
+            v-on:handleReload="loadData($event)"
           />
-          <ButtonPermission
-            exportType="pdf"
-            :permission="'print'"
-            @click="handleClickExport('pdf')"
-          /> -->
         </CCardBody>
       </CCard>
     </CCol>
@@ -62,27 +23,16 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import {
-  capitalizeFirstLetter,
-  exportDataReport,
-  calculatePaginationV3,
-} from '../../../utils';
+import { capitalizeFirstLetter, exportDataReport } from '../../../utils';
 
 export default {
   name: 'ListAuditTrail',
-  mounted() {
-    this.page = 1;
-  },
+  mounted() {},
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        // StartDate: dateFilter.last_3_month.start,
-        // EndDate: dateFilter.last_3_month.end,
-      },
       items: [],
+      totalData: 0,
+      filter: null,
       fields: [
         {
           key: 'id',
@@ -134,48 +84,30 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      if (filter) this.filter = filter;
+      let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v3/system/audit-trail?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || 0;
       });
     },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.loadData();
-    },
     handleClickExport(type) {
-      exportDataReport({ param: this.filter, exportType: type });
-    },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
-    },
-    getNumber(num) {
-      num = (this.filter.page - 1) * this.filter.limit + num;
-      return num;
+      exportDataReport({ param: this.$route.query, exportType: type });
     },
     rowViewClicked(item) {
       this.$router.push({ path: `audit_trail/read/${item.id}` });
     },
   },
   computed: {
-    dataTableItem() {
+    reformatItems() {
       return this.items.map((item, index) => {
         return {
           ...item,
           _action: item.action,
-          no: this.getNumber(index + 1),
           type: capitalizeFirstLetter(item.type),
           dep_sec: item.department_name + ' - ' + item.section_name,
         };

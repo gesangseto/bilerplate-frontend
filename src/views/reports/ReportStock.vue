@@ -6,8 +6,15 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <HeaderFilterTransactionV3
-            :filter="[
+          <TableTransaction
+            :totalData="totalData"
+            :fields="fields"
+            :items="reformatItems"
+            status_code="report_stock"
+            status_code_default="include_pending"
+            :remove_all_status_code="true"
+            :removeTrxDate="true"
+            :filterBy="[
               'All',
               'product_id',
               'warehouse_id',
@@ -16,34 +23,8 @@
               'minimum',
               'maximum',
             ]"
-            status_code="report_stock"
-            status_code_default="include_pending"
-            :remove_all_status_code="true"
-            :removeTrxDate="true"
-            v-on:handleClickFilter="handleClickFilter($event)"
-            v-on:handleChangeSize="handleChangeSize($event)"
+            v-on:handleReload="loadData($event)"
           />
-          <!-- INI BATAS HEADER TABLE -->
-          <CDataTable
-            hover
-            striped
-            sorter
-            border
-            :items="dataTableItem"
-            :fields="fields"
-            class="text-left"
-            style="font-size: 12px"
-          >
-          </CDataTable>
-          <template>
-            <CPagination
-              :activePage.sync="filter.page"
-              :pages="filter.totalPages"
-              size="sm"
-              align="center"
-              @update:activePage="pageChange"
-            />
-          </template>
           <ButtonPermission
             exportType="excel"
             :permission="'print'"
@@ -62,27 +43,16 @@
 
 <script>
 import $axiosMertrack from '../../apiMertrack';
-import { calculatePaginationV3, exportDataV3 } from '../../utils';
+import { exportDataV3 } from '../../utils';
 
 export default {
   name: 'ReportStock',
-  mounted() {
-    this.page = 1;
-    this.loadData();
-  },
+  mounted() {},
   data() {
     return {
-      filter: {
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalData: 0,
-        StatusCode: 'include_pending',
-        StatusCodeText: 'Include Pending',
-        StartDate: '',
-        EndDate: '',
-      },
       items: [],
+      filter: null,
+      totalData: 0,
       fields: [
         {
           key: 'no',
@@ -136,22 +106,16 @@ export default {
     };
   },
   methods: {
-    loadData() {
-      let param = `${new URLSearchParams(this.filter).toString()}`;
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      if (filter) this.filter = filter;
+      let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v3/report/stock?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
-        this.items = res.data.data;
-        this.filter = calculatePaginationV3({
-          filter: this.filter,
-          item: res,
-        });
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || 0;
       });
-    },
-    handleClickFilter(val) {
-      this.filter = Object.assign(this.filter, val);
-      this.filter.StartDate = '';
-      this.filter.EndDate = '';
-      this.loadData();
     },
     handleClickExport(type) {
       exportDataV3({
@@ -161,27 +125,18 @@ export default {
         url: '/v3/report/stock',
       });
     },
-    pageChange(page) {
-      this.filter.page = page;
-      this.loadData();
-    },
-    handleChangeSize($event) {
-      this.filter.limit = $event;
-      this.filter.page = 1;
-      this.loadData();
-    },
     getNumber(num) {
       num = (this.filter.page - 1) * this.filter.limit + num;
       return num;
     },
   },
   computed: {
-    dataTableItem() {
+    reformatItems() {
       return this.items.map((item, index) => {
         return {
           ...item,
           nie: item.nie || '-',
-          gtin: item.gtin || '-',
+          product_gtin: item.product_gtin || item.gtin || '-',
           no: this.getNumber(index + 1),
         };
       });
