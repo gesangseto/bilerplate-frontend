@@ -24,7 +24,7 @@ export default {
   name: 'SwitchDefault',
   props: {
     show_label: { type: Boolean, default: false },
-    default_value: { type: [Boolean, Number], default: true },
+    default_value: { type: [Boolean, Number], default: false },
     disabled: { type: Boolean, default: false },
     description: { type: String, default: null },
   },
@@ -35,6 +35,12 @@ export default {
     };
   },
   watch: {
+    default_value: {
+      immediate: true,
+      handler(newVal) {
+        this.status = !!newVal;
+      },
+    },
     status: {
       handler(newVal) {
         this.handleChange(newVal);
