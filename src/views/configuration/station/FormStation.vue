@@ -84,7 +84,6 @@
                 :options="listStation"
                 horizontal
                 :value.sync="formData.station_type"
-                @change="handleChangeConnector()"
                 :is-valid="
                   initialLoad ? null : !formData.station_type ? false : true
                 "

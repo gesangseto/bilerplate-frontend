@@ -117,6 +117,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          department_name: item.department_name || '-',
+          section_name: item.section_name || '-',
           employee_id: item.employee_id || '',
         };
       });
