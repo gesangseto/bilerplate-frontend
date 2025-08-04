@@ -111,7 +111,7 @@
                         "
                       >
                         <CInputCheckbox
-                          v-if="child.show_update === 1"
+                          v-if="child.show_update"
                           :disabled="action == 'Read' ? true : false"
                           @click="clickUpdate('edit', key)"
                           size="sm"
@@ -127,7 +127,7 @@
                         "
                       >
                         <CInputCheckbox
-                          v-if="child.show_update === 1"
+                          v-if="child.show_approve"
                           :disabled="action == 'Read' ? true : false"
                           @click="clickUpdate('approve', key)"
                           size="sm"
@@ -188,7 +188,7 @@
 }
 </style>
 <script>
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, getProfile } from '../../../utils';
 import {
   getMstSectionRole,
   updateMstSectionRole,
@@ -204,6 +204,7 @@ export default {
   },
   data() {
     return {
+      userInfo: getProfile(),
       route_action: '',
       readOnlyItem: false,
       pages: null,
@@ -221,18 +222,6 @@ export default {
       role: [],
       menu: [],
       defaultMenu: [],
-      fields: [
-        { key: 'parent_label', label: 'Parent Menu' },
-        { key: 'label', label: 'Child Menu' },
-        // { key: "check_all", label: "All" },
-        { key: 'can_view', label: 'View' },
-        { key: 'can_add', label: 'Add' },
-        { key: 'can_edit', label: 'Edit' },
-        { key: 'can_delete', label: 'Delete' },
-        { key: 'can_print', label: 'Print' },
-        { key: 'can_approve', label: 'Approve' },
-        // {key: 'action', label: 'Action'},
-      ],
     };
   },
 

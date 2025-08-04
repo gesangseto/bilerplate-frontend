@@ -180,6 +180,7 @@ const ReportShowStatus = () => import('@/views/reports/ReportShowStatus');
 
 // ========================SYSTEM========================
 const SystemApplication = () => import('@/views/system/application/Form');
+const SystemMenu = () => import('@/views/system/menu/Form');
 const ListSystemScriptInj = () =>
   import('@/views/system/script_injection/List');
 const FormSystemScriptInj = () =>
@@ -1071,6 +1072,13 @@ function configRoutes() {
           name: 'System Configuration (Details)',
           meta: { login: true },
           component: SystemApplication,
+        },
+        // SYSTEM MENU
+        {
+          path: 'menu',
+          name: 'System Menu ',
+          meta: { login: true },
+          component: SystemMenu,
         },
         // SYSTEM SCRIPT INJECTION
         {

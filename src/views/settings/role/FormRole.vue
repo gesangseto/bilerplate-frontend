@@ -117,7 +117,7 @@
                         v-if="child.parent_label != 'Android'"
                       >
                         <CInputCheckbox
-                          v-if="child.show_create === 1"
+                          v-if="child.show_create"
                           :disabled="action == 'Read' ? true : false"
                           size="sm"
                           @click="clickCreate(child, key)"
@@ -134,7 +134,7 @@
                         v-if="child.parent_label != 'Android'"
                       >
                         <CInputCheckbox
-                          v-if="child.show_read === 1"
+                          v-if="child.show_read"
                           :disabled="action == 'Read' ? true : false"
                           @click="clickRead(child, key)"
                           size="sm"
@@ -151,7 +151,7 @@
                         :colspan="child.parent_label == 'Android' ? 7 : null"
                       >
                         <CInputCheckbox
-                          v-if="child.show_update === 1"
+                          v-if="child.show_update"
                           :disabled="action == 'Read' ? true : false"
                           @click="clickUpdate(child, key)"
                           size="sm"
@@ -168,7 +168,7 @@
                         v-if="child.parent_label != 'Android'"
                       >
                         <CInputCheckbox
-                          v-if="child.show_delete === 1"
+                          v-if="child.show_delete"
                           :disabled="action == 'Read' ? true : false"
                           @click="clickDelete(child, key)"
                           size="sm"
@@ -185,7 +185,7 @@
                         v-if="child.parent_label != 'Android'"
                       >
                         <CInputCheckbox
-                          v-if="child.show_print === 1"
+                          v-if="child.show_print"
                           :disabled="action == 'Read' ? true : false"
                           @click="clickPrint(child, key)"
                           size="sm"
@@ -202,7 +202,7 @@
                         v-if="child.parent_label != 'Android'"
                       >
                         <CInputCheckbox
-                          v-if="child.show_approve === 1"
+                          v-if="child.show_approve"
                           :disabled="action == 'Read' ? true : false"
                           @click="clickApprove(child, key)"
                           size="sm"
