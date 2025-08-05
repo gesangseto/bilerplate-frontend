@@ -676,6 +676,14 @@
                   >Production Option</CCardHeader
                 >
                 <CCardBody>
+                  <SelectOption
+                    title="Expiry Type (Shelf Life Calculation)"
+                    :options="listExpiryType"
+                    v-on:onchange="data.expiry_type = $event"
+                    :value="data.expiry_type"
+                    :col="[3, 7]"
+                    :description="expiryDescription()"
+                  />
                   <InputDefault
                     :col="[3, 7]"
                     title="Min. Count Generated Serial"
@@ -848,6 +856,24 @@ export default {
         { value: 14, label: '14 Day' },
         { value: 30, label: '30 Day' },
       ],
+      listExpiryType: [
+        {
+          value: 'start_of_month',
+          label: 'Start Of Month',
+          description: 'Expiry date falls on the first day of the month',
+        },
+        {
+          value: 'end_of_month',
+          label: 'End Of Moth',
+          description: 'Expiry date falls on the last day of the month',
+        },
+        {
+          value: 'adjusted_eom',
+          label: 'Adjusted EOM',
+          description:
+            'If the manufacturing date is before the 15th, subtract 1 month and set expiry to the end of that month',
+        },
+      ],
       listCron: [],
       message: {
         errorAdmin: '',
@@ -906,6 +932,16 @@ export default {
       }
       return;
     },
+    expiryDescription() {
+      let thisExpiry = this.listExpiryType.find(
+        (it) => it.value == this.data.expiry_type
+      );
+      if (thisExpiry) {
+        return thisExpiry.description;
+      } else {
+        return 'Shelf life is added directly in months; the expiry date retains the original day value.';
+      }
+    },
     async loadEpcStatus() {
       let epcStatus = await getMstEpcStatus({ is_final_status: true });
       if (epcStatus) {
@@ -953,7 +989,6 @@ export default {
         this.whatsappStatus.error = false;
         this.whatsappStatus.message = null;
       }
-      console.log(this.whatsappStatus);
     },
     formatDate(date) {
       return moment(date).format('yyyy/MM/DD');

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { isAlphaNumeric, isNumeric } from '../costumUtils';
 import { getConfig } from '../storage';
 import cronstrue from 'cronstrue';
@@ -364,4 +365,29 @@ function validateCronField(field, min, max) {
   if (step && step < 1) return false;
 
   return true;
+}
+
+export function expFromShelfLife({ mfg_date, shelf_life, type }) {
+  let add = shelf_life;
+  if (add && mfg_date) {
+    let mfg = moment(mfg_date);
+    let date = mfg.date();
+    if (type == 'start_of_month') {
+      return mfg.add(add, 'months').startOf('month').format('YYYY-MM-DD');
+    } else if (type == 'end_of_month') {
+      return mfg.add(add, 'months').endOf('month').format('YYYY-MM-DD');
+    } else if (type == 'adjusted_eom') {
+      /*
+      Jika tanggal produksi (mfg_date) < 15, maka shelf life dikurangi 1 bulan, lalu hasilnya diarahkan ke akhir bulan dari tanggal tersebut.
+      Jika tanggal produksi ≥ 15, langsung ke akhir bulan setelah shelf life ditambahkan. 
+      Sudah digunakan di ETHICA
+      */
+      if (date < 15) {
+        add = add - 1;
+      }
+      return mfg.add(add, 'months').endOf('month').format('YYYY-MM-DD');
+    } else {
+      return mfg.add(add, 'months').format('YYYY-MM-DD');
+    }
+  }
 }

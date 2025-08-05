@@ -595,6 +595,7 @@ import {
 } from '../../../resource/ProcessOrder';
 import {
   capitalizeFirstLetter,
+  expFromShelfLife,
   getConfig,
   getProfile,
   isJsonString,
@@ -613,13 +614,21 @@ export default {
     'formData.shelf_life': {
       deep: true,
       handler(item) {
-        this.reformatExp();
+        this.formData.exp_date = expFromShelfLife({
+          mfg_date: this.formData.mfg_date,
+          shelf_life: this.formData.shelf_life,
+          type: getConfig()?.expiry_type,
+        });
       },
     },
     'formData.mfg_date': {
       deep: true,
       handler(item) {
-        this.reformatExp();
+        this.formData.exp_date = expFromShelfLife({
+          mfg_date: this.formData.mfg_date,
+          shelf_life: this.formData.shelf_life,
+          type: getConfig()?.expiry_type,
+        });
       },
     },
 
@@ -866,20 +875,6 @@ export default {
     },
     handleInputEXP($event) {
       if ($event) this.formData.shelf_life = null;
-    },
-    reformatExp() {
-      let add = this.formData.shelf_life;
-      if (add && this.formData.mfg_date) {
-        let mfg = moment(this.formData.mfg_date);
-        let date = mfg.date();
-        if (date < 15) {
-          add = add - 1;
-        }
-        this.formData.exp_date = mfg
-          .add(add, 'months')
-          .endOf('month')
-          .format('YYYY-MM-DD');
-      }
     },
     filterSerials() {
       let status = {
