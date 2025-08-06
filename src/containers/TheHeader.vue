@@ -186,11 +186,10 @@ export default {
   },
   watch: {
     $route: {
-      // immediate: true,
+      immediate: true,
       handler(route) {
         // console.log('==========LOAD NOTIF VIA ROUTE============');
         // console.log(route.query);
-
         this.path_url = route.matched || null;
         this.timeoutModal = false;
         this.current_route = route;
