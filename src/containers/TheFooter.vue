@@ -21,49 +21,33 @@
       </template>
       <CCardBody>
         <CRow>
-          <CCol class="md-4">
+          <CCol md="4">
             <img
               v-bind:src="mertrack_image"
               style="width: 150px; heigth: auto"
             />
           </CCol>
-          <CCol class="md-4">
-            <table style="width: 100%">
-              <tr>
-                <td colspan="3"><strong>System Version</strong></td>
-              </tr>
-              <tr>
-                <td>Mertrack Core</td>
-                <td>:</td>
-                <td>4.0</td>
-              </tr>
-              <tr>
-                <td>Mobile</td>
-                <td>:</td>
-                <td>4.0</td>
-              </tr>
-            </table>
-          </CCol>
-          <CCol class="md-4">
-            <table style="width: 100%">
-              <tr>
-                <td colspan="3">&nbsp;</td>
-              </tr>
-              <tr>
-                <!-- <tr>
-                <td>Connector EPCIS OSM</td>
-                <td>:</td>
-                <td>1.0</td>
-              </tr> -->
-                <!-- <tr>
-                <td>Connector EPCIS EML</td>
-                <td>:</td>
-                <td>1.0</td>
-              </tr> -->
-                <td>Connector BPOM</td>
-                <td>:</td>
-                <td>3.0.1</td>
-              </tr>
+          <CCol md="8">
+            <table class="sticky-table">
+              <thead>
+                <tr>
+                  <th style="text-align: center" colspan="4">System Version</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mertrack Core</td>
+                  <td>:&nbsp;{{ version.be }}</td>
+                  <td>Website</td>
+                  <td>:&nbsp;{{ version.web }}</td>
+                </tr>
+                <tr>
+                  <td>Mobile</td>
+                  <td>:&nbsp;{{ version.mobile }}</td>
+                  <td>Connector BPOM</td>
+                  <td>:&nbsp;{{ version.bpom }}</td>
+                </tr>
+              </tbody>
             </table>
           </CCol>
         </CRow>
@@ -109,13 +93,34 @@
   cursor: text;
   resize: none;
 }
+.sticky-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ccc; /* Border luar tabel */
+}
+.sticky-table th,
+.sticky-table td {
+  text-align: left;
+  white-space: nowrap;
+  padding: 4px 8px;
+}
+.sticky-table th {
+  text-align: center;
+}
 </style>
 <script>
 import { logoMertrack, logoMerindo } from '../constants';
+import { getVersion } from '../resource/Version';
 import { getConfig } from '../utils';
 export default {
   data() {
     return {
+      version: {
+        web: process.env.VUE_APP_BUILD_VERSION,
+        be: null,
+        mobile: '4.0.0',
+        bpom: '3.0.1',
+      },
       mertrack_image: logoMertrack,
       merindo_image: logoMerindo,
       appModal: false,
@@ -130,6 +135,7 @@ export default {
   },
   name: 'TheFooter',
   mounted() {
+    this.loadVersion();
     this.data = getConfig();
     this.data.about = `
     This copy of <strong>Mertrack® Integra</strong> is licensed to: <br/>
@@ -171,6 +177,11 @@ Licensed customer can purchase support and service package or on demand support 
     <br/>
 Copyright © ${new Date().getFullYear()} PT Merindo Makmur. All rights reserved.
 `;
+  },
+  methods: {
+    async loadVersion() {
+      this.version.be = await getVersion();
+    },
   },
   computed: {
     show() {

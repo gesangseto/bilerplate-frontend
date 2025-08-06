@@ -1,6 +1,6 @@
 {
   "name": "MERTRACK-Integra",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "MERTRACK PharmaTrust Track & Trace for Pharma Manufacturer",
   "author": {
     "name": "CoreUI",
@@ -18,8 +18,9 @@
   "copyright": "Copyright 2020 creativeLabs Łukasz Holeczek",
   "license": "MIT",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "postinstall": "node ./scripts/set-git-hash.js",
+    "serve": "npm run postinstall && vue-cli-service serve",
+    "build": "npm run postinstall && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
@@ -47,6 +48,7 @@
     "moment": "^2.28.0",
     "regenerator-runtime": "^0.13.11",
     "sass": "^1.32.5",
+    "tabulator-tables": "^4.9.3",
     "vue": "~2.6.11",
     "vue-awesome": "^4.3.1",
     "vue-chartjs": "^3.5.1",
