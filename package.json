@@ -20,6 +20,7 @@
   "scripts": {
     "postinstall": "node ./scripts/set-git-hash.js",
     "serve": "npm run postinstall && vue-cli-service serve",
+    "start": "npm run postinstall && vue-cli-service serve",
     "build": "npm run postinstall && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit",

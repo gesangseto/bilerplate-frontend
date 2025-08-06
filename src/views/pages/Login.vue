@@ -184,6 +184,11 @@ export default {
       );
     },
     redirectReload() {
+      let profile = getProfile();
+      if (profile && profile.id != 0 && profile.password_must_change) {
+        this.$router.push({ path: `/change-password?p-key=${profile.token}` });
+        return;
+      }
       let lastUrl = getLastUrl();
       if (lastUrl) {
         this.$router.push({ path: lastUrl });

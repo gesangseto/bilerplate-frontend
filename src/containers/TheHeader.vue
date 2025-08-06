@@ -299,10 +299,6 @@ export default {
       if (can_access === 'false' || !can_access) {
         this.$router.push({ path: `/oops` });
       }
-      let profile = getProfile();
-      if (profile && profile.id != 0 && profile.password_must_change) {
-        this.$router.push({ path: `/change-password?p-key=${profile.token}` });
-      }
     },
     async readNotif(item, alert = false) {
       if (!alert) {
