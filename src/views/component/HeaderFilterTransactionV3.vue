@@ -231,8 +231,12 @@ export default {
           new Date(dateFilter.this_week.end),
         ],
         'Last 1 week': [
-          new Date(dateFilter.last_one_week.start),
-          new Date(dateFilter.last_one_week.end),
+          new Date(dateFilter.last_1_week.start),
+          new Date(dateFilter.last_1_week.end),
+        ],
+        'Last 2 week': [
+          new Date(dateFilter.last_2_week.start),
+          new Date(dateFilter.last_2_week.end),
         ],
         'This month': [
           new Date(dateFilter.this_month.start),
@@ -241,6 +245,10 @@ export default {
         'Last month': [
           new Date(dateFilter.last_month.start),
           new Date(dateFilter.last_month.end),
+        ],
+        'Last 1 month': [
+          new Date(dateFilter.last_1_month.start),
+          new Date(dateFilter.last_1_month.end),
         ],
         'Last 3 month': [
           new Date(dateFilter.last_3_month.start),

@@ -9,8 +9,12 @@ export const dateFilter = {
     start: moment().startOf('isoweek'),
     end: moment().format('YYYY-MM-DD'),
   },
-  last_one_week: {
+  last_1_week: {
     start: moment().add(-6, 'days').format('YYYY-MM-DD'),
+    end: moment().format('YYYY-MM-DD'),
+  },
+  last_2_week: {
+    start: moment().add(-13, 'days').format('YYYY-MM-DD'),
     end: moment().format('YYYY-MM-DD'),
   },
   this_month: {
@@ -21,12 +25,16 @@ export const dateFilter = {
     start: moment().add(-1, 'month').startOf('month').format('YYYY-MM-DD'),
     end: moment().add(-1, 'month').endOf('month').format('YYYY-MM-DD'),
   },
+  last_1_month: {
+    start: moment().add(1, 'days').subtract(1, 'month').format('YYYY-MM-DD'),
+    end: moment().format('YYYY-MM-DD'),
+  },
   last_3_month: {
-    start: moment().add(-2, 'month').startOf('month').format('YYYY-MM-DD'),
+    start: moment().add(1, 'days').subtract(2, 'month').format('YYYY-MM-DD'),
     end: moment().format('YYYY-MM-DD'),
   },
   last_6_month: {
-    start: moment().add(-5, 'month').startOf('month').format('YYYY-MM-DD'),
+    start: moment().add(1, 'days').subtract(5, 'month').format('YYYY-MM-DD'),
     end: moment().format('YYYY-MM-DD'),
   },
   this_year: {
