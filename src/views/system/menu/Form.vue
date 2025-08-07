@@ -3,9 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader
-          ><h5>
-            System {{ $activeMenu.name }} [{{ route_action }}]
-          </h5></CCardHeader
+          ><h5>{{ $activeMenu.name }} [{{ route_action }}]</h5></CCardHeader
         >
         <CCardBody>
           <!-- MENU WEBSITE -->
@@ -253,7 +251,7 @@
             <CCard>
               <CCardHeader class="HeaderDashboard">
                 <div class="float-left title-dashboard font-weight-bold">
-                  Menu Station
+                  Menu Android
                 </div>
               </CCardHeader>
               <CCardBody style="padding: 0px">
@@ -261,13 +259,9 @@
                   <table class="sticky-table">
                     <thead>
                       <tr>
-                        <th style="text-align: center">Parent Menu</th>
-                        <th style="text-align: center">Child Menu</th>
+                        <th style="text-align: center">Menu</th>
                         <th style="text-align: center">Access</th>
                         <th style="text-align: center">Approve</th>
-                        <th style="text-align: center">Diff Approval</th>
-                        <th style="text-align: center">Batch Active</th>
-                        <th style="text-align: center">Batch Inactive</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -280,101 +274,35 @@
                           "
                         >
                           <td
-                            v-if="index == item.start_menu_count"
-                            :rowspan="item.count"
-                            style="
-                              padding-left: 10px;
-                              border-bottom: 1px solid #7d7d7d;
-                            "
-                          >
-                            {{ item.parent_label }}
-                          </td>
-                          <td
-                            :style="
-                              item.count + item.start_menu_count == index + 1
-                                ? 'padding-left: 10px;border-bottom: 1px solid #7d7d7d;'
-                                : 'padding-left: 10px;'
-                            "
+                            :class="{ 'has-border': !item.mst_menu_id }"
+                            :style="{
+                              paddingLeft:
+                                (getLevel(menuStation, item) * 40 || 10) + 'px',
+                            }"
                           >
                             {{ item.label }}
                           </td>
                           <td
-                            :style="
-                              item.count + item.start_menu_count == index + 1
-                                ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                                : 'text-align: center;'
-                            "
+                            :class="{ 'has-border': !item.mst_menu_id }"
+                            style="text-align: center"
                           >
                             <CInputCheckbox
+                              v-if="item.show_update"
+                              @click="clickUpdate('edit', index)"
                               size="sm"
-                              @click="
-                                handleChangeMenuStation('show_update', index)
-                              "
-                              :checked="item.show_update"
+                              :checked="item.can_edit"
                               style="margin-bottom: 30px; margin-top: 5px"
                             />
                           </td>
                           <td
-                            :style="
-                              item.count + item.start_menu_count == index + 1
-                                ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                                : 'text-align: center;'
-                            "
+                            :class="{ 'has-border': !item.mst_menu_id }"
+                            :style="'text-align: center;'"
                           >
                             <CInputCheckbox
-                              @click="
-                                handleChangeMenuStation('show_approve', index)
-                              "
+                              v-if="item.show_approve"
+                              @click="clickUpdate('approve', index)"
                               size="sm"
-                              :checked="item.show_approve"
-                              style="margin-bottom: 30px; margin-top: 5px"
-                            />
-                          </td>
-                          <td
-                            :style="
-                              item.count + item.start_menu_count == index + 1
-                                ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                                : 'text-align: center;'
-                            "
-                          >
-                            <CInputCheckbox
-                              @click="
-                                handleChangeMenuStation('diff_approval', index)
-                              "
-                              size="sm"
-                              :checked="item.diff_approval"
-                              style="margin-bottom: 30px; margin-top: 5px"
-                            />
-                          </td>
-                          <td
-                            :style="
-                              item.count + item.start_menu_count == index + 1
-                                ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                                : 'text-align: center;'
-                            "
-                          >
-                            <CInputCheckbox
-                              @click="
-                                handleChangeMenuStation('batch_active', index)
-                              "
-                              size="sm"
-                              :checked="item.batch_active"
-                              style="margin-bottom: 30px; margin-top: 5px"
-                            />
-                          </td>
-                          <td
-                            :style="
-                              item.count + item.start_menu_count == index + 1
-                                ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                                : 'text-align: center;'
-                            "
-                          >
-                            <CInputCheckbox
-                              @click="
-                                handleChangeMenuStation('batch_inactive', index)
-                              "
-                              size="sm"
-                              :checked="item.batch_inactive"
+                              :checked="item.can_approve"
                               style="margin-bottom: 30px; margin-top: 5px"
                             />
                           </td>
@@ -386,7 +314,6 @@
               </CCardBody>
             </CCard>
           </template>
-
           <!-- END OF TABLE -->
         </CCardBody>
         <CCardFooter>
@@ -403,6 +330,7 @@
 <script>
 import { capitalizeFirstLetter } from '../../../utils';
 import { getMstMenu, updateMstMenu } from '../../../resource/MstMenu';
+import { CCard, CCardBody } from '@coreui/vue';
 
 export default {
   name: 'AddRoles',
@@ -429,6 +357,20 @@ export default {
     this.loadData();
   },
   methods: {
+    getLevel(menu, item) {
+      let level = 0;
+      let currentParent = item.mst_menu_id;
+      while (currentParent) {
+        const parent = menu.find((m) => m.id == currentParent);
+        if (parent) {
+          level++;
+          currentParent = parent.mst_menu_id;
+        } else {
+          break;
+        }
+      }
+      return level;
+    },
     // Using a conditional statement
     stringToBoolean(str) {
       if (!str) return false;
@@ -451,43 +393,16 @@ export default {
       if (!_res) return;
 
       let data = _res.data;
-      const reformatingMenu = (items = []) => {
-        let nestedMenu = [];
-        let start_menu_count = 0;
-        let parents = items.filter((it) => !it.mst_menu_id);
-        for (const parent of parents) {
-          let children = items.filter((it) => it.mst_menu_id == parent.id);
-          let count = children.length;
-          //Jika memiliki anak maka kesini
-          if (children.length > 0) {
-            for (const child of children) {
-              let temp = child;
-              temp.parent_label = parent.label;
-              temp.parent_id = parent.id;
-              temp.count = count;
-              temp.start_menu_count = start_menu_count;
-              nestedMenu.push(temp);
-            }
-          } else {
-            // Handle Menu Without Child
-            count = 1;
-            let temp = parent;
-            temp.parent_label = parent.label;
-            temp.parent_id = parent.id;
-            temp.count = count;
-            temp.start_menu_count = start_menu_count;
-            nestedMenu.push(temp);
-            // END Handle Menu Without Child
-          }
-          start_menu_count = start_menu_count + count;
-        }
-        return nestedMenu;
-      };
 
       // filter menu berdasarkan type
-      this.menuWeb = reformatingMenu(data.filter((it) => it.type == 0));
-      this.menuAndroid = reformatingMenu(data.filter((it) => it.type == 1));
-      this.menuStation = reformatingMenu(data.filter((it) => it.type == 2));
+      this.menuWeb = this.reformatingMenu(data.filter((it) => it.type == 0));
+      this.menuAndroid = this.reformatingMenu(
+        data.filter((it) => it.type == 1)
+      );
+      this.menuStation = this.reformatStationMenu(
+        data.filter((it) => it.type == 2)
+      );
+      console.log(this.menuStation);
     },
     handleChangeMenuWeb(name, index) {
       this.menuWeb[index][name] = !this.menuWeb[index][name];
@@ -497,6 +412,49 @@ export default {
     },
     handleChangeMenuStation(name, index) {
       this.menuStation[index][name] = !this.menuStation[index][name];
+    },
+    reformatingMenu(items = []) {
+      let nestedMenu = [];
+      let start_menu_count = 0;
+      let parents = items.filter((it) => !it.mst_menu_id);
+      for (const parent of parents) {
+        let children = items.filter((it) => it.mst_menu_id == parent.id);
+        let count = children.length;
+        //Jika memiliki anak maka kesini
+        if (children.length > 0) {
+          for (const child of children) {
+            let temp = child;
+            temp.parent_label = parent.label;
+            temp.parent_id = parent.id;
+            temp.count = count;
+            temp.start_menu_count = start_menu_count;
+            nestedMenu.push(temp);
+          }
+        } else {
+          // Handle Menu Without Child
+          count = 1;
+          let temp = parent;
+          temp.parent_label = parent.label;
+          temp.parent_id = parent.id;
+          temp.count = count;
+          temp.start_menu_count = start_menu_count;
+          nestedMenu.push(temp);
+          // END Handle Menu Without Child
+        }
+        start_menu_count = start_menu_count + count;
+      }
+      return nestedMenu;
+    },
+    reformatStationMenu(items = [], parentId = null) {
+      let result = [];
+      items
+        .filter((item) => item.mst_menu_id === parentId)
+        .forEach((parent) => {
+          result.push(parent);
+          // recursive ke anak
+          result = result.concat(this.reformatStationMenu(items, parent.id));
+        });
+      return result;
     },
 
     cancel() {
@@ -540,6 +498,20 @@ export default {
 </script>
 
 <style scoped>
+.has-border {
+  border-top: 1px solid #000;
+  font-weight: bold;
+}
+.table-container {
+  /* max-height: 520px; */
+  overflow-y: auto;
+}
+.sticky-table-container {
+  max-height: 500px; /* atur tinggi sesuai kebutuhan */
+  overflow-y: auto;
+  display: block;
+}
+
 .table-container {
   /* max-height: 520px; */
   overflow-y: auto;

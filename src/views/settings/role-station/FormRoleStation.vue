@@ -67,71 +67,49 @@
               <table class="sticky-table">
                 <thead>
                   <tr>
-                    <th v-if="!search" style="text-align: center">
-                      Parent Menu
-                    </th>
-                    <th style="text-align: center">Child Menu</th>
+                    <th style="text-align: center">Menu</th>
                     <th style="text-align: center">Access</th>
                     <th style="text-align: center">Approve</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-for="(child, key) in menu">
+                  <template v-for="(item, index) in menu">
                     <tr
                       :style="
-                        key % 2 == 0
+                        index % 2 == 0
                           ? 'background-color:#ffffff;'
                           : 'background-color:#ededed;'
                       "
                     >
                       <td
-                        v-if="key == child.start_menu_count && !search"
-                        :rowspan="child.count"
-                        style="
-                          padding-left: 10px;
-                          border-bottom: 1px solid #7d7d7d;
-                        "
+                        :class="{ 'has-border': !item.mst_menu_id }"
+                        :style="{ paddingLeft: getLevel(item) * 40 + 'px' }"
                       >
-                        {{ child.parent_label }}
+                        {{ item.label }}
                       </td>
                       <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'padding-left: 10px;border-bottom: 1px solid #7d7d7d;'
-                            : 'padding-left: 10px;'
-                        "
-                      >
-                        {{ child.label }}
-                      </td>
-                      <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                            : 'text-align: center;'
-                        "
+                        :class="{ 'has-border': !item.mst_menu_id }"
+                        style="text-align: center"
                       >
                         <CInputCheckbox
-                          v-if="child.show_update"
+                          v-if="item.show_update"
                           :disabled="action == 'Read' ? true : false"
-                          @click="clickUpdate('edit', key)"
+                          @click="clickUpdate('edit', index)"
                           size="sm"
-                          :checked="child.can_edit"
+                          :checked="item.can_edit"
                           style="margin-bottom: 30px; margin-top: 5px"
                         />
                       </td>
                       <td
-                        :style="
-                          child.count + child.start_menu_count == key + 1
-                            ? 'text-align: center;border-bottom: 1px solid #7d7d7d;'
-                            : 'text-align: center;'
-                        "
+                        :class="{ 'has-border': !item.mst_menu_id }"
+                        :style="'text-align: center;'"
                       >
                         <CInputCheckbox
-                          v-if="child.show_approve"
+                          v-if="item.show_approve"
                           :disabled="action == 'Read' ? true : false"
-                          @click="clickUpdate('approve', key)"
+                          @click="clickUpdate('approve', index)"
                           size="sm"
-                          :checked="child.can_approve"
+                          :checked="item.can_approve"
                           style="margin-bottom: 30px; margin-top: 5px"
                         />
                       </td>
@@ -160,6 +138,10 @@
 </template>
 
 <style scoped>
+.has-border {
+  border-top: 1px solid #000;
+  font-weight: bold;
+}
 .table-container {
   /* max-height: 520px; */
   overflow-y: auto;
@@ -232,6 +214,20 @@ export default {
     }
   },
   methods: {
+    getLevel(item) {
+      let level = 0;
+      let currentParent = item.mst_menu_id;
+      while (currentParent) {
+        const parent = this.menu.find((m) => m.menu_id === currentParent);
+        if (parent) {
+          level++;
+          currentParent = parent.mst_menu_id;
+        } else {
+          break;
+        }
+      }
+      return level;
+    },
     handleSearchInput() {
       this.search = false;
       this.menu = this.defaultMenu;
@@ -257,66 +253,18 @@ export default {
       if (!_res) return;
       let data = _res.data[0];
       this.role = data;
-      let nestedMenu = [];
-      let start_menu_count = 0;
-      for (const parent of data.role_menu) {
-        let count = parent.children.length;
-        if (!parent.link) {
-          for (const child of parent.children) {
-            let temp = child;
-            temp.can_add = child.can_add == 'true' ? true : false;
-            temp.can_view = child.can_view == 'true' ? true : false;
-            temp.can_edit = child.can_edit == 'true' ? true : false;
-            temp.can_delete = child.can_delete == 'true' ? true : false;
-            temp.can_print = child.can_print == 'true' ? true : false;
-            temp.can_approve = child.can_approve == 'true' ? true : false;
-            temp.parent_label = parent.label;
-            temp.parent_id = parent.id;
-            temp.count = count;
-            temp.start_menu_count = start_menu_count;
-            temp.can_all = false;
-            if (
-              child.can_add &&
-              child.can_view &&
-              child.can_edit &&
-              child.can_delete &&
-              child.can_print &&
-              child.can_approve
-            ) {
-              temp.can_all = true;
-            }
-            nestedMenu.push(temp);
+      const flattingMenu = (menus = Array) => {
+        let thisMenu = [];
+        for (const it of menus) {
+          thisMenu.push(it);
+          if (it.children && Array.isArray(it.children)) {
+            thisMenu = [...thisMenu, ...flattingMenu(it.children)];
           }
-        } else {
-          // Handle Menu Without Child
-          count = 1;
-          let temp = parent;
-          temp.can_add = parent.can_add == 'true' ? true : false;
-          temp.can_view = parent.can_view == 'true' ? true : false;
-          temp.can_edit = parent.can_edit == 'true' ? true : false;
-          temp.can_delete = parent.can_delete == 'true' ? true : false;
-          temp.can_print = parent.can_print == 'true' ? true : false;
-          temp.can_approve = parent.can_approve == 'true' ? true : false;
-          temp.parent_label = parent.label;
-          temp.parent_id = parent.id;
-          temp.count = count;
-          temp.start_menu_count = start_menu_count;
-          temp.can_all = false;
-          if (
-            parent.can_add &&
-            parent.can_view &&
-            parent.can_edit &&
-            parent.can_delete &&
-            parent.can_print &&
-            parent.can_approve
-          ) {
-            temp.can_all = true;
-          }
-          nestedMenu.push(temp);
-          // END Handle Menu Without Child
         }
-        start_menu_count = start_menu_count + count;
-      }
+        return thisMenu;
+      };
+
+      let nestedMenu = flattingMenu(data.role_menu);
       this.defaultMenu = nestedMenu;
       this.menu = nestedMenu;
     },
