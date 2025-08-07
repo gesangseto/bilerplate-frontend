@@ -63,7 +63,7 @@
           </CRow>
           <br />
           <template>
-            <div class="table-container">
+            <div class="sticky-table-container">
               <table class="sticky-table">
                 <thead>
                   <tr>
@@ -164,27 +164,22 @@
   /* max-height: 520px; */
   overflow-y: auto;
 }
+.sticky-table-container {
+  max-height: 500px; /* atur tinggi sesuai kebutuhan */
+  overflow-y: auto;
+  display: block;
+}
 
 .sticky-table {
   width: 100%;
+  border-collapse: collapse;
 }
 
-.sticky-table thead tr {
+.sticky-table thead th {
   position: sticky;
   top: 0;
-  background: #3266a8; /* Latar belakang header untuk menutupi konten saat scroll */
-  z-index: 1; /* Pastikan header berada di atas konten */
-  color: white;
-}
-
-.sticky-table th {
-  padding: 10px;
-  border: 1px solid #ddd;
-}
-
-.sticky-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
+  background-color: #f9f9f9; /* opsional agar sticky terlihat */
+  z-index: 2;
 }
 </style>
 <script>

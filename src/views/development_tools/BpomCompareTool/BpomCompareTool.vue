@@ -53,60 +53,63 @@
             </CCol>
           </CRow>
         </br>
-          <div class="table-responsive">
-            <CDataTable
-              hover
-              striped
-              sorter
-              :items="renderList"
-              :fields="fields"
-              class="compact-table"
-              style="font-size: 12px"
-            >
-              <template #barcode="{ item }">
-                <td :class="getClass(item.barcode, item.barcode_stock)">
-                  {{ item.barcode ? '...' + item.barcode.slice(-15) : '' }}
-                </td>
-              </template>
-              <template #sekunder="{ item }">
-                <td :class="getClass(item.sekunder, item.sekunder_stock)">
-                  {{ item.sekunder ? '...' + item.sekunder.slice(-15) : '' }}
-                </td>
-              </template>
-              <template #tersier="{ item }">
-                <td :class="getClass(item.tersier, item.tersier_stock)">
-                  {{ item.tersier ? '...' + item.tersier.slice(-15) : '' }}
-                </td>
-              </template>
-              <template #barcode_stock="{ item }">
-                <td :class="getClass(item.barcode, item.barcode_stock)">
-                  {{
-                    item.barcode_stock
-                      ? '...' + item.barcode_stock.slice(-15)
-                      : ''
-                  }}
-                </td>
-              </template>
-              <template #sekunder_stock="{ item }">
-                <td :class="getClass(item.sekunder, item.sekunder_stock)">
-                  {{
-                    item.sekunder_stock
-                      ? '...' + item.sekunder_stock.slice(-15)
-                      : ''
-                  }}
-                </td>
-              </template>
-              <template #tersier_stock="{ item }">
-                <td :class="getClass(item.tersier, item.tersier_stock)">
-                  {{
-                    item.tersier_stock
-                      ? '...' + item.tersier_stock.slice(-15)
-                      : ''
-                  }}
-                </td>
-              </template>
-            </CDataTable>
-          </div>
+        
+          <template>
+            <div class="sticky-table-container">
+              <table class="sticky-table">
+                <thead>
+                  <tr>
+                    <th style="text-align: center">No</th>
+                    <th style="text-align: center">Barcode (xlsx)</th>
+                    <th style="text-align: center">Sekunder (xlsx)</th>
+                    <th style="text-align: center">Tersier (xlsx)</th>
+                    <th style="text-align: center">Barcode (database)</th>
+                    <th style="text-align: center">Sekunder (database)</th>
+                    <th style="text-align: center">Tersier (database)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-for="(item, index) in renderList">
+                    <tr>    
+                      <td>
+                        {{ item.no}}
+                      </td>
+                      <td :class="getClass(item.barcode, item.barcode_stock)">
+                        {{ item.barcode ? '...' + item.barcode.slice(-15) : '' }}
+                      </td>
+                      <td :class="getClass(item.sekunder, item.sekunder_stock)">
+                        {{ item.sekunder ? '...' + item.sekunder.slice(-15) : '' }}
+                      </td>
+                      <td :class="getClass(item.tersier, item.tersier_stock)">
+                        {{ item.tersier ? '...' + item.tersier.slice(-15) : '' }}
+                      </td>
+                      <td :class="getClass(item.barcode, item.barcode_stock)">
+                        {{
+                          item.barcode_stock
+                            ? '...' + item.barcode_stock.slice(-15)
+                            : ''
+                        }}
+                      </td>
+                      <td :class="getClass(item.sekunder, item.sekunder_stock)">
+                        {{
+                          item.sekunder_stock
+                            ? '...' + item.sekunder_stock.slice(-15)
+                            : ''
+                        }}
+                      </td>
+                      <td :class="getClass(item.tersier, item.tersier_stock)">
+                        {{
+                          item.tersier_stock
+                            ? '...' + item.tersier_stock.slice(-15)
+                            : ''
+                        }}
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </template>
         </CCardBody>
       </CCard>
     </CCol>
@@ -254,5 +257,27 @@ export default {
 .compact-table td {
   padding: 4px 8px !important; /* Kurangi padding agar lebih rapat */
   white-space: nowrap; /* Hindari pemecahan baris */
+}
+
+.table-container {
+  /* max-height: 520px; */
+  overflow-y: auto;
+}
+.sticky-table-container {
+  max-height: 500px; /* atur tinggi sesuai kebutuhan */
+  overflow-y: auto;
+  display: block;
+}
+
+.sticky-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sticky-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f9f9f9; /* opsional agar sticky terlihat */
+  z-index: 2;
 }
 </style>
