@@ -8,168 +8,51 @@
           </CCardHeader>
           <CCardBody>
             <CForm>
-              <CCol sm="10">
-                <CInput
-                  label="Entity Name"
-                  horizontal
-                  v-model="data.identity_name"
-                  :is-valid="
-                    initialLoad ? null : !data.identity_name ? false : true
-                  "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Entity Name
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInput>
-              </CCol>
-              <CCol sm="10">
-                <CTextarea
-                  label="Entity Address"
-                  horizontal
-                  v-model="data.entity_address"
-                  :is-valid="
-                    initialLoad ? null : !data.entity_address ? false : true
-                  "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Entity Address
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CTextarea>
-              </CCol>
-              <CCol sm="10">
-                <CInput
-                  label="GS1 Company Prefix"
-                  horizontal
-                  type="number"
-                  v-model="data.identity_number"
-                  :is-valid="
-                    initialLoad ? null : !data.identity_number ? false : true
-                  "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      GS1 Company Prefix
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInput>
-              </CCol>
-
-              <CCol sm="10">
-                <CInput
-                  label="ID Location"
-                  horizontal
-                  type="number"
-                  v-model="data.gln"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      GLN
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInput>
-              </CCol>
-              <!-- IDENTITY PATH LOGO -->
-              <CCol sm="10" lg="10">
-                <CInputFile
-                  :placeholder="labelLogo.identity"
-                  horizontal
-                  custom
-                  class="input-form-upload"
-                  @change="uploadLogo($event, 'identity')"
-                  :is-valid="
-                    initialLoad ? null : !data.identity_logo_path ? false : true
-                  "
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">
-                      Identity Logo
-                      <span class="text-danger">
-                        <strong>*</strong>
-                      </span>
-                    </p>
-                  </template>
-                </CInputFile>
-              </CCol>
-              <div class="form-group row mb-5">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="identity-logo"> </label>
-                </div>
-                <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
-                  <div class="custom-file mb-3">
-                    <CImg width="100" v-bind:src="data.identity_logo_path" />
-                  </div>
-                </div>
-              </div>
-              <!-- Home LOGO -->
-              <CCol sm="10" lg="10">
-                <CInputFile
-                  :placeholder="labelLogo.home"
-                  horizontal
-                  custom
-                  class="input-form-upload"
-                  @change="uploadLogo($event, 'home')"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">Home Logo</p>
-                  </template>
-                </CInputFile>
-              </CCol>
-              <div class="form-group row mb-5">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="home-logo"> </label>
-                </div>
-                <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
-                  <div class="custom-file mb-3">
-                    <CImg width="100" v-bind:src="data.home_logo" />
-                  </div>
-                </div>
-              </div>
-              <!-- LOGIN LOGO -->
-              <CCol sm="10" lg="10">
-                <CInputFile
-                  :placeholder="labelLogo.login"
-                  horizontal
-                  custom
-                  class="input-form-upload"
-                  @change="uploadLogo($event, 'login')"
-                >
-                  <template #label>
-                    <p class="col-form-label col-sm-3">Login Logo</p>
-                  </template>
-                </CInputFile>
-              </CCol>
-              <div class="form-group row mb-5">
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                  <label for="login-logo"> </label>
-                </div>
-                <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
-                  <div class="custom-file mb-3">
-                    <CImg width="100" v-bind:src="data.login_logo" />
-                  </div>
-                </div>
-              </div>
-
+              <!-- Licensed Entity Information -->
               <CCard>
                 <CCardHeader style="font-weight: bold">
-                  Limitation
+                  Licensed Entity Information
                 </CCardHeader>
                 <CCardBody>
+                  <!-- COMPANY INFORMATION -->
+                  <p style="font-weight: bold">Company Information</p>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Entity Name"
+                    v-model="data.identity_name"
+                  />
+                  <TextareaDefault
+                    :col="[3, 7]"
+                    title="Entity Address"
+                    v-model="data.entity_address"
+                  />
+                  <!-- GS1 INFORMATION -->
+                  <p style="font-weight: bold">GS1 Information</p>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="GS1 Company Prefix"
+                    v-model="data.identity_number"
+                    :validasi="'integer'"
+                    :max="12"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="GLN"
+                    v-model="data.gln"
+                    :validasi="'integer'"
+                    :max="100"
+                  />
+                </CCardBody>
+              </CCard>
+
+              <!-- Licensed Features & Limits -->
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  Licensed Features & Limits
+                </CCardHeader>
+                <CCardBody>
+                  <!-- License Limits -->
+                  <p style="font-weight: bold">License Limits</p>
                   <InputDefault
                     :col="[3, 7]"
                     title="Maximum Warehouse"
@@ -193,40 +76,35 @@
                   />
                   <InputDefault
                     :col="[3, 7]"
-                    title="Maximum Config Layout"
+                    title="Maximum Label Layout"
                     v-model="data.total_conf_layout"
                     :validasi="'integer'"
                     :max="100"
                   />
                   <InputDefault
                     :col="[3, 7]"
-                    title="Maximum Config Date"
+                    title="Maximum Date Format"
                     v-model="data.total_conf_date"
                     :validasi="'integer'"
                     :max="100"
                   />
+                  <p style="font-weight: bold">
+                    MERTRACK Warehouse Mobile (MWM) Devices
+                  </p>
                   <InputDefault
                     :col="[3, 7]"
-                    title="Maximum Android Device"
+                    title="Maximum MWM Devices"
                     :validasi="'integer'"
                     v-model="data.total_device"
                     :max="100"
                   />
-                </CCardBody>
-              </CCard>
-
-              <CCard>
-                <CCardHeader style="font-weight: bold">
-                  List Android ID
-                </CCardHeader>
-                <CCardBody>
                   <div
                     v-for="(item, index) in parseInt(data.total_device)"
                     :key="item"
                   >
                     <InputDefault
                       :col="[3, 7]"
-                      :title="'Android ID ' + (index + 1)"
+                      :title="'MWM Device ID #' + (index + 1)"
                       :validasi="'alphanumeric'"
                       v-model="data.list_device[index]"
                       :max="100"
@@ -234,85 +112,28 @@
                   </div>
                 </CCardBody>
               </CCard>
+
+              <!-- Authentication & Security Settings -->
               <CCard>
                 <CCardHeader style="font-weight: bold">
-                  Third-Party Messenger
+                  Authentication & Security Settings
                 </CCardHeader>
                 <CCardBody>
-                  <strong>
-                    <CIcon name="cib-whatsapp" /> &nbsp; Whatsapp
-                  </strong>
-                  <br />
-                  <small>{{ whatsappStatus.message }}</small>
-                  <hr />
-                  <CForm v-if="!whatsappStatus.error"
-                    ><CCol class="md-4">
-                      <img
-                        v-bind:src="whatsappStatus.qr_base64"
-                        style="width: 150px; heigth: auto"
-                      />
-                    </CCol>
-                  </CForm>
-                  <CForm v-if="whatsappStatus.error">
-                    <InputDefault
-                      :col="[3, 7]"
-                      :title="'To'"
-                      :validasi="'integer'"
-                      v-model="whatsappMessage.to"
-                      :max="14"
-                    />
-                    <InputDefault
-                      :col="[3, 7]"
-                      :title="'Message'"
-                      v-model="whatsappMessage.message"
-                      :max="200"
-                    />
-                    <CButton size="sm" color="success" @click="sendWhatsapp()">
-                      Send Test Message
-                    </CButton>
-                    <CButton
-                      class="ml-1"
-                      size="sm"
-                      color="danger"
-                      @click="deleteWhatsapp()"
-                    >
-                      Delete Session
-                    </CButton>
-                    <br />
-                    <small
-                      :class="
-                        whatsappMessage.error ? 'text-danger' : 'text-muted'
-                      "
-                    >
-                      {{ whatsappMessage.response }}
-                    </small>
-                  </CForm>
-                </CCardBody>
-              </CCard>
-              <CCard>
-                <CCardHeader style="font-weight: bold">
-                  Authentication
-                </CCardHeader>
-                <CCardBody>
+                  <p style="font-weight: bold">Authentication Rules</p>
                   <InputDefault
                     :col="[3, 7]"
-                    :title="'Login attempts exceeded'"
+                    :title="'Maximum Consecutive Failed Login Attempts'"
                     :validasi="'integer'"
                     v-model="data.login_attempt"
                     :max="50"
                   />
-                </CCardBody>
-              </CCard>
-              <CCard>
-                <CCardHeader style="font-weight: bold">
-                  Password Validation
-                </CCardHeader>
-                <CCardBody>
+
+                  <p style="font-weight: bold">Password Policy</p>
                   <CRow form class="form-group">
-                    <CCol sm="6">
+                    <CCol col="6">
                       <InputDefault
                         :col="[4, 6]"
-                        title="Min Character"
+                        title="Minimum Length"
                         :validasi="'integer'"
                         v-model="data.password_pattern.min"
                         :is-valid="
@@ -326,10 +147,10 @@
                         invalid_feedback="Min value must smaller than Max value"
                       />
                     </CCol>
-                    <CCol sm="6">
+                    <CCol col="6">
                       <InputDefault
                         :col="[4, 6]"
-                        title="Max Character"
+                        title="Maximum Length"
                         :validasi="'integer'"
                         v-model="data.password_pattern.max"
                         :is-valid="
@@ -406,87 +227,367 @@
                       </CRow>
                     </CCol>
                   </CRow>
-                </CCardBody>
-
-                <CCardHeader style="font-weight: bold">
-                  Password Option
-                </CCardHeader>
-                <CCardBody>
+                  <p style="font-weight: bold">Initial Password Settings</p>
+                  <InputDefault
+                    :col="[3, 6]"
+                    title="Default Password User"
+                    v-model="data.password_default"
+                    :is-valid="data.password_default ? true : null"
+                    description="This password will be assigned to new user accounts or when resetting a user's password"
+                  />
                   <CRow form class="form-group">
-                    <CCol sm="6">
-                      <InputDefault
-                        :col="[4, 6]"
-                        title="Default Password User"
-                        v-model="data.password_default"
-                        :is-valid="data.password_default ? true : null"
-                      />
+                    <CCol tag="label" sm="3" class="col-form-label">
+                      Enforce Password Change on First Login or After Password
+                      Reset
                     </CCol>
-                    <CCol sm="6">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="4" class="col-form-label">
-                          Must Change Password
-                        </CCol>
-                        <CCol sm="8">
-                          <SwitchDefault
-                            :default_value="data.password_must_change"
-                            v-on:onChange="data.password_must_change = $event"
-                            :description="
-                              data.password_must_change
-                                ? `The user must change their password upon account creation or after a password reset.`
-                                : null
-                            "
-                          />
-                        </CCol>
-                      </CRow>
+                    <CCol sm="7">
+                      <SwitchDefault
+                        :default_value="data.password_must_change"
+                        v-on:onChange="data.password_must_change = $event"
+                        :description="
+                          data.password_must_change
+                            ? `Users are required to change their password upon first login after account creation or a password reset.`
+                            : null
+                        "
+                      />
                     </CCol>
                   </CRow>
                 </CCardBody>
               </CCard>
 
+              <!-- General System Settings -->
               <CCard>
-                <CCardHeader style="font-weight: bold">BPOM Config</CCardHeader>
+                <CCardHeader style="font-weight: bold">
+                  General System Settings
+                </CCardHeader>
                 <CCardBody>
+                  <p style="font-weight: bold">Pictures</p>
+                  <!-- Identity Logo -->
+                  <CCol sm="10" lg="10">
+                    <CInputFile
+                      :placeholder="labelLogo.identity"
+                      horizontal
+                      custom
+                      class="input-form-upload"
+                      @change="uploadLogo($event, 'identity')"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">Home Page Picture</p>
+                      </template>
+                    </CInputFile>
+                  </CCol>
+                  <!-- identity_logo_path -->
+                  <div class="form-group row mb-5">
+                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                      <label for="identity-logo"> </label>
+                    </div>
+                    <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
+                      <div class="custom-file mb-3">
+                        <CImg
+                          width="100"
+                          v-bind:src="data.identity_logo_path"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Home LOGO -->
+                  <CCol sm="10" lg="10">
+                    <CInputFile
+                      :placeholder="labelLogo.home"
+                      horizontal
+                      custom
+                      class="input-form-upload"
+                      @change="uploadLogo($event, 'home')"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">Home Logo</p>
+                      </template>
+                    </CInputFile>
+                  </CCol>
+                  <div class="form-group row mb-5">
+                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                      <label for="home-logo"> </label>
+                    </div>
+                    <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
+                      <div class="custom-file mb-3">
+                        <CImg width="100" v-bind:src="data.home_logo" />
+                      </div>
+                    </div>
+                  </div>
+                  <!-- LOGIN LOGO -->
+                  <CCol sm="10" lg="10">
+                    <CInputFile
+                      :placeholder="labelLogo.login"
+                      horizontal
+                      custom
+                      class="input-form-upload"
+                      @change="uploadLogo($event, 'login')"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">Login Logo</p>
+                      </template>
+                    </CInputFile>
+                  </CCol>
+                  <div class="form-group row mb-5">
+                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                      <label for="login-logo"> </label>
+                    </div>
+                    <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
+                      <div class="custom-file mb-3">
+                        <CImg width="100" v-bind:src="data.login_logo" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <p style="font-weight: bold">Long Process Settings</p>
+                  <SelectOption
+                    title="Retry Interval"
+                    :options="listCron"
+                    v-on:onchange="data.retry_interval = $event"
+                    :value="data.retry_interval"
+                    :col="[3, 7]"
+                  />
+                  <p style="font-weight: bold">Notification Settings</p>
+
+                  <strong>
+                    <CIcon name="cib-whatsapp" /> &nbsp; Whatsapp
+                  </strong>
+                  <br />
+                  <small>{{ whatsappStatus.message }}</small>
+                  <hr />
+                  <CForm v-if="!whatsappStatus.error"
+                    ><CCol class="md-4">
+                      <img
+                        v-bind:src="whatsappStatus.qr_base64"
+                        style="width: 150px; heigth: auto"
+                      />
+                    </CCol>
+                  </CForm>
+                  <CForm v-if="whatsappStatus.error">
+                    <InputDefault
+                      :col="[3, 7]"
+                      :title="'To'"
+                      :validasi="'integer'"
+                      v-model="whatsappMessage.to"
+                      :max="14"
+                    />
+                    <InputDefault
+                      :col="[3, 7]"
+                      :title="'Message'"
+                      v-model="whatsappMessage.message"
+                      :max="200"
+                    />
+                    <CButton size="sm" color="success" @click="sendWhatsapp()">
+                      Send Test Message
+                    </CButton>
+                    <CButton
+                      class="ml-1"
+                      size="sm"
+                      color="danger"
+                      @click="deleteWhatsapp()"
+                    >
+                      Delete Session
+                    </CButton>
+                    <br />
+                    <small
+                      :class="
+                        whatsappMessage.error ? 'text-danger' : 'text-muted'
+                      "
+                    >
+                      {{ whatsappMessage.response }}
+                    </small>
+                  </CForm>
+                </CCardBody>
+              </CCard>
+              <!-- Production Module Settings -->
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  Production Module Settings
+                </CCardHeader>
+                <CCardBody>
+                  <p style="font-weight: bold">Process Order</p>
+                  <SelectOption
+                    title="Expiry Date Calculation Rule"
+                    :options="listExpiryType"
+                    v-on:onchange="data.expiry_type = $event"
+                    :value="data.expiry_type"
+                    :col="[3, 7]"
+                    :description="expiryDescription()"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Minimum Generated SN"
+                    v-model="data.min_count_generated_serial"
+                    :validasi="'integer'"
+                    :max="10000"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Additional SNs for Ref. Sample"
+                    v-model="data.additional_serial_for_sample"
+                    :validasi="'integer'"
+                    :max="10000"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="SN Pattern"
+                    v-model="data.serial_pattern"
+                  />
+                </CCardBody>
+              </CCard>
+
+              <!-- Warehouse Module Settings -->
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  Warehouse Module Settings
+                </CCardHeader>
+                <CCardBody>
+                  <p style="font-weight: bold">Transaction Settings</p>
                   <CRow form class="form-group">
-                    <CCol sm="12">
-                      <InputDefault
-                        :required="true"
-                        :col="[3, 7]"
-                        title="Latitude"
-                        v-model="data.latitude"
-                        :validasi="'float'"
-                        :isValid="
-                          initialLoad ? null : !data.latitude ? false : true
-                        "
-                      />
-                    </CCol>
-                    <CCol sm="12">
-                      <InputDefault
-                        :required="true"
-                        :col="[3, 7]"
-                        title="Longitude"
-                        v-model="data.longitude"
-                        :validasi="'float'"
-                        :isValid="
-                          initialLoad ? null : !data.longitude ? false : true
-                        "
-                      />
+                    <CCol sm="6">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Create Inbound on Transfer Completion
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.allow_multiple_batch_inbound"
+                          />
+                        </CCol>
+                      </CRow>
                     </CCol>
 
-                    <CCol sm="12">
-                      <InputDefault
-                        :required="true"
-                        :col="[3, 7]"
-                        title="ID Location (BPOM)"
-                        v-model="data.id_location"
-                        :validasi="'integer'"
-                        :max="100"
-                        :isValid="
-                          initialLoad ? null : !data.id_location ? false : true
-                        "
-                        description="This value is named 'ID Sarana' is obtained from BPOM and is used for serial reporting to BPOM"
-                      />
+                    <CCol sm="6">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Create Outbound on Transfer Completion
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.transfer_record_to_inbound"
+                          />
+                        </CCol>
+                      </CRow>
                     </CCol>
 
+                    <CCol sm="6">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Create Inbound on Return Completion
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.return_record_to_inbound"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+
+                    <CCol sm="6">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Create Outbound on Return Completion
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.return_record_to_outbound"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Minimum Remaining Shelf Life for Picking"
+                    v-model="data.delivery_day_limit"
+                    :validasi="'integer'"
+                    :max="10000"
+                    description="Products must have at least the specified number of days before expiry to be eligible for picking."
+                  />
+                  <CCol sm="12"> </CCol>
+                  <CRow form class="form-group">
+                    <CCol tag="label" sm="3" class="col-form-label">
+                      Allow Aggregated Packaging L2 on Return External
+                    </CCol>
+                    <CCol sm="9">
+                      <CSwitch
+                        class="mr-1"
+                        color="success"
+                        :checked.sync="data.return_ext_aggregation"
+                      />
+                      <p style="font-size: smaller; color: rgb(143, 143, 143)">
+                        When enabled, the system accepts external return items
+                        in aggregated packaging (level 2). When disabled, only
+                        unit-level packaging (level 1) is allowed.
+                      </p>
+                    </CCol>
+                    <CCol sm="12">
+                      <SelectOption
+                        title="EPC Status After Return External"
+                        :options="epcStatusOptions"
+                        v-on:onchange="data.return_ext_status = $event"
+                        :value="data.return_ext_status"
+                        :col="[3, 7]"
+                        description="If left blank, the default status Active will be applied."
+                      />
+                    </CCol>
+                  </CRow>
+                </CCardBody>
+              </CCard>
+              <!-- Warehouse Module Settings -->
+              <CCard>
+                <CCardHeader style="font-weight: bold">
+                  BPOM TTAC Settings
+                </CCardHeader>
+                <CCardBody>
+                  <p style="font-weight: bold">
+                    BPOM TTAC Registration Information
+                  </p>
+
+                  <InputDefault
+                    :required="true"
+                    :col="[3, 7]"
+                    title="Latitude"
+                    v-model="data.latitude"
+                    :validasi="'float'"
+                    :isValid="
+                      initialLoad ? null : !data.latitude ? false : true
+                    "
+                  />
+                  <InputDefault
+                    :required="true"
+                    :col="[3, 7]"
+                    title="Longitude"
+                    v-model="data.longitude"
+                    :validasi="'float'"
+                    :isValid="
+                      initialLoad ? null : !data.longitude ? false : true
+                    "
+                  />
+                  <InputDefault
+                    :required="true"
+                    :col="[3, 7]"
+                    title="ID Sarana"
+                    v-model="data.id_location"
+                    :validasi="'integer'"
+                    :max="100"
+                    :isValid="
+                      initialLoad ? null : !data.id_location ? false : true
+                    "
+                    description="'ID Sarana' as registered in the BPOM TTAC system, used for reporting Track & Trace data."
+                  />
+                  <p style="font-weight: bold">BPOM TTAC Reporting Settings</p>
+
+                  <CRow form class="form-group">
                     <CCol sm="12">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="3" class="col-form-label">
@@ -504,13 +605,18 @@
                               color: rgb(143, 143, 143);
                             "
                           >
-                            This affects the report that will be generated for
-                            BPOM purposes. If this value is true then all
-                            aggregation processes will be generated. if the
-                            value is false then the report is carried out during
-                            production and during the picking list. This value
-                            cannot change if there is already a transaction in
-                            the bpom Queue
+                            Determines how the system generates reports to the
+                            BPOM TTAC system. When enabled, all reportable
+                            transactions include aggregated packaging data, and
+                            any changes to aggregation or serial operations will
+                            trigger TTAC reports. When disabled, production
+                            reports after Transfer include only level 1
+                            serialization (primary barcode). In distribution
+                            reports, the system registers relevant aggregation
+                            from the Picking List and reports the corresponding
+                            aggregated barcodes sent to the customer. Important:
+                            Before changing this setting, all pending reports in
+                            the BPOM Queue must be completed.
                           </p>
                         </CCol>
                       </CRow>
@@ -532,21 +638,14 @@
                               color: rgb(143, 143, 143);
                             "
                           >
-                            This function is still beta for validation
-                            return-external
+                            When enabled, the system will validate barcodes of
+                            returned items against the BPOM TTAC system during
+                            the first approval of an External Return
+                            transaction. When disabled, validation will rely
+                            solely on the internal system database.
                           </p>
                         </CCol>
                       </CRow>
-                    </CCol>
-                    <CCol sm="12">
-                      <SelectOption
-                        title="Return External Status"
-                        :options="epcStatusOptions"
-                        v-on:onchange="data.return_ext_status = $event"
-                        :value="data.return_ext_status"
-                        :col="[3, 7]"
-                        description="Leave blank if status set to active"
-                      />
                     </CCol>
                   </CRow>
                 </CCardBody>
@@ -574,184 +673,7 @@
                 </CCardBody>
               </CCard>
 
-              <CCard>
-                <CCardHeader style="font-weight: bold"
-                  >Transaction Option</CCardHeader
-                >
-                <CCardBody>
-                  <CRow form class="form-group">
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Allow Inbound Multiple Batch
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.allow_multiple_batch_inbound"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Transfer Record to Inbound
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.transfer_record_to_inbound"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Return Record to Inbound
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.return_record_to_inbound"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                  </CRow>
-
-                  <CRow form class="form-group">
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Allow Transfer Multiple Batch
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.allow_multiple_batch_transfer"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Transfer Record to Outbound
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.transfer_record_to_outbound"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Return Record to Outbound
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.return_record_to_outbound"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                  </CRow>
-                </CCardBody>
-              </CCard>
-              <CCard>
-                <CCardHeader style="font-weight: bold"
-                  >Production Option</CCardHeader
-                >
-                <CCardBody>
-                  <SelectOption
-                    title="Expiry Type (Shelf Life Calculation)"
-                    :options="listExpiryType"
-                    v-on:onchange="data.expiry_type = $event"
-                    :value="data.expiry_type"
-                    :col="[3, 7]"
-                    :description="expiryDescription()"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Min. Count Generated Serial"
-                    v-model="data.min_count_generated_serial"
-                    :validasi="'integer'"
-                    :max="10000"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Additional EPC for ref Sample"
-                    v-model="data.additional_serial_for_sample"
-                    :validasi="'integer'"
-                    :max="10000"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Pattern for Generating Serial Number"
-                    v-model="data.serial_pattern"
-                  />
-                </CCardBody>
-              </CCard>
-              <CCard>
-                <CCardHeader style="font-weight: bold">
-                  Long Process Configuration
-                </CCardHeader>
-                <CCardBody>
-                  <SelectOption
-                    title="Retrying Time Interval"
-                    :options="listCron"
-                    v-on:onchange="data.retry_interval = $event"
-                    :value="data.retry_interval"
-                    :col="[3, 7]"
-                  />
-                </CCardBody>
-              </CCard>
-
-              <CCol sm="10">
-                <CInput
-                  label=" Delivery Limit Before Expiry Date"
-                  placeholder="Enter minimum L1 stock threshold"
-                  type="number"
-                  horizontal
-                  description="This will determine the expiration date that is allowed to be sold"
-                  v-model="data.delivery_day_limit"
-                >
-                  <template #append-content>Day's</template>
-                </CInput>
-              </CCol>
-
-              <CCol sm="10">
-                <CRow form class="form-group">
-                  <CCol tag="label" sm="3" class="col-form-label">
-                    Allow Return Aggregation
-                  </CCol>
-                  <CCol sm="9">
-                    <CSwitch
-                      class="mr-1"
-                      color="success"
-                      :checked.sync="data.return_ext_aggregation"
-                    />
-                    <p style="font-size: smaller; color: rgb(143, 143, 143)">
-                      If the value is true then when returning externally it is
-                      allowed to return with the aggregation level (maximum
-                      level 2)
-                    </p>
-                  </CCol>
-                </CRow>
-              </CCol>
+              <CCol sm="10"> </CCol>
             </CForm>
           </CCardBody>
           <CCardFooter>
@@ -790,6 +712,7 @@ import {
 } from '../../../resource/Whatsapp';
 import { setConfig } from '../../../utils';
 import { getConfCron } from '../../../resource/ConfCron';
+import { CCard, CCol } from '@coreui/vue';
 export default {
   name: 'ConfigApplication',
   components: {},
