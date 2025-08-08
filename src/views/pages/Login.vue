@@ -127,6 +127,7 @@ import {
   setMenu,
   getLoginLogo,
   getLastUrl,
+  getConfig,
 } from '../../utils';
 import { logoMertrack } from '../../constants';
 import { getSysConfig } from '../../resource/SysConfig';
@@ -185,7 +186,13 @@ export default {
     },
     redirectReload() {
       let profile = getProfile();
-      if (profile && profile.id != 0 && profile.password_must_change) {
+
+      if (
+        getConfig().password_must_change &&
+        profile &&
+        profile.id != 0 &&
+        profile.password_must_change
+      ) {
         this.$router.push({ path: `/change-password?p-key=${profile.token}` });
         return;
       }

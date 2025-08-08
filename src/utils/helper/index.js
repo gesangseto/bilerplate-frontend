@@ -265,7 +265,7 @@ export function isJsonString(item) {
   }
 }
 
-let secret_key = 'PT. Merindo Makmur';
+let secret_key = 'mmDS8899#l3';
 // Encrypt data
 export function encryptData(data) {
   if (typeof data === 'object') data = JSON.stringify(data);

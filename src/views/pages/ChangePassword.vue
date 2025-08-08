@@ -67,6 +67,9 @@
                 <v-icon v-if="!showPassword" name="eye-slash" size="sm" />
                 <v-icon v-if="showPassword" name="eye" size="sm" />
               </CButton>
+              <CButton color="danger" size="sm" @click="logOut">
+                Cancel
+              </CButton>
             </CCardFooter>
           </CCard>
         </CCol>
@@ -79,9 +82,10 @@
 import { CCardHeader } from '@coreui/vue';
 import { ChangePwdFirstTime } from '../../resource/SysAuth';
 import {
+  clearStorage,
+  getConfig,
   getConfUserApp,
   getProfile,
-  getUserId,
   setProfile,
   validationPassword,
 } from '../../utils';
@@ -131,9 +135,14 @@ export default {
   },
   mounted() {
     this.profile = getProfile();
+    if (!this.profile) this.$router.replace({ path: `/login` });
     this.conf_user_app = getConfUserApp();
   },
   methods: {
+    logOut() {
+      clearStorage();
+      this.$router.replace({ path: `/login` });
+    },
     checkValidation() {
       let have_error = false;
       for (const rq in this.required) {
