@@ -1065,6 +1065,9 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         let dataPost = param;
+        console.log(dataPost);
+
+        // return;
         this.$isLoading(true);
         let res = {};
         if (this.action === 'Create' && dataPost.id) {

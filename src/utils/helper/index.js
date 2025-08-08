@@ -372,7 +372,12 @@ export function expFromShelfLife({ mfg_date, shelf_life, type }) {
   if (add && mfg_date) {
     let mfg = moment(mfg_date);
     let date = mfg.date();
-    if (type == 'start_of_month') {
+    if (!type) type = 'same_day';
+    if (type == 'same_day') {
+      return mfg.add(add, 'months').format('YYYY-MM-DD');
+    } else if (type == 'one_day_before') {
+      return mfg.add(add, 'months').add(-1, 'days').format('YYYY-MM-DD');
+    } else if (type == 'start_of_month') {
       return mfg.add(add, 'months').startOf('month').format('YYYY-MM-DD');
     } else if (type == 'end_of_month') {
       return mfg.add(add, 'months').endOf('month').format('YYYY-MM-DD');
@@ -386,8 +391,6 @@ export function expFromShelfLife({ mfg_date, shelf_life, type }) {
         add = add - 1;
       }
       return mfg.add(add, 'months').endOf('month').format('YYYY-MM-DD');
-    } else {
-      return mfg.add(add, 'months').format('YYYY-MM-DD');
     }
   }
 }

@@ -129,50 +129,43 @@
                   />
 
                   <p style="font-weight: bold">Password Policy</p>
-                  <CRow form class="form-group">
-                    <CCol col="6">
-                      <InputDefault
-                        :col="[4, 6]"
-                        title="Minimum Length"
-                        :validasi="'integer'"
-                        v-model="data.password_pattern.min"
-                        :is-valid="
-                          data.password_pattern.max && data.password_pattern.min
-                            ? parseInt(data.password_pattern.min) >
-                              parseInt(data.password_pattern.max)
-                              ? false
-                              : true
-                            : true
-                        "
-                        invalid_feedback="Min value must smaller than Max value"
-                      />
-                    </CCol>
-                    <CCol col="6">
-                      <InputDefault
-                        :col="[4, 6]"
-                        title="Maximum Length"
-                        :validasi="'integer'"
-                        v-model="data.password_pattern.max"
-                        :is-valid="
-                          !data.password_pattern
-                            ? null
-                            : data.password_pattern.max &&
-                              data.password_pattern.min
-                            ? parseInt(data.password_pattern.min) >
-                              parseInt(data.password_pattern.max)
-                              ? false
-                              : true
-                            : true
-                        "
-                        invalid_feedback="Max value must greater than Min value"
-                      />
-                    </CCol>
-                  </CRow>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Minimum Length"
+                    :validasi="'integer'"
+                    v-model="data.password_pattern.min"
+                    :is-valid="
+                      data.password_pattern.max && data.password_pattern.min
+                        ? parseInt(data.password_pattern.min) >
+                          parseInt(data.password_pattern.max)
+                          ? false
+                          : true
+                        : true
+                    "
+                    invalid_feedback="Min value must smaller than Max value"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Maximum Length"
+                    :validasi="'integer'"
+                    v-model="data.password_pattern.max"
+                    :is-valid="
+                      !data.password_pattern
+                        ? null
+                        : data.password_pattern.max && data.password_pattern.min
+                        ? parseInt(data.password_pattern.min) >
+                          parseInt(data.password_pattern.max)
+                          ? false
+                          : true
+                        : true
+                    "
+                    invalid_feedback="Max value must greater than Min value"
+                  />
 
                   <CRow form class="form-group">
-                    <CCol sm="3">
+                    <CCol sm="6">
                       <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
+                        <CCol tag="label" sm="6" class="col-form-label">
                           Alphabet (Lower Case)
                         </CCol>
                         <CCol sm="4">
@@ -184,9 +177,9 @@
                         </CCol>
                       </CRow>
                     </CCol>
-                    <CCol sm="3">
+                    <CCol sm="6">
                       <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
+                        <CCol tag="label" sm="6" class="col-form-label">
                           Alphabet (Upper Case)
                         </CCol>
                         <CCol sm="4">
@@ -198,9 +191,9 @@
                         </CCol>
                       </CRow>
                     </CCol>
-                    <CCol sm="3">
+                    <CCol sm="6">
                       <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
+                        <CCol tag="label" sm="6" class="col-form-label">
                           Numeric
                         </CCol>
                         <CCol sm="4">
@@ -212,9 +205,9 @@
                         </CCol>
                       </CRow>
                     </CCol>
-                    <CCol sm="3">
+                    <CCol sm="6">
                       <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
+                        <CCol tag="label" sm="6" class="col-form-label">
                           Symbol
                         </CCol>
                         <CCol sm="4">
@@ -229,7 +222,7 @@
                   </CRow>
                   <p style="font-weight: bold">Initial Password Settings</p>
                   <InputDefault
-                    :col="[3, 6]"
+                    :col="[3, 7]"
                     title="Default Password User"
                     v-model="data.password_default"
                     :is-valid="data.password_default ? true : null"
@@ -656,20 +649,16 @@
                   Archive Folder
                 </CCardHeader>
                 <CCardBody>
-                  <CCol sm="10">
-                    <CInput
-                      label="Pre Inbound"
-                      horizontal
-                      v-model="data.folder_preinbound"
-                    />
-                  </CCol>
-                  <CCol sm="10">
-                    <CInput
-                      label="Picking List"
-                      horizontal
-                      v-model="data.folder_pickinglist"
-                    />
-                  </CCol>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Pre Inbound"
+                    v-model="data.folder_preinbound"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Picking List"
+                    v-model="data.folder_pickinglist"
+                  />
                 </CCardBody>
               </CCard>
 
@@ -781,6 +770,17 @@ export default {
       ],
       listExpiryType: [
         {
+          value: 'one_day_before',
+          label: 'One Day Before the day of Mfg Date',
+          description:
+            'Expiry date falls on one day before the day of Mfg Date',
+        },
+        {
+          value: 'same_day',
+          label: 'Same Day as the Day of Mfg Date',
+          description: 'Expiry date retains the original day value.',
+        },
+        {
           value: 'start_of_month',
           label: 'Start Of Month',
           description: 'Expiry date falls on the first day of the month',
@@ -792,7 +792,7 @@ export default {
         },
         {
           value: 'adjusted_eom',
-          label: 'Adjusted EOM',
+          label: 'Mid-Month Adjustment (15th Day to EoM)',
           description:
             'If the manufacturing date is before the 15th, subtract 1 month and set expiry to the end of that month',
         },
@@ -862,7 +862,7 @@ export default {
       if (thisExpiry) {
         return thisExpiry.description;
       } else {
-        return 'Shelf life is added directly in months; the expiry date retains the original day value.';
+        return 'Expiry date retains the original day value.';
       }
     },
     async loadEpcStatus() {
