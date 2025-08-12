@@ -581,6 +581,7 @@ export default {
     */
     handleUploadFile(event) {
       let isiFile = event[0];
+
       if (isiFile != undefined) {
         let ekstensiFile = isiFile.name.split('.').reverse()[0];
         let fileName = isiFile.name.replace(`.${ekstensiFile}`, '');
@@ -613,7 +614,16 @@ export default {
           }
         }
         listLayout.sort(dynamicSort('itf_var_name'));
-        this.formData.items = listLayout;
+        // Mencari semua yang sama, jika sama maka pakain parameter yang lama
+        let newItems = [];
+        for (const it of listLayout) {
+          let find = this.formData.items.find(
+            (o) => o.itf_var_name == it.itf_var_name
+          );
+          if (find) newItems.push(find);
+          else newItems.push(it);
+        }
+        this.formData.items = newItems;
       } else if (extensi === 'csv') {
         for (const it of arr_str) {
           if (it) {
@@ -642,7 +652,6 @@ export default {
         } else {
           // Jika sama
           this.formData.items = oldData.items;
-          this.formData.itf_content = oldData.itf_content;
         }
       }
       return;
