@@ -85,10 +85,10 @@ export default {
           key: 'province_name',
           label: 'Province',
         },
-        {
-          key: 'entity_name',
-          label: 'Entity',
-        },
+        // {
+        //   key: 'entity_name',
+        //   label: 'Entity',
+        // },
         {
           key: 'status',
           _classes: 'font-weight-bold',

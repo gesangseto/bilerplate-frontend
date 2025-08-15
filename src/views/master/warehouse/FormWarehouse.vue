@@ -71,30 +71,18 @@
                 </template>
               </CSelect>
 
-              <CSelect
+              <!-- <CSelect
                 :disabled="action == 'Read' ? true : false"
                 label="Entity *"
                 :options="listEntity"
                 horizontal
                 placeholder="--Select--"
                 :value.sync="formData.mst_warehouse_entity_id"
-                :is-valid="
-                  initial_load
-                    ? null
-                    : formData.mst_warehouse_entity_id
-                    ? true
-                    : false
-                "
               >
                 <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Entity
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
+                  <p class="col-form-label col-sm-3">Entity</p>
                 </template>
-              </CSelect>
+              </CSelect> -->
 
               <CSelect
                 :disabled="action == 'Read' ? true : false"
@@ -274,9 +262,11 @@ export default {
         return false;
       } else if (!this.formData.mst_province_id) {
         return false;
-      } else if (!this.formData.mst_warehouse_entity_id) {
-        return false;
-      } else if (!this.formData.category_id) {
+      }
+      //  else if (!this.formData.mst_warehouse_entity_id) {
+      //   return false;
+      // }
+      else if (!this.formData.category_id) {
         return false;
       } else if (this.formData.error_metadata) {
         return false;
