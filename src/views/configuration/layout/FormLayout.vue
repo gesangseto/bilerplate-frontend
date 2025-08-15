@@ -1117,7 +1117,7 @@ export default {
         }
         return {
           ...item,
-          AI: item.layout_identifier_AI || '',
+          AI: item.layout_identifier_AI || item.layout_identifier_ai || '',
           is_selected: is_selected,
         };
       });

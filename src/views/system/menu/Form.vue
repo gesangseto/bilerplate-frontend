@@ -251,7 +251,7 @@
             <CCard>
               <CCardHeader class="HeaderDashboard">
                 <div class="float-left title-dashboard font-weight-bold">
-                  Menu Android
+                  Menu Station
                 </div>
               </CCardHeader>
               <CCardBody style="padding: 0px">
@@ -262,6 +262,9 @@
                         <th style="text-align: center">Menu</th>
                         <th style="text-align: center">Access</th>
                         <th style="text-align: center">Approve</th>
+                        <th style="text-align: center">Diff Approval</th>
+                        <th style="text-align: center">Batch Active</th>
+                        <th style="text-align: center">Batch Inactive</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -282,15 +285,17 @@
                           >
                             {{ item.label }}
                           </td>
+
                           <td
                             :class="{ 'has-border': !item.mst_menu_id }"
-                            style="text-align: center"
+                            :style="'text-align: center;'"
                           >
                             <CInputCheckbox
-                              v-if="item.show_update"
-                              @click="clickUpdate('edit', index)"
                               size="sm"
-                              :checked="item.can_edit"
+                              @click="
+                                handleChangeMenuStation('show_update', index)
+                              "
+                              :checked="item.show_update"
                               style="margin-bottom: 30px; margin-top: 5px"
                             />
                           </td>
@@ -299,10 +304,50 @@
                             :style="'text-align: center;'"
                           >
                             <CInputCheckbox
-                              v-if="item.show_approve"
-                              @click="clickUpdate('approve', index)"
+                              @click="
+                                handleChangeMenuStation('show_approve', index)
+                              "
                               size="sm"
-                              :checked="item.can_approve"
+                              :checked="item.show_approve"
+                              style="margin-bottom: 30px; margin-top: 5px"
+                            />
+                          </td>
+                          <td
+                            :class="{ 'has-border': !item.mst_menu_id }"
+                            :style="'text-align: center;'"
+                          >
+                            <CInputCheckbox
+                              @click="
+                                handleChangeMenuStation('diff_approval', index)
+                              "
+                              size="sm"
+                              :checked="item.diff_approval"
+                              style="margin-bottom: 30px; margin-top: 5px"
+                            />
+                          </td>
+                          <td
+                            :class="{ 'has-border': !item.mst_menu_id }"
+                            :style="'text-align: center;'"
+                          >
+                            <CInputCheckbox
+                              @click="
+                                handleChangeMenuStation('batch_active', index)
+                              "
+                              size="sm"
+                              :checked="item.batch_active"
+                              style="margin-bottom: 30px; margin-top: 5px"
+                            />
+                          </td>
+                          <td
+                            :class="{ 'has-border': !item.mst_menu_id }"
+                            :style="'text-align: center;'"
+                          >
+                            <CInputCheckbox
+                              @click="
+                                handleChangeMenuStation('batch_inactive', index)
+                              "
+                              size="sm"
+                              :checked="item.batch_inactive"
                               style="margin-bottom: 30px; margin-top: 5px"
                             />
                           </td>
