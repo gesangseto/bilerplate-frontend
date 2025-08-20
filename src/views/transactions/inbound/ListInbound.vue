@@ -119,7 +119,7 @@ export default {
           label: 'Destination',
         },
         {
-          key: '_created.full_name',
+          key: 'created_full_name',
           label: 'Created By',
         },
         {
@@ -155,7 +155,7 @@ export default {
   computed: {
     reformatItems() {
       return this.items.map((item) => {
-        let created_by = item['_created.full_name'];
+        let created_by = item['created_full_name'];
         let source = toTitleCase(item.source);
         return {
           ...item,
@@ -163,7 +163,7 @@ export default {
           gtin: item.gtin || '-',
           trx_ref_id: item.trx_ref_id || '-',
           source: source,
-          '_created.full_name': created_by || '-',
+          created_full_name: created_by || '-',
         };
       });
     },

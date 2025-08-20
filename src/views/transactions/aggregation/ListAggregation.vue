@@ -120,7 +120,7 @@ export default {
           label: 'Pkg Name',
         },
         {
-          key: '_created.full_name',
+          key: 'created_full_name',
           label: 'Created By',
         },
         {
@@ -212,7 +212,7 @@ export default {
           ...item,
           nie: item.nie || '-',
           gtin: item.gtin || '-',
-          ['_created.full_name']: item['_created.full_name'] || '-',
+          ['created_full_name']: item['created_full_name'] || '-',
         };
       });
     },

@@ -144,7 +144,7 @@ export default {
           label: 'Pkg Name',
         },
         {
-          key: '_created.full_name',
+          key: 'created_full_name',
           label: 'Created By',
         },
         {
@@ -213,7 +213,7 @@ export default {
           gtin: item.gtin || '-',
           epc_key: epc_key,
           serial: serial,
-          ['_created.full_name']: item['_created.full_name'] || '-',
+          ['created_full_name']: item['created_full_name'] || '-',
         };
       });
     },

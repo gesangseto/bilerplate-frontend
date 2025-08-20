@@ -272,7 +272,9 @@
         <CCardFooter>
           <!-- Simpan data saat create-->
           <CButton
-            v-if="action == 'Create' || action == 'Update'"
+            v-if="
+              action == 'Create' || (formData.status == 0 && action == 'Update')
+            "
             type="submit"
             size="sm"
             @click="save()"

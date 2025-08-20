@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="aggregation['_created.full_name']"
+                          v-model="aggregation['created_full_name']"
                         />
                       </td>
                     </tr>

@@ -149,6 +149,7 @@ import {
   getLimitation,
   setConfig,
   setLastUrl,
+  getConfig,
 } from '../utils';
 import moment from 'moment';
 import { getSysConfig } from '../resource/SysConfig';
@@ -297,6 +298,16 @@ export default {
       }
       if (can_access === 'false' || !can_access) {
         this.$router.push({ path: `/oops` });
+      }
+      let profile = getProfile();
+      if (
+        getConfig().password_must_change &&
+        profile &&
+        profile.id != 0 &&
+        profile.password_must_change
+      ) {
+        this.$router.push({ path: `/change-password?p-key=${profile.token}` });
+        return;
       }
     },
     async readNotif(item, alert = false) {

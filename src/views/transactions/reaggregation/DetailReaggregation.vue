@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation['_created.full_name']"
+                          v-model="reaggregation['created_full_name']"
                         />
                       </td>
                     </tr>

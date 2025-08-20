@@ -37,7 +37,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack['_created.full_name']"
+                          v-model="unpack['created_full_name']"
                         />
                       </td>
                     </tr>

@@ -256,6 +256,12 @@ export default {
       const flattingMenu = (menus = Array) => {
         let thisMenu = [];
         for (const it of menus) {
+          it.can_add = it.can_add == 'true' ? true : false;
+          it.can_view = it.can_view == 'true' ? true : false;
+          it.can_edit = it.can_edit == 'true' ? true : false;
+          it.can_delete = it.can_delete == 'true' ? true : false;
+          it.can_print = it.can_print == 'true' ? true : false;
+          it.can_approve = it.can_approve == 'true' ? true : false;
           thisMenu.push(it);
           if (it.children && Array.isArray(it.children)) {
             thisMenu = [...thisMenu, ...flattingMenu(it.children)];
