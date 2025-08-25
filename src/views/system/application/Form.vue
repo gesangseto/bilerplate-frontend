@@ -10,7 +10,7 @@
             <CForm>
               <!-- Licensed Entity Information -->
               <CCard>
-                <CCardHeader style="font-weight: bold">
+                <CCardHeader style="font-weight: bold; font-size: large">
                   Licensed Entity Information
                 </CCardHeader>
                 <CCardBody>
@@ -47,7 +47,7 @@
 
               <!-- Licensed Features & Limits -->
               <CCard>
-                <CCardHeader style="font-weight: bold">
+                <CCardHeader style="font-weight: bold; font-size: large">
                   Licensed Features & Limits
                 </CCardHeader>
                 <CCardBody>
@@ -115,7 +115,7 @@
 
               <!-- Authentication & Security Settings -->
               <CCard>
-                <CCardHeader style="font-weight: bold">
+                <CCardHeader style="font-weight: bold; font-size: large">
                   Authentication & Security Settings
                 </CCardHeader>
                 <CCardBody>
@@ -223,7 +223,7 @@
                   <p style="font-weight: bold">Initial Password Settings</p>
                   <InputDefault
                     :col="[3, 7]"
-                    title="Default Password User"
+                    title="Default User Password"
                     v-model="data.password_default"
                     :is-valid="data.password_default ? true : null"
                     description="This password will be assigned to new user accounts or when resetting a user's password"
@@ -250,7 +250,7 @@
 
               <!-- General System Settings -->
               <CCard>
-                <CCardHeader style="font-weight: bold">
+                <CCardHeader style="font-weight: bold; font-size: large">
                   General System Settings
                 </CCardHeader>
                 <CCardBody>
@@ -265,7 +265,7 @@
                       @change="uploadLogo($event, 'identity')"
                     >
                       <template #label>
-                        <p class="col-form-label col-sm-3">Home Page Picture</p>
+                        <p class="col-form-label col-sm-3">Identity Logo</p>
                       </template>
                     </CInputFile>
                   </CCol>
@@ -293,7 +293,7 @@
                       @change="uploadLogo($event, 'home')"
                     >
                       <template #label>
-                        <p class="col-form-label col-sm-3">Home Logo</p>
+                        <p class="col-form-label col-sm-3">Home Page Picture</p>
                       </template>
                     </CInputFile>
                   </CCol>
@@ -394,7 +394,7 @@
               </CCard>
               <!-- Production Module Settings -->
               <CCard>
-                <CCardHeader style="font-weight: bold">
+                <CCardHeader style="font-weight: bold; font-size: large">
                   Production Module Settings
                 </CCardHeader>
                 <CCardBody>
@@ -431,16 +431,16 @@
 
               <!-- Warehouse Module Settings -->
               <CCard>
-                <CCardHeader style="font-weight: bold">
+                <CCardHeader style="font-weight: bold; font-size: large">
                   Warehouse Module Settings
                 </CCardHeader>
                 <CCardBody>
                   <p style="font-weight: bold">Transaction Settings</p>
                   <CRow form class="form-group">
-                    <CCol sm="6">
+                    <CCol sm="4">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="8" class="col-form-label">
-                          Create Inbound on Transfer Completion
+                          Allow Inbound Multiple Batch
                         </CCol>
                         <CCol sm="4">
                           <CSwitch
@@ -450,12 +450,23 @@
                           />
                         </CCol>
                       </CRow>
-                    </CCol>
-
-                    <CCol sm="6">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="8" class="col-form-label">
-                          Create Outbound on Transfer Completion
+                          Allow Transfer Multiple Batch
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.allow_multiple_batch_transfer"
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="4">
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Create Inbound on Transfer Completion
                         </CCol>
                         <CCol sm="4">
                           <CSwitch
@@ -465,9 +476,20 @@
                           />
                         </CCol>
                       </CRow>
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="8" class="col-form-label">
+                          Create Outbound on Transfer Completion
+                        </CCol>
+                        <CCol sm="4">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.transfer_record_to_putbound"
+                          />
+                        </CCol>
+                      </CRow>
                     </CCol>
-
-                    <CCol sm="6">
+                    <CCol sm="4">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="8" class="col-form-label">
                           Create Inbound on Return Completion
@@ -476,13 +498,10 @@
                           <CSwitch
                             class="mr-1"
                             color="success"
-                            :checked.sync="data.return_record_to_inbound"
+                            :checked.sync="data.transfer_record_to_inbound"
                           />
                         </CCol>
                       </CRow>
-                    </CCol>
-
-                    <CCol sm="6">
                       <CRow form class="form-group">
                         <CCol tag="label" sm="8" class="col-form-label">
                           Create Outbound on Return Completion
@@ -491,7 +510,7 @@
                           <CSwitch
                             class="mr-1"
                             color="success"
-                            :checked.sync="data.return_record_to_outbound"
+                            :checked.sync="data.transfer_record_to_outbound"
                           />
                         </CCol>
                       </CRow>
@@ -538,7 +557,7 @@
               </CCard>
               <!-- Warehouse Module Settings -->
               <CCard>
-                <CCardHeader style="font-weight: bold">
+                <CCardHeader style="font-weight: bold; font-size: large">
                   BPOM TTAC Settings
                 </CCardHeader>
                 <CCardBody>
@@ -645,7 +664,7 @@
               </CCard>
 
               <CCard>
-                <CCardHeader style="font-weight: bold">
+                <CCardHeader style="font-weight: bold; font-size: large">
                   Archive Folder
                 </CCardHeader>
                 <CCardBody>
