@@ -57,7 +57,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="reaggregation['_warehouse.name']"
+                          v-model="reaggregation['warehouse_name']"
                         />
                       </td>
                     </tr>

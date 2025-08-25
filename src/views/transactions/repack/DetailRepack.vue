@@ -57,7 +57,7 @@
                         <input
                           class="form-control"
                           readonly
-                          v-model="unpack['_warehouse.name']"
+                          v-model="unpack['warehouse_name']"
                         />
                       </td>
                     </tr>

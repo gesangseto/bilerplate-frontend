@@ -120,7 +120,7 @@ export default {
           label: 'Product Name [Batch No]',
         },
         {
-          key: '_warehouse.name',
+          key: 'warehouse_name',
           label: 'Warehouse',
         },
         {

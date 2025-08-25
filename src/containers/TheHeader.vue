@@ -167,7 +167,7 @@ export default {
       timeout: null,
       can_show: true,
       timeoutModal: false,
-      notif: null,
+      notif: [],
       notifModal: false,
       notifLength: 0,
       notification: 0,
@@ -361,8 +361,10 @@ export default {
           this.sessionExpired();
           return;
         }
+
         this.notif = _res.data;
-        this.notifLength = _res.data.length || 0;
+        console.log(this.notif.length);
+        this.notifLength = this.notif.length || 0;
         this.timeout = this.getDifferentSecond();
       }
       return;
@@ -409,7 +411,7 @@ export default {
   computed: {
     notifUnreadCount() {
       return Array.isArray(this.notif)
-        ? this.notif.filter((it) => it.flag_read === 0).length
+        ? this.notif.filter((it) => !it.flag_read).length
         : 0;
     },
     notifCount() {
