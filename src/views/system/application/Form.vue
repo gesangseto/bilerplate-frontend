@@ -348,8 +348,8 @@
                   <br />
                   <small>{{ whatsappStatus.message }}</small>
                   <hr />
-                  <CForm v-if="!whatsappStatus.error"
-                    ><CCol class="md-4">
+                  <CForm v-if="!whatsappStatus.error">
+                    <CCol class="md-4">
                       <img
                         v-bind:src="whatsappStatus.qr_base64"
                         style="width: 150px; heigth: auto"
@@ -662,12 +662,13 @@
                   </CRow>
                 </CCardBody>
               </CCard>
-
+              <!-- Data Center -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
-                  Archive Folder
+                  Data Center
                 </CCardHeader>
                 <CCardBody>
+                  <p style="font-weight: bold">Archive</p>
                   <InputDefault
                     :col="[3, 7]"
                     title="Pre Inbound"
@@ -677,6 +678,30 @@
                     :col="[3, 7]"
                     title="Picking List"
                     v-model="data.folder_pickinglist"
+                  />
+                  <p style="font-weight: bold; margin-bottom: 15px">Backup</p>
+                  <SelectOption
+                    title="Scheduler"
+                    :options="listCron"
+                    v-on:onchange="data.backup_interval = $event"
+                    :value="data.backup_interval"
+                    :col="[3, 7]"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Backup Path"
+                    v-model="data.backup_path"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Backup Prefix"
+                    v-model="data.backup_prefix"
+                    :description="`The file name will look like this '${getFullNameBackup()}`"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Backup Password 7z"
+                    v-model="data.backup_password"
                   />
                 </CCardBody>
               </CCard>
@@ -780,6 +805,7 @@ export default {
         list_device: [],
         password_pattern: this.initial_password_pattern(),
       },
+      info: {},
       devicesLooping: 0,
       periodicBackupOptions: [
         { value: 1, label: '1 Day' },
@@ -870,6 +896,7 @@ export default {
             ? JSON.parse(pattern)
             : this.initial_password_pattern(),
         };
+        this.info = this.data?.info;
         this.devicesLooping = data.total_device;
       }
       return;
@@ -1032,6 +1059,12 @@ export default {
     },
     cancel() {
       this.$router.back();
+    },
+    getFullNameBackup() {
+      let timestamp = moment(new Date()).format('YYYYMMDD-hhmmss');
+      return `${this.data.backup_prefix || ''}${this.info.database}_L3v${
+        this.info.app_version
+      }_Full_${timestamp}.pgb`;
     },
   },
 };

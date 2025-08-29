@@ -178,6 +178,11 @@ const DetailAuditTrail = () =>
 const ReportShowStatus = () => import('@/views/reports/ReportShowStatus');
 // ========================REPORT========================
 
+// ========================MAINTENANCE========================
+const DatabaseBackup = () => import('@/views/maintenance/database-backup/Form');
+const DatabaseRestore = () =>
+  import('@/views/maintenance/database-restore/Form');
+
 // ========================SYSTEM========================
 const SystemApplication = () => import('@/views/system/application/Form');
 const SystemMenu = () => import('@/views/system/menu/Form');
@@ -1052,6 +1057,32 @@ function configRoutes() {
           name: 'List Connector Action',
           component: ListConnectorAct,
           meta: { login: true },
+        },
+      ],
+    },
+    // MAINTENANCE
+    {
+      path: 'maintenance',
+      redirect: '/dashboard',
+      name: 'Maintenance',
+      meta: { login: true },
+      component: {
+        render(c) {
+          return c('router-view');
+        },
+      },
+      children: [
+        {
+          path: 'database-backup',
+          name: 'Database Backup',
+          meta: { login: true },
+          component: DatabaseBackup,
+        },
+        {
+          path: 'database-restore',
+          name: 'Database Restore',
+          meta: { login: true },
+          component: DatabaseRestore,
         },
       ],
     },
