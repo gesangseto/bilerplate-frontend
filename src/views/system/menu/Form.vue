@@ -265,6 +265,7 @@
                         <th style="text-align: center">Diff Approval</th>
                         <th style="text-align: center">Batch Active</th>
                         <th style="text-align: center">Batch Inactive</th>
+                        <th style="text-align: center">Remark Required</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -348,6 +349,22 @@
                               "
                               size="sm"
                               :checked="item.batch_inactive"
+                              style="margin-bottom: 30px; margin-top: 5px"
+                            />
+                          </td>
+                          <td
+                            :class="{ 'has-border': !item.mst_menu_id }"
+                            :style="'text-align: center;'"
+                          >
+                            <CInputCheckbox
+                              @click="
+                                handleChangeMenuStation(
+                                  'remarks_required',
+                                  index
+                                )
+                              "
+                              size="sm"
+                              :checked="item.remarks_required"
                               style="margin-bottom: 30px; margin-top: 5px"
                             />
                           </td>

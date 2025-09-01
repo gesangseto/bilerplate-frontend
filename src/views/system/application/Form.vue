@@ -703,6 +703,14 @@
                     title="Backup Password 7z"
                     v-model="data.backup_password"
                   />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Backup Retention "
+                    v-model="data.backup_retention"
+                    :validasi="'integer'"
+                    :max="2"
+                    :description="`Determines how long (in days) the backup database can be kept.`"
+                  />
                 </CCardBody>
               </CCard>
 
