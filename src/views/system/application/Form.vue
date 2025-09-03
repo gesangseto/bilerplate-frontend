@@ -665,7 +665,7 @@
               <!-- Data Center -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
-                  Data Center
+                  Database Management Settings
                 </CCardHeader>
                 <CCardBody>
                   <p style="font-weight: bold">Archive</p>
@@ -694,22 +694,30 @@
                   />
                   <InputDefault
                     :col="[3, 7]"
-                    title="Backup Prefix"
+                    title="Backup File Name Prefix"
                     v-model="data.backup_prefix"
-                    :description="`The file name will look like this '${getFullNameBackup()}`"
+                    :description="`File name preview: '${getFullNameBackup()}`"
                   />
                   <InputDefault
                     :col="[3, 7]"
-                    title="Backup Password 7z"
+                    :type="showPassword == false ? 'password' : 'text'"
+                    title="7z Password"
                     v-model="data.backup_password"
-                  />
+                  >
+                    <template #append>
+                      <CButton @click="showPassword = !showPassword">
+                        <v-icon v-if="!showPassword" name="eye-slash" />
+                        <v-icon v-if="showPassword" name="eye" />
+                      </CButton>
+                    </template>
+                  </InputDefault>
                   <InputDefault
                     :col="[3, 7]"
-                    title="Backup Retention "
+                    title="Backup File Retention "
                     v-model="data.backup_retention"
                     :validasi="'integer'"
                     :max="2"
-                    :description="`Determines how long (in days) the backup database can be kept.`"
+                    :description="`How many days to keep database backup files. Files older than this are deleted automatically (oldest first).`"
                   />
                 </CCardBody>
               </CCard>
@@ -759,6 +767,7 @@ export default {
   components: {},
   data() {
     return {
+      showPassword: false,
       initialLoad: true,
       action: 'Edit',
       labelLogo: {
@@ -994,12 +1003,7 @@ export default {
       return val ? val.length >= 4 : false;
     },
     formValidation() {
-      let required = [
-        'identity_name',
-        'identity_number',
-        'identity_logo_path',
-        'entity_address',
-      ];
+      let required = ['identity_name', 'entity_address'];
       // Check Pattern
       if (this.data.password_pattern) {
         let patt = this.data.password_pattern;
