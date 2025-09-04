@@ -2,10 +2,10 @@ import $axiosMertrack from '../apiMertrack';
 
 let url = `/v4/maintenance`;
 
-export const DatabaseBackup = async () => {
+export const getDatabaseBackup = async (params = {}) => {
   return new Promise((resolve) => {
     $axiosMertrack
-      .post(url + '/backup')
+      .get(url + '/backup', params)
       .then((result) => {
         let res = result.data;
         return resolve(res);
@@ -16,12 +16,25 @@ export const DatabaseBackup = async () => {
       });
   });
 };
-export const DatabaseRestore = async (file) => {
-  if (!file) {
-    return false;
-  }
+export const DatabaseBackup = async (params = {}) => {
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(url + '/backup', params)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+export const DatabaseRestore = async (params = {}) => {
   const formData = new FormData();
-  formData.append('file', file); // "file" harus sama dengan yang dicek di backend: req.files.file
+  for (const key in params) {
+    formData.append(key, params[key]);
+  }
 
   return new Promise((resolve) => {
     $axiosMertrack

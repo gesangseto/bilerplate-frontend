@@ -4,25 +4,36 @@
       <CCol sm="12" md="12" lg="12" xl="12">
         <CCard>
           <CCardHeader>
-            <ButtonPermission
-              :permission="'create'"
-              @click="restore()"
-              :buttonProperty="{
-                size: 'sm',
-                class: 'float-right',
-                color: 'success',
-                icon: 'file',
-                text: 'Restore Now',
-                tooltip: 'Restore Database from specific file',
-              }"
-            />
             <CRow>
               <CCol sm="4" lg="4">
                 <h5>{{ $activeMenu.name }}</h5>
               </CCol>
-              <CCol sm="8" lg="8">
+            </CRow>
+          </CCardHeader>
+          <CCardBody>
+            <SelectOption
+              title="Source"
+              :options="[
+                { value: 'server', label: 'Server' },
+                { value: 'local', label: 'Local' },
+              ]"
+              v-on:onchange="formData.source = $event"
+              :value="formData.source"
+              :col="[3, 7]"
+            />
+            <SelectOption
+              v-if="formData.source == 'server'"
+              title="Select File"
+              :options="listFiles"
+              v-on:onchange="formData.file = $event"
+              :value="formData.file"
+              :col="[3, 7]"
+            />
+            <CRow v-if="formData.source == 'local'">
+              <CCol sm="3" lg="3"> Select File </CCol>
+              <CCol sm="7" lg="7">
                 <CInputFile
-                  :placeholder="fileName"
+                  :placeholder="formData.file_name"
                   accept=".7z,.pgb"
                   custom
                   class="input-form-upload"
@@ -30,10 +41,56 @@
                 />
               </CCol>
             </CRow>
-          </CCardHeader>
+          </CCardBody>
+          <CCardFooter>
+            <ButtonPermission
+              :permission="'create'"
+              @click="formData.modal = true"
+              :buttonProperty="{
+                size: 'sm',
+                color: 'success',
+                icon: 'file',
+                text: 'Restore',
+              }"
+            />
+          </CCardFooter>
         </CCard>
       </CCol>
     </CRow>
+    <!-- START RESTORE MODAL -->
+    <div>
+      <CModal
+        centered="centered"
+        :show.sync="formData.modal"
+        :title="`Restore`"
+        color="danger"
+      >
+        <CRow>
+          <CCol sm="12" md="12" lg="12">
+            <TextareaDefault
+              :col="[3, 8]"
+              title="Remark"
+              required
+              v-model="formData.remark"
+              :is-valid="formData.remark ? true : false"
+            />
+            <p>
+              This action will restore your database from the selected backup
+              file. Existing data may be overwritten. Do you want to continue?
+            </p>
+          </CCol>
+        </CRow>
+        <template #footer>
+          <CButton @click="restore()" color="success">
+            <CIcon name="cil-check-circle" />
+            Restore Now
+          </CButton>
+          <CButton @click="formData.modal = false" color="danger">
+            <CIcon name="cil-ban" /> Cancel</CButton
+          >
+        </template>
+      </CModal>
+    </div>
   </div>
 </template>
 
@@ -41,22 +98,46 @@
 const reader = new FileReader();
 import 'vue2-datepicker/index.css';
 import { CCard, CCol } from '@coreui/vue';
-import { DatabaseRestore } from '../../../resource/BackupRestore';
+import {
+  DatabaseRestore,
+  getDatabaseBackup,
+} from '../../../resource/BackupRestore';
 export default {
   name: 'ConfigApplication',
   components: {},
   data() {
-    return { file: null, fileName: '' };
+    return {
+      file: null,
+      formData: {
+        file: null,
+        file_name: null,
+        file_path: null,
+        source: null,
+        remark: null,
+        modal: false,
+      },
+      listFiles: [],
+    };
   },
-  mounted() {},
+  mounted() {
+    this.loadFileList();
+  },
   methods: {
+    async loadFileList() {
+      let _res = await getDatabaseBackup();
+      if (!_res.error) {
+        let data = _res.data;
+        this.listFiles = data.map((it) => {
+          return { value: it.path, label: it.name };
+        });
+        console.log(this.listFiles);
+      }
+    },
     uploadFile(files) {
       const file = files[0];
-      console.log(file);
-
       if (!file) {
-        this.file = null;
-        this.fileName = '';
+        this.formData.file = null;
+        this.formData.file_name = '';
         return;
       }
 
@@ -69,16 +150,17 @@ export default {
           type: 'error',
           position: 'top-right',
         });
-        this.file = null;
-        this.fileName = '';
+        this.formData.file = null;
+        this.formData.file_name = '';
         return;
       }
-
-      this.file = file;
-      this.fileName = file.name;
+      this.formData.file = file;
+      this.formData.file_name = file.name;
     },
     async restore() {
-      if (!this.file) {
+      console.log(this.formData);
+
+      if (!this.formData.file) {
         this.$toast.open({
           message: 'Please select a backup file first!',
           type: 'error',
@@ -88,13 +170,16 @@ export default {
       }
 
       try {
-        let eksekusi = await DatabaseRestore(this.file); // pastikan axios request kirim multipart/form-data
+        let eksekusi = await DatabaseRestore(this.formData); // pastikan axios request kirim multipart/form-data
         this.$toast.open({
           message: eksekusi.message,
           type: eksekusi.error ? 'error' : 'success',
           position: 'top-right',
           duration: 10000,
         });
+        if (!eksekusi.error) {
+          this.formData.modal = false;
+        }
       } catch (err) {
         this.$toast.open({
           message: err.message,
