@@ -27,6 +27,7 @@
               :options="listFiles"
               v-on:onchange="formData.file = $event"
               :value="formData.file"
+              :description="getRemark()"
               :col="[3, 7]"
             />
             <CRow v-if="formData.source == 'local'">
@@ -128,10 +129,14 @@ export default {
       if (!_res.error) {
         let data = _res.data;
         this.listFiles = data.map((it) => {
-          return { value: it.path, label: it.name };
+          return { ...it, value: it.path, label: it.name };
         });
-        console.log(this.listFiles);
       }
+    },
+    getRemark() {
+      let find = this.listFiles.find((it) => it.path === this.formData.file);
+      if (!find) return '';
+      return `Remarks: ${find.remarks}`;
     },
     uploadFile(files) {
       const file = files[0];
