@@ -716,8 +716,8 @@
                     title="Backup File Retention "
                     v-model="data.backup_retention"
                     :validasi="'integer'"
-                    :max="2"
-                    :description="`How many days to keep database backup files. Files older than this are deleted automatically (oldest first).`"
+                    :max="4"
+                    :description="`How many days to keep database backup files. Files older than this are deleted automatically (oldest first).\nLeave blank to disable auto-delete`"
                   />
                 </CCardBody>
               </CCard>
@@ -849,7 +849,7 @@ export default {
         },
         {
           value: 'end_of_month',
-          label: 'End Of Moth',
+          label: 'End Of Month',
           description: 'Expiry date falls on the last day of the month',
         },
         {

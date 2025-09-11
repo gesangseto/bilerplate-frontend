@@ -177,7 +177,7 @@ export default {
       try {
         let eksekusi = await DatabaseRestore(this.formData); // pastikan axios request kirim multipart/form-data
         this.$toast.open({
-          message: eksekusi.message,
+          message: eksekusi.message.replace(/\n/g, '<br>'),
           type: eksekusi.error ? 'error' : 'success',
           position: 'top-right',
           duration: 10000,
@@ -187,7 +187,7 @@ export default {
         }
       } catch (err) {
         this.$toast.open({
-          message: err.message,
+          message: err.message.replace(/\n/g, '<br>'),
           type: 'error',
           position: 'top-right',
         });

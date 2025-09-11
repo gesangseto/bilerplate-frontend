@@ -53,7 +53,11 @@
         <slot name="description"></slot>
         <p
           class="mb-0 mt-0"
-          style="font-size: smaller; color: rgb(143, 143, 143)"
+          style="
+            font-size: smaller;
+            color: rgb(143, 143, 143);
+            white-space: pre-line;
+          "
           v-if="description"
         >
           {{ description }}

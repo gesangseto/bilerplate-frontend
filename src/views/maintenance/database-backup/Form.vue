@@ -94,7 +94,7 @@ export default {
     async backup() {
       let eksekusi = await DatabaseBackup(this.formData);
       this.$toast.open({
-        message: eksekusi.message,
+        message: eksekusi.message.replace(/\n/g, '<br>'),
         type: eksekusi.error ? 'error' : 'success',
         dissmissible: true,
         position: 'top-right',
