@@ -122,11 +122,7 @@
         </CCardBody>
         <CCardFooter>
           <CButton
-            v-if="
-              action == 'Read' || (userInfo && userInfo.user_id !== 0)
-                ? false
-                : true
-            "
+            v-if="action == 'Read' ? false : true"
             type="submit"
             size="sm"
             color="primary"

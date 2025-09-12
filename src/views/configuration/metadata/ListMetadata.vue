@@ -11,8 +11,7 @@
             :fields="fields"
             :items="reformatDatas"
             :status_code="'mst_product'"
-            :action="['read', 'update', 'delete']"
-            v-on:handleDelete="deleteRow($event)"
+            :action="['read', 'update']"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"
             v-on:handleReload="loadData($event)"
@@ -40,7 +39,7 @@ export default {
         },
         {
           key: 'name',
-          label: 'Name',
+          label: 'Menu',
           _classes: 'font-weight-bold',
         },
         {

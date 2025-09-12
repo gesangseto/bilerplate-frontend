@@ -7,7 +7,7 @@ try {
   const version = require('../package.json').version;
   const buildVersion = `${version} (${gitHash})`;
 
-  const configPath = path.resolve(__dirname, '../src/config.js');
+  const configPath = path.resolve(__dirname, '../config.js');
   const content = `// 🚀 Auto-generated file, jangan edit manual
     export const APP_CONFIG = {
       BUILD_VERSION: "${buildVersion}",

@@ -8,59 +8,47 @@
           </CCardHeader>
           <CCardBody>
             <CForm novalidate>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter station name"
-                v-model="formData.name"
-                :is-valid="initialLoad ? null : !formData.name ? false : true"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CTextarea
-                :disabled="action == 'Read' ? true : false"
-                placeholder="Enter connector description"
-                horizontal
-                v-model="formData.description"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Description</p>
-                </template>
-              </CTextarea>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Pattern"
-                v-model="formData.pattern"
-                :is-valid="
-                  initialLoad ? null : !formData.pattern ? false : true
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Pattern
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
+              <CCol sm="12">
+                <InputDefault
+                  required
+                  :col="[3, 9]"
+                  title="Name"
+                  placeholder="Enter pattern name"
+                  v-model="formData.name"
+                  :is-valid="initialLoad ? null : !formData.name ? false : true"
                 />
-              </CRow>
+              </CCol>
+              <CCol sm="12">
+                <TextareaDefault
+                  :col="[3, 9]"
+                  title="Description"
+                  placeholder="Enter pattern description"
+                  v-model="formData.description"
+                />
+              </CCol>
+
+              <CCol sm="12">
+                <InputDefault
+                  required
+                  :col="[3, 9]"
+                  title="Regex"
+                  placeholder="Enter regex pattern"
+                  v-model="formData.pattern"
+                  :is-valid="
+                    initialLoad ? null : !formData.pattern ? false : true
+                  "
+                />
+              </CCol>
+              <CCol md="12">
+                <CRow form class="form-group">
+                  <CCol sm="3"> Status </CCol>
+                  <SwitchStatusMaster
+                    :default_value="formData.status"
+                    :show_label="true"
+                    v-on:onChange="formData.status = $event"
+                  />
+                </CRow>
+              </CCol>
             </CForm>
           </CCardBody>
           <CCardFooter>

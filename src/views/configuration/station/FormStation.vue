@@ -52,7 +52,7 @@
               </CInput>
               <CTextarea
                 :disabled="action == 'Read' ? true : false"
-                placeholder="Enter connector description"
+                placeholder="Enter station description"
                 horizontal
                 v-model="formData.description"
               >

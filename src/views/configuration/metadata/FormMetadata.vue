@@ -17,7 +17,7 @@
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
-                    Name
+                    Menu
                     <span class="text-danger">
                       <strong>*</strong>
                     </span>
@@ -33,7 +33,7 @@
               >
                 <template #label>
                   <p class="col-form-label col-sm-3">
-                    Model Name
+                    Model
                     <span class="text-danger">
                       <strong>*</strong>
                     </span>
@@ -41,7 +41,11 @@
                 </template>
               </CInput>
             </CForm>
-            <ButtonPermission :permission="'create'" @click="addNew()" />
+            <ButtonPermission
+              v-if="action == 'Update'"
+              :permission="'create'"
+              @click="addNew()"
+            />
             <CDataTable
               hover
               striped
@@ -54,11 +58,13 @@
               <template #action="{ item, index }">
                 <td>
                   <ButtonPermission
+                    v-if="action == 'Update'"
                     :id="item.id"
                     :permission="'delete'"
                     @click="deleteRow(item, index)"
                   />
                   <ButtonPermission
+                    v-if="action == 'Update'"
                     :id="item.id"
                     :permission="'update'"
                     @click="rowUpdate(item, index)"
@@ -74,58 +80,58 @@
       </CCol>
     </CRow>
     <CModal
-      title="Weight Configuration"
+      title="Add Metadata"
       color="warning"
       :show.sync="showModalDialog"
       size="lg"
     >
       <CRow v-if="modalData">
-        <CCol md="12">
-          <CInput
-            horizontal
+        <CCol sm="12">
+          <InputDefault
+            required
+            :col="[3, 9]"
+            title="Metadata Name"
             placeholder="Enter Metadata name"
             v-model="modalData.name"
             :is-valid="!modalData.name ? false : true"
-          >
-            <template #label>
-              <p class="col-form-label col-sm-3">
-                Model Name
-                <span class="text-danger">
-                  <strong>*</strong>
-                </span>
-              </p>
-            </template>
-          </CInput>
-          <CTextarea
-            horizontal
-            placeholder="Enter Description name"
+          />
+        </CCol>
+        <CCol sm="12">
+          <TextareaDefault
+            :col="[3, 9]"
+            title="Metadata Description"
+            placeholder="Enter Metadata description"
             v-model="modalData.description"
-          >
-            <template #label>
-              <p class="col-form-label col-sm-3">Description Name</p>
-            </template>
-          </CTextarea>
-          <CSelect
-            placeholder="-Select-"
+          />
+        </CCol>
+
+        <CCol sm="12">
+          <SelectOption
+            title="Pattern "
             :options="listOption"
-            horizontal
-            :value.sync="modalData.conf_pattern_id"
-          >
-            <template #label>
-              <p class="col-form-label col-sm-3">Pattern</p>
-            </template>
-          </CSelect>
+            v-on:onchange="modalData.conf_pattern_id = $event"
+            :value="modalData.conf_pattern_id"
+            :col="[3, 9]"
+          />
+        </CCol>
+
+        <CCol sm="12">
           <CRow form class="form-group">
             <CCol sm="3"> Mandatory </CCol>
-            <SwitchStatusTrx
+            <SwitchDefault
+              :show_label="true"
               :default_value="modalData.mandatory"
               v-on:onChange="modalData.mandatory = $event"
             />
           </CRow>
+        </CCol>
+
+        <CCol md="12">
           <CRow form class="form-group">
             <CCol sm="3"> Status </CCol>
             <SwitchStatusMaster
               :default_value="modalData.status"
+              :show_label="true"
               v-on:onChange="modalData.status = $event"
             />
           </CRow>
@@ -183,7 +189,7 @@ export default {
         },
         {
           key: 'name',
-          label: 'Name',
+          label: 'Metadata Name',
           _classes: 'font-weight-bold',
         },
         {
