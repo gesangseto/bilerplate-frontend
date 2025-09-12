@@ -12,12 +12,14 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <TableDefault
+          <TableTransaction
             :totalData="totalData"
             :fields="fields"
             :items="reformatDatas"
             :status_code="'mst_product'"
             :action="['copy', 'read', 'update', 'delete']"
+            :filterBy="['All', 'id', 'packaging_level']"
+            removeTrxDate
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"

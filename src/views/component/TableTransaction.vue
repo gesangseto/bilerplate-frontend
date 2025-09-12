@@ -390,6 +390,11 @@ export default {
           label: 'ID',
         },
         {
+          value: 'packaging_level',
+          code: 'packaging_level',
+          label: 'Packaging Level',
+        },
+        {
           value: 'supplier_id',
           code: 'supplier_id',
           label: 'Supplier',
@@ -700,6 +705,9 @@ export default {
         } else if (this.filter.SearchType.toLowerCase() == 'id') {
           this.use_normal_form = true;
           this.extendFilter = true;
+        } else if (this.filter.SearchType.toLowerCase() == 'packaging_level') {
+          this.getPackagingLevel();
+          this.extendFilter = true;
         } else if (this.filter.SearchType.toLowerCase() == 'source_id') {
           this.getSource();
           this.extendFilter = true;
@@ -802,6 +810,14 @@ export default {
           this.listExtendFilter.push(tmp);
         }
       });
+    },
+    getPackagingLevel() {
+      this.listExtendFilter = [
+        { value: 1, text: 1 },
+        { value: 2, text: 2 },
+        { value: 3, text: 3 },
+        { value: 4, text: 4 },
+      ];
     },
     getSource() {
       let url = `/v3/master/source`;

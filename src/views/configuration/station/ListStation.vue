@@ -48,6 +48,10 @@ export default {
           label: 'ID',
         },
         {
+          key: 'code',
+          label: 'Code',
+        },
+        {
           key: 'name',
           label: 'Name',
           _classes: 'font-weight-bold',
@@ -55,10 +59,6 @@ export default {
         {
           key: 'description',
           label: 'Desc',
-        },
-        {
-          key: 'code',
-          label: 'Code',
         },
         {
           key: 'station_type',
