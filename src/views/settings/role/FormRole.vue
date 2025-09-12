@@ -235,7 +235,11 @@
         </CCardBody>
         <CCardFooter>
           <CButton
-            v-if="action == 'Read' ? false : true"
+            v-if="
+              action == 'Read' || (userInfo && userInfo.user_id !== 0)
+                ? false
+                : true
+            "
             type="submit"
             size="sm"
             color="primary"
@@ -274,7 +278,7 @@
 }
 </style>
 <script>
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, getProfile } from '../../../utils';
 import {
   getMstSectionRole,
   updateMstSectionRole,
@@ -290,6 +294,7 @@ export default {
   },
   data() {
     return {
+      userInfo: getProfile(),
       route_action: '',
       readOnlyItem: false,
       pages: null,

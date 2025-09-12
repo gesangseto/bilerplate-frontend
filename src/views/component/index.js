@@ -27,8 +27,10 @@ import ButtonPopover from './ButtonPopover';
 import TextareaDefault from './TextareaDefault';
 import TableDefault from './TableDefault';
 import TableTransaction from './TableTransaction';
+import ButtonDefault from './ButtonDefault';
 
 export {
+  ButtonDefault,
   TableTransaction,
   TableDefault,
   VirtualKeyboard,

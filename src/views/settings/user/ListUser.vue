@@ -21,6 +21,7 @@
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"
             v-on:handleReload="loadData($event)"
+            :filterAction="customActionFilter"
           />
         </CCardBody>
       </CCard>
@@ -71,6 +72,14 @@ export default {
     },
   },
   methods: {
+    customActionFilter(item) {
+      let action = ['create', 'read'];
+      if (!item.is_sys) {
+        action.push('update');
+        action.push('delete');
+      }
+      return action;
+    },
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let res = await getMstUser(filter);

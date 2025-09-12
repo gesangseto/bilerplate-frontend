@@ -112,11 +112,13 @@
 import { logoMertrack, logoMerindo } from '../constants';
 import { getVersion } from '../resource/Version';
 import { getConfig } from '../utils';
+import { APP_CONFIG } from '@/config';
+
 export default {
   data() {
     return {
       version: {
-        web: process.env.VUE_APP_BUILD_VERSION,
+        web: APP_CONFIG.BUILD_VERSION,
         be: null,
         mobile: '4.0.0',
         bpom: '3.0.1',

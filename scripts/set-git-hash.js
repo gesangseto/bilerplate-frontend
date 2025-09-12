@@ -1,39 +1,19 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
-
-const envPath = '.env';
-const key = 'VUE_APP_BUILD_VERSION';
+const path = require('path');
 
 try {
   const gitHash = execSync('git rev-parse --short HEAD').toString().trim();
   const version = require('../package.json').version;
   const buildVersion = `${version} (${gitHash})`;
-  let envContent = '';
 
-  // Jika file sudah ada, baca isinya
-  if (fs.existsSync(envPath)) {
-    envContent = fs.readFileSync(envPath, 'utf-8');
-  }
-
-  const lines = envContent.split('\n').filter((line) => line.trim() !== '');
-  let found = false;
-
-  // Update jika sudah ada
-  const newLines = lines.map((line) => {
-    if (line.startsWith(`${key}=`)) {
-      found = true;
-      return `${key}=${buildVersion}`;
-    }
-    return line;
-  });
-
-  // Tambahkan jika belum ada
-  if (!found) {
-    newLines.push(`${key}=${buildVersion}`);
-  }
-
-  // Tulis kembali file
-  fs.writeFileSync(envPath, newLines.join('\n') + '\n', 'utf-8');
+  const configPath = path.resolve(__dirname, '../src/config.js');
+  const content = `// 🚀 Auto-generated file, jangan edit manual
+    export const APP_CONFIG = {
+      BUILD_VERSION: "${buildVersion}",
+    };`;
+  fs.writeFileSync(configPath, content, 'utf-8');
+  console.log('✅ Build version updated:', buildVersion);
 } catch (error) {
   console.error('❌ Gagal mengambil commit hash:', error);
 }

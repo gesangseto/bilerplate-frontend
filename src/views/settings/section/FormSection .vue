@@ -105,7 +105,7 @@
           </CCardBody>
           <CCardFooter>
             <CButton
-              v-if="action == 'Read' ? false : true"
+              v-if="action == 'Read' || formData.is_sys ? false : true"
               type="submit"
               size="sm"
               color="primary"

@@ -17,6 +17,7 @@
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"
             v-on:handleReload="loadData($event)"
+            :filterAction="customActionFilter"
           />
         </CCardBody>
       </CCard>
@@ -26,6 +27,7 @@
 
 <script>
 import { getMstSectionRole } from '../../../resource/MstSectionRole';
+import { getProfile } from '../../../utils';
 
 export default {
   name: 'ListRole',
@@ -33,6 +35,7 @@ export default {
   mounted() {},
   data() {
     return {
+      userInfo: getProfile(),
       totalData: 0,
       items: [],
       fields: [
@@ -64,6 +67,16 @@ export default {
     },
   },
   methods: {
+    customActionFilter(item) {
+      let action = ['read'];
+      if (!item.is_sys) {
+        action.push('update');
+      }
+      if (this.userInfo && this.userInfo.user_id == 0) {
+        action.push('update');
+      }
+      return action;
+    },
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let res = await getMstSectionRole(filter);

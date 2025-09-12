@@ -160,6 +160,22 @@
                   "
                 />
               </CCol>
+              <CCol sm="12" v-if="action != 'Read'">
+                <ButtonDefault
+                  :col="[3, 9]"
+                  :buttonProperty="{
+                    size: 'sm',
+                    class: 'mb-4',
+                    color: 'warning',
+                    icon: 'sync',
+                    text: 'Reset Password',
+                    tooltip: '',
+                  }"
+                  title=" "
+                  @click="resetPassword()"
+                />
+              </CCol>
+
               <CCol sm="12">
                 <SelectOption
                   :disabled="action == 'Read' || formData.is_sys ? true : false"
@@ -196,7 +212,7 @@
                 <CRow form class="form-group">
                   <CCol sm="3"> Status </CCol>
                   <SwitchStatusMaster
-                    :disabled="action == 'Read' || formData.is_sys"
+                    :disabled="action == 'Read'"
                     :show_label="true"
                     :default_value="formData.status"
                     v-on:onChange="formData.status = $event"
@@ -706,6 +722,42 @@ export default {
       this.checkValidation();
       if (this.formData.have_error) return false;
       return true;
+    },
+    async resetPassword() {
+      if (!this.configuration.password_default) {
+        this.$toast.open({
+          message: 'Password default not set on Application Config',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      }
+      this.initial_load = false;
+      let param = {
+        id: this.formData.id,
+        pwd: this.configuration.password_default || '',
+        re_pwd: this.configuration.password_default || '',
+        password_must_change: true,
+      };
+
+      var message = `You are about to reset password to this data. This operation cannot be undone. Would you like to continue?`;
+      if (confirm(message)) {
+        this.$isLoading(true);
+        let res = await updateMstUser(param);
+        this.$isLoading(false);
+        this.$toast.open({
+          message: res['error']
+            ? `${res['message']}`
+            : 'Data has been saved successfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+      }
+      return;
     },
     async save() {
       this.formData.mst_position_id = 1;

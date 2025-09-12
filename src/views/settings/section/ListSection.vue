@@ -22,6 +22,7 @@
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"
             v-on:handleReload="loadData($event)"
+            :filterAction="customActionFilter"
           />
         </CCardBody>
       </CCard>
@@ -68,6 +69,14 @@ export default {
     },
   },
   methods: {
+    customActionFilter(item) {
+      let action = ['create', 'read'];
+      if (!item.is_sys) {
+        action.push('update');
+        action.push('delete');
+      }
+      return action;
+    },
     protectCreateData(_res) {
       let max = getLimitation('total_section');
       if (max) {

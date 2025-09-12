@@ -15,6 +15,7 @@ import vmodal from 'vue-js-modal';
 import VueFab from 'vue-float-action-button';
 
 import {
+  ButtonDefault,
   Button,
   ButtonBack,
   ButtonPermission,
@@ -56,6 +57,7 @@ Vue.use(VueCustomTooltip);
 Vue.use(loading);
 Vue.use(vmodal);
 Vue.use(VueTouchKeyboard);
+Vue.component('ButtonDefault', ButtonDefault);
 Vue.component('TableTransaction', TableTransaction);
 Vue.component('TableDefault', TableDefault);
 Vue.component('ButtonPopover', ButtonPopover);
