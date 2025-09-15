@@ -119,7 +119,7 @@
                       'is-invalid':
                         !weight_config[`weight_l${level}`].average_of_first,
                     }"
-                    :invalid-feedback="'Average of FIrst is required'"
+                    :invalid-feedback="'Average of First is required'"
                   />
                 </CCol>
                 <CCol md="3">
@@ -135,7 +135,7 @@
                     :add-input-classes="{
                       'is-invalid': !weight_config[`weight_l${level}`].offset,
                     }"
-                    :invalid-feedback="'Offset of FIrst is required'"
+                    :invalid-feedback="'Offset of First is required'"
                   />
                 </CCol>
               </CRow>

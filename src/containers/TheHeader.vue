@@ -363,7 +363,6 @@ export default {
         }
 
         this.notif = _res.data;
-        console.log(this.notif.length);
         this.notifLength = this.notif.length || 0;
         this.timeout = this.getDifferentSecond();
       }

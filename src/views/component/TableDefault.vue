@@ -287,7 +287,6 @@ export default {
          NavigationDuplicated {_name: 'NavigationDuplicated', name: 'NavigationDuplicated', message: 'Navigating to current location
         */
 
-      console.log('================APPLY FILTER================');
       if (!isSameRoute) {
         // console.log('Reload Normal');
         this.$router.push({ path: this.$route.path, query: targetQuery });

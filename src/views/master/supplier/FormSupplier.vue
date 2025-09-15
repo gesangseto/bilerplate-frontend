@@ -61,7 +61,7 @@
                   validasi="numeric"
                   v-model="formData.tlp"
                   :max="12"
-                  :is-valid="initial_load ? null : checkPhone(formData.tlp)"
+                  :is-valid="checkPrimaryPhone()"
                   :invalid_feedback="'Please provide 7-12 digits phone number'"
                   placeholder="Enter phone number (Example : 81211223344)"
                 >
@@ -73,9 +73,7 @@
                         :options="CountryCode"
                         v-on:onchange="handleChangeInput($event)"
                         :value="formData.tlp_code"
-                        :is-valid="
-                          initial_load ? null : formData.tlp_code ? true : false
-                        "
+                        :is-valid="checkPrimaryPhone()"
                         :invalid_feedback="
                           checkPhone(formData.tlp) ? null : '   '
                         "
@@ -92,13 +90,7 @@
                   validasi="numeric"
                   v-model="formData.tlp_alt"
                   :max="12"
-                  :is-valid="
-                    initial_load
-                      ? null
-                      : formData.tlp_alt_code && !checkPhone(formData.tlp_alt)
-                      ? false
-                      : true
-                  "
+                  :is-valid="checkAltPhone()"
                   :invalid_feedback="
                     formData.tlp_alt_code
                       ? 'Please provide 7-12 digits phone number'
@@ -112,6 +104,7 @@
                         :options="CountryCode"
                         v-on:onchange="handleChangeInput($event, 'alt_code')"
                         :value="formData.tlp_alt_code"
+                        :is-valid="checkAltPhone()"
                       />
                     </div>
                   </template>
@@ -272,6 +265,32 @@ export default {
         }
       }
     },
+    splitPhone(phone) {
+      if (!phone) return null;
+      if (phone) return phone.split('-');
+    },
+    joinPhone(code, phone) {
+      if (!code && !phone) return null;
+      if (code && phone) return `${code}-${phone}`;
+    },
+    checkPrimaryPhone() {
+      let code = this.formData.tlp_code;
+      let phone = this.formData.tlp;
+      if (this.initial_load) return null;
+      if (!phone && !code) return false;
+      if (phone && !code) return false;
+      if (!phone && code) return false;
+      return isPhone(phone);
+    },
+    checkAltPhone() {
+      let code = this.formData.tlp_alt_code;
+      let phone = this.formData.tlp_alt;
+      if (this.initial_load) return null;
+      if (!phone && !code) return null;
+      if (phone && !code) return false;
+      if (!phone && code) return false;
+      return isPhone(phone);
+    },
     valid() {
       if (!this.formData.name) {
         return false;
@@ -279,14 +298,9 @@ export default {
         return false;
       } else if (!this.formData.address) {
         return false;
-      } else if (!this.formData.tlp_code) {
+      } else if (this.checkPrimaryPhone() === false) {
         return false;
-      } else if (!this.formData.tlp || !isPhone(this.formData.tlp)) {
-        return false;
-      } else if (
-        this.formData.tlp_alt_code &&
-        !isPhone(this.formData.tlp_alt)
-      ) {
+      } else if (this.checkAltPhone() === false) {
         return false;
       } else if (!this.formData.email || !isEmail(this.formData.email)) {
         return false;
@@ -300,6 +314,19 @@ export default {
       if (!this.valid()) {
         this.$toast.open({
           message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      } else if (
+        this.joinPhone(this.formData.tlp_code, this.formData.tlp) ==
+        this.joinPhone(this.formData.tlp_alt_code, this.formData.tlp_alt)
+      ) {
+        this.$toast.open({
+          message:
+            ' Primary Phone Number and Alternative Phone Number must be different.',
           type: 'error',
           dissmissible: true,
           position: 'top-right',

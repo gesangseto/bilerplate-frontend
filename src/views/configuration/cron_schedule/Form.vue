@@ -7,6 +7,15 @@
             <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
           </CCardHeader>
           <CCardBody>
+            <strong
+              v-if="formData.is_lock"
+              style="color: red; font-size: x-small; margin-bottom: 10px"
+              class="mb-5"
+            >
+              This record is referenced by another transaction.
+            </strong>
+            <br />
+            <br />
             <CCol sm="12">
               <InputDefault
                 :disabled="true"
@@ -18,7 +27,7 @@
             </CCol>
             <CCol sm="12">
               <InputDefault
-                :disabled="action == 'Read' ? true : false"
+                :disabled="action == 'Read' || formData.is_lock ? true : false"
                 :col="[3, 9]"
                 title="Name"
                 placeholder="Enter Name"
@@ -28,7 +37,7 @@
             </CCol>
             <CCol sm="12">
               <InputDefault
-                :disabled="action == 'Read' ? true : false"
+                :disabled="action == 'Read' || formData.is_lock ? true : false"
                 :col="[3, 9]"
                 title="Cron Schedule"
                 placeholder="* * * * * (5 / 6 length of *)"

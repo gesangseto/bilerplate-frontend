@@ -30,6 +30,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
+import { readCron } from '../../../utils';
 
 export default {
   name: 'ListConnectorAction',
@@ -70,7 +71,7 @@ export default {
         },
         {
           key: 'schedule',
-          label: 'Time Interval (in minute)',
+          label: 'Running Schedule',
         },
         {
           key: 'value_name',
@@ -156,6 +157,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          schedule: item.schedule ? readCron(item.schedule) : '',
           description: item.description || '',
           folder_sftp: item.folder_sftp || '',
           folder_backup: item.folder_backup || '',

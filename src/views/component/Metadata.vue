@@ -33,12 +33,21 @@ import { getConfMetadata } from '../../resource/ConfMetadata';
 
 export default {
   name: 'VirtualKeyboard',
-  props: ['defaultMetadata', 'model'],
+  props: {
+    defaultMetadata: { type: Object, default: {} },
+    model: { type: String, default: null },
+    action: { type: String, default: 'create' },
+  },
   data() {
     return {
       config_metadata: null,
       reformat_metadata: null,
     };
+  },
+  mounted() {
+    if (this.action.toLowerCase() == 'create') {
+      this.reformatData();
+    }
   },
   watch: {
     defaultMetadata: {
@@ -86,6 +95,7 @@ export default {
               error_metadata,
             });
           }
+          console.log('================');
           this.reformat_metadata = row;
         }
       }

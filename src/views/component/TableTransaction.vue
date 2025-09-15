@@ -624,7 +624,6 @@ export default {
          NavigationDuplicated {_name: 'NavigationDuplicated', name: 'NavigationDuplicated', message: 'Navigating to current location
         */
 
-      console.log('================APPLY FILTER================');
       // console.log(targetQuery);
       if (!isSameRoute) {
         // console.log('Reload Normal');

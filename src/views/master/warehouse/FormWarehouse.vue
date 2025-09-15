@@ -262,11 +262,12 @@ export default {
         return false;
       } else if (!this.formData.mst_province_id) {
         return false;
-      }
-      //  else if (!this.formData.mst_warehouse_entity_id) {
-      //   return false;
-      // }
-      else if (!this.formData.category_id) {
+      } else if (!this.formData.category_id) {
+        return false;
+      } else if (
+        this.formData.temperature != 0 &&
+        this.formData.temperature != 1
+      ) {
         return false;
       } else if (this.formData.error_metadata) {
         return false;

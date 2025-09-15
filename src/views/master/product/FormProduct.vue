@@ -19,7 +19,10 @@
 
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read'"
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   title="Item No ERP"
                   placeholder="Enter item no erp"
                   v-model="product.no"
@@ -193,10 +196,14 @@
 
               <CCol sm="12">
                 <InputDefault
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   :required="butuh.gtin"
-                  :disabled="!product.flag_upd_del"
                   :col="[3, 9]"
                   title="Company Prefix"
+                  placeholder="GS1 Company Prefix"
                   v-model="product.company_prefix"
                   validasi="numeric"
                   :max="9"
@@ -205,14 +212,17 @@
                 >
                   <template #append>
                     <InputDefault
-                      :disabled="!product.flag_upd_del"
+                      :disabled="
+                        action == 'Read' ||
+                        (product.flag_upd_del == 0 && action != 'Create')
+                      "
                       :useBr="false"
                       :title="null"
                       style="width: 400px; margin-left: 10px"
                       validasi="numeric"
                       :max="5"
                       v-model="product.item_reference"
-                      placeholder="Company prefix"
+                      placeholder="GTIN Item Reference"
                       :is-valid="
                         initial_load ? null : isValidCPIR() ? true : false
                       "
@@ -253,7 +263,10 @@
             <CRow>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read'"
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   :required="true"
                   title="Product Name"
                   placeholder="Enter product name for label printing"
@@ -266,7 +279,10 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read'"
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   title="Description 1"
                   placeholder="Enter product description 1 for label printing"
                   v-model="product.print_desc1"
@@ -275,7 +291,10 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read'"
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   title="Description 2"
                   placeholder="Enter product description 2 for label printing"
                   v-model="product.print_desc2"
@@ -284,7 +303,10 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read'"
+                  :disabled="
+                    action == 'Read' ||
+                    (product.flag_upd_del == 0 && action != 'Create')
+                  "
                   :required="true"
                   title="Storage Temperature"
                   placeholder="Enter product storage temperature for label printing"
@@ -530,6 +552,10 @@ export default {
       let pid_l1 = this.product.mst_pid.find(
         (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
       );
+      if (!pid_l1) {
+        this.product.gtin = null;
+        return;
+      }
       let id1 = null;
       if (pid_l1) id1 = pid_l1.id1;
       let item_reference = this.product.item_reference;

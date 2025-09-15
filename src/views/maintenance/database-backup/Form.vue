@@ -50,8 +50,7 @@
             <p>
               This will create a new backup of your database. The file will be
               saved in
-              {{ appConfig.backup_path }} with the filename
-              {{
+              {{ appConfig.backup_path }}\{{
                 formData.file_name
                   ? `${formData.file_name}.7z`
                   : `[default file name]`

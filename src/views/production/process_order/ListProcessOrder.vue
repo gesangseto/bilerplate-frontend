@@ -143,7 +143,7 @@ export default {
   },
   methods: {
     customActionFilter(item) {
-      let action = ['read'];
+      let action = ['read', 'copy'];
       if (item.status == 0) {
         action.push('approve');
         action.push('delete');
@@ -153,9 +153,9 @@ export default {
       } else if (item.status === 4) {
         action.push('update');
       }
-      if (this.user_id == 0) {
-        action.push('copy');
-      }
+      // if (this.user_id == 0) {
+      //   action.push('copy');
+      // }
       return action;
     },
     async loadData(filter) {

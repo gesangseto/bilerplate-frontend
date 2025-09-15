@@ -90,10 +90,10 @@ export default {
   },
   methods: {
     customActionFilter(item) {
-      let action = ['create', 'read', 'update', 'delete'];
-      if (this.user_id == 0) {
-        action.push('copy');
-      }
+      let action = ['create', 'read', 'copy', 'update', 'delete'];
+      // if (this.user_id == 0) {
+      //   action.push('copy');
+      // }
       return action;
     },
     async loadData(filter) {

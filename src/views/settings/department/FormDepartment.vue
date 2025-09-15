@@ -54,6 +54,7 @@
               </CRow>
             </CForm>
             <Metadata
+              :action="$route.params.type"
               :defaultMetadata="formData.metadata"
               v-on:handleChange="
                 (formData.metadata = $event.result),
@@ -96,7 +97,7 @@ export default {
       initial_load: true,
       route_action: '',
       action: 'Edit',
-      formData: { name: '', description: '', status: 'Active' },
+      formData: { name: '', description: '', status: 'Active', metadata: {} },
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
