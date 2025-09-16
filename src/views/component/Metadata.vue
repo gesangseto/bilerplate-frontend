@@ -36,7 +36,6 @@ export default {
   props: {
     defaultMetadata: { type: Object, default: {} },
     model: { type: String, default: null },
-    action: { type: String, default: 'create' },
   },
   data() {
     return {
@@ -45,7 +44,8 @@ export default {
     };
   },
   mounted() {
-    if (this.action.toLowerCase() == 'create') {
+    let action = this.$route.params.type.toLowerCase();
+    if (action == 'create') {
       this.reformatData();
     }
   },

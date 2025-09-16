@@ -54,7 +54,6 @@
               </CRow>
             </CForm>
             <Metadata
-              :action="$route.params.type"
               :defaultMetadata="formData.metadata"
               v-on:handleChange="
                 (formData.metadata = $event.result),

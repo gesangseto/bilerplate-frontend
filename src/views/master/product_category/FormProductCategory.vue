@@ -92,7 +92,7 @@ export default {
       initial_load: true,
       action: '',
       route_action: '',
-      formData: { id: null, status: 'Active', metadata: null },
+      formData: { id: null, status: 'Active', metadata: {} },
     };
   },
   mounted() {

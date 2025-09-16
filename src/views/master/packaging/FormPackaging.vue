@@ -116,7 +116,7 @@ export default {
       initial_load: true,
       route_action: '',
       action: 'Edit',
-      formData: { id: null, have_error: false, metadata: null },
+      formData: { id: null, have_error: false, metadata: {} },
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
