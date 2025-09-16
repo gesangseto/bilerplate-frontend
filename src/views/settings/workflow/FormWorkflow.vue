@@ -21,8 +21,8 @@
                 v-on:onchange="workflow.approval_1 = $event"
                 :value="workflow.approval_1"
                 :col="[3, 9]"
-                :isValid="err_workflow.approval_1 == false ? false : true"
-                invalid_feedback="Approval 1 have an error"
+                :isValid="initialLoad ? null : checkError(1) ? false : true"
+                :invalid_feedback="checkError(1)"
               />
               <SelectOption
                 title="Approval 2"
@@ -31,8 +31,8 @@
                 v-on:onchange="workflow.approval_2 = $event"
                 :value="workflow.approval_2"
                 :col="[3, 9]"
-                :isValid="err_workflow.approval_2 == false ? false : true"
-                invalid_feedback="Approval 2 have an error"
+                :isValid="initialLoad ? null : checkError(2) ? false : true"
+                :invalid_feedback="checkError(2)"
               />
               <SelectOption
                 title="Approval 3"
@@ -41,6 +41,8 @@
                 v-on:onchange="workflow.approval_3 = $event"
                 :value="workflow.approval_3"
                 :col="[3, 9]"
+                :isValid="initialLoad ? null : checkError(3) ? false : true"
+                :invalid_feedback="checkError(3)"
               />
               <SelectOption
                 title="Approval 4"
@@ -49,6 +51,8 @@
                 v-on:onchange="workflow.approval_4 = $event"
                 :value="workflow.approval_4"
                 :col="[3, 9]"
+                :isValid="initialLoad ? null : checkError(4) ? false : true"
+                :invalid_feedback="checkError(4)"
               />
             </CForm>
           </CCardBody>
@@ -90,27 +94,41 @@ export default {
       initialLoad: true,
       action: '',
       route_action: '',
-      usedTransaction: [],
-      transactionIsUsed: false,
-      err_workflow: {
-        approval_1: null,
-        approval_2: null,
-        approval_3: null,
-        approval_4: null,
-      },
       workflow: {
         approval_1: null,
         approval_2: null,
         approval_3: null,
         approval_4: null,
-        id: null,
+        id: this.$route.params.id,
       },
-      userValidation: false,
       section: [],
-      menuOptions: [],
     };
   },
   methods: {
+    checkError(idx) {
+      if (this.initialLoad) return null;
+      // Check Duplicate Approval
+      let thisApproval = this.workflow[`approval_${idx}`];
+      for (let i = 1; i <= 4; i++) {
+        if (i != idx && thisApproval) {
+          if (thisApproval == this.workflow[`approval_${i}`])
+            return 'Duplicate section assignment. Each section can be assigned to only one approval level.';
+        }
+      }
+      // Check approval pertama itu wajib ada isinya
+      if (idx == 1 && !this.workflow.approval_1) {
+        return 'Approval 1 is required';
+      }
+      // Check approval jika ada bolong sebelumnya e.g: [2, 12, null, 41]
+      for (let i = idx + 1; i <= 4; i++) {
+        if (!thisApproval && this.workflow[`approval_${i}`]) {
+          return `Approval ${idx} is missing. Please fill all approvals in sequence.`;
+        }
+      }
+      return null;
+    },
+
+    getErrorMessage(idx) {},
     loadWorkflowList() {
       let param = `raw=true&id=${this.$route.params.id}`;
       $axiosMertrack.get(`/v3/master/workflow?${param}`).then((response) => {
@@ -118,100 +136,49 @@ export default {
         this.workflow = data;
       });
     },
-    checkTransactionId() {
-      for (var i = 0; i < this.usedTransaction.length; i++) {
-        if (this.usedTransaction[i] == this.workflow.transactionId) {
-          this.transactionIsUsed = true;
-          this.$toast.open({
-            message: `Transaction Already Used`,
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-          break;
-        } else if (this.usedTransaction[i] != this.workflow.transactionId) {
-          this.transactionIsUsed = false;
-        }
-      }
-    },
-    checkDuplicateApproval() {
-      var dupe = false;
-      let index_duplicate = [];
-      for (var i = 1; i <= 4; i++) {
-        let usr_id = this.workflow[`approval_${i}`];
-        for (var x = 1; x <= 4; x++) {
-          let find = this.workflow[`approval_${x}`];
-          if (usr_id && i != x && usr_id === find) {
-            index_duplicate.push([`approval_${i}`], [`approval_${x}`]);
-            dupe = true;
-            break;
-          }
-        }
-        if (dupe) {
-          this.err_workflow[index_duplicate[0]] = false;
-          this.err_workflow[index_duplicate[1]] = false;
+    isValid() {
+      for (let i = 1; i <= 4; i++) {
+        if (this.checkError(i)) {
           return false;
         }
       }
       return true;
     },
-
     save() {
-      let can_process = true;
-      this.err_workflow = {
-        approval_1: true,
-        approval_2: true,
-        approval_3: true,
-        approval_4: true,
-      };
-      if (!this.workflow.approval_1) {
-        this.err_workflow.approval_1 = false;
-        can_process = false;
-      }
-      if (
-        !this.workflow.approval_2 &&
-        (this.workflow.approval_3 || this.workflow.approval_4)
-      ) {
-        this.err_workflow.approval_2 = false;
-        can_process = false;
-      }
-      if (!this.workflow.approval_3 && this.workflow.approval_4) {
-        this.err_workflow.approval_3 = false;
-        can_process = false;
-      }
-      if (!this.checkDuplicateApproval() || !can_process) {
+      this.initialLoad = false;
+      if (!this.isValid()) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
         return;
       }
-      // check duplicate approval
-      let body = {
-        id: this.$route.params.id,
-        approval_1: this.workflow.approval_1,
-        approval_2: this.workflow.approval_2,
-        approval_3: this.workflow.approval_3,
-        approval_4: this.workflow.approval_4,
-      };
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack.post('/v3/master/workflow', body).then((result) => {
-          this.$isLoading(false);
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? res.message
-              : `Data has been saved successfully `,
-            type: res.error ? 'error' : 'success',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
+        $axiosMertrack
+          .post('/v3/master/workflow', this.workflow)
+          .then((result) => {
+            this.$isLoading(false);
+            let res = result.data;
+            this.$toast.open({
+              message: res.error
+                ? res.message
+                : `Data has been saved successfully `,
+              type: res.error ? 'error' : 'success',
+              dissmissible: true,
+              position: 'top-right',
+              duration: 5000,
+            });
+            if (!res.error) {
+              this.$router.back();
+            }
           });
-          if (!res.error) {
-            this.$router.back();
-          }
-        });
       }
       return;
     },

@@ -568,6 +568,18 @@
                   <InputDefault
                     :required="true"
                     :col="[3, 7]"
+                    title="ID Sarana"
+                    v-model="data.id_location"
+                    :validasi="'integer'"
+                    :max="100"
+                    :isValid="
+                      initialLoad ? null : !data.id_location ? false : true
+                    "
+                    description="'ID Sarana' as registered in the BPOM TTAC system, used for reporting Track & Trace data."
+                  />
+                  <InputDefault
+                    :required="true"
+                    :col="[3, 7]"
                     title="Latitude"
                     v-model="data.latitude"
                     :validasi="'float'"
@@ -584,18 +596,6 @@
                     :isValid="
                       initialLoad ? null : !data.longitude ? false : true
                     "
-                  />
-                  <InputDefault
-                    :required="true"
-                    :col="[3, 7]"
-                    title="ID Sarana"
-                    v-model="data.id_location"
-                    :validasi="'integer'"
-                    :max="100"
-                    :isValid="
-                      initialLoad ? null : !data.id_location ? false : true
-                    "
-                    description="'ID Sarana' as registered in the BPOM TTAC system, used for reporting Track & Trace data."
                   />
                   <p style="font-weight: bold">BPOM TTAC Reporting Settings</p>
 
