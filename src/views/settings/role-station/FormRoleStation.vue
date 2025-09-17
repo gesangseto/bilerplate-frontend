@@ -231,16 +231,15 @@ export default {
     handleSearchInput() {
       this.search = false;
       this.menu = this.defaultMenu;
+      console.log(this.keyword);
+
       if (this.keyword) {
         this.search = true;
         let search_menu = [];
         let key = this.keyword.toLowerCase();
         for (const it of this.defaultMenu) {
-          let parent_label = it.parent_label.toLowerCase();
           let label = it.label.toLowerCase();
-          if (parent_label.includes(`${key}`)) {
-            search_menu.push(it);
-          } else if (label.includes(`${key}`)) {
+          if (label.includes(`${key}`)) {
             search_menu.push(it);
           }
         }
