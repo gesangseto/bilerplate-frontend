@@ -184,7 +184,7 @@
             />
             <ButtonPermission
               v-if="getActions(item).includes('copy')"
-              :buttonProperty="actionProperty.copy || null"
+              :buttonProperty="actionProperty.copy || btn_copy"
               :id="getActionId('copy', item)"
               :useHref="getActionHref('copy')"
               :permission="'create'"
@@ -317,6 +317,14 @@ export default {
   },
   data() {
     return {
+      btn_copy: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'copy',
+        text: '',
+        tooltip: 'Copy data',
+      },
       filtering: {},
       useTransactionDate: true,
       pages: [10, 20, 50, 100],

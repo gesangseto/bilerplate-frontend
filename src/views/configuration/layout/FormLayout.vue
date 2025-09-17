@@ -589,6 +589,7 @@ export default {
           let content = e.target.result;
           this.generateField(content, ekstensiFile, fileName);
         };
+
         reader.readAsText(isiFile);
       } else {
         return;
@@ -597,7 +598,6 @@ export default {
 
     generateField(content, extensi, fileName) {
       let oldData = JSON.parse(JSON.stringify(this.formData));
-
       this.formData.name = fileName;
       this.formData.itf_name = `${fileName}.${extensi}`;
       this.formData.itf_content = content;
@@ -633,9 +633,18 @@ export default {
           }
         }
         listLayout.sort(dynamicSort('itf_var_name'));
-        this.formData.items = listLayout;
+        // Mencari semua yang sama, jika sama maka pakain parameter yang lama
+        let newItems = [];
+        for (const it of listLayout) {
+          let find = this.formData.items.find(
+            (o) => o.itf_var_name == it.itf_var_name
+          );
+          if (find) newItems.push(find);
+          else newItems.push(it);
+        }
+        this.formData.items = newItems;
       }
-
+      return;
       if (this.is_copy) {
         let itf_var_name = listLayout.map((it) => it.itf_var_name);
         let sama = oldData.items.filter((it) =>
