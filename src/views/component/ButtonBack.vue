@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { handleBack } from '../../utils';
+
 export default {
   name: 'ButtonBack',
   props: ['type', 'title', 'href'],
@@ -36,7 +38,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.go(-1);
+      handleBack(this.$router, this.$route);
       return;
       const path = this.$route.path;
       const params = this.$route.params;

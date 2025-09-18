@@ -195,7 +195,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import $axiosMertrack from '../../../apiMertrack';
 import jsPDF from 'jspdf';
 import domtoimage from 'dom-to-image';
@@ -288,7 +288,7 @@ export default {
         });
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
   computed: {

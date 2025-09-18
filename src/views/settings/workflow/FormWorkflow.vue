@@ -78,7 +78,7 @@
 <script>
 import $axiosMertrack from '../../../apiMertrack';
 import { getMstSection } from '../../../resource/MstSection';
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, handleBack } from '../../../utils';
 
 export default {
   name: 'FormWorkflow',
@@ -176,7 +176,7 @@ export default {
               duration: 5000,
             });
             if (!res.error) {
-              this.$router.back();
+              handleBack(this.$router, this.$route);
             }
           });
       }
@@ -208,7 +208,7 @@ export default {
     },
 
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

@@ -143,7 +143,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import $axiosMertrack from '../../../apiMertrack';
 
 export default {
@@ -195,7 +195,7 @@ export default {
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import { getConfPattern } from '../../../resource/ConfPattern';
 import {
   deleteConfMetadata,
@@ -252,7 +252,7 @@ export default {
       return true;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     addNew() {
       this.modalData = { sys_database_content_id: this.$route.params.id };

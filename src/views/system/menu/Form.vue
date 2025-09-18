@@ -390,7 +390,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import { getMstMenu, updateMstMenu } from '../../../resource/MstMenu';
 import { CCard, CCardBody } from '@coreui/vue';
 
@@ -520,7 +520,7 @@ export default {
     },
 
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     async save() {
       let params = [...this.menuWeb, ...this.menuAndroid, ...this.menuStation];

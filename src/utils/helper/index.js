@@ -284,7 +284,29 @@ export function decryptData(data) {
     return null;
   }
 }
-
+function getBaseUrl(path) {
+  const formPages = ['create', 'update', 'read', 'approve'];
+  let base = path;
+  formPages.forEach((page) => {
+    const regex = new RegExp(`/${page}(/.*)?$`);
+    // cocokkan "/page" di akhir, boleh ada id / tambahan sesudahnya
+    base = base.replace(regex, '');
+  });
+  return base;
+}
+export function handleBack($router, $route) {
+  const currentPath = $route.path.toLowerCase();
+  let baseUrl = getBaseUrl(currentPath);
+  if (window.history.length === 1) {
+    if (baseUrl === currentPath) {
+      $router.push({ path: `/home` });
+    } else if (baseUrl) {
+      $router.push({ path: `${baseUrl}` });
+    }
+  } else {
+    $router.go(-1);
+  }
+}
 export function readCron(cron) {
   const parts = cron.split(' ');
   let humanReadable = '';

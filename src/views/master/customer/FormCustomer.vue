@@ -202,6 +202,7 @@ import {
   capitalizeFirstLetter,
   onlyNumber,
   isEmail,
+  handleBack,
 } from '../../../utils';
 import {
   getMstCustomer,
@@ -394,12 +395,12 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

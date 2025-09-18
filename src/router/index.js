@@ -179,6 +179,7 @@ const ReportShowStatus = () => import('@/views/reports/ReportShowStatus');
 // ========================REPORT========================
 
 // ========================MAINTENANCE========================
+const MaintenanceLog = () => import('@/views/maintenance/log/List');
 const DatabaseBackup = () => import('@/views/maintenance/database-backup/Form');
 const DatabaseRestore = () =>
   import('@/views/maintenance/database-restore/Form');
@@ -1072,6 +1073,12 @@ function configRoutes() {
         },
       },
       children: [
+        {
+          path: 'log',
+          name: 'Database Log',
+          meta: { login: true },
+          component: MaintenanceLog,
+        },
         {
           path: 'database-backup',
           name: 'Database Backup',

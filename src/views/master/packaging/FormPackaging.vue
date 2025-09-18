@@ -108,7 +108,7 @@ import {
   insertMstPackaging,
   updateMstPackaging,
 } from '../../../resource/MstPackaging';
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, handleBack } from '../../../utils';
 export default {
   name: 'PackageForm',
   data() {
@@ -189,12 +189,12 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

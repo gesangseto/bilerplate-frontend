@@ -256,7 +256,7 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from '../../../utils';
+import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import $axiosMertrack from '../../../apiMertrack';
 import { getConfCron } from '../../../resource/ConfCron';
 
@@ -456,7 +456,7 @@ export default {
                 duration: 5000,
               });
               if (!res.error) {
-                this.$router.back();
+                handleBack(this.$router, this.$route);
               }
             });
         } else {
@@ -475,7 +475,7 @@ export default {
                 duration: 5000,
               });
               if (!res.error) {
-                this.$router.back();
+                handleBack(this.$router, this.$route);
               }
             });
         }
@@ -483,7 +483,7 @@ export default {
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

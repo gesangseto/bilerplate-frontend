@@ -158,6 +158,7 @@ import {
   getConfUserApp,
   getProfile,
   getUserId,
+  handleBack,
   setProfile,
   validationPassword,
 } from '../../../utils';
@@ -263,7 +264,7 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!res['error']) this.$router.back();
+      if (!res['error']) handleBack(this.$router, this.$route);
     },
     async changeConf() {
       let profile = getProfile();

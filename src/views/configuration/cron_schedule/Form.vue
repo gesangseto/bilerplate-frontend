@@ -85,7 +85,12 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter, isValidCron, readCron } from '../../../utils';
+import {
+  capitalizeFirstLetter,
+  handleBack,
+  isValidCron,
+  readCron,
+} from '../../../utils';
 import {
   getConfCron,
   insertConfCron,
@@ -172,12 +177,12 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

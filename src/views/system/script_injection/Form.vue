@@ -119,7 +119,12 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter, getProfile, isValidCron } from '../../../utils';
+import {
+  capitalizeFirstLetter,
+  getProfile,
+  handleBack,
+  isValidCron,
+} from '../../../utils';
 import {
   getSysScriptInj,
   updateSysScriptInj,
@@ -186,7 +191,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
     },
     testCron(string) {
@@ -240,12 +245,12 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

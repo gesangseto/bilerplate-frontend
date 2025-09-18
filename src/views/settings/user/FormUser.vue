@@ -435,6 +435,7 @@ import {
   validationPassword,
   getUserId,
   getConfig,
+  handleBack,
 } from '../../../utils';
 import {
   getMstUser,
@@ -801,12 +802,12 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

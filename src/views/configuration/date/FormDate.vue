@@ -214,7 +214,7 @@
 } */
 </style>
 <script>
-import { exportData, capitalizeFirstLetter } from '../../../utils';
+import { exportData, capitalizeFirstLetter, handleBack } from '../../../utils';
 import moment from 'moment';
 import {
   getConfDate,
@@ -573,12 +573,12 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

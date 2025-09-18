@@ -274,7 +274,7 @@
 }
 </style>
 <script>
-import { capitalizeFirstLetter, getProfile } from '../../../utils';
+import { capitalizeFirstLetter, getProfile, handleBack } from '../../../utils';
 import {
   getMstSectionRole,
   updateMstSectionRole,
@@ -501,7 +501,7 @@ export default {
       this.loadData();
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     async save() {
       let _form_data = JSON.parse(JSON.stringify(this.menu));
@@ -544,7 +544,7 @@ export default {
         if (!res.error) {
           this.items = [];
           dataPost = [];
-          this.$router.back();
+          handleBack(this.$router, this.$route);
         }
       }
       return;

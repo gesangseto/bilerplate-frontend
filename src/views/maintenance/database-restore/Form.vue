@@ -21,15 +21,55 @@
               :value="formData.source"
               :col="[3, 7]"
             />
-            <SelectOption
-              v-if="formData.source == 'server'"
-              title="Select File"
-              :options="listFiles"
-              v-on:onchange="formData.file = $event"
-              :value="formData.file"
-              :description="getRemark()"
-              :col="[3, 7]"
-            />
+            <!-- Tabel jika yang dipilih adalah server -->
+            <CRow v-if="formData.source == 'server'" class="mt-15">
+              <CCol md="3">Select File</CCol>
+              <CCol md="9">
+                <div class="sticky-table-container">
+                  <table class="sticky-table">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center">Select</th>
+                        <th style="text-align: center">File name</th>
+                        <th style="text-align: center">Remark</th>
+                        <th style="text-align: center">Create Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template v-for="(item, index) in listFiles">
+                        <tr
+                          :style="
+                            index % 2 == 0
+                              ? 'background-color:#ffffff;'
+                              : 'background-color:#ededed;'
+                          "
+                        >
+                          <td :style="'text-align: center;'">
+                            <CInputCheckbox
+                              :key="index"
+                              :checked="item.checked"
+                              size="sm"
+                              @change="handleSelectFile(index)"
+                              style="margin-bottom: 30px; margin-top: 5px"
+                            />
+                          </td>
+                          <td style="padding-left: 10px">
+                            {{ item.name }}
+                          </td>
+                          <td style="padding-left: 10px">
+                            {{ item.remarks }}
+                          </td>
+                          <td style="padding-left: 10px">
+                            {{ item.Timestamp }}
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </CCol>
+            </CRow>
+
             <CRow v-if="formData.source == 'local'">
               <CCol sm="3" lg="3"> Select File </CCol>
               <CCol sm="7" lg="7">
@@ -98,7 +138,7 @@
 <script>
 const reader = new FileReader();
 import 'vue2-datepicker/index.css';
-import { CCard, CCol } from '@coreui/vue';
+import { CCard, CCol, CRow } from '@coreui/vue';
 import {
   DatabaseRestore,
   getDatabaseBackup,
@@ -124,6 +164,25 @@ export default {
     this.loadFileList();
   },
   methods: {
+    handleSelectFile(selectedIndex) {
+      let checked = null;
+      // Merubah checkbox agar reactive
+      this.listFiles = this.listFiles.map((row, i) => {
+        let result = {
+          ...row,
+          checked: i === selectedIndex ? !row.checked : false,
+        };
+        if (result.checked) checked = true;
+        return result;
+      });
+      // Jika ada check file maka masukan namanya ke FormData
+      if (checked) {
+        this.formData.file = this.listFiles[selectedIndex].path;
+      } else {
+        // Jika tidak ada check file maka hapus namanya di FormData
+        this.formData.file = null;
+      }
+    },
     async loadFileList() {
       let _res = await getDatabaseBackup();
       if (!_res.error) {
@@ -196,3 +255,41 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.has-border {
+  border-top: 1px solid #000;
+  font-weight: bold;
+}
+.table-container {
+  /* max-height: 520px; */
+  overflow-y: auto;
+}
+.sticky-table-container {
+  max-height: 500px; /* atur tinggi sesuai kebutuhan */
+  overflow-y: auto;
+  display: block;
+}
+
+.table-container {
+  /* max-height: 520px; */
+  overflow-y: auto;
+}
+.sticky-table-container {
+  max-height: 400px; /* atur tinggi sesuai kebutuhan */
+  overflow-y: auto;
+  display: block;
+}
+
+.sticky-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sticky-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f9f9f9; /* opsional agar sticky terlihat */
+  z-index: 2;
+}
+</style>

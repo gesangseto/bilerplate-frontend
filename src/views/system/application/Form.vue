@@ -759,7 +759,7 @@ import {
   sendWhatsappMessage,
   deleteWhatsappSession,
 } from '../../../resource/Whatsapp';
-import { setConfig } from '../../../utils';
+import { handleBack, setConfig } from '../../../utils';
 import { getConfCron } from '../../../resource/ConfCron';
 import { CCard, CCol } from '@coreui/vue';
 export default {
@@ -1064,13 +1064,13 @@ export default {
           });
           if (!res.error) {
             setConfig(this.data);
-            this.$router.back();
+            handleBack(this.$router, this.$route);
           }
         });
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     getFullNameBackup() {
       let timestamp = moment(new Date()).format('YYYYMMDD-hhmmss');
