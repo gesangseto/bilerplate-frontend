@@ -227,7 +227,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3 } from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
 export default {
   mounted() {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
@@ -351,7 +351,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     closeModal() {
       this.datas = [];

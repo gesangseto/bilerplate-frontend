@@ -144,6 +144,7 @@ import {
   calculatePaginationV3,
   exportDataV3,
   getUserId,
+  handleBack,
   humanize,
 } from '../../../utils';
 
@@ -369,7 +370,7 @@ export default {
         });
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     rowClicked(item) {
       this.datas = [];

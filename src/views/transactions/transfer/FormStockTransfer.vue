@@ -156,6 +156,7 @@
 <script>
 import '../../../assets/js/jquery-ui';
 import $axiosMertrack from '../../../apiMertrack';
+import { handleBack } from '../../../utils';
 // import vueSelect from 'vue-select';
 
 export default {
@@ -485,7 +486,7 @@ export default {
             if (!res.error) {
               this.items = [];
               this.formData.items = [];
-              this.$router.back();
+              handleBack(this.$router, this.$route);
             }
           })
           .catch((err) => {
@@ -502,7 +503,7 @@ export default {
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
   computed: {

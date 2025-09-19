@@ -89,6 +89,7 @@ import $axiosMertrack from '../../../apiMertrack';
 import 'vue-select/dist/vue-select.css';
 import $ from 'jquery';
 import { getMstSupplier } from '../../../resource/MstSupplier';
+import { handleBack } from '../../../utils';
 export default {
   name: 'FormUploadXML',
   watch: {
@@ -241,7 +242,7 @@ export default {
               duration: 5000,
             });
             if (!result.data.error) {
-              this.$router.back();
+              handleBack(this.$router, this.$route);
             }
           })
           .catch((err) => {
@@ -257,7 +258,7 @@ export default {
       }
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

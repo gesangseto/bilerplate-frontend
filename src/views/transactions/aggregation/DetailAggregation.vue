@@ -215,7 +215,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3 } from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
 export default {
   name: 'DetailAggregation',
   mounted() {
@@ -336,7 +336,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     rowClicked(item) {
       this.datas = [];

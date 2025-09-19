@@ -158,7 +158,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3, toTitleCase } from '../../../utils';
+import { exportDataV3, handleBack, toTitleCase } from '../../../utils';
 
 export default {
   name: 'DetailOutbound',
@@ -308,7 +308,7 @@ export default {
       this.viewModal = false;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     handleClickExport(type) {
       exportDataV3({

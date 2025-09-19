@@ -201,7 +201,12 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3, getSectionId, getUserId } from '../../../utils';
+import {
+  exportDataV3,
+  getSectionId,
+  getUserId,
+  handleBack,
+} from '../../../utils';
 
 export default {
   name: 'DetailDisposal',
@@ -348,7 +353,7 @@ export default {
           .post(url, data)
           .then((result) => {
             this.$isLoading(false);
-            if (!result.data.error) this.$router.back();
+            if (!result.data.error) handleBack(this.$router, this.$route);
             this.$toast.open({
               message: result.data.error
                 ? `${result.data.message}`
@@ -388,7 +393,7 @@ export default {
         .post(url, data)
         .then((result) => {
           this.$isLoading(false);
-          if (!result.data.error) this.$router.back();
+          if (!result.data.error) handleBack(this.$router, this.$route);
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
@@ -411,7 +416,7 @@ export default {
         });
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     rowClicked(item) {
       this.datas = [];

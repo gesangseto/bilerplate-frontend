@@ -155,6 +155,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
+import { handleBack } from '../../../utils';
 export default {
   name: 'DetailUploadXML',
   mounted() {
@@ -268,7 +269,7 @@ export default {
   },
   methods: {
     back() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
   computed: {

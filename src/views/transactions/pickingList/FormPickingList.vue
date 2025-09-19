@@ -213,6 +213,7 @@
 <script>
 const ekstensiFileValid = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
 import $axiosMertrack from '../../../apiMertrack';
+import { handleBack } from '../../../utils';
 const reader = new FileReader();
 export default {
   name: 'FormPickingList',
@@ -607,7 +608,7 @@ export default {
             });
             if (!res.error) {
               this.items = [];
-              this.$router.back();
+              handleBack(this.$router, this.$route);
             }
           })
           .catch((err) => {
@@ -624,7 +625,7 @@ export default {
       return;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
   computed: {

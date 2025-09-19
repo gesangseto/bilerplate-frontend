@@ -164,6 +164,7 @@ import moment from 'moment';
 import { getMstProduct, insertMstProduct } from '../../../resource/MstProduct';
 import { insertPackingV4 } from '../../../resource/TrxPacking';
 import { getMstWarehouse } from '../../../resource/MstWarehouse';
+import { handleBack } from '../../../utils';
 export default {
   name: 'FormPacking',
   watch: {
@@ -408,7 +409,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
       return;
     },
@@ -496,7 +497,7 @@ export default {
       }
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
   computed: {

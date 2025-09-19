@@ -193,7 +193,7 @@
 </template>
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3 } from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
 export default {
   data() {
     return {
@@ -260,7 +260,7 @@ export default {
   },
   methods: {
     back() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     rowClicked(item) {
       this.detail_item = item;

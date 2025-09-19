@@ -183,7 +183,12 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3, getUserId, printLabelV3 } from '../../../utils';
+import {
+  exportDataV3,
+  getUserId,
+  handleBack,
+  printLabelV3,
+} from '../../../utils';
 
 export default {
   name: 'DetailPacking',
@@ -350,7 +355,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     printAllV3(zpl_mode = false) {
       let _body = [];

@@ -127,6 +127,7 @@
 <script>
 import $axiosMertrack from '../../../apiMertrack';
 import 'vue-select/dist/vue-select.css';
+import { handleBack } from '../../../utils';
 export default {
   name: 'FormStockOpname',
   data() {
@@ -357,7 +358,7 @@ export default {
               duration: 5000,
             });
             if (!res.error) {
-              this.$router.back();
+              handleBack(this.$router, this.$route);
             }
           });
       }
@@ -365,7 +366,7 @@ export default {
     },
     cancel() {
       // kembali kehalaman sebelumnya
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
   computed: {

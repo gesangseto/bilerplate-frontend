@@ -231,7 +231,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3 } from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
 
 export default {
   name: 'DetailInbound',
@@ -362,7 +362,7 @@ export default {
       this.viewModal = false;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     handleExportPdf(type) {
       if (type == 'Weighing') type = 'timbangan';

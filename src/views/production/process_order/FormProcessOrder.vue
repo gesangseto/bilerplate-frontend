@@ -600,6 +600,7 @@ import {
   expFromShelfLife,
   getConfig,
   getProfile,
+  handleBack,
   isJsonString,
   onlyNumber,
 } from '../../../utils';
@@ -1047,7 +1048,7 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!res['error']) this.$router.back();
+      if (!res['error']) handleBack(this.$router, this.$route);
     },
     async submitAdditionSerial() {
       this.initialLoad = false;
@@ -1138,7 +1139,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
       return;
     },
@@ -1167,7 +1168,7 @@ export default {
       this.viewModalRequestSerial = false;
     },
     cancel() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     async changeProgressDevelopment(type) {
       this.$isLoading(true);
@@ -1185,7 +1186,7 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!res['error']) this.$router.back();
+      if (!res['error']) handleBack(this.$router, this.$route);
     },
     async closeDevelopment(type) {
       this.$isLoading(true);
@@ -1208,7 +1209,7 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!res['error']) this.$router.back();
+      if (!res['error']) handleBack(this.$router, this.$route);
     },
     async start_batch() {
       var message = `You are about to Start Batch to this data. This operation cannot be undone. Would you like to continue?`;
@@ -1229,7 +1230,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
     },
     async reset_status() {
@@ -1248,7 +1249,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.back();
+        if (!res['error']) handleBack(this.$router, this.$route);
       }
     },
   },

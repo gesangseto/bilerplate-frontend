@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { clearStorage, getProfile } from '../../utils';
+import { clearStorage, getProfile, handleBack } from '../../utils';
 export default {
   name: 'Oops',
   beforeCreate() {
@@ -43,7 +43,7 @@ export default {
       this.$router.push({ path: `/home` });
     },
     goBack() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
   },
 };

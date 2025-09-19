@@ -299,7 +299,7 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { exportDataV3 } from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
 export default {
   name: 'DetailPicking',
   data() {
@@ -411,7 +411,7 @@ export default {
   },
   methods: {
     back() {
-      this.$router.back();
+      handleBack(this.$router, this.$route);
     },
     rowClicked(item) {
       this.datas = [];
@@ -466,8 +466,7 @@ export default {
               duration: 5000,
             });
             if (!res.error) {
-              // this.generateCsv();
-              this.$router.back();
+              handleBack(this.$router, this.$route);
             }
           })
           .catch((err) => {
