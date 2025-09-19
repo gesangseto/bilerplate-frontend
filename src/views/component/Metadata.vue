@@ -34,7 +34,7 @@ import { getConfMetadata } from '../../resource/ConfMetadata';
 export default {
   name: 'VirtualKeyboard',
   props: {
-    defaultMetadata: { type: Object, default: {} },
+    defaultMetadata: { type: Object, default: null },
     model: { type: String, default: null },
   },
   data() {

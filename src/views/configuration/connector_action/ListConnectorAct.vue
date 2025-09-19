@@ -111,6 +111,7 @@ export default {
           res = res.data;
           this.totalData = res.grand_total;
           this.items = res.data;
+          console.log(this.items);
         });
     },
     rowUpdate(item) {
@@ -155,9 +156,14 @@ export default {
   computed: {
     reformatDatas() {
       return this.items.map((item) => {
+        try {
+          item.schedule = readCron(item.schedule);
+        } catch (error) {
+          item.schedule = '-';
+        }
         return {
           ...item,
-          schedule: item.schedule ? readCron(item.schedule) : '',
+          schedule: item.schedule,
           description: item.description || '',
           folder_sftp: item.folder_sftp || '',
           folder_backup: item.folder_backup || '',

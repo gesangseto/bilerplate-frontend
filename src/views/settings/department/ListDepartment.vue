@@ -79,8 +79,9 @@ export default {
     },
     protectCreateData(_res) {
       let max = getLimitation('total_department');
+      let count = _res.data.filter((it) => !it.is_sys).lenght;
       if (max) {
-        if (max <= _res.grand_total) {
+        if (max <= count) {
           this.can_create = false;
         }
       }
