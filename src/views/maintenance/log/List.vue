@@ -17,13 +17,12 @@
             style="font-size: 12px"
             items-per-page-select
             :items-per-page="10"
-            paginatio
+            pagination
           >
           </CDataTable>
         </CCardBody>
       </CCard>
     </CCol>
-    <DetailBarcodeGenerator :property="selected_data" />
   </CRow>
 </template>
 

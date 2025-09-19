@@ -23,53 +23,57 @@
             />
             <!-- Tabel jika yang dipilih adalah server -->
             <CRow v-if="formData.source == 'server'" class="mt-15">
-              <CCol md="3">Select File</CCol>
-              <CCol md="9">
-                <div class="sticky-table-container">
-                  <table class="sticky-table">
-                    <thead>
-                      <tr>
-                        <th style="text-align: center">Select</th>
-                        <th style="text-align: center">File name</th>
-                        <th style="text-align: center">Remark</th>
-                        <th style="text-align: center">Create Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <template v-for="(item, index) in listFiles">
-                        <tr
-                          :style="
-                            index % 2 == 0
-                              ? 'background-color:#ffffff;'
-                              : 'background-color:#ededed;'
-                          "
-                        >
-                          <td :style="'text-align: center;'">
-                            <CInputCheckbox
-                              :key="index"
-                              :checked="item.checked"
-                              size="sm"
-                              @change="handleSelectFile(index)"
-                              style="margin-bottom: 30px; margin-top: 5px"
-                            />
-                          </td>
-                          <td style="padding-left: 10px">
-                            {{ item.name }}
-                          </td>
-                          <td style="padding-left: 10px">
-                            {{ item.remarks }}
-                          </td>
-                          <td style="padding-left: 10px">
-                            {{ item.Timestamp }}
-                          </td>
+              <CCol md="12" class="mb-3">Select File</CCol>
+
+              <CCol md="12">
+                <CCard>
+                  <div class="sticky-table-container">
+                    <table class="sticky-table">
+                      <thead>
+                        <tr>
+                          <th style="text-align: center">Select</th>
+                          <th style="text-align: center">File name</th>
+                          <th style="text-align: center">Remark</th>
+                          <th style="text-align: center">Create Date</th>
                         </tr>
-                      </template>
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        <template v-for="(item, index) in listFiles">
+                          <tr
+                            :style="
+                              index % 2 == 0
+                                ? 'background-color:#ffffff;'
+                                : 'background-color:#ededed;'
+                            "
+                          >
+                            <td :style="'text-align: center;'">
+                              <CInputCheckbox
+                                :key="index"
+                                :checked="item.checked"
+                                size="sm"
+                                @change="handleSelectFile(index)"
+                                style="margin-bottom: 30px; margin-top: 5px"
+                              />
+                            </td>
+                            <td style="padding-left: 10px">
+                              {{ item.name }}
+                            </td>
+                            <td
+                              style="padding-left: 10px; white-space: pre-line"
+                            >
+                              {{ item.remarks }}
+                            </td>
+                            <td style="padding-left: 10px">
+                              {{ item.Timestamp }}
+                            </td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </CCard>
               </CCol>
             </CRow>
-
             <CRow v-if="formData.source == 'local'">
               <CCol sm="3" lg="3"> Select File </CCol>
               <CCol sm="7" lg="7">
