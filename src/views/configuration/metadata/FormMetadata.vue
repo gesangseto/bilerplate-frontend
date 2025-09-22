@@ -80,7 +80,9 @@
       </CCol>
     </CRow>
     <CModal
-      title="Add Metadata"
+      :title="
+        formData.sys_database_content_id ? 'Edit Metadata' : 'Add Metedata'
+      "
       color="warning"
       :show.sync="showModalDialog"
       size="lg"
@@ -93,7 +95,7 @@
             title="Metadata Name"
             placeholder="Enter Metadata name"
             v-model="modalData.name"
-            :is-valid="!modalData.name ? false : true"
+            :is-valid="initial_load ? null : !modalData.name ? false : true"
           />
         </CCol>
         <CCol sm="12">
@@ -107,11 +109,15 @@
 
         <CCol sm="12">
           <SelectOption
+            required
             title="Pattern "
             :options="listOption"
             v-on:onchange="modalData.conf_pattern_id = $event"
             :value="modalData.conf_pattern_id"
             :col="[3, 9]"
+            :is-valid="
+              initial_load ? null : !modalData.conf_pattern_id ? false : true
+            "
           />
         </CCol>
 
@@ -168,8 +174,20 @@ export default {
   },
   data() {
     return {
+      initial_load: true,
       showModalDialog: false,
-      modalData: {},
+      initialData: {
+        sys_database_content_id: null,
+        name: null,
+        conf_pattern_id: null,
+        status: null,
+      },
+      modalData: {
+        sys_database_content_id: null,
+        name: null,
+        conf_pattern_id: null,
+        status: null,
+      },
       initialLoad: true,
       route_action: '',
       // category: '',
@@ -255,7 +273,10 @@ export default {
       handleBack(this.$router, this.$route);
     },
     addNew() {
-      this.modalData = { sys_database_content_id: this.$route.params.id };
+      this.modalData = {
+        ...this.initialData,
+        sys_database_content_id: this.$route.params.id,
+      };
       this.showModalDialog = true;
     },
     rowUpdate(item, index) {
@@ -277,12 +298,33 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        this.modalData = null;
+        this.modalData = this.initialData;
         this.showModalDialog = false;
         if (!res.error) this.loadData();
       }
     },
+    validationMetadata() {
+      if (!this.modalData.sys_database_content_id) {
+        return false;
+      } else if (!this.modalData.name) {
+        return false;
+      } else if (!this.modalData.conf_pattern_id) {
+        return false;
+      }
+      return true;
+    },
     async onSave() {
+      this.initial_load = false;
+      if (!this.validationMetadata()) {
+        this.$toast.open({
+          message: 'Please input all the required data',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      }
       let message = `You are about to change this data.\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
@@ -302,9 +344,12 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        this.modalData = null;
-        this.showModalDialog = false;
-        if (!res.error) this.loadData();
+        if (!res.error) {
+          this.loadData();
+          this.initial_load = true;
+          this.modalData = this.initialData;
+          this.showModalDialog = false;
+        }
       }
     },
   },

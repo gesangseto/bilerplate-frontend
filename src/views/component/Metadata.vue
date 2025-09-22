@@ -29,12 +29,15 @@
 </template>
 
 <script>
-import { getConfMetadata } from '../../resource/ConfMetadata';
+import {
+  getConfMetadata,
+  getOnlyConfMetadata,
+} from '../../resource/ConfMetadata';
 
 export default {
   name: 'VirtualKeyboard',
   props: {
-    defaultMetadata: { type: Object, default: null },
+    defaultMetadata: { type: Object, default: () => ({}) },
     model: { type: String, default: null },
   },
   data() {
@@ -73,19 +76,17 @@ export default {
   methods: {
     async reformatData() {
       if (!this.config_metadata) {
-        let res = await getConfMetadata({
+        let res = await getOnlyConfMetadata({
           status: 'Active',
           model: this.model,
         });
         if (res && res.data[0]) {
-          this.config_metadata = res.data[0].metadata;
+          this.config_metadata = res.data;
           let row = [];
           for (const it of this.config_metadata) {
             let result = this.defaultMetadata[it.name];
-            let pattern = it.conf_pattern ? it.conf_pattern.pattern : null;
-            let pattern_description = it.conf_pattern
-              ? it.conf_pattern.description
-              : null;
+            let pattern = it.conf_pattern.pattern || null;
+            let pattern_description = it.conf_pattern.description || null;
             let error_metadata = this.validation(result, pattern, it.mandatory);
             row.push({
               ...it,
@@ -95,7 +96,7 @@ export default {
               error_metadata,
             });
           }
-          console.log('================');
+          console.log(row, '================');
           this.reformat_metadata = row;
         }
       }
