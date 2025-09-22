@@ -19,6 +19,16 @@
             :items-per-page="10"
             pagination
           >
+            <template #Remarks="{ item }">
+              <td style="white-space: pre-line">
+                {{ item.Remarks }}
+              </td>
+            </template>
+            <template #Username="{ item }">
+              <td style="white-space: nowrap">
+                {{ item.Username }}
+              </td>
+            </template>
           </CDataTable>
         </CCardBody>
       </CCard>
@@ -42,11 +52,16 @@ export default {
         {
           key: 'Timestamp',
           label: 'Created Date',
-          _classes: 'font-weight-bold',
+          _style: 'white-space: nowrap',
         },
         {
           key: 'Action',
           label: 'Action',
+          _style: 'white-space: nowrap;',
+        },
+        {
+          key: 'Status',
+          label: 'Status',
         },
         {
           key: 'Result Message',
@@ -55,22 +70,22 @@ export default {
         {
           key: 'Database Name',
           label: 'Database Name',
+          _style: 'width:1%',
         },
         {
           key: 'Target/Source File',
           label: 'Target/Source File',
-        },
-        {
-          key: 'Remarks',
-          label: 'Remarks',
+          _style: 'max-width: 100px',
         },
         {
           key: 'Username',
           label: 'Username',
+          _style: 'white-space: nowrap',
         },
         {
-          key: 'Status',
-          label: 'Status',
+          key: 'Remarks',
+          label: 'Remarks',
+          _style: 'white-space: pre-line',
         },
       ],
     };

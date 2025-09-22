@@ -297,7 +297,7 @@ function getBaseUrl(path) {
 export function handleBack($router, $route) {
   const currentPath = $route.path.toLowerCase();
   let baseUrl = getBaseUrl(currentPath);
-  if (window.history.length === 1) {
+  if (window.history.length === 1 || baseUrl == '/system/application') {
     if (baseUrl === currentPath) {
       $router.push({ path: `/home` });
     } else if (baseUrl) {

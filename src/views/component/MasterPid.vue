@@ -166,6 +166,11 @@
                     <CInput
                       size="sm"
                       :readonly="!product.flag_upd_del"
+                      @input="
+                        product.mst_pid[index - 1].sn_prefix = product.mst_pid[
+                          index - 1
+                        ].sn_prefix.replace(/\s+/g, '')
+                      "
                       v-model="product.mst_pid[index - 1].sn_prefix"
                       :is-valid="
                         product.mst_pid[index - 1].sn_prefix &&

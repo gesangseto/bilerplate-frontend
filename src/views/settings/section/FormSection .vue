@@ -8,81 +8,47 @@
           </CCardHeader>
           <CCardBody>
             <CForm novalidate>
-              <CInput :disabled="true" horizontal v-model="formData.id">
-                <template #label>
-                  <p class="col-form-label col-sm-3">IDs</p>
-                </template>
-              </CInput>
-              <CSelect
+              <InputDefault
+                :disabled="true"
+                :col="[3, 9]"
+                title="ID"
+                placeholder="ID"
+                v-model="formData.id"
+              />
+              <SelectOption
+                required
                 :disabled="action == 'Read' ? true : false"
-                label="Department *"
+                title="Department "
                 :options="departmentOptions"
-                horizontal
-                placeholder="--Select--"
-                :value.sync="formData.mst_department_id"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.formData.mst_department_id.$error &&
-                    $v.formData.mst_department_id.required,
-                  'is-invalid':
-                    $v.formData.mst_department_id.$error &&
-                    !$v.formData.mst_department_id.required,
-                }"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Department
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
-              <CInput
+                v-on:onchange="formData.mst_department_id = $event"
+                :value="formData.mst_department_id"
+                :col="[3, 9]"
+                :is-valid="
+                  initial_load
+                    ? null
+                    : formData.mst_department_id
+                    ? true
+                    : false
+                "
+              />
+              <InputDefault
+                required
                 :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter section name"
-                autocomplete="name"
+                :col="[3, 9]"
+                title="Name"
                 v-model="formData.name"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.formData.name.$error && $v.formData.name.required,
-                  'is-invalid':
-                    $v.formData.name.$error && !$v.formData.name.required,
-                }"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CTextarea
+                :is-valid="initial_load ? null : formData.name ? true : false"
+              />
+              <TextareaDefault
                 :disabled="action == 'Read' ? true : false"
-                placeholder="Enter section description"
-                horizontal
+                :col="[3, 9]"
+                required
+                title="Description"
                 v-model="formData.description"
-                :add-input-classes="{
-                  'is-valid':
-                    !$v.formData.description.$error &&
-                    $v.formData.description.required,
-                  'is-invalid':
-                    $v.formData.description.$error &&
-                    !$v.formData.description.required,
-                }"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Description
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CTextarea>
+                :is-valid="
+                  initial_load ? null : formData.description ? true : false
+                "
+              />
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
                 <SwitchStatusMaster
@@ -93,7 +59,6 @@
                 />
               </CRow>
             </CForm>
-
             <Metadata
               :defaultMetadata="formData.metadata"
               v-on:handleChange="
