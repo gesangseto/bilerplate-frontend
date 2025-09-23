@@ -970,6 +970,8 @@ export default {
         }
         if (this.is_copy) {
           this.formData.history = [];
+          this.formData.reason = null;
+          this.formData.system_remark = null;
         }
       }
     },

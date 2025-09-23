@@ -22,6 +22,7 @@
             v-model="internalValue"
             @keypress="validateInput"
             @input="handleInput"
+            @blur="handleBlur"
             :placeholder="
               placeholder
                 ? placeholder
@@ -158,6 +159,10 @@ export default {
           newCursorPosition
         );
       });
+    },
+    handleBlur() {
+      this.internalValue = this.internalValue.trim(); // hilangkan spasi di awal & akhir
+      this.$emit('input', this.internalValue);
     },
     convertValueToString() {
       if (this.value || this.value == 0) {

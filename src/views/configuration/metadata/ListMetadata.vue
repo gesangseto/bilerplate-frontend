@@ -10,7 +10,6 @@
             :totalData="totalData"
             :fields="fields"
             :items="reformatDatas"
-            :status_code="'mst_product'"
             :action="['read', 'update']"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"

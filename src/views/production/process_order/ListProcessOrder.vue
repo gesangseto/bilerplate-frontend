@@ -201,7 +201,10 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!_res.error) this.loadData();
+      if (!_res.error) {
+        this.items = [];
+        this.loadData();
+      }
     },
   },
   computed: {

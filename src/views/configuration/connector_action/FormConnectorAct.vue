@@ -81,51 +81,49 @@
               </CRow>
               <CCard v-if="form.using_connection">
                 <CCardBody>
-                  <CInput
+                  <InputDefault
                     :disabled="action == 'Read' ? true : false"
-                    horizontal
+                    required
+                    :col="[3, 9]"
+                    title="Host"
                     placeholder="Enter Connection Host"
-                    label="Host *"
                     v-model="connection.host"
                     :is-valid="
                       initialLoad ? null : !connection.host ? false : true
                     "
-                  >
-                  </CInput>
-                  <CInput
+                  />
+                  <InputDefault
                     :disabled="action == 'Read' ? true : false"
-                    horizontal
+                    required
+                    :col="[3, 9]"
+                    title="Port"
                     placeholder="Enter Connection PORT"
-                    label="Port *"
                     v-model="connection.port"
                     :is-valid="
                       initialLoad ? null : !connection.port ? false : true
                     "
-                  >
-                  </CInput>
-                  <CInput
+                  />
+                  <InputDefault
                     :disabled="action == 'Read' ? true : false"
-                    horizontal
-                    placeholder="Enter Username"
-                    label="Username *"
+                    required
+                    :col="[3, 9]"
+                    title="Username"
                     v-model="connection.username"
                     :is-valid="
                       initialLoad ? null : !connection.username ? false : true
                     "
-                  >
-                  </CInput>
-                  <CInput
+                  />
+                  <InputDefault
                     :disabled="action == 'Read' ? true : false"
-                    horizontal
+                    required
+                    :col="[3, 9]"
+                    title="password"
                     type="password"
-                    placeholder="Enter Password"
-                    label="Password *"
                     v-model="connection.password"
                     :is-valid="
                       initialLoad ? null : !connection.password ? false : true
                     "
-                  >
-                  </CInput>
+                  />
                 </CCardBody>
               </CCard>
               <CSelect
