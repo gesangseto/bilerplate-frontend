@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="form-group row mb-2">
-      <label for="product-name" class="col-sm-2 col-md-2 col-lg-2 form-label">
+    <div class="form-group row mb-3">
+      <label for="product-name" class="col-sm-3 col-md-3 col-lg-3 form-label">
         Product Name <strong class="text-danger">*</strong>
       </label>
-      <div class="col-sm-5 col-md-5 col-lg-5">
+      <div class="col-sm-7 col-md-7 col-lg-7">
         <v-select
           key="value"
           placeholder="--Select--"
@@ -17,11 +17,11 @@
       </div>
     </div>
     <!-- Batch No -->
-    <div class="form-group row mb-2">
-      <label for="product-name" class="col-sm-2 col-md-2 col-lg-2 form-label">
+    <div class="form-group row mb-3">
+      <label for="product-name" class="col-sm-3 col-md-3 col-lg-3 form-label">
         Batch No <strong class="text-danger">*</strong>
       </label>
-      <div class="col-sm-5 col-md-5 col-lg-5">
+      <div class="col-sm-7 col-md-7 col-lg-7">
         <v-select
           placeholder="--Select--"
           :options="listBatchNo"
@@ -36,8 +36,15 @@
         <label v-if="alertExpired" style="color: red">{{ alertExpired }}</label>
       </div>
     </div>
+    <InputDefault
+      v-if="onlyQuantity"
+      required
+      :col="[3, 7]"
+      title="Quantity L1"
+      v-model="formData.quantity"
+    />
 
-    <CRow>
+    <CRow v-if="!onlyQuantity">
       <CCol md="10" lg="10" xl="10">
         <div class="form-group form-check float-right">
           Total Selected L1 Qty :
@@ -96,7 +103,12 @@ import { setConfig } from '../../utils';
 import { getSysConfig } from '../../resource/SysConfig';
 export default {
   name: 'FormAddItemV3',
-  props: { currentItem: Array, filter: Object, useDeliveryDayLimit: Boolean },
+  props: {
+    currentItem: { type: Array, default: () => {} },
+    filter: { type: Object, default: () => {} },
+    useDeliveryDayLimit: { type: Boolean, default: false },
+    onlyQuantity: { type: Boolean, default: false },
+  },
   watch: {
     currentItem: {
       handler() {
@@ -119,6 +131,12 @@ export default {
     'formData.stock': {
       handler(arr) {
         // console.log(arr);
+      },
+      deep: true,
+    },
+    formData: {
+      handler(arr) {
+        this.returnResultQuantity();
       },
       deep: true,
     },
@@ -150,6 +168,7 @@ export default {
       formData: {
         product_id: null,
         batch_no: null,
+        quantity: null,
         stock: [],
       },
       result: [],
@@ -250,6 +269,32 @@ export default {
       }
       this.formData.stock = datas;
       this.returnResult();
+    },
+    returnResultQuantity() {
+      if (!this.onlyQuantity) return;
+      if (!this.formData.batch_no) {
+        return [];
+      }
+      if (!this.formData.product_id) {
+        return [];
+      }
+      if (!this.formData.quantity) {
+        return [];
+      }
+      let params = JSON.parse(JSON.stringify(this.formData));
+      let product = this.listProduct.find((it) => it.id === params.product_id);
+      let batch = this.listBatchNo.find(
+        (it) => it.batch_no === params.batch_no
+      );
+      params = {
+        ...product,
+        ...params,
+        exp_date: batch.expired_date,
+        expired_date: batch.expired_date,
+      };
+      delete params.id;
+      delete params.stock;
+      this.$emit('handleResult', [params]);
     },
     returnResult() {
       let result = this.formData.stock.filter((e) => e.is_checked);
