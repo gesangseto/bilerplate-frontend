@@ -161,12 +161,13 @@
           title="Add Item (Picking List)"
           color="info"
           :show.sync="modalAdd"
-          size="xl"
+          size="lg"
         >
           <FormAddItemV3
             :useDeliveryDayLimit="true"
             :currentItem="items"
             :filter="formData"
+            :onlyQuantity="true"
             v-on:handleResult="handleResult($event)"
           />
           <template #footer>
@@ -293,15 +294,15 @@ export default {
       temp_items: [],
       fields: [
         {
-          key: 'no',
+          key: 'no_urut',
           label: 'No',
         },
         {
-          key: 'product_no',
+          key: 'no',
           label: 'Item No',
         },
         {
-          key: 'product_name',
+          key: 'name',
           label: 'Product Name',
         },
         {
@@ -314,24 +315,12 @@ export default {
           label: 'Exp Date',
         },
         {
-          key: 'product_nie',
+          key: 'nie',
           label: 'NIE',
         },
         {
-          key: 'epc_key',
-          label: 'EPC Key',
-        },
-        {
-          key: 'serial',
-          label: 'SN',
-        },
-        {
-          key: 'packaging_level',
-          label: 'Pkg Level',
-        },
-        {
-          key: 'packaging_name',
-          label: 'Pkg Name',
+          key: 'gtin',
+          label: 'NIE',
         },
         {
           key: 'quantity',
@@ -439,38 +428,31 @@ export default {
       this.detail_item = item;
       this.detailModal = true;
     },
-    removeDuplicateData(data) {
-      data = data.filter(
-        (value, index, self) =>
-          index ===
-          self.findIndex(
-            (t) =>
-              t.gtin_sscc === value.gtin_sscc &&
-              t.serial === value.serial &&
-              t.batch_id === value.batch_id
-          )
-      );
-      return data;
+    calculationDuplicateData(data) {
+      const result = [];
+      data.forEach((item) => {
+        const found = result.find(
+          (r) =>
+            r.product_id === item.product_id && r.batch_no === item.batch_no
+        );
+        if (found) {
+          found.quantity += item.quantity; // totalkan quantity
+        } else {
+          result.push({ ...item }); // copy item kalau belum ada
+        }
+      });
+
+      return result;
     },
 
     handleResult(data) {
       // this.temp_items = this.temp_items.concat(data);
-      this.temp_items = this.removeDuplicateData(data);
+      this.temp_items = this.calculationDuplicateData(data);
       return;
     },
     setData() {
-      if (this.temp_items.length == 0) {
-        this.$toast.open({
-          message: `No data to be set`,
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-        return;
-      }
       this.items = this.items.concat(this.temp_items);
-      this.items = this.removeDuplicateData(this.items);
+      this.items = this.calculationDuplicateData(this.items);
       this.temp_items = [];
       this.modalAdd = false;
     },
@@ -572,29 +554,23 @@ export default {
         });
         return false;
       }
-      let items = [];
+      let param = structuredClone(this.formData);
+      param.items;
       for (const it of this.items) {
-        let field = {
-          epc_key: it.epc_key,
-          serial: it.serial,
-        };
-        if (it.serial == '0000000000') {
-          field['epc_key'] = it.epc_key;
-          field['product_id'] = it.product_id;
-          field['batch_no'] = it.batch_no;
-          field['expired_date'] = it.expired_date;
-          field['quantity'] = it.quantity;
-        }
-        items.push(field);
+        param.items.push({
+          batch_no: it.batch_no,
+          product_id: it.product_id,
+          quantity: it.quantity,
+        });
       }
-      let param = this.formData;
-      param.items = items;
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
         $axiosMertrack
-          .put('/v3/transaction/picking', param)
+          .put('/v4.2/transaction/picking', param)
           .then((result) => {
+            console.log(result);
+
             this.$isLoading(false);
             let res = result.data;
             this.$toast.open({
@@ -636,9 +612,7 @@ export default {
           ...item,
           nie: item.nie || '-',
           gtin: item.gtin || '-',
-          no: (no += 1),
-          gtin_cp:
-            item.epc_type == 'sscc' ? item.company_prefix : item.gtin_sscc,
+          no_urut: (no += 1),
         };
       });
     },

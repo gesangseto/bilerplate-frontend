@@ -144,7 +144,7 @@ export default {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;
-      let url = `/v3/transaction/picking?raw=true&${param}`;
+      let url = `/v4.2/transaction/picking?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
         res = res.data;
         this.totalData = res.grand_total || 0;
@@ -166,12 +166,12 @@ export default {
     handleCancel() {
       let data = {
         id: this.cancelProperty.id,
-        approved: false,
         reason: `[CANCEL] ${this.cancelProperty.reason}`,
       };
+      let param = { data: { ...data } };
       this.$isLoading(true);
       $axiosMertrack
-        .post('/v3/transaction/picking', data)
+        .delete('/v4.2/transaction/picking', param)
         .then((result) => {
           this.$isLoading(false);
           this.loadData();

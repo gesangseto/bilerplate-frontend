@@ -82,20 +82,13 @@ const ListProcessOrder = () =>
 const FormProcessOrder = () =>
   import('@/views/production/process_order/FormProcessOrder');
 // ========================TRANSACTION========================
-// Picking List
+// Picking List V4.2
 const ListPickingList = () =>
   import('@/views/transactions/pickingList/ListPickingList');
 const FormPickingList = () =>
   import('@/views/transactions/pickingList/FormPickingList');
 const DetailPickingList = () =>
   import('@/views/transactions/pickingList/DetailPickingList');
-// Picking List V4.2
-const ListPickingList_v42 = () =>
-  import('@/views/transactions/pickingList_v4.2/ListPickingList');
-const FormPickingList_v42 = () =>
-  import('@/views/transactions/pickingList_v4.2/FormPickingList');
-const DetailPickingList_v42 = () =>
-  import('@/views/transactions/pickingList_v4.2/DetailPickingList');
 // Upload XML
 const FormUploadXML = () => import('@/views/transactions/upload/FormUploadXML');
 const DetailUploadXML = () =>
@@ -615,25 +608,6 @@ function configRoutes() {
           name: 'Picking List (Home)',
           meta: { login: true },
           component: ListPickingList,
-        },
-        // PICKING LIST V4.2
-        {
-          path: 'picking_list_v4.2/:type/:id',
-          name: 'Picking List (Details) ',
-          meta: { login: true },
-          component: DetailPickingList_v42,
-        },
-        {
-          path: 'picking_list_v4.2/:type',
-          name: 'Picking List (Details)',
-          meta: { login: true },
-          component: FormPickingList_v42,
-        },
-        {
-          path: 'picking_list_v4.2',
-          name: 'Picking List (Home)',
-          meta: { login: true },
-          component: ListPickingList_v42,
         },
         // UPLOAD XML
         {

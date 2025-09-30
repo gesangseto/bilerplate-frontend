@@ -131,7 +131,10 @@
                     />
                   </td>
                 </tr>
-                <tr style="height: 50px" v-if="picking.status != 0">
+                <tr
+                  style="height: 50px"
+                  v-if="picking.status != 0 && picking.remark"
+                >
                   <td>Remark</td>
                   <td>
                     <textarea
@@ -141,7 +144,10 @@
                     />
                   </td>
                 </tr>
-                <tr style="height: 50px" v-if="picking.status != 0">
+                <tr
+                  style="height: 50px"
+                  v-if="picking.status != 0 && picking.do_number"
+                >
                   <td>DO No</td>
                   <td>
                     <input
@@ -177,6 +183,22 @@
                       class="form-control"
                       readonly
                       v-model="picking[`quantity_lvl_${index}`]"
+                    />
+                  </td>
+                </tr>
+
+                <tr style="height: 50px">
+                  <td style="width: 40%" colspan="2">
+                    <br />
+                    <br />
+                    <strong>Batch Requested</strong>
+                    <CDataTable
+                      :items="picking.picking_batch"
+                      :fields="fieldPickingBatch"
+                      hover
+                      sorter
+                      striped
+                      tableFilter
                     />
                   </td>
                 </tr>
@@ -298,6 +320,7 @@
 </template>
 
 <script>
+import { CDataTable } from '@coreui/vue';
 import $axiosMertrack from '../../../apiMertrack';
 import { exportDataV3, handleBack } from '../../../utils';
 export default {
@@ -336,6 +359,8 @@ export default {
         },
         file_1_name: '',
         file_2_name: '',
+        items: [],
+        picking_batch: [],
       },
       item: [],
       items: [],
@@ -387,11 +412,25 @@ export default {
           filter: false,
         },
       ],
+      fieldPickingBatch: [
+        {
+          key: 'product_name',
+          label: 'Product',
+        },
+        {
+          key: 'batch_no',
+          label: 'Batch No',
+        },
+        {
+          key: 'quantity',
+          label: 'L1 Qty',
+        },
+      ],
     };
   },
   mounted() {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
-    var _url = `/v3/transaction/picking?id=${this.$route.params.id}`;
+    var _url = `/v4.2/transaction/picking?id=${this.$route.params.id}`;
     $axiosMertrack.get(_url).then((response) => {
       let data = response.data.data[0];
       this.picking = data;
@@ -450,7 +489,7 @@ export default {
           do_number: this.doNumber,
           reason: '',
         };
-        var _url = `/v3/transaction/picking/finish`;
+        var _url = `/v4.2/transaction/picking/finish`;
         $axiosMertrack
           .post(_url, param)
           .then((result) => {
