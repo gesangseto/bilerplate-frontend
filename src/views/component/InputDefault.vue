@@ -82,6 +82,7 @@ export default {
     type: { type: String, default: 'text' },
     validasi: { type: String, default: null },
     max: { type: Number, default: null },
+    maxValue: { type: Number, default: null },
     title: { type: String, default: null },
     description: { type: String, default: '' },
     placeholder: { type: String },
@@ -121,6 +122,9 @@ export default {
       if (!isValid || (this.max && this.internalValue.length >= this.max)) {
         event.preventDefault();
       }
+      if (!isValid || (this.maxValue && this.internalValue > this.maxValue)) {
+        event.preventDefault();
+      }
     },
     handleInput(event) {
       const input = event.target;
@@ -132,6 +136,9 @@ export default {
       }
       if (this.max && cleanedValue.length > this.max) {
         cleanedValue = cleanedValue.substring(0, this.max);
+      }
+      if (this.maxValue && cleanedValue > this.maxValue) {
+        cleanedValue = this.maxValue;
       }
       if (this.options.uppercase) {
         cleanedValue = cleanedValue.toUpperCase();

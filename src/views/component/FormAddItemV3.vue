@@ -34,14 +34,18 @@
           </template>
         </v-select>
         <label v-if="alertExpired" style="color: red">{{ alertExpired }}</label>
+        <label v-if="onlyQuantity && formData.batch_no" style="color: green">
+          Available L1 quantity {{ formData.available_quantity }}
+        </label>
       </div>
     </div>
     <InputDefault
       v-if="onlyQuantity"
       required
       :col="[3, 7]"
-      title="Quantity L1"
+      title="L1 Quantity"
       v-model="formData.quantity"
+      :maxValue="formData.available_quantity"
     />
 
     <CRow v-if="!onlyQuantity">
@@ -169,6 +173,7 @@ export default {
         product_id: null,
         batch_no: null,
         quantity: null,
+        available_quantity: null,
         stock: [],
       },
       result: [],
@@ -210,6 +215,8 @@ export default {
       this.check_all = false;
       this.formData.stock = [];
       this.formData.product_id = null;
+      this.formData.quantity = null;
+      this.formData.available_quantity = 0;
       this.formData.batch_no = null;
       this.alertExpired = false;
     },
@@ -365,7 +372,10 @@ export default {
       let _url = `/v3/helper/detail-item/stock?${param}`;
       $axiosMertrack.get(`${_url}`).then((result) => {
         let data = result.data.data;
+        let available_quantity = 0;
         for (const it of data) {
+          available_quantity += it.quantity;
+
           let idx = this.currentItem.findIndex(
             (e) =>
               e.gtin_sscc === it.gtin_sscc &&
@@ -376,6 +386,7 @@ export default {
             it.is_checked = true;
             it.is_disabled = true;
           }
+          this.formData.available_quantity = available_quantity;
           this.formData.stock.push(it);
         }
       });

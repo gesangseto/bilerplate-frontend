@@ -538,7 +538,7 @@
         </CCol>
         <CCol md="2">
           <p class="float-right">
-            Quantity L1: {{ tabData.quantity_l1 }}<br />
+            L1 Quantity: {{ tabData.quantity_l1 }}<br />
           </p>
         </CCol>
       </CRow>
