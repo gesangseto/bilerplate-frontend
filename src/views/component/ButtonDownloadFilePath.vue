@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import $axiosMertrack from '../../apiMertrack';
+
 export default {
   name: 'ButtonDownloadFilePath',
   props: ['buttonProperty', 'file_path'],
@@ -59,11 +61,59 @@ export default {
     };
   },
   methods: {
-    downloadFile() {
-      let endpoint = process.env.VUE_APP_URL_API_MERTRACK;
-      let _url = `${endpoint}/api/v4/helper/download?file_path=${this.file_path}`;
-      window.open(`${_url}`, '_blank');
-      return true;
+    async downloadFile() {
+      try {
+        let endpoint = process.env.VUE_APP_URL_API_MERTRACK;
+        let _url = `${endpoint}/api/v4/helper/download?file_path=${this.file_path}`;
+
+        // 🔥 request dengan axios, responseType = blob
+        const response = await $axiosMertrack.get(_url, {
+          responseType: 'blob',
+        });
+
+        // Cek apakah response sebenarnya error JSON
+        const contentType = response.headers['content-type'];
+        if (contentType && contentType.includes('application/json')) {
+          const text = await response.data.text();
+          const errorObj = JSON.parse(text);
+          this.$toast.open({
+            message: errorObj.message || 'Download gagal',
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+          return;
+        }
+
+        // ✅ Kalau sukses → buat link download manual
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+
+        // Nama file bisa diambil dari header Content-Disposition
+        const disposition = response.headers['content-disposition'];
+        let fileName = 'download.dat';
+
+        if (disposition && disposition.includes('filename=')) {
+          fileName = disposition.split('filename=')[1].replace(/"/g, '');
+        }
+
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        this.$toast.open({
+          message: err,
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+      }
     },
   },
 };
