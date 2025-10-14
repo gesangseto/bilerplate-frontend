@@ -156,7 +156,7 @@ export default {
         alert: true,
         param: this.$route.query,
         exportType: type,
-        url: '/v3/transaction/picking',
+        url: '/v4.2/transaction/picking',
       });
     },
     modalCancel(item) {

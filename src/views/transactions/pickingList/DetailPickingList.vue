@@ -528,7 +528,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/picking',
+        url: '/v4.2/transaction/picking',
       });
     },
     handleClickExportBPOM(type) {
@@ -538,7 +538,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/picking/bpom-report',
+        url: '/v4.2/transaction/picking/bpom-report',
       });
     },
   },
