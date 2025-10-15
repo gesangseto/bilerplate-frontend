@@ -252,11 +252,13 @@
             @click="handleClickExportBPOM()"
           />
           <ButtonPermission
+            v-if="picking.items.length > 0"
             exportType="excel"
             :permission="'print'"
             @click="handleClickExport('xls')"
           />
           <ButtonPermission
+            v-if="picking.items.length > 0"
             exportType="pdf"
             :permission="'print'"
             @click="handleClickExport('pdf')"
