@@ -168,7 +168,7 @@
             />
             <ButtonPermission
               v-if="getActions(item).includes('print')"
-              :buttonProperty="actionProperty.print || null"
+              :buttonProperty="getButtonPrint(item)"
               :id="getActionId('print', item)"
               :useHref="getActionHref('print')"
               :permission="'print'"
@@ -317,6 +317,15 @@ export default {
   },
   data() {
     return {
+      btn_print: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'secondary',
+        icon: 'print',
+        text: '',
+        tooltip: 'Print',
+        useHref: false,
+      },
       btn_copy: {
         size: 'sm',
         class: 'float-right',
@@ -506,6 +515,19 @@ export default {
     };
   },
   methods: {
+    getButtonPrint(item) {
+      let prop = JSON.parse(JSON.stringify(this.btn_print));
+      if (item.hasOwnProperty('allow_print')) {
+        if (item.allow_print) {
+          prop.color = 'warning';
+        } else {
+          prop.color = 'danger';
+        }
+      } else {
+        return null;
+      }
+      return prop;
+    },
     getActionId(action, item) {
       if (
         this.actionProperty &&
