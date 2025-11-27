@@ -13,9 +13,7 @@
             :items="reformatDatas"
             :filterAction="customActionFilter"
             :action="['read', 'delete']"
-            :filterBy="['All', 'mst_product_category_id']"
             v-on:handleDelete="deleteRow($event)"
-            v-on:handleUpdate="rowUpdate($event)"
             v-on:handleReload="loadData($event)"
           />
         </CCardBody>
@@ -26,13 +24,11 @@
 
 <script>
 import moment from 'moment';
-import { getProcessSchedule } from '../../../resource/ProcessSchedule';
 import {
-  deleteSysScriptInj,
-  getSysScriptInj,
-} from '../../../resource/SysScriptInj';
+  deleteProcessQueue,
+  getProcessQueue,
+} from '../../../resource/ProcessQueue';
 import { getProfile, getUserId } from '../../../utils';
-import { getProcessQueue } from '../../../resource/ProcessQueue';
 
 export default {
   name: 'ListSysScriptInj',
@@ -123,7 +119,7 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let _param = { id: item.id };
-        let res = await deleteSysScriptInj(_param);
+        let res = await deleteProcessQueue(_param);
         this.$isLoading(false);
         this.$toast.open({
           message: res.error

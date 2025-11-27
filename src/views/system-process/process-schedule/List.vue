@@ -13,7 +13,6 @@
             :items="reformatDatas"
             :filterAction="customActionFilter"
             :action="['read', 'delete']"
-            :filterBy="['All', 'mst_product_category_id']"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleReload="loadData($event)"
@@ -27,10 +26,7 @@
 <script>
 import moment from 'moment';
 import { getProcessSchedule } from '../../../resource/ProcessSchedule';
-import {
-  deleteSysScriptInj,
-  getSysScriptInj,
-} from '../../../resource/SysScriptInj';
+import { deleteSysScriptInj } from '../../../resource/SysScriptInj';
 import { getProfile, getUserId } from '../../../utils';
 
 export default {

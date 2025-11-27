@@ -194,12 +194,8 @@ const FormSystemScriptInj = () =>
 // ========================SYSTEM PROCESS========================
 const ListProcessSchedule = () =>
   import('@/views/system-process/process-schedule/List');
-const FormProcessSchedule = () =>
-  import('@/views/system-process/process-schedule/Form');
 const ListProcessQueue = () =>
   import('@/views/system-process/process-queue/List');
-const FormProcessQueue = () =>
-  import('@/views/system-process/process-queue/Form');
 // ========================CONFIGURATION========================
 // const ConfApplication = () =>
 //   import('@/views/configuration/application/ConfApplication');
@@ -1162,35 +1158,11 @@ function configRoutes() {
       children: [
         // PROCESS SCHEDULER
         {
-          path: 'process-schedule/:type/:id',
-          name: 'Process Schedule (Details)',
-          component: FormProcessSchedule,
-          meta: { login: true },
-        },
-        {
-          path: 'process-schedule/:type',
-          name: 'Process Schedule (Create)',
-          component: FormProcessSchedule,
-          meta: { login: true },
-        },
-        {
           path: 'process-schedule',
           name: 'Process Schedule (Home)',
           component: ListProcessSchedule,
           meta: { login: true },
         }, // PROCESS QUEUE
-        {
-          path: 'process-queue/:type/:id',
-          name: 'Process Queue (Details)',
-          component: FormProcessQueue,
-          meta: { login: true },
-        },
-        {
-          path: 'process-queue/:type',
-          name: 'Process Queue (Create)',
-          component: FormProcessQueue,
-          meta: { login: true },
-        },
         {
           path: 'process-queue',
           name: 'Process Queue (Home)',
