@@ -4,7 +4,13 @@
       <CRow class="justify-content-center">
         <CCol md="6">
           <CCard class="mx-4 mb-0">
-            <CCardHeader><h4>Change Password</h4></CCardHeader>
+            <CCardHeader>
+              <h4>Change Password</h4>
+              <small v-if="this.password_is_expiry" style="color: red">
+                Your password has expired. Please create a new password to
+                continue.
+              </small>
+            </CCardHeader>
             <CCardBody class="p-4">
               <CForm>
                 <CRow>
@@ -121,6 +127,7 @@ export default {
         newPassword: '',
         confirmPassword: '',
       },
+      password_is_expiry: false,
       showPassword: false,
       conf_user_app: {},
       profile: {},
@@ -134,6 +141,7 @@ export default {
     };
   },
   mounted() {
+    this.password_is_expiry = this.$route.query['password_is_expiry'];
     this.profile = getProfile();
     if (!this.profile) this.$router.replace({ path: `/login` });
     this.conf_user_app = getConfUserApp();
@@ -182,6 +190,7 @@ export default {
       var body = {
         new_password: this.form_data.newPassword,
         token: this.profile.token,
+        password_is_expiry: this.password_is_expiry,
       };
       let res = await ChangePwdFirstTime(body);
 
@@ -197,6 +206,7 @@ export default {
       });
       if (!res['error']) {
         this.profile.password_must_change = false;
+        this.profile.password_is_expiry = false;
         setProfile(this.profile);
         this.$router.push({ path: `/home` });
       }

@@ -127,6 +127,23 @@
                     v-model="data.login_attempt"
                     :max="50"
                   />
+                  <InputDefault
+                    :col="[3, 7]"
+                    :title="'Password Expiration (Days)'"
+                    :validasi="'integer'"
+                    v-model="data.password_expiry_days"
+                    :max="50"
+                    description="Number of days before the user is required to change their password.
+                    Leave blank to disable password expiration."
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    :title="'Password History Limit'"
+                    :validasi="'integer'"
+                    v-model="data.password_history_limit"
+                    :max="50"
+                    description="Specifies how many previous passwords cannot be reused."
+                  />
 
                   <p style="font-weight: bold">Password Policy</p>
                   <InputDefault

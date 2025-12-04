@@ -300,13 +300,18 @@ export default {
         this.$router.push({ path: `/oops` });
       }
       let profile = getProfile();
+      let url = `/change-password?p-key=${profile.token}`;
+      if (profile && profile.id != 0 && profile.password_is_expiry) {
+        this.$router.push({ path: `${url}&password_is_expiry=true` });
+        return;
+      }
       if (
         getConfig().password_must_change &&
         profile &&
         profile.id != 0 &&
         profile.password_must_change
       ) {
-        this.$router.push({ path: `/change-password?p-key=${profile.token}` });
+        this.$router.push({ path: url });
         return;
       }
     },
