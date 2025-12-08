@@ -1,9 +1,9 @@
-import $axiosMertrack from "../apiMertrack";
+import $axiosMertrack from '../apiMertrack';
 
 let url = `/v3/master/product`;
 
 export const getMstProduct = async (param = Object) => {
-  var query_string = "";
+  var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
   }
@@ -15,7 +15,7 @@ export const getMstProduct = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -33,7 +33,7 @@ export const insertMstProduct = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -51,7 +51,7 @@ export const updateMstProduct = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -68,7 +68,7 @@ export const deleteMstProduct = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -78,7 +78,7 @@ export const insertMstProductV1 = async (param = Object) => {
   if (!param) {
     return false;
   }
-  let _url = "v3/master/product/v1";
+  let _url = 'v3/master/product/v1';
   return new Promise((resolve) => {
     $axiosMertrack
       .put(_url, param)
@@ -87,7 +87,7 @@ export const insertMstProductV1 = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -97,7 +97,7 @@ export const updateMstProductV1 = async (param = Object) => {
   if (!param) {
     return false;
   }
-  let _url = "v3/master/product/v1";
+  let _url = 'v3/master/product/v1';
   return new Promise((resolve) => {
     $axiosMertrack
       .post(_url, param)
@@ -106,7 +106,7 @@ export const updateMstProductV1 = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });

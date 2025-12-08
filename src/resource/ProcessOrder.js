@@ -1,6 +1,7 @@
 import $axiosMertrack from '../apiMertrack';
 
 let url = `/v4/production/process-order`;
+let urlV41 = `/v4.1/production/process-order`;
 
 export const getProcessOrder = async (param = Object) => {
   var query_string = '';
@@ -129,6 +130,23 @@ export const closeBatchPO = async (param = Object) => {
       });
   });
 };
+export const closeBatchPOV41 = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(`${urlV41}/closed-development`, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
 
 export const changeProgressPO = async (param = Object) => {
   if (!param) {
@@ -174,6 +192,23 @@ export const resetProcessOrder = async (param = Object) => {
   return new Promise((resolve) => {
     $axiosMertrack
       .post(`${url}/change-to-ready`, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+export const startBatchProcessOrderV41 = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(`${urlV41}/confirmation`, param)
       .then((result) => {
         let res = result.data;
         return resolve(res);

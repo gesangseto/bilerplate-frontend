@@ -296,40 +296,26 @@
           >
           <!-- Generate Serial data saat update-->
 
+          <ButtonPopover
+            v-if="formData.status == 4 && userInfo.id == 0"
+            :buttonProperty="{
+              color: 'danger',
+              text: 'Close Batch',
+            }"
+            permission="approve"
+            :popover_list="['End Serialization', 'Partial', 'Final']"
+            @handleClick="closeDevelopment($event)"
+            mt="-11"
+          />
           <ButtonPermission
             v-if="formData.status == 4 && userInfo.id == 0"
             :buttonProperty="{
-              color: 'warning',
+              color: 'danger',
               text: 'Reset Status',
             }"
             class="float-right"
             :permission="'approve'"
             @click="reset_status()"
-          />
-          <ButtonPermission
-            v-if="
-              (formData.status == 3 || formData.status == 4) &&
-              userInfo.id == 0 &&
-              !is_copy
-            "
-            :buttonProperty="{
-              color: 'warning',
-              text: 'Start Batch',
-            }"
-            class="float-right"
-            :permission="'approve'"
-            @click="start_batch()"
-          />
-          <ButtonPopover
-            v-if="formData.status == 4 && userInfo.id == 0"
-            :buttonProperty="{
-              color: 'warning',
-              text: 'Close Batch',
-            }"
-            permission="approve"
-            :popover_list="['Partial', 'Final']"
-            @handleClick="closeDevelopment($event)"
-            mt="-11"
           />
           <ButtonPopover
             v-if="formData.status == 4 && userInfo.id == 0"
@@ -341,6 +327,22 @@
             :popover_list="['Paused', 'Resume']"
             @handleClick="changeProgressDevelopment($event)"
             mt="-11"
+          />
+          <ButtonPopover
+            v-if="
+              (formData.status == 3 || formData.status == 4) &&
+              userInfo.id == 0 &&
+              !is_copy
+            "
+            :buttonProperty="{
+              color: 'success',
+              text: 'Start Batch',
+            }"
+            :popover_list="['Online', 'Serialization', 'Aggregation']"
+            class="float-right"
+            :permission="'approve'"
+            @handleClick="start_batch($event)"
+            mt="-13"
           />
           <!-- Buton Cancel-->
           <ButtonBack />
@@ -594,6 +596,8 @@ import {
   updateProcessOrder,
   closeBatchPO,
   changeProgressPO,
+  startBatchProcessOrderV41,
+  closeBatchPOV41,
 } from '../../../resource/ProcessOrder';
 import {
   capitalizeFirstLetter,
@@ -604,6 +608,7 @@ import {
   isJsonString,
   onlyNumber,
 } from '../../../utils';
+import { getConfStation } from '../../../resource/ConfStation';
 
 export default {
   name: 'FormPacking',
@@ -1188,7 +1193,7 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!res['error']) handleBack(this.$router, this.$route);
+      if (!res['error']) this.$router.go();
     },
     async closeDevelopment(type) {
       this.$isLoading(true);
@@ -1197,9 +1202,10 @@ export default {
         result.max = (parseFloat(result.min) + parseFloat(n)).toFixed(2);
         return result;
       }
-      let res = await closeBatchPO({
+      if (type.toLowerCase().includes('serialization')) type = 'serialization';
+      let res = await closeBatchPOV41({
         id: this.formData.id,
-        type: type == 'Partial' ? 'partial' : 'final',
+        type: type.toLowerCase(),
       });
       this.$isLoading(false);
       this.$toast.open({
@@ -1211,17 +1217,40 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!res['error']) handleBack(this.$router, this.$route);
+      if (!res['error']) this.$router.go();
     },
-    async start_batch() {
+    async start_batch($event) {
+      let station = null;
+      if ($event) {
+        station = await getConfStation({
+          station_type: $event.toLowerCase(),
+          station_status: 'null',
+          status: 'Active',
+          limit: '1',
+          page: '1',
+        });
+        if (station && station.total > 0) {
+          station = station.data[0];
+        } else {
+          this.$toast.open({
+            message: `The standby station with type '${$event}' could not be found.`,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+          return;
+        }
+      }
       var message = `You are about to Start Batch to this data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
         let param = {
+          station_id: station.id,
           id: this.formData.id,
           serial_ids: { type: 'all' },
         };
-        let res = await startBatchProcessOrder(param);
+        let res = await startBatchProcessOrderV41(param);
         this.$isLoading(false);
         this.$toast.open({
           message: res['error']
@@ -1232,7 +1261,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) handleBack(this.$router, this.$route);
+        if (!res['error']) this.$router.go();
       }
     },
     async reset_status() {
@@ -1251,7 +1280,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) handleBack(this.$router, this.$route);
+        if (!res['error']) this.$router.go();
       }
     },
   },
