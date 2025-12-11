@@ -119,23 +119,6 @@ export const closeBatchPO = async (param = Object) => {
   }
   return new Promise((resolve) => {
     $axiosMertrack
-      .post(`${url}/closed-development`, param)
-      .then((result) => {
-        let res = result.data;
-        return resolve(res);
-      })
-      .catch((e) => {
-        console.log('ERROR => ', e);
-        return resolve(false);
-      });
-  });
-};
-export const closeBatchPOV41 = async (param = Object) => {
-  if (!param) {
-    return false;
-  }
-  return new Promise((resolve) => {
-    $axiosMertrack
       .post(`${urlV41}/closed-development`, param)
       .then((result) => {
         let res = result.data;
@@ -154,7 +137,7 @@ export const changeProgressPO = async (param = Object) => {
   }
   return new Promise((resolve) => {
     $axiosMertrack
-      .post(`${url}/change-progress`, param)
+      .post(`${urlV41}/change-progress`, param)
       .then((result) => {
         let res = result.data;
         return resolve(res);
@@ -202,30 +185,13 @@ export const resetProcessOrder = async (param = Object) => {
       });
   });
 };
-export const startBatchProcessOrderV41 = async (param = Object) => {
-  if (!param) {
-    return false;
-  }
-  return new Promise((resolve) => {
-    $axiosMertrack
-      .post(`${urlV41}/confirmation`, param)
-      .then((result) => {
-        let res = result.data;
-        return resolve(res);
-      })
-      .catch((e) => {
-        console.log('ERROR => ', e);
-        return resolve(false);
-      });
-  });
-};
 export const startBatchProcessOrder = async (param = Object) => {
   if (!param) {
     return false;
   }
   return new Promise((resolve) => {
     $axiosMertrack
-      .post(`${url}/confirmation`, param)
+      .post(`${urlV41}/confirmation`, param)
       .then((result) => {
         let res = result.data;
         return resolve(res);

@@ -294,19 +294,7 @@
           >
             <CIcon name="cil-check-circle" /> Generate Serial</CButton
           >
-          <!-- Generate Serial data saat update-->
 
-          <ButtonPopover
-            v-if="formData.status == 4 && userInfo.id == 0"
-            :buttonProperty="{
-              color: 'danger',
-              text: 'Close Batch',
-            }"
-            permission="approve"
-            :popover_list="['End Serialization', 'Partial', 'Final']"
-            @handleClick="closeDevelopment($event)"
-            mt="-11"
-          />
           <ButtonPermission
             v-if="formData.status == 4 && userInfo.id == 0"
             :buttonProperty="{
@@ -317,33 +305,131 @@
             :permission="'approve'"
             @click="reset_status()"
           />
-          <ButtonPopover
-            v-if="formData.status == 4 && userInfo.id == 0"
-            :buttonProperty="{
-              color: 'warning',
-              text: 'Change Progress',
-            }"
-            permission="approve"
-            :popover_list="['Paused', 'Resume']"
-            @handleClick="changeProgressDevelopment($event)"
-            mt="-11"
-          />
-          <ButtonPopover
+          <!-- Generate Serial data saat update-->
+          <!-- Status 3 berarti belum dimulai batch -->
+          <div v-if="formData.status == 3 && userInfo.id == 0 && !is_copy">
+            <ButtonPopover
+              :buttonProperty="{
+                color: 'success',
+                text: 'Start Batch',
+              }"
+              :popover_list="['Online', 'Serialization']"
+              class="float-right"
+              :permission="'approve'"
+              @handleClick="start_batch($event)"
+              mt="-11"
+            />
+          </div>
+
+          <!-- Status 4 berarti proses sudah dimulai -->
+          <!-- Khusus station OFFLINE -->
+          <div
             v-if="
-              (formData.status == 3 || formData.status == 4) &&
+              formData.status == 4 &&
               userInfo.id == 0 &&
-              !is_copy
+              !is_copy &&
+              station_type != 'online'
             "
-            :buttonProperty="{
-              color: 'success',
-              text: 'Start Batch',
-            }"
-            :popover_list="['Online', 'Serialization', 'Aggregation']"
-            class="float-right"
-            :permission="'approve'"
-            @handleClick="start_batch($event)"
-            mt="-13"
-          />
+          >
+            <ButtonPopover
+              :buttonProperty="{
+                color: 'danger',
+                text: 'Close Batch',
+              }"
+              :popover_list="['End Serialization', 'Partial', 'Final']"
+              class="float-right"
+              :permission="'approve'"
+              @handleClick="closeDevelopment($event)"
+              mt="-14"
+            />
+            <ButtonPopover
+              :buttonProperty="{
+                color: 'warning',
+                text: 'Pause Progress',
+              }"
+              :popover_list="['Serialization', 'Aggregation']"
+              class="float-right"
+              :permission="'approve'"
+              @handleClick="pauseProgressDevelopment($event)"
+              mt="-11"
+            />
+            <ButtonPopover
+              :buttonProperty="{
+                color: 'warning',
+                text: 'Resume Progress',
+              }"
+              :popover_list="['Serialization', 'Aggregation']"
+              class="float-right"
+              :permission="'approve'"
+              @handleClick="resumeProgressDevelopment($event)"
+              mt="-11"
+            />
+            <ButtonPopover
+              :buttonProperty="{
+                color: 'success',
+                text: 'Start Batch',
+              }"
+              :popover_list="['Serialization', 'Aggregation']"
+              class="float-right"
+              :permission="'approve'"
+              @handleClick="start_batch($event)"
+              mt="-11"
+            />
+          </div>
+          <!-- Status 4 berarti proses sudah dimulai -->
+          <!-- Khusus station ONLINE -->
+          <div
+            v-if="
+              formData.status == 4 &&
+              userInfo.id == 0 &&
+              !is_copy &&
+              station_type == 'online'
+            "
+          >
+            <ButtonPopover
+              :buttonProperty="{
+                color: 'danger',
+                text: 'Close Batch',
+              }"
+              :popover_list="['Partial', 'Final']"
+              class="float-right"
+              :permission="'approve'"
+              @handleClick="closeDevelopment($event)"
+              mt="-14"
+            />
+            <Button
+              :buttonProperty="{
+                color: 'warning',
+                text: 'Pause Progress',
+                tooltip: '',
+              }"
+              class="float-right"
+              :permission="'approve'"
+              @click="pauseProgressDevelopment('online')"
+            />
+            <Button
+              :buttonProperty="{
+                color: 'warning',
+                text: 'Resume Progress',
+                tooltip: '',
+              }"
+              class="float-right"
+              :permission="'approve'"
+              @click="resumeProgressDevelopment('online')"
+              mt="-11"
+            />
+            <Button
+              :buttonProperty="{
+                color: 'success',
+                text: 'Start Batch',
+                tooltip: '',
+              }"
+              class="float-right"
+              :permission="'approve'"
+              @click="start_batch('online')"
+            />
+          </div>
+
           <!-- Buton Cancel-->
           <ButtonBack />
         </CCardFooter>
@@ -596,8 +682,6 @@ import {
   updateProcessOrder,
   closeBatchPO,
   changeProgressPO,
-  startBatchProcessOrderV41,
-  closeBatchPOV41,
 } from '../../../resource/ProcessOrder';
 import {
   capitalizeFirstLetter,
@@ -820,6 +904,7 @@ export default {
         quantity_l4: 0,
         serials: [],
       },
+      station_type: null,
       filterKeyword: '', // Input user
       filteredItems: [], // Data hasil filter
       itemGenerateCount: [],
@@ -971,6 +1056,11 @@ export default {
           // Mencari packaging yang digunakan
           if (this.formData.product[`packagingl${level}_id`]) {
             this.formData.current_pack = level;
+          }
+        }
+        if (this.formData.history) {
+          for (const it of this.formData.history) {
+            if (it.station_type == 'online') this.station_type = 'online';
           }
         }
         if (this.is_copy) {
@@ -1177,24 +1267,7 @@ export default {
     cancel() {
       handleBack(this.$router, this.$route);
     },
-    async changeProgressDevelopment(type) {
-      this.$isLoading(true);
-      let res = await changeProgressPO({
-        id: this.formData.id,
-        status: type == 'Resume' ? '1' : '2',
-      });
-      this.$isLoading(false);
-      this.$toast.open({
-        message: res['error']
-          ? `${res['message']}`
-          : 'Success change progress development',
-        type: res.error ? 'error' : 'success',
-        dissmissible: true,
-        position: 'top-right',
-        duration: 5000,
-      });
-      if (!res['error']) this.$router.go();
-    },
+
     async closeDevelopment(type) {
       this.$isLoading(true);
       function getRandomMinMax(n) {
@@ -1203,7 +1276,7 @@ export default {
         return result;
       }
       if (type.toLowerCase().includes('serialization')) type = 'serialization';
-      let res = await closeBatchPOV41({
+      let res = await closeBatchPO({
         id: this.formData.id,
         type: type.toLowerCase(),
       });
@@ -1217,40 +1290,20 @@ export default {
         position: 'top-right',
         duration: 5000,
       });
-      if (!res['error']) this.$router.go();
+      if (!res['error']) this.loadData();
     },
     async start_batch($event) {
-      let station = null;
-      if ($event) {
-        station = await getConfStation({
-          station_type: $event.toLowerCase(),
-          station_status: 'null',
-          status: 'Active',
-          limit: '1',
-          page: '1',
-        });
-        if (station && station.total > 0) {
-          station = station.data[0];
-        } else {
-          this.$toast.open({
-            message: `The standby station with type '${$event}' could not be found.`,
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-          return;
-        }
-      }
+      console.log('Start Batch => ', $event);
+      let station_type = $event.toLowerCase();
       var message = `You are about to Start Batch to this data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
         let param = {
-          station_id: station.id,
+          station_type: station_type,
           id: this.formData.id,
           serial_ids: { type: 'all' },
         };
-        let res = await startBatchProcessOrderV41(param);
+        let res = await startBatchProcessOrder(param);
         this.$isLoading(false);
         this.$toast.open({
           message: res['error']
@@ -1261,8 +1314,53 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.go();
+        if (!res['error']) this.loadData();
       }
+    },
+
+    async pauseProgressDevelopment($event) {
+      console.log('Pause Batch => ', $event);
+
+      let station_type = $event.toLowerCase();
+      this.$isLoading(true);
+      let res = await changeProgressPO({
+        id: this.formData.id,
+        status: '2',
+        station_type: station_type,
+      });
+      this.$isLoading(false);
+      this.$toast.open({
+        message: res['error']
+          ? `${res['message']}`
+          : 'Success change progress development',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!res['error']) this.loadData();
+    },
+
+    async resumeProgressDevelopment($event) {
+      let station_type = $event.toLowerCase();
+      console.log('Resume Batch => ', $event);
+      this.$isLoading(true);
+      let res = await changeProgressPO({
+        id: this.formData.id,
+        status: '1',
+        station_type: station_type,
+      });
+      this.$isLoading(false);
+      this.$toast.open({
+        message: res['error']
+          ? `${res['message']}`
+          : 'Success change progress development',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!res['error']) this.loadData();
     },
     async reset_status() {
       var message = `You are about to changes status to "Ready" to this data. This operation cannot be undone. Would you like to continue?`;
@@ -1280,7 +1378,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.$router.go();
+        // if (!res['error']) this.$router.go();
       }
     },
   },
