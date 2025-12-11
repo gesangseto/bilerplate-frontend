@@ -363,50 +363,70 @@
                     <CIcon name="cib-whatsapp" /> &nbsp; Whatsapp
                   </strong>
                   <br />
-                  <small>{{ whatsappStatus.message }}</small>
-                  <hr />
-                  <CForm v-if="!whatsappStatus.error">
-                    <CCol class="md-4">
-                      <img
-                        v-bind:src="whatsappStatus.qr_base64"
-                        style="width: 150px; heigth: auto"
+                  <CCol sm="6">
+                    <CRow form class="form-group">
+                      <CCol tag="label" sm="6" class="col-form-label">
+                        Enabling Notification
+                      </CCol>
+                      <CCol sm="4">
+                        <CSwitch
+                          class="mr-1"
+                          color="success"
+                          :checked.sync="data.notification_whatsapp"
+                        />
+                      </CCol>
+                    </CRow>
+                  </CCol>
+                  <div v-if="data.notification_whatsapp">
+                    <small>{{ whatsappStatus.message }}</small>
+                    <hr />
+                    <CForm v-if="!whatsappStatus.error">
+                      <CCol class="md-4">
+                        <img
+                          v-bind:src="whatsappStatus.qr_base64"
+                          style="width: 150px; heigth: auto"
+                        />
+                      </CCol>
+                    </CForm>
+                    <CForm v-if="whatsappStatus.error">
+                      <InputDefault
+                        :col="[3, 7]"
+                        :title="'To'"
+                        :validasi="'integer'"
+                        v-model="whatsappMessage.to"
+                        :max="14"
                       />
-                    </CCol>
-                  </CForm>
-                  <CForm v-if="whatsappStatus.error">
-                    <InputDefault
-                      :col="[3, 7]"
-                      :title="'To'"
-                      :validasi="'integer'"
-                      v-model="whatsappMessage.to"
-                      :max="14"
-                    />
-                    <InputDefault
-                      :col="[3, 7]"
-                      :title="'Message'"
-                      v-model="whatsappMessage.message"
-                      :max="200"
-                    />
-                    <CButton size="sm" color="success" @click="sendWhatsapp()">
-                      Send Test Message
-                    </CButton>
-                    <CButton
-                      class="ml-1"
-                      size="sm"
-                      color="danger"
-                      @click="deleteWhatsapp()"
-                    >
-                      Delete Session
-                    </CButton>
-                    <br />
-                    <small
-                      :class="
-                        whatsappMessage.error ? 'text-danger' : 'text-muted'
-                      "
-                    >
-                      {{ whatsappMessage.response }}
-                    </small>
-                  </CForm>
+                      <InputDefault
+                        :col="[3, 7]"
+                        :title="'Message'"
+                        v-model="whatsappMessage.message"
+                        :max="200"
+                      />
+                      <CButton
+                        size="sm"
+                        color="success"
+                        @click="sendWhatsapp()"
+                      >
+                        Send Test Message
+                      </CButton>
+                      <CButton
+                        class="ml-1"
+                        size="sm"
+                        color="danger"
+                        @click="deleteWhatsapp()"
+                      >
+                        Delete Session
+                      </CButton>
+                      <br />
+                      <small
+                        :class="
+                          whatsappMessage.error ? 'text-danger' : 'text-muted'
+                        "
+                      >
+                        {{ whatsappMessage.response }}
+                      </small>
+                    </CForm>
+                  </div>
                 </CCardBody>
               </CCard>
               <!-- Production Module Settings -->
