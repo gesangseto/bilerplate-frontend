@@ -297,10 +297,7 @@
 
           <ButtonPermission
             v-if="formData.status == 4 && userInfo.id == 0"
-            :buttonProperty="{
-              color: 'danger',
-              text: 'Reset Status',
-            }"
+            :buttonProperty="buttonReset"
             class="float-right"
             :permission="'approve'"
             @click="reset_status()"
@@ -309,15 +306,12 @@
           <!-- Status 3 berarti belum dimulai batch -->
           <div v-if="formData.status == 3 && userInfo.id == 0 && !is_copy">
             <ButtonPopover
-              :buttonProperty="{
-                color: 'success',
-                text: 'Start Batch',
-              }"
+              :buttonProperty="buttonStart"
               :popover_list="['Online', 'Serialization']"
               class="float-right"
               :permission="'approve'"
               @handleClick="start_batch($event)"
-              mt="-11"
+              mt="-8"
             />
           </div>
 
@@ -332,48 +326,36 @@
             "
           >
             <ButtonPopover
-              :buttonProperty="{
-                color: 'danger',
-                text: 'Close Batch',
-              }"
+              :buttonProperty="buttonClose"
               :popover_list="['End Serialization', 'Partial', 'Final']"
               class="float-right"
               :permission="'approve'"
               @handleClick="closeDevelopment($event)"
-              mt="-14"
+              mt="-11"
             />
             <ButtonPopover
-              :buttonProperty="{
-                color: 'warning',
-                text: 'Pause Progress',
-              }"
+              :buttonProperty="buttonPause"
               :popover_list="['Serialization', 'Aggregation']"
               class="float-right"
               :permission="'approve'"
               @handleClick="pauseProgressDevelopment($event)"
-              mt="-11"
+              mt="-8"
             />
             <ButtonPopover
-              :buttonProperty="{
-                color: 'warning',
-                text: 'Resume Progress',
-              }"
+              :buttonProperty="buttonResume"
               :popover_list="['Serialization', 'Aggregation']"
               class="float-right"
               :permission="'approve'"
               @handleClick="resumeProgressDevelopment($event)"
-              mt="-11"
+              mt="-8"
             />
             <ButtonPopover
-              :buttonProperty="{
-                color: 'success',
-                text: 'Start Batch',
-              }"
+              :buttonProperty="buttonStart"
               :popover_list="['Serialization', 'Aggregation']"
               class="float-right"
               :permission="'approve'"
               @handleClick="start_batch($event)"
-              mt="-11"
+              mt="-8"
             />
           </div>
           <!-- Status 4 berarti proses sudah dimulai -->
@@ -387,43 +369,28 @@
             "
           >
             <ButtonPopover
-              :buttonProperty="{
-                color: 'danger',
-                text: 'Close Batch',
-              }"
+              :buttonProperty="buttonClose"
               :popover_list="['Partial', 'Final']"
               class="float-right"
               :permission="'approve'"
               @handleClick="closeDevelopment($event)"
-              mt="-14"
+              mt="-8"
             />
             <Button
-              :buttonProperty="{
-                color: 'warning',
-                text: 'Pause Progress',
-                tooltip: '',
-              }"
+              :buttonProperty="buttonPause"
               class="float-right"
               :permission="'approve'"
               @click="pauseProgressDevelopment('online')"
             />
             <Button
-              :buttonProperty="{
-                color: 'warning',
-                text: 'Resume Progress',
-                tooltip: '',
-              }"
+              :buttonProperty="buttonResume"
               class="float-right"
               :permission="'approve'"
               @click="resumeProgressDevelopment('online')"
-              mt="-11"
+              mt="-8"
             />
             <Button
-              :buttonProperty="{
-                color: 'success',
-                text: 'Start Batch',
-                tooltip: '',
-              }"
+              :buttonProperty="buttonStart"
               class="float-right"
               :permission="'approve'"
               @click="start_batch('online')"
@@ -772,6 +739,36 @@ export default {
       userInfo: getProfile(),
       activeTab: 0,
       initialLoad: true,
+      buttonStart: {
+        color: 'success',
+        text: 'Start Batch',
+        tooltip: '',
+        icon: 'clipboard-check',
+      },
+      buttonClose: {
+        color: 'danger',
+        text: 'Close Batch',
+        tooltip: '',
+        icon: 'stop',
+      },
+      buttonPause: {
+        color: 'warning',
+        text: 'Pause Batch',
+        tooltip: '',
+        icon: 'pause',
+      },
+      buttonResume: {
+        color: 'warning',
+        text: 'Resume Batch',
+        tooltip: '',
+        icon: 'play',
+      },
+      buttonReset: {
+        color: 'danger',
+        text: 'Reset Batch',
+        tooltip: '',
+        icon: 'redo',
+      },
       additionalSerial: {
         id: this.$route.params.id,
         generate_count_level_1: null,
@@ -1033,7 +1030,7 @@ export default {
     },
     async loadData() {
       let _res = await getProcessOrder({ id: this.$route.params.id });
-
+      this.station_type = null;
       if (_res && !_res.error) {
         this.formData = _res.data[0];
         this.formData.het = this.formData.het || '';
@@ -1293,7 +1290,6 @@ export default {
       if (!res['error']) this.loadData();
     },
     async start_batch($event) {
-      console.log('Start Batch => ', $event);
       let station_type = $event.toLowerCase();
       var message = `You are about to Start Batch to this data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
@@ -1314,7 +1310,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        if (!res['error']) this.loadData();
+        if (!res['error']) this.$router.go();
       }
     },
 
@@ -1378,7 +1374,7 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        // if (!res['error']) this.$router.go();
+        if (!res['error']) this.$router.go();
       }
     },
   },

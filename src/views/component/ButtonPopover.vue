@@ -129,7 +129,7 @@ export default {
       this.property.tooltip = 'Approve / Reject';
     }
     if (this.buttonProperty) {
-      this.property = this.buttonProperty;
+      this.property = Object.assign({}, this.property, this.buttonProperty);
     }
     if (this.exportType && this.exportType.toLowerCase() == 'excel') {
       this.property = this.btn_export_excel;
