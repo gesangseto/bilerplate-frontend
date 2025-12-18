@@ -6,7 +6,10 @@
           <CCard class="mx-4 mb-0">
             <CCardHeader>
               <h4>Change Password</h4>
-              <small v-if="this.password_is_expiry" style="color: red">
+              <small
+                v-if="password_is_expiry && !password_must_change"
+                style="color: red"
+              >
                 Your password has expired. Please create a new password to
                 continue.
               </small>
@@ -128,6 +131,7 @@ export default {
         confirmPassword: '',
       },
       password_is_expiry: false,
+      password_must_change: false,
       showPassword: false,
       conf_user_app: {},
       profile: {},
@@ -141,8 +145,9 @@ export default {
     };
   },
   mounted() {
-    this.password_is_expiry = this.$route.query['password_is_expiry'];
     this.profile = getProfile();
+    this.password_is_expiry = this.profile.password_is_expiry;
+    this.password_must_change = this.profile.password_must_change;
     if (!this.profile) this.$router.replace({ path: `/login` });
     this.conf_user_app = getConfUserApp();
   },
