@@ -10,6 +10,7 @@
             <CForm novalidate>
               <CCol sm="12">
                 <InputDefault
+                  :disabled="action == 'Read'"
                   required
                   :col="[3, 9]"
                   title="Name"
@@ -20,6 +21,7 @@
               </CCol>
               <CCol sm="12">
                 <TextareaDefault
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   title="Description"
                   placeholder="Enter pattern description"
@@ -29,6 +31,7 @@
 
               <CCol sm="12">
                 <InputDefault
+                  :disabled="action == 'Read'"
                   required
                   :col="[3, 9]"
                   title="Regex"
@@ -43,6 +46,7 @@
                 <CRow form class="form-group">
                   <CCol sm="3"> Status </CCol>
                   <SwitchStatusMaster
+                    :disabled="action == 'Read'"
                     :default_value="formData.status"
                     :show_label="true"
                     v-on:onChange="formData.status = $event"
