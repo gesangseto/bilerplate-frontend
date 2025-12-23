@@ -115,8 +115,9 @@ export default {
   methods: {
     protectCreateData(_res) {
       let max = getLimitation('total_wh');
+      let count = _res.grand_total - _res.grand_total_is_sys;
       if (max) {
-        if (max <= _res.grand_total) {
+        if (max <= count) {
           this.can_create = false;
         }
       }

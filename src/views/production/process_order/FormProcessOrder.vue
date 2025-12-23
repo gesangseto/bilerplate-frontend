@@ -219,7 +219,7 @@
                 Serial</CButton
               >
               <CButton
-                v-if="[1, 4, 5, 6].includes(formData.status)"
+                v-if="[1, 4, 5, 6].includes(formData.status) && !is_copy"
                 type="submit"
                 size="sm"
                 @click="viewModalHistory = true"
@@ -296,7 +296,7 @@
           >
 
           <ButtonPermission
-            v-if="formData.status == 4 && userInfo.id == 0"
+            v-if="formData.status == 4 && userInfo.id == 0 && !is_copy"
             :buttonProperty="buttonReset"
             class="float-right"
             :permission="'approve'"

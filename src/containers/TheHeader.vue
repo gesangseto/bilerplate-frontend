@@ -146,7 +146,6 @@ import {
   getProfile,
   clearStorage,
   setLimitation,
-  getLimitation,
   setConfig,
   setLastUrl,
   getConfig,
@@ -258,7 +257,6 @@ export default {
       data = data.data[0];
       setConfig(data);
       setLimitation(data);
-      getLimitation();
     },
     getDifferentSecond() {
       let time_out = getLoginTimeout();
