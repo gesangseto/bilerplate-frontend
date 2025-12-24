@@ -183,8 +183,12 @@ export default {
   computed: {
     reformatDatas() {
       return this.items.map((item) => {
+        console.log(item);
+
         return {
           ...item,
+          packagingl2_name: item.packagingl2_name || '-',
+          qty_packagingl2: item.qty_packagingl2 || '-',
           show_status: item.show_status ? 'Yes' : 'No',
           itemNo: item.no,
           product_type: item.product_type == 0 ? 'Serial' : 'Non-Serial',
