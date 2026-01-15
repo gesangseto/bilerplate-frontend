@@ -587,7 +587,8 @@
         <CCol md="10">
           <CTabs :active-tab.sync="activeTab">
             <CTab title="Available" active> </CTab>
-            <CTab title="Reserved"> </CTab>
+            <CTab title="On Process"> </CTab>
+            <CTab title="Serialization Outcome"> </CTab>
             <CTab title="Production Outcome"> </CTab>
           </CTabs>
         </CCol>
@@ -985,23 +986,38 @@ export default {
         unused: 26,
       };
       this.tabData.serials = [];
-
       if (this.activeTab == 0) {
         // AVAILABLE
         this.tabData.serials = this.serials.filter(
-          (it) => it.status_sync == 'available'
+          (it) => it.status_sync == 'available' && it.status == status.available
         );
       } else if (this.activeTab == 1) {
-        // RESERVED
+        // ON PROCESS
         this.tabData.serials = this.serials.filter(
           (it) =>
             it.status_sync != 'available' && it.status_sync != 'preinbound'
         );
       } else if (this.activeTab == 2) {
+        if (this.station_type == 'online') {
+          // jika station bertype online maka yang ditampilkan di Tab adalah Production Outcome
+          this.tabData.serials = this.serials.filter(
+            (it) => it.status_sync == 'preinbound'
+          );
+        } else {
+          // jika station bertype offline maka yang ditampilkan di Tab adalah Serialization Outcome
+          // Serialization Outcome yang statusnya bukan 25 dan belum dilakukan preinbound
+          this.tabData.serials = this.serials.filter(
+            (it) =>
+              it.status != status.available && it.status_sync != 'preinbound'
+          );
+        }
+      } else if (this.activeTab == 3) {
+        // Production Outcome
         this.tabData.serials = this.serials.filter(
           (it) => it.status_sync == 'preinbound'
         );
       }
+
       this.tabData.quantity_l1 = this.tabData.serials.filter(
         (it) => it.packaging_level == 1
       ).length;
