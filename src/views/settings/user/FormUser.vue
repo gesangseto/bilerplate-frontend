@@ -106,6 +106,7 @@
                   "
                 />
               </CCol>
+              <!-- 
               <CCol sm="12">
                 <InputDefault
                   :disabled="action == 'Read' || formData.is_sys ? true : false"
@@ -160,21 +161,7 @@
                   "
                 />
               </CCol>
-              <CCol sm="12" v-if="action != 'Read'">
-                <ButtonDefault
-                  :col="[3, 9]"
-                  :buttonProperty="{
-                    size: 'sm',
-                    class: 'mb-4',
-                    color: 'warning',
-                    icon: 'sync',
-                    text: 'Reset Password',
-                    tooltip: '',
-                  }"
-                  title=" "
-                  @click="resetPassword()"
-                />
-              </CCol>
+               -->
 
               <CCol sm="12">
                 <SelectOption
@@ -417,6 +404,17 @@
               Submit
             </CButton>
             <ButtonBack />
+            <CButton
+              type="submit"
+              size="sm"
+              class="float-right"
+              color="warning"
+              title="Reset Password "
+              @click="resetPassword()"
+            >
+              <CIcon name="cil-sync" />
+              Reset Password
+            </CButton>
           </CCardFooter>
         </CCard>
       </CCol>
@@ -445,6 +443,7 @@ import {
 import { required } from 'vuelidate/lib/validators';
 import { getMstDepartment } from '../../../resource/MstDepartment';
 import { getMstSection } from '../../../resource/MstSection';
+import { authChangePwd } from '../../../resource/SysAuth';
 
 export default {
   name: 'FormUser',
@@ -727,7 +726,8 @@ export default {
     async resetPassword() {
       if (!this.configuration.password_default) {
         this.$toast.open({
-          message: 'Password default not set on Application Config',
+          message:
+            'Default password has not been set in the system configuration.',
           type: 'error',
           dissmissible: true,
           position: 'top-right',
@@ -738,8 +738,8 @@ export default {
       this.initial_load = false;
       let param = {
         id: this.formData.id,
-        pwd: this.configuration.password_default || '',
-        re_pwd: this.configuration.password_default || '',
+        new_password: this.configuration.password_default || '',
+        new_password: this.configuration.password_default || '',
         password_must_change: true,
         reset_password: true,
       };
@@ -747,7 +747,8 @@ export default {
       var message = `You are about to reset password to this data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let res = await updateMstUser(param);
+
+        let res = await authChangePwd(param);
         this.$isLoading(false);
         this.$toast.open({
           message: res['error']
