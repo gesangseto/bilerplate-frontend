@@ -405,6 +405,7 @@
             </CButton>
             <ButtonBack />
             <CButton
+              v-if="action == 'Update'"
               type="submit"
               size="sm"
               class="float-right"
