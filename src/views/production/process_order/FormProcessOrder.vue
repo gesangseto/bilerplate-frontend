@@ -636,10 +636,12 @@
 
 <script>
 let dataPost = [];
-import 'vue-select/dist/vue-select.css';
 import moment from 'moment';
+import 'vue-select/dist/vue-select.css';
 import { getMstProduct } from '../../../resource/MstProduct';
 import {
+  changeProgressPO,
+  closeBatchPO,
   generateProcessOrder,
   getAllSerials,
   getProcessOrder,
@@ -648,8 +650,6 @@ import {
   resetProcessOrder,
   startBatchProcessOrder,
   updateProcessOrder,
-  closeBatchPO,
-  changeProgressPO,
 } from '../../../resource/ProcessOrder';
 import {
   capitalizeFirstLetter,
@@ -660,11 +660,24 @@ import {
   isJsonString,
   onlyNumber,
 } from '../../../utils';
-import { getConfStation } from '../../../resource/ConfStation';
 
 export default {
   name: 'FormPacking',
   watch: {
+    filteredItems: {
+      deep: true,
+      handler(items) {
+        const count_l1 = items.filter((it) => it.packaging_level === 1).length;
+        const count_l2 = items.filter((it) => it.packaging_level === 2).length;
+        const count_l3 = items.filter((it) => it.packaging_level === 3).length;
+        const count_l4 = items.filter((it) => it.packaging_level === 4).length;
+        this.tabData.quantity_l1 = count_l1;
+        this.tabData.quantity_l2 = count_l2;
+        this.tabData.quantity_l3 = count_l3;
+        this.tabData.quantity_l4 = count_l4;
+      },
+    },
+
     activeTab: {
       deep: true,
       handler(item) {
@@ -716,7 +729,7 @@ export default {
       handler(item) {
         if (item.product_id) {
           let product = this.productOptions.find(
-            (it) => it.value == item.product_id
+            (it) => it.value == item.product_id,
           );
           if (product) {
             product = product.item;
@@ -727,7 +740,7 @@ export default {
             this.updateGenerateCount(
               product,
               item.generate_count_level_1,
-              item.buff
+              item.buff,
             );
           }
         }
@@ -960,8 +973,8 @@ export default {
       const keyword = this.filterKeyword.toLowerCase();
       this.filteredItems = this.tabData.serials.filter((item) =>
         Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(keyword)
-        )
+          String(val).toLowerCase().includes(keyword),
+        ),
       );
     },
     handleInputEXP($event) {
@@ -989,46 +1002,50 @@ export default {
       if (this.activeTab == 0) {
         // AVAILABLE
         this.tabData.serials = this.serials.filter(
-          (it) => it.status_sync == 'available' && it.status == status.available
+          (it) =>
+            it.status_sync == 'available' && it.status == status.available,
         );
       } else if (this.activeTab == 1) {
         // ON PROCESS
         this.tabData.serials = this.serials.filter(
           (it) =>
-            it.status_sync != 'available' && it.status_sync != 'preinbound'
+            it.status_sync != 'available' && it.status_sync != 'preinbound',
+          //  && it.status == status.reserved,
         );
       } else if (this.activeTab == 2) {
         if (this.station_type == 'online') {
           // jika station bertype online maka yang ditampilkan di Tab adalah Production Outcome
           this.tabData.serials = this.serials.filter(
-            (it) => it.status_sync == 'preinbound'
+            (it) => it.status_sync == 'preinbound',
           );
         } else {
           // jika station bertype offline maka yang ditampilkan di Tab adalah Serialization Outcome
           // Serialization Outcome yang statusnya bukan 25 dan belum dilakukan preinbound
+          let ignore = [status.available, status.reserved];
           this.tabData.serials = this.serials.filter(
             (it) =>
-              it.status != status.available && it.status_sync != 'preinbound'
+              !ignore.includes(parseInt(it.status)) &&
+              it.status_sync != 'preinbound',
           );
         }
       } else if (this.activeTab == 3) {
         // Production Outcome
         this.tabData.serials = this.serials.filter(
-          (it) => it.status_sync == 'preinbound'
+          (it) => it.status_sync == 'preinbound',
         );
       }
 
       this.tabData.quantity_l1 = this.tabData.serials.filter(
-        (it) => it.packaging_level == 1
+        (it) => it.packaging_level == 1,
       ).length;
       this.tabData.quantity_l2 = this.tabData.serials.filter(
-        (it) => it.packaging_level == 2
+        (it) => it.packaging_level == 2,
       ).length;
       this.tabData.quantity_l3 = this.tabData.serials.filter(
-        (it) => it.packaging_level == 3
+        (it) => it.packaging_level == 3,
       ).length;
       this.tabData.quantity_l4 = this.tabData.serials.filter(
-        (it) => it.packaging_level == 4
+        (it) => it.packaging_level == 4,
       ).length;
       this.applyFilter();
     },
@@ -1088,7 +1105,7 @@ export default {
     },
     updateGenerateCount(product, count, buff) {
       let additional_sample = parseInt(
-        this.formData.additional_serial_for_sample
+        this.formData.additional_serial_for_sample,
       );
       this.formData.generate_count_level_1 = parseInt(count || 0);
       this.formData.buff = parseInt(buff);

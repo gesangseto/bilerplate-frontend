@@ -44,8 +44,14 @@
       required
       :col="[3, 7]"
       title="L1 Quantity"
+      validasi="numeric"
       v-model="formData.quantity"
       :maxValue="formData.available_quantity"
+      :description="
+        formData.quantity == '0'
+          ? 'Please enter a value greater than zero.'
+          : ''
+      "
     />
 
     <CRow v-if="!onlyQuantity">
@@ -285,13 +291,15 @@ export default {
       if (!this.formData.product_id) {
         return [];
       }
-      if (!this.formData.quantity) {
+      if (!this.formData.quantity || this.formData.quantity == 0) {
         return [];
       }
+      // console.log(this.formData.quantity);
+
       let params = JSON.parse(JSON.stringify(this.formData));
       let product = this.listProduct.find((it) => it.id === params.product_id);
       let batch = this.listBatchNo.find(
-        (it) => it.batch_no === params.batch_no
+        (it) => it.batch_no === params.batch_no,
       );
       params = {
         ...product,
@@ -307,7 +315,7 @@ export default {
       let result = this.formData.stock.filter((e) => e.is_checked);
       this.selected_quantity = result.reduce(
         (acc, o) => acc + parseInt(o.quantity),
-        0
+        0,
       );
       this.$emit('handleResult', result);
     },
@@ -380,7 +388,7 @@ export default {
             (e) =>
               e.gtin_sscc === it.gtin_sscc &&
               e.serial === it.serial &&
-              e.batch_id === it.batch_id
+              e.batch_id === it.batch_id,
           );
           if (idx >= 0) {
             it.is_checked = true;

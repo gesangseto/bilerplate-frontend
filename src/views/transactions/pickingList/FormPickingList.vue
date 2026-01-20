@@ -320,7 +320,7 @@ export default {
         },
         {
           key: 'gtin',
-          label: 'NIE',
+          label: 'GTIN',
         },
         {
           key: 'quantity',
@@ -433,7 +433,7 @@ export default {
       data.forEach((item) => {
         const found = result.find(
           (r) =>
-            r.product_id === item.product_id && r.batch_no === item.batch_no
+            r.product_id === item.product_id && r.batch_no === item.batch_no,
         );
         if (found) {
           found.quantity += item.quantity; // totalkan quantity
@@ -451,6 +451,16 @@ export default {
       return;
     },
     setData() {
+      if (this.temp_items.length == 0) {
+        this.$toast.open({
+          message: `Please input all the required data.`,
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      }
       this.items = this.items.concat(this.temp_items);
       this.items = this.calculationDuplicateData(this.items);
       this.temp_items = [];
