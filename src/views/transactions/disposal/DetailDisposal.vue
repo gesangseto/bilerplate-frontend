@@ -381,11 +381,12 @@ export default {
       this.rejectProperty.id = this.disposal.id;
     },
     handleSubmitReject() {
+      let reason = (this.rejectProperty.reason || '').trim();
       let data = {
         id: this.disposal.wrk_id,
         trx_ref_id: this.disposal.id,
         approved: false,
-        reason: `[REJECT] ${this.rejectProperty.reason}`,
+        reason: `[REJECT] ${reason}`,
       };
       this.$isLoading(true);
       let url = `/v3/transaction/approval/disposal`;

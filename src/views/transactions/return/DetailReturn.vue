@@ -400,11 +400,12 @@ export default {
     },
     handleSubmitReject() {
       this.$isLoading(true);
+      let reason = (this.rejectProperty.reason || '').trim();
       let param = {
         id: this.returnDetail.wrk_id,
         trx_ref_id: this.returnDetail.id,
         approved: false,
-        reason: `[REJECT] ${this.rejectProperty.reason}`,
+        reason: `[REJECT] ${reason}`,
       };
       let url = `/v3/transaction/approval/return`;
       $axiosMertrack

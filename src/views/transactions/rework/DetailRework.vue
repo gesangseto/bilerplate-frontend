@@ -385,11 +385,12 @@ export default {
       this.rejectProperty.id = this.rework.id;
     },
     handleSubmitReject() {
+      let reason = (this.rejectProperty.reason || '').trim();
       let data = {
         id: this.rework.wrk_id,
         trx_ref_id: this.rework.id,
         approved: false,
-        reason: `[REJECT] ${this.rejectProperty.reason}`,
+        reason: `[REJECT] ${reason}`,
       };
       this.$isLoading(true);
       let url = `/v3/transaction/approval/rework`;

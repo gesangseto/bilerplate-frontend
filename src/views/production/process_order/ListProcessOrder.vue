@@ -183,10 +183,11 @@ export default {
     },
     async handleCancel() {
       this.$isLoading(true);
+      let reason = (this.rejectProperty.reason || '').trim();
       let param = {
         id: this.rejectProperty.id,
         approved: false,
-        reason: `[CANCEL] ${this.rejectProperty.reason}`,
+        reason: `[CANCEL] ${reason}`,
       };
       let _res = await deleteProcessOrder(param);
       this.rejectProperty.id = null;

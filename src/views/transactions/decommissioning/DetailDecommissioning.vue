@@ -396,11 +396,12 @@ export default {
       this.rejectProperty.id = this.decomissioning.id;
     },
     handleSubmitReject() {
+      let reason = (this.rejectProperty.reason || '').trim();
       let data = {
         id: this.decomissioning.wrk_id,
         trx_ref_id: this.decomissioning.id,
         approved: false,
-        reason: `[REJECT] ${this.rejectProperty.reason}`,
+        reason: `[REJECT] ${reason}`,
       };
       let url = `/v3/transaction/approval/comm-decomm`;
       this.$isLoading(true);

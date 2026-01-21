@@ -375,10 +375,11 @@ export default {
     },
 
     handleCancel() {
+      let reason = (this.cancelProperty.reason || '').trim();
       let body = {
         id: this.cancelProperty.id,
         approved: false,
-        reason: `[CANCEL] ${this.cancelProperty.reason}`,
+        reason: `[CANCEL] ${reason}`,
       };
       $axiosMertrack
         .post(`/v3/transaction/upload-xml/process`, body)

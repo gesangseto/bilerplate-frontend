@@ -164,9 +164,10 @@ export default {
       this.cancelProperty.id = item.id;
     },
     handleCancel() {
+      let reason = (this.cancelProperty.reason || '').trim();
       let data = {
         id: this.cancelProperty.id,
-        reason: `[CANCEL] ${this.cancelProperty.reason}`,
+        reason: `[CANCEL] ${reason}`,
       };
       let param = { data: { ...data } };
       this.$isLoading(true);

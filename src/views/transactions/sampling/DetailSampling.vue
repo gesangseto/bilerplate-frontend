@@ -387,11 +387,12 @@ export default {
       this.rejectProperty.id = this.sampling.id;
     },
     handleSubmitReject() {
+      let reason = (this.rejectProperty.reason || '').trim();
       let data = {
         id: this.sampling.wrk_id,
         trx_ref_id: this.sampling.id,
         approved: false,
-        reason: `[REJECT] ${this.rejectProperty.reason}`,
+        reason: `[REJECT] ${reason}`,
       };
       this.$isLoading(false);
       let url = `/v3/transaction/approval/sampling`;

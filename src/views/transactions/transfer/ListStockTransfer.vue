@@ -139,10 +139,11 @@ export default {
     },
     handleCancel() {
       this.$isLoading(true);
+      let reason = (this.cancelProperty.reason || '').trim();
       let data = {
         id: this.cancelProperty.id,
         approved: false,
-        reason: `[CANCEL] ${this.cancelProperty.reason}`,
+        reason: `[CANCEL] ${reason}`,
       };
 
       let url = `/v3/transaction/transfer`;
