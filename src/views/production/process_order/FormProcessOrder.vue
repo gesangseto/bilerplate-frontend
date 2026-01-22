@@ -585,7 +585,7 @@
     >
       <CRow>
         <CCol md="10">
-          <CTabs :active-tab.sync="activeTab">
+          <CTabs :active-tab.sync="activeTab" variant="pills">
             <CTab title="Available" active> </CTab>
             <CTab title="On Process"> </CTab>
             <CTab title="Serialization Outcome"> </CTab>
@@ -593,11 +593,12 @@
           </CTabs>
         </CCol>
         <CCol md="2">
-          <p class="float-right">
+          <p class="float-right mb-2 mt-2">
             L1 Quantity: {{ tabData.quantity_l1 }}<br />
           </p>
         </CCol>
       </CRow>
+      <hr />
       <CRow>
         <CCol md="6">
           <CInput
@@ -607,6 +608,11 @@
             class="mb-2 mt-2"
             size="sm"
           />
+        </CCol>
+        <CCol md="6" v-if="activeTab >= 2">
+          <p class="float-right mb-2 mt-2">
+            L1 Active : {{ findActiveL1() }}<br />
+          </p>
         </CCol>
       </CRow>
       <CDataTable
@@ -968,6 +974,13 @@ export default {
           });
         }
       }
+    },
+    findActiveL1() {
+      let level_1 = this.tabData.serials.filter(
+        (it) => it.packaging_level == 1 && (it.status == 1 || it.status == 207),
+      );
+      // tabData.quantity_l1
+      return level_1.length;
     },
     applyFilter() {
       const keyword = this.filterKeyword.toLowerCase();

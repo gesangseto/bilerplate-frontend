@@ -51,7 +51,7 @@ Vue.use(
   // opitons Optional Alibaba iconfont icon or MaterialIcons
   iconType: 'MaterialDesign'
   // iconType: 'iconfont'
-} */
+} */,
 );
 Vue.use(VueCustomTooltip);
 Vue.use(loading);
