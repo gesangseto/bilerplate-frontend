@@ -436,17 +436,7 @@ export default {
     $axiosMertrack.get(_url).then((response) => {
       let data = response.data.data[0];
       this.picking = data;
-      if (data.items.length > 0) {
-        this.items = data.items;
-      } else {
-        this.$toast.open({
-          message: `No data to be viewed`,
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-      }
+      this.items = data.items;
     });
     // get detail data
   },

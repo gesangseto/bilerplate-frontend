@@ -169,6 +169,7 @@
             :filter="formData"
             :onlyQuantity="true"
             v-on:handleResult="handleResult($event)"
+            :initial_load="initial_load_add"
           />
           <template #footer>
             <CButton type="button" size="sm" color="primary" @click="setData()">
@@ -231,6 +232,7 @@ export default {
   data() {
     return {
       initial_load: true,
+      initial_load_add: true,
       maxFileSize: 500,
       chekcedBatch: [],
       errors: false,
@@ -451,6 +453,7 @@ export default {
       return;
     },
     setData() {
+      this.initial_load_add = false;
       if (this.temp_items.length == 0) {
         this.$toast.open({
           message: `Please input all the required data.`,
@@ -465,6 +468,7 @@ export default {
       this.items = this.calculationDuplicateData(this.items);
       this.temp_items = [];
       this.modalAdd = false;
+      this.initial_load_add = true;
     },
     closeModalAdd() {
       this.checked = [];

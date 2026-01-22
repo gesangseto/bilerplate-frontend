@@ -1,44 +1,42 @@
 <template>
   <div>
-    <div class="form-group row mb-3">
-      <label for="product-name" class="col-sm-3 col-md-3 col-lg-3 form-label">
-        Product Name <strong class="text-danger">*</strong>
-      </label>
-      <div class="col-sm-7 col-md-7 col-lg-7">
-        <v-select
-          key="value"
-          placeholder="--Select--"
-          :options="listProduct"
-          :reduce="(opt) => opt.value"
-          v-model="formData.product_id"
-          @input="handleChangeProduct()"
-        >
-        </v-select>
-      </div>
-    </div>
     <!-- Batch No -->
-    <div class="form-group row mb-3">
-      <label for="product-name" class="col-sm-3 col-md-3 col-lg-3 form-label">
-        Batch No <strong class="text-danger">*</strong>
-      </label>
-      <div class="col-sm-7 col-md-7 col-lg-7">
-        <v-select
-          placeholder="--Select--"
-          :options="listBatchNo"
-          :reduce="(opt) => opt.value"
-          v-model="formData.batch_no"
-          @input="handleChangeBatch()"
-        >
-          <template #no-options="{ search, searching, loading }">
-            Sorry, no matching item.
-          </template>
-        </v-select>
-        <label v-if="alertExpired" style="color: red">{{ alertExpired }}</label>
-        <label v-if="onlyQuantity && formData.batch_no" style="color: green">
-          Available L1 quantity {{ formData.available_quantity }}
-        </label>
-      </div>
-    </div>
+    <SelectOption
+      required
+      :title="`Product Name`"
+      :options="listProduct"
+      v-on:onchange="
+        ($event) => {
+          formData.product_id = $event;
+          handleChangeProduct();
+        }
+      "
+      :value="formData.product_id"
+      :col="[3, 7]"
+      :is-valid="initial_load ? null : !formData.product_id ? false : true"
+    />
+    <!-- Batch No -->
+    <SelectOption
+      required
+      title="Batch No "
+      :options="listBatchNo"
+      v-on:onchange="
+        ($event) => {
+          formData.batch_no = $event;
+          handleChangeBatch();
+        }
+      "
+      :value="formData.batch_no"
+      :col="[3, 7]"
+      :is-valid="initial_load ? null : !formData.batch_no ? false : true"
+      :invalid_feedback="!alertExpired ? null : alertExpired"
+      :description="
+        onlyQuantity && formData.batch_no
+          ? `Available L1 quantity ${formData.available_quantity}`
+          : ''
+      "
+    />
+
     <InputDefault
       v-if="onlyQuantity"
       required
@@ -47,6 +45,13 @@
       validasi="numeric"
       v-model="formData.quantity"
       :maxValue="formData.available_quantity"
+      :is-valid="
+        initial_load
+          ? null
+          : !formData.quantity || formData.quantity == 0
+          ? false
+          : true
+      "
       :description="
         formData.quantity == '0'
           ? 'Please enter a value greater than zero.'
@@ -118,6 +123,7 @@ export default {
     filter: { type: Object, default: () => {} },
     useDeliveryDayLimit: { type: Boolean, default: false },
     onlyQuantity: { type: Boolean, default: false },
+    initial_load: { type: Boolean, default: true },
   },
   watch: {
     currentItem: {
