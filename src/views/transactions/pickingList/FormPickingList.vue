@@ -464,6 +464,21 @@ export default {
         });
         return;
       }
+      for (const it of this.temp_items) {
+        let find = this.items.find(
+          (f) => f.batch_no === it.batch_no && f.product_id === it.product_id,
+        );
+        if (find) {
+          this.$toast.open({
+            message: `Item is already in the list.`,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+          return;
+        }
+      }
       this.items = this.items.concat(this.temp_items);
       this.items = this.calculationDuplicateData(this.items);
       this.temp_items = [];
@@ -583,8 +598,6 @@ export default {
         $axiosMertrack
           .put('/v4.2/transaction/picking', param)
           .then((result) => {
-            console.log(result);
-
             this.$isLoading(false);
             let res = result.data;
             this.$toast.open({
