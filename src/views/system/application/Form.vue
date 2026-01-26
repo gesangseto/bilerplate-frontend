@@ -247,8 +247,7 @@
                   />
                   <CRow form class="form-group">
                     <CCol tag="label" sm="3" class="col-form-label">
-                      Enforce Password Change on First Login or After Password
-                      Reset
+                      Enforce Default Password Change
                     </CCol>
                     <CCol sm="7">
                       <SwitchDefault
@@ -256,7 +255,7 @@
                         v-on:onChange="data.password_must_change = $event"
                         :description="
                           data.password_must_change
-                            ? `Users are required to change their password upon first login after account creation or a password reset.`
+                            ? `Users assigned the default password (new accounts or after password reset by administrator) must change their password at next login.`
                             : null
                         "
                       />
@@ -957,7 +956,7 @@ export default {
     },
     expiryDescription() {
       let thisExpiry = this.listExpiryType.find(
-        (it) => it.value == this.data.expiry_type
+        (it) => it.value == this.data.expiry_type,
       );
       if (thisExpiry) {
         return thisExpiry.description;
