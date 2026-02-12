@@ -120,7 +120,28 @@
                   initialLoad ? null : !formData.exp_date ? false : true
                 "
               />
-
+              <!-- Ini adalah HET yang menggunakan Currency, masih disimpan sampai ready -->
+              <!-- <InputDefault
+                :disabled="action == 'Read' ? true : false"
+                :col="[3, 9]"
+                required
+                title="HET"
+                validasi="het"
+                v-model="formData.het"
+              >
+                <template #prepend>
+                  <div style="width: 350px; margin-bottom: -50px">
+                    <SelectOption
+                      placeholder="--Select Currency--"
+                      :disabled="action == 'Read' ? true : false"
+                      required
+                      v-on:onchange="formData.currency = $event"
+                      :options="listCurrency"
+                      :value="formData.currency"
+                    />
+                  </div>
+                </template>
+              </InputDefault> -->
               <InputDefault
                 :disabled="
                   action != 'Create' &&
@@ -667,6 +688,7 @@ import {
   isJsonString,
   onlyNumber,
 } from '../../../utils';
+import { getMstMstCurrency } from '../../../resource/MstCurrency';
 
 export default {
   name: 'FormPacking',
@@ -760,6 +782,7 @@ export default {
       userInfo: getProfile(),
       activeTab: 0,
       initialLoad: true,
+      listCurrency: [],
       buttonStart: {
         color: 'success',
         text: 'Start Batch',
@@ -806,6 +829,7 @@ export default {
         lot_no: '',
         exp_date: null,
         mfg_date: null,
+        currency: null,
         het: '',
         process_order_erp: '',
         buff: 0,
@@ -935,6 +959,7 @@ export default {
     };
   },
   async mounted() {
+    await this.loadCurrency();
     await this.loadProduct();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     // if (this.action != "Create") this.loadData();
@@ -971,6 +996,22 @@ export default {
             value: it.id,
             name: it.name,
             label: `[${it.no}] ${it.name}`,
+            item: it,
+          });
+        }
+      }
+    },
+    async loadCurrency() {
+      let param = {
+        status: 'Active',
+      };
+      let getData = await getMstMstCurrency(param);
+      if (getData) {
+        for (const it of getData.data) {
+          this.listCurrency.push({
+            value: it.symbol,
+            name: it.name,
+            label: `[${it.country}] ${it.symbol}`,
             item: it,
           });
         }

@@ -11,7 +11,7 @@
       <CCol :md="title ? col[1] : '12'">
         <v-select
           :disabled="disabled"
-          placeholder="--Select--"
+          :placeholder="placeholder"
           :options="options"
           :reduce="(opt) => opt.value"
           v-model="localValue"
@@ -61,7 +61,7 @@ export default {
     max: { type: Number, default: null },
     title: { type: String, default: null },
     description: { type: String, default: '' },
-    placeholder: { type: String },
+    placeholder: { type: String, default: '--Select--' },
     required: { type: Boolean, default: false },
     isValid: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
     invalid_feedback: { type: String, default: null },
