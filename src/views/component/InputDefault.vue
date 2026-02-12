@@ -163,7 +163,7 @@ export default {
         const newCursorPosition = cursorPosition + lengthDiff;
         input.selectionStart = input.selectionEnd = Math.max(
           0,
-          newCursorPosition
+          newCursorPosition,
         );
       });
     },
@@ -197,6 +197,10 @@ export default {
         // Karakter umum cron: angka, *, /, -, , dan spasi
         this.regex = /[^*\/,\-\d\s]/g;
         this.regexValidation = /^[\d*/,\-\s]+$/;
+      } else if (this.validasi === 'het') {
+        // Alphanumeric + karakter: , . -
+        this.regex = /[^a-zA-Z0-9,.\-]/g;
+        this.regexValidation = /^[a-zA-Z0-9,.\-]+$/;
       }
     },
   },

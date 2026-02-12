@@ -127,6 +127,7 @@
                   (action != 'Update' || formData.status == '4')
                 "
                 title="HET"
+                validasi="het"
                 v-model="formData.het"
                 :max="25"
               />
