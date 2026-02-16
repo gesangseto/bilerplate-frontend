@@ -89,7 +89,7 @@
                 <template #append>
                   <InputDefault
                     :title="null"
-                    style="width: 400px"
+                    style="width: 400px; margin-left: 10px"
                     :disabled="
                       action != 'Create' &&
                       (action != 'Update' || formData.status == '4')
@@ -130,7 +130,13 @@
                 v-model="formData.het"
               >
                 <template #prepend>
-                  <div style="width: 350px; margin-bottom: -50px">
+                  <div
+                    style="
+                      width: 350px;
+                      margin-bottom: -50px;
+                      margin-right: 10px;
+                    "
+                  >
                     <SelectOption
                       placeholder="--Select Currency--"
                       :disabled="action == 'Read' ? true : false"

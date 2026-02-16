@@ -71,17 +71,6 @@
                 </tr>
 
                 <tr style="height: 50px">
-                  <td>Het</td>
-                  <td>
-                    <input
-                      class="form-control"
-                      readonly
-                      v-model="formData.het"
-                    />
-                  </td>
-                </tr>
-
-                <tr style="height: 50px">
                   <td>Mfg Date</td>
                   <td>
                     <input
@@ -98,6 +87,38 @@
                       class="form-control"
                       readonly
                       v-model="formData.exp_date"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Het</td>
+                  <td>
+                    <!-- Ini adalah HET yang menggunakan Currency, masih disimpan sampai ready -->
+                    <!-- <InputDefault
+                      :disabled="true"
+                      style="margin-top: 5px"
+                      v-model="formData.het"
+                    >
+                      <template #prepend>
+                        <div
+                          style="
+                            width: 350px;
+                            margin-bottom: -50px;
+                            margin-right: 10px;
+                          "
+                        >
+                          <InputDefault
+                            :disabled="true"
+                            v-model="formData.currency"
+                          />
+                        </div>
+                      </template>
+                    </InputDefault> -->
+
+                    <input
+                      class="form-control"
+                      readonly
+                      v-model="formData.het"
                     />
                   </td>
                 </tr>
