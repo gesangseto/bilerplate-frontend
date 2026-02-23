@@ -621,7 +621,7 @@
           </CTabs>
         </CCol>
         <CCol md="2">
-          <p class="float-right mb-2 mt-2">
+          <p class="float-right mb-2 mt-2" v-if="activeTab >= 2">
             L1 Active : {{ findActiveL1() }}<br />
           </p>
         </CCol>
@@ -637,7 +637,7 @@
             size="sm"
           />
         </CCol>
-        <CCol md="6" v-if="activeTab >= 2">
+        <CCol md="6">
           <p class="float-right mb-2 mt-2">
             L1 Quantity: {{ tabData.quantity_l1 }}<br />
           </p>
