@@ -883,6 +883,10 @@ export default {
           label: 'Station Name',
         },
         {
+          key: 'conf_station_code',
+          label: 'Station Code',
+        },
+        {
           key: 'transaction',
           label: 'Transaction',
         },
