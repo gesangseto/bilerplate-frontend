@@ -121,7 +121,7 @@
                 "
               />
               <!-- Ini adalah HET yang menggunakan Currency, masih disimpan sampai ready -->
-              <!-- <InputDefault
+              <InputDefault
                 :disabled="action == 'Read' ? true : false"
                 :col="[3, 9]"
                 required
@@ -147,8 +147,9 @@
                     />
                   </div>
                 </template>
-              </InputDefault> -->
-              <InputDefault
+              </InputDefault>
+
+              <!-- <InputDefault
                 :disabled="
                   action != 'Create' &&
                   (action != 'Update' || formData.status == '4')
@@ -157,7 +158,7 @@
                 validasi="het"
                 v-model="formData.het"
                 :max="25"
-              />
+              /> -->
               <InputDefault
                 v-if="action != 'Create'"
                 :disabled="true"

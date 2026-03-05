@@ -205,6 +205,11 @@ const FormStation = () => import('@/views/configuration/station/FormStation');
 // Pattern
 const ListPattern = () => import('@/views/configuration/pattern/ListPattern');
 const FormPattern = () => import('@/views/configuration/pattern/FormPattern');
+// Pattern
+const ListCurrency = () =>
+  import('@/views/configuration/currency/ListCurrency');
+const FormCurrency = () =>
+  import('@/views/configuration/currency/FormCurrency');
 // Cron Schedule
 const ListCron = () => import('@/views/configuration/cron_schedule/List');
 const FormCron = () => import('@/views/configuration/cron_schedule/Form');
@@ -969,6 +974,27 @@ function configRoutes() {
           meta: { login: true },
           component: ListPattern,
         },
+
+        // CURRENCY
+        {
+          path: 'currency/:type/:id',
+          name: 'Currency Details',
+          component: FormCurrency,
+          meta: { login: true },
+        },
+        {
+          path: 'currency/:type',
+          name: 'Currency Add',
+          component: FormCurrency,
+          meta: { login: true },
+        },
+        {
+          path: 'currency',
+          name: 'Currency',
+          meta: { login: true },
+          component: ListCurrency,
+        },
+
         // METADATA
         {
           path: 'metadata/:type/:id',

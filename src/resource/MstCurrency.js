@@ -20,3 +20,56 @@ export const getMstMstCurrency = async (param = Object) => {
       });
   });
 };
+
+export const insertMstCurrency = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .put(url, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
+export const updateMstCurrency = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .post(url, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
+export const deleteMstCurrency = async (param = Object) => {
+  if (!param.id) return false;
+  param = { data: { ...param } };
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .delete(url, param)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};

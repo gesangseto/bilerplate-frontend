@@ -19,30 +19,51 @@
                 required
                 :col="[3, 9]"
                 title="Name"
-                placeholder="Enter packaging name"
                 v-model="formData.name"
-                :is-valid="initial_load ? null : formData.name ? true : false"
+                :is-valid="initial_load ? null : !formData.name ? false : true"
               />
               <InputDefault
                 :disabled="action == 'Read' ? true : false"
                 required
                 :col="[3, 9]"
-                title="Code"
-                placeholder="Enter Code name"
-                v-model="formData.code"
-                :is-valid="initial_load ? null : formData.code ? true : false"
+                title="Country"
+                v-model="formData.country"
+                :is-valid="
+                  initial_load ? null : !formData.country ? false : true
+                "
               />
-              <TextareaDefault
+
+              <InputDefault
                 :disabled="action == 'Read' ? true : false"
                 :col="[3, 9]"
                 required
-                title="Description"
-                placeholder="Enter Description"
-                v-model="formData.description"
-                :is-valid="
-                  initial_load ? null : formData.description ? true : false
-                "
-              />
+                title="Symbol / Country Code"
+                placeholder="Please input Country Code"
+                v-model="formData.code"
+                :is-valid="initial_load ? null : !formData.code ? false : true"
+              >
+                <template #prepend>
+                  <div
+                    style="
+                      width: 350px;
+                      margin-bottom: -50px;
+                      margin-right: 10px;
+                    "
+                  >
+                    <InputDefault
+                      :disabled="action == 'Read' ? true : false"
+                      :col="[3, 9]"
+                      required
+                      placeholder="Please input Symbol"
+                      v-model="formData.symbol"
+                      :is-valid="
+                        initial_load ? null : !formData.symbol ? false : true
+                      "
+                    />
+                  </div>
+                </template>
+              </InputDefault>
+
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
                 <SwitchStatusMaster
@@ -83,14 +104,14 @@
 
 <script>
 import { required } from 'vuelidate/lib/validators';
-import {
-  getMstPackaging,
-  insertMstPackaging,
-  updateMstPackaging,
-} from '../../../resource/MstPackaging';
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
+import {
+  getMstMstCurrency,
+  insertMstCurrency,
+  updateMstCurrency,
+} from '../../../resource/MstCurrency';
 export default {
-  name: 'PackageForm',
+  name: 'FormCurrency',
   data() {
     return {
       initial_load: true,
@@ -115,7 +136,7 @@ export default {
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       let param = `id=${this.$route.params.id}`;
-      let _res = await getMstPackaging(param);
+      let _res = await getMstMstCurrency(param);
       this.formData = _res.data[0];
     }
   },
@@ -128,7 +149,9 @@ export default {
         this.formData.have_error = true;
       } else if (!this.formData.code) {
         this.formData.have_error = true;
-      } else if (!this.formData.description) {
+      } else if (!this.formData.symbol) {
+        this.formData.have_error = true;
+      } else if (!this.formData.symbol) {
         this.formData.have_error = true;
       }
       return;
@@ -155,9 +178,9 @@ export default {
         let dataPost = this.formData;
         let res = {};
         if (dataPost.id) {
-          res = await updateMstPackaging(dataPost);
+          res = await updateMstCurrency(dataPost);
         } else {
-          res = await insertMstPackaging(dataPost);
+          res = await insertMstCurrency(dataPost);
         }
         this.$isLoading(false);
         this.$toast.open({

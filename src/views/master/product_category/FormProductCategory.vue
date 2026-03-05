@@ -8,37 +8,31 @@
           </CCardHeader>
           <CCardBody>
             <CForm>
-              <CInput :disabled="true" horizontal v-model="formData.id">
-                <template #label>
-                  <p class="col-form-label col-sm-3">ID</p>
-                </template>
-              </CInput>
-              <CInput
+              <InputDefault
+                :disabled="true"
+                :col="[3, 9]"
+                title="ID"
+                v-model="formData.id"
+              />
+              <InputDefault
                 :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter product category name"
+                required
+                :col="[3, 9]"
+                title="Name"
                 v-model="formData.name"
                 :is-valid="initial_load ? null : formData.name ? true : false"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CTextarea
+              />
+
+              <TextareaDefault
                 :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter product category description"
+                :col="[3, 9]"
+                required
+                title="Description"
                 v-model="formData.description"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Description</p>
-                </template>
-              </CTextarea>
+                :is-valid="
+                  initial_load ? null : formData.description ? true : false
+                "
+              />
               <CRow form class="form-group">
                 <CCol sm="3"> Status </CCol>
                 <SwitchStatusMaster
