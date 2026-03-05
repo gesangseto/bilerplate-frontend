@@ -246,7 +246,7 @@
 
           <ButtonBack />
           <ButtonPermission
-            v-if="picking.status == 1 && picking.generate_bpom_report == 1"
+            v-if="picking.status == 1 && picking.generate_bpom_report == 0"
             exportType="bpom-report"
             :permission="'print'"
             @click="handleClickExportBPOM()"
