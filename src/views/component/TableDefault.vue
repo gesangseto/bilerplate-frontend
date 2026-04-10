@@ -82,6 +82,7 @@
         striped
         sorter
         border
+        :key="JSON.stringify(items)"
         :items="items"
         :fields="fields"
         style="font-size: 12px"
@@ -279,7 +280,7 @@ export default {
       // Cek apakah query sudah sama
       const isSameRoute = _.isEqual(
         this.normalizeObject(currentQuery),
-        this.normalizeObject(targetQuery)
+        this.normalizeObject(targetQuery),
       );
 
       /*
@@ -332,7 +333,7 @@ export default {
       let idx = -1;
       if (this.filter.SearchType)
         idx = this.listFilter.findIndex(
-          (i) => i.value === this.filter.SearchType.toLowerCase()
+          (i) => i.value === this.filter.SearchType.toLowerCase(),
         );
 
       if (~idx) {

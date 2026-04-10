@@ -143,14 +143,13 @@ export default {
   },
   methods: {
     customActionFilter(item) {
+      const status = Number(item.status);
       let action = ['read', 'copy'];
-      if (item.status == 0) {
-        action.push('approve');
+      if (status === 0) {
+        action.push('approve', 'delete', 'update');
+      } else if (status === 3) {
         action.push('delete');
-        action.push('update');
-      } else if (item.status === 3) {
-        action.push('delete');
-      } else if (item.status === 4) {
+      } else if (status === 4) {
         action.push('update');
       }
       // if (this.user_id == 0) {

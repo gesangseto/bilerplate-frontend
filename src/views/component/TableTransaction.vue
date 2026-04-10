@@ -138,6 +138,7 @@
         striped
         sorter
         border
+        :key="JSON.stringify(items)"
         :items="items"
         :fields="fields"
         style="font-size: 12px"
@@ -578,10 +579,10 @@ export default {
       this.filter.EndDate = '';
       if (this.default_date.startDate && this.default_date.endDate) {
         this.filter.StartDate = moment(this.default_date.startDate).format(
-          'YYYY-MM-DD'
+          'YYYY-MM-DD',
         );
         this.filter.EndDate = moment(this.default_date.endDate).format(
-          'YYYY-MM-DD'
+          'YYYY-MM-DD',
         );
       }
       if (this.use_type_date) {
@@ -597,10 +598,10 @@ export default {
         this.extend_default_date.endDate
       ) {
         start_date = moment(this.extend_default_date.startDate).format(
-          'YYYY-MM-DD'
+          'YYYY-MM-DD',
         );
         end_date = moment(this.extend_default_date.endDate).format(
-          'YYYY-MM-DD'
+          'YYYY-MM-DD',
         );
       }
       this.filter.SearchVal1 = start_date;
@@ -646,7 +647,7 @@ export default {
       // Cek apakah query sudah sama
       const isSameRoute = _.isEqual(
         this.normalizeObject(currentQuery),
-        this.normalizeObject(targetQuery)
+        this.normalizeObject(targetQuery),
       );
 
       /*
@@ -713,7 +714,7 @@ export default {
       let idx = -1;
       if (this.filter.SearchType)
         idx = this.listFilter.findIndex(
-          (i) => i.value === this.filter.SearchType.toLowerCase()
+          (i) => i.value === this.filter.SearchType.toLowerCase(),
         );
 
       if (~idx) {

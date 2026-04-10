@@ -107,10 +107,7 @@
               </InputDateDefault>
 
               <InputDateDefault
-                :disabled="
-                  action != 'Create' &&
-                  (action != 'Update' || formData.status == '4')
-                "
+                :disabled="true"
                 title="Exp Date"
                 v-model="formData.exp_date"
                 :options="{ format: 'dd/mm/yyyy' }"
@@ -723,21 +720,29 @@ export default {
     'formData.shelf_life': {
       deep: true,
       handler(item) {
-        this.formData.exp_date = expFromShelfLife({
-          mfg_date: this.formData.mfg_date,
-          shelf_life: this.formData.shelf_life,
-          type: getConfig()?.expiry_type,
-        });
+        if (this.formData.shelf_life && this.formData.mfg_date) {
+          this.formData.exp_date = expFromShelfLife({
+            mfg_date: this.formData.mfg_date,
+            shelf_life: this.formData.shelf_life,
+            type: getConfig()?.expiry_type,
+          });
+        } else {
+          this.formData.exp_date = null;
+        }
       },
     },
     'formData.mfg_date': {
       deep: true,
       handler(item) {
-        this.formData.exp_date = expFromShelfLife({
-          mfg_date: this.formData.mfg_date,
-          shelf_life: this.formData.shelf_life,
-          type: getConfig()?.expiry_type,
-        });
+        if (this.formData.shelf_life && this.formData.mfg_date) {
+          this.formData.exp_date = expFromShelfLife({
+            mfg_date: this.formData.mfg_date,
+            shelf_life: this.formData.shelf_life,
+            type: getConfig()?.expiry_type,
+          });
+        } else {
+          this.formData.exp_date = null;
+        }
       },
     },
 
