@@ -18,15 +18,26 @@
             items-per-page-select
             :items-per-page="10"
             pagination
+            table-class="table-fixed"
           >
             <template #Remarks="{ item }">
-              <td style="white-space: pre-line">
-                {{ item.Remarks }}
+              <td class="break-text">
+                {{ item['Remarks'] }}
               </td>
             </template>
-            <template #Username="{ item }">
-              <td style="white-space: nowrap">
-                {{ item.Username }}
+            <template #databaseName="{ item }">
+              <td class="break-text">
+                {{ item['Database Name'] }}
+              </td>
+            </template>
+            <template #targetSourceFile="{ item }">
+              <td class="break-text">
+                {{ item['Target/Source File'] }}
+              </td>
+            </template>
+            <template #resultMessage="{ item }">
+              <td class="break-text">
+                {{ item['Result Message'] }}
               </td>
             </template>
           </CDataTable>
@@ -36,6 +47,17 @@
   </CRow>
 </template>
 
+<style scoped>
+.table-fixed {
+  table-layout: fixed !important;
+  width: 200%;
+}
+.break-text {
+  max-width: 500px;
+  word-break: break-all;
+  white-space: pre-line;
+}
+</style>
 <script>
 import { getDatabaseLog } from '../../../resource/BackupRestore';
 export default {
@@ -52,40 +74,34 @@ export default {
         {
           key: 'Timestamp',
           label: 'Created Date',
-          _style: 'white-space: nowrap',
         },
         {
           key: 'Action',
           label: 'Action',
-          _style: 'white-space: nowrap;',
         },
         {
           key: 'Status',
           label: 'Status',
         },
         {
-          key: 'Result Message',
+          key: 'resultMessage',
           label: 'Result Message',
         },
         {
-          key: 'Database Name',
+          key: 'databaseName',
           label: 'Database Name',
-          _style: 'width:1%',
         },
         {
-          key: 'Target/Source File',
+          key: 'targetSourceFile',
           label: 'Target/Source File',
-          _style: 'max-width: 100px',
         },
         {
           key: 'Username',
           label: 'Username',
-          _style: 'white-space: nowrap',
         },
         {
           key: 'Remarks',
           label: 'Remarks',
-          _style: 'white-space: pre-line',
         },
       ],
     };
