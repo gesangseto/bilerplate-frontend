@@ -286,7 +286,8 @@
                 sorter
                 tableFilter
                 :pagination="true"
-                :items-per-page="50"
+                :items-per-page="20"
+                itemsPerPageSelect
                 :items="detailHistory"
                 :fields="fieldStationHistory"
                 style="font-size: 12px"
@@ -1516,6 +1517,10 @@ export default {
       return this.formData.history.map((item) => {
         return {
           ...item,
+          status_name:
+            item?.status_name == 'End Batch' ? 'End Final' : item?.status_name,
+          transaction:
+            item?.transaction == 'End Batch' ? 'End Final' : item?.transaction,
           created_date: moment
             .parseZone(item.created_date)
             .format('YYYY-MM-DD HH:mm'),

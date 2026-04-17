@@ -325,6 +325,7 @@
 import { CDataTable } from '@coreui/vue';
 import $axiosMertrack from '../../../apiMertrack';
 import { exportDataV3, handleBack } from '../../../utils';
+import { getPicking, isBpomGenerated } from '../../../resource/TrxPicking';
 export default {
   name: 'DetailPicking',
   data() {
@@ -430,15 +431,15 @@ export default {
       ],
     };
   },
-  mounted() {
+  async mounted() {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
-    var _url = `/v4.2/transaction/picking?id=${this.$route.params.id}`;
-    $axiosMertrack.get(_url).then((response) => {
-      let data = response.data.data[0];
+    let getData = await getPicking({ id: this.$route.params.id });
+    if (getData && !getData?.error) {
+      let data = getData.data[0];
       this.picking = data;
       this.items = data.items;
-    });
-    // get detail data
+    }
+    console.log(getData);
   },
   methods: {
     back() {
@@ -464,8 +465,15 @@ export default {
       this.datas = [];
       this.viewModal = false;
     },
-    inputDo() {
-      this.modalDO = true;
+    async inputDo() {
+      let getData = await isBpomGenerated({ id: this.$route.params.id });
+      if (getData.error) {
+        if (confirm(`${getData.message} Would you like to continue?`)) {
+          this.modalDO = true;
+        }
+      } else {
+        this.modalDO = true;
+      }
     },
     saveDO() {
       this.initial_load = false;
