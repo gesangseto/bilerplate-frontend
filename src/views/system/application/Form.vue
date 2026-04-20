@@ -11,6 +11,35 @@
               <!-- Licensed Entity Information -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
+                  Super User
+                </CCardHeader>
+                <CCardBody>
+                  <!-- COMPANY INFORMATION -->
+                  <p style="font-weight: bold">Login Information</p>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Username"
+                    v-model="data.users_name"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    :type="showUserPassword == false ? 'password' : 'text'"
+                    title="Password"
+                    v-model="data.users_password"
+                    description="Leave blank if you do not want to change the password."
+                  >
+                    <template #append>
+                      <CButton @click="showUserPassword = !showUserPassword">
+                        <v-icon v-if="!showUserPassword" name="eye-slash" />
+                        <v-icon v-if="showUserPassword" name="eye" />
+                      </CButton>
+                    </template>
+                  </InputDefault>
+                </CCardBody>
+              </CCard>
+              <!-- Licensed Entity Information -->
+              <CCard>
+                <CCardHeader style="font-weight: bold; font-size: large">
                   Licensed Entity Information
                 </CCardHeader>
                 <CCardBody>
@@ -803,6 +832,7 @@ export default {
   components: {},
   data() {
     return {
+      showUserPassword: false,
       showPassword: false,
       initialLoad: true,
       action: 'Edit',
@@ -944,6 +974,7 @@ export default {
         let pattern = data.password_pattern;
         this.data = {
           ...data,
+          users_password: null,
           return_ext_aggregation: data.return_ext_aggregation ? true : false,
           password_pattern: pattern
             ? JSON.parse(pattern)
