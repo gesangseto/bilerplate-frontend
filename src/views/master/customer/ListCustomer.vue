@@ -43,7 +43,7 @@ import {
   deleteMstCustomer,
   getMstCustomer,
 } from '../../../resource/MstCustomer';
-import { calculatePaginationV3, exportDataV3 } from '../../../utils';
+import { exportDataV3 } from '../../../utils';
 
 export default {
   name: 'ListCustomer',
@@ -116,7 +116,7 @@ export default {
 
     handleClickExport(type) {
       exportDataV3({
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/master/customer',
       });

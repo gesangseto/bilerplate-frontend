@@ -120,7 +120,7 @@ export default {
     handleClickExport(type) {
       exportDataV3({
         alert: true,
-        param: this.filter,
+        param: this.$route.query,
         exportType: type,
         url: '/v3/report/stock',
       });
