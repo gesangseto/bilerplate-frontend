@@ -191,9 +191,9 @@
                   <td style="width: 40%" colspan="2">
                     <br />
                     <br />
-                    <strong>Batch Requested</strong>
+                    <strong> Requested Batch Item</strong>
                     <CDataTable
-                      :items="picking.picking_batch"
+                      :items="pickingBatch"
                       :fields="fieldPickingBatch"
                       hover
                       sorter
@@ -208,6 +208,7 @@
           <div class="my-4">
             <div class="row my-3">
               <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
+                <h5>Picked Items</h5>
                 <CDataTable
                   table-filter
                   hover
@@ -369,8 +370,12 @@ export default {
       items: [],
       fieldItem: [
         {
+          key: 'nomor',
+          label: 'No',
+        },
+        {
           key: 'no',
-          label: 'Item No',
+          label: 'Item No ERP',
         },
         {
           key: 'name',
@@ -416,6 +421,14 @@ export default {
         },
       ],
       fieldPickingBatch: [
+        {
+          key: 'nomor',
+          label: 'No',
+        },
+        {
+          key: 'product_no',
+          label: 'Item No ERP',
+        },
         {
           key: 'product_name',
           label: 'Product',
@@ -543,10 +556,22 @@ export default {
     },
   },
   computed: {
-    renderDetailItem() {
-      return this.items.map((item) => {
+    pickingBatch() {
+      return this.picking.picking_batch.map((item) => {
+        let no = 0;
         return {
           ...item,
+          nomor: (no += 1),
+        };
+      });
+    },
+
+    renderDetailItem() {
+      return this.items.map((item) => {
+        let no = 0;
+        return {
+          ...item,
+          nomor: (no += 1),
           nie: item.nie || '-',
           gtin: item.gtin || '-',
         };

@@ -110,6 +110,7 @@
               </CInputFile>
             </CCol>
           </CRow>
+
           <div class="clearfix">
             <CButton
               type="button"
@@ -121,7 +122,7 @@
               <CIcon name="cil-plus" /> Add
             </CButton>
           </div>
-
+          <h5>Requested Batch Item</h5>
           <CDataTable
             tableFilter
             hover
@@ -214,6 +215,7 @@
 
 <script>
 const ekstensiFileValid = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+import { CCol, CRow } from '@coreui/vue';
 import $axiosMertrack from '../../../apiMertrack';
 import { handleBack } from '../../../utils';
 const reader = new FileReader();
@@ -301,7 +303,7 @@ export default {
         },
         {
           key: 'no',
-          label: 'Item No',
+          label: 'Item No ERP',
         },
         {
           key: 'name',
