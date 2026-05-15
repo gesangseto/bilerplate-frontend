@@ -298,7 +298,7 @@ export default {
       temp_items: [],
       fields: [
         {
-          key: 'no_urut',
+          key: 'nomor',
           label: 'No',
         },
         {
@@ -635,13 +635,12 @@ export default {
   },
   computed: {
     renderItems() {
-      let no = 0;
-      return this.items.map((item) => {
+      return this.items.map((item, index) => {
         return {
           ...item,
           nie: item.nie || '-',
           gtin: item.gtin || '-',
-          no_urut: (no += 1),
+          nomor: index + 1,
         };
       });
     },

@@ -557,21 +557,19 @@ export default {
   },
   computed: {
     pickingBatch() {
-      return this.picking.picking_batch.map((item) => {
-        let no = 0;
+      return this.picking.picking_batch.map((item, index) => {
         return {
           ...item,
-          nomor: (no += 1),
+          nomor: index + 1,
         };
       });
     },
 
     renderDetailItem() {
-      return this.items.map((item) => {
-        let no = 0;
+      return this.items.map((item, index) => {
         return {
           ...item,
-          nomor: (no += 1),
+          nomor: index + 1,
           nie: item.nie || '-',
           gtin: item.gtin || '-',
         };
