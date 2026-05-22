@@ -79,6 +79,7 @@
                 :items="renderItems"
                 :fields="fields"
                 style="font-size: 12px"
+                :key="item.no"
               >
                 <template #action="{ item, index }">
                   <td>
@@ -356,8 +357,8 @@ export default {
             (t) =>
               t.gtin_sscc === value.gtin_sscc &&
               t.serial === value.serial &&
-              t.batch_id === value.batch_id
-          )
+              t.batch_id === value.batch_id,
+          ),
       );
       return data;
     },
@@ -418,13 +419,9 @@ export default {
       let editPicking = this.editPicking;
       this.items.splice(index, 1, editPicking);
     },
-    deleteRow(item, index) {
-      this.items.splice(index, 1);
-      if (this.listChecked.length == 0) {
-        this.disableWarehouse = false;
-      }
+    deleteRow(item) {
+      this.items = this.items.filter((x) => x.id !== item.id);
     },
-
     checkValidation() {
       this.initialLoad = false;
       if (!this.formData.from_warehouse || !this.formData.to_warehouse) {

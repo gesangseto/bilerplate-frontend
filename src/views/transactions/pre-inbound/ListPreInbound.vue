@@ -123,6 +123,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          quantity_lvl_1: item.quantity_lvl_1 || '-',
           nie: item.nie || '-',
           gtin: item.gtin || '-',
         };
