@@ -172,44 +172,6 @@ export default {
     deleteRow(item, index) {
       this.dataReaggregation.splice(index, 1);
     },
-
-    printV3(item) {
-      let _body = {
-        serial: item.serial,
-        epc_key: item.epc_key,
-        validate: true,
-      };
-      var _url = new URLSearchParams(_body).toString();
-      $axiosMertrack
-        .get(`/v3/helper/print-layout/pdf?${_url}`)
-        .then((response) => {
-          this.$toast.open({
-            message: `${response.data.message ?? 'Success validate'}`,
-            type: response.data.error ? 'error' : 'success',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 3000,
-          });
-          if (response.data.error) {
-            return;
-          }
-          let _data = [_body];
-          printLabelV3({
-            data: _data,
-            link: `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/helper/print-layout/pdf`,
-          });
-        })
-        .catch((error) => {
-          this.$toast.open({
-            message: `${error}`,
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 3000,
-          });
-        });
-      return;
-    },
   },
   computed: {
     reformatItems() {
