@@ -28,8 +28,10 @@ import TextareaDefault from './TextareaDefault';
 import TableDefault from './TableDefault';
 import TableTransaction from './TableTransaction';
 import ButtonDefault from './ButtonDefault';
+import ModalPrintLabelDummy from './ModalPrintLabelDummy';
 
 export {
+  ModalPrintLabelDummy,
   ButtonDefault,
   TableTransaction,
   TableDefault,

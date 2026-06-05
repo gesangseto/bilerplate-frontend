@@ -16,10 +16,13 @@
             :totalData="totalData"
             :fields="fields"
             :items="reformatDatas"
+            :actionProperty="{ print: btn_print }"
+            :filterAction="customActionFilter"
             :status_code="'mst_product'"
-            :action="['copy', 'read', 'update', 'delete']"
+            :action="['copy', 'print', 'read', 'update', 'delete']"
             :filterBy="['All', 'id', 'packaging_level']"
             removeTrxDate
+            v-on:handlePrint="selected_data = $event"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"
@@ -28,6 +31,10 @@
         </CCardBody>
       </CCard>
     </CCol>
+    <ModalPrintLabelDummy
+      :item="selected_data"
+      v-on:onClose="selected_data = {}"
+    />
   </CRow>
 </template>
 
@@ -42,8 +49,18 @@ export default {
   data() {
     return {
       can_create: true,
+      btn_print: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'danger',
+        icon: 'print',
+        text: '',
+        tooltip: 'Print Label',
+        useHref: false, // digunakan agar tidak terbukan link
+      },
       totalData: 0,
       items: [],
+      selected_data: {},
       fields: [
         {
           key: 'id',
@@ -92,6 +109,14 @@ export default {
     },
   },
   methods: {
+    customActionFilter(item) {
+      let action = ['read', 'copy', 'update', 'delete'];
+      if (item.allow_print) {
+        action.push('print');
+      }
+      this.btn_print.color = 'warning';
+      return action;
+    },
     protectCreateData(_res) {
       let max = getLimitation('total_conf_layout');
       let count = _res.grand_total - _res.grand_total_is_sys;
@@ -104,9 +129,14 @@ export default {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let res = await getConfLayout(filter);
+      this.items = [];
       if (res) {
         this.totalData = res.grand_total;
-        this.items = res.data;
+        for (const it of res.data) {
+          if (it.packaging_level > 1) it.allow_print = true;
+          else it.allow_print = false;
+          this.items.push(it);
+        }
       }
       this.protectCreateData(res);
     },
