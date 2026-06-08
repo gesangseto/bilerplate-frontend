@@ -56,7 +56,7 @@ export default {
         icon: 'print',
         text: '',
         tooltip: 'Print Label',
-        useHref: false, // digunakan agar tidak terbukan link
+        useHref: false, //digunakan agar tidak terbuka link, biasanya digunakan untuk tombol print/download
       },
       totalData: 0,
       items: [],

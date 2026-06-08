@@ -8,8 +8,6 @@
       :color="property.color"
       v-on:click="!useHref ? $emit('click', $event.target.value) : null"
     >
-      // digunakan agar tidak terbukan link, biasanya digunakan untuk tombol
-      print/download
       <v-icon
         style="vertical-align: -0.175em"
         v-if="property.icon"

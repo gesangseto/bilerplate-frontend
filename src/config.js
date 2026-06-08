@@ -1,4 +1,4 @@
 // 🚀 Auto-generated file, jangan edit manual
     export const APP_CONFIG = {
-      BUILD_VERSION: "4.2.0 (6558bb4)",
+      BUILD_VERSION: "4.2.0 (2bb2c05)",
     };
