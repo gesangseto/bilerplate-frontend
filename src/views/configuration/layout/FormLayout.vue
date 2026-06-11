@@ -552,7 +552,7 @@ export default {
     selectedIdentifier: {
       handler(n) {
         let idx = this.associated_content.findIndex(
-          (it) => it.layout_identifier_id === n
+          (it) => it.layout_identifier_id === n,
         );
         if (~idx) this.selectedAssociated = this.associated_content[idx];
       },
@@ -619,7 +619,7 @@ export default {
         let newItems = [];
         for (const it of listLayout) {
           let find = this.formData.items.find(
-            (o) => o.itf_var_name == it.itf_var_name
+            (o) => o.itf_var_name == it.itf_var_name,
           );
           if (find) newItems.push(find);
           else newItems.push(it);
@@ -638,7 +638,7 @@ export default {
         let newItems = [];
         for (const it of listLayout) {
           let find = this.formData.items.find(
-            (o) => o.itf_var_name == it.itf_var_name
+            (o) => o.itf_var_name == it.itf_var_name,
           );
           if (find) newItems.push(find);
           else newItems.push(it);
@@ -649,7 +649,7 @@ export default {
       if (this.is_copy) {
         let itf_var_name = listLayout.map((it) => it.itf_var_name);
         let sama = oldData.items.filter((it) =>
-          itf_var_name.includes(it.itf_var_name)
+          itf_var_name.includes(it.itf_var_name),
         );
         // Jika data tidak sama
         if (sama.length !== oldData.items.length) {
@@ -681,7 +681,7 @@ export default {
       let layout_selected = this.formData.items[index];
       this.getIdentifier(layout_selected.layout_generate_type_id);
       let type = this.listType.find(
-        (it) => it.value == layout_selected.layout_generate_type_id
+        (it) => it.value == layout_selected.layout_generate_type_id,
       );
       this.formData.items[index].layout_generate_type = type.code;
 
@@ -767,7 +767,7 @@ export default {
       check_ai.is_selected = !check_ai.selected;
       if (!check_ai.flag_system && check_ai.data_type == 'Date') {
         let listDate = this.listFormatDate.find(
-          (it) => it.value == check_ai.format_ref
+          (it) => it.value == check_ai.format_ref,
         );
         if (listDate) {
           check_ai.format_ref = listDate.value;
@@ -780,7 +780,7 @@ export default {
         // ini jika yang dipilih bertipe METADATA
         await this.loadListMetadata(check_ai.table_name);
         let find = this.listMetadata.find(
-          (it) => it.value == check_ai.format_ref
+          (it) => it.value == check_ai.format_ref,
         );
         if (find) {
           check_ai.format_ref = find.value;
@@ -899,11 +899,11 @@ export default {
       let find = null;
       if (this.selectedAssociated.data_type === 'Metadata') {
         find = this.listMetadata.find(
-          (it) => this.selectedAssociated.format_ref === it.value
+          (it) => this.selectedAssociated.format_ref === it.value,
         );
       } else if (this.selectedAssociated.data_type === 'Date') {
         find = this.listFormatDate.find(
-          (it) => this.selectedAssociated.format_ref === it.value
+          (it) => this.selectedAssociated.format_ref === it.value,
         );
       }
       if (find) {
@@ -928,18 +928,18 @@ export default {
       let associated = this.selectedAssociated;
       if (associated.data_type == 'Metadata') {
         selectedConfig = this.listMetadata.find(
-          (it) => it.value == this.selectedConfigAssociated
+          (it) => it.value == this.selectedConfigAssociated,
         );
       } else if (associated.data_type == 'Date') {
         selectedConfig = this.listFormatDate.find(
-          (it) => it.value == this.selectedConfigAssociated
+          (it) => it.value == this.selectedConfigAssociated,
         );
       }
       associated.format_ref = this.selectedConfigAssociated;
       associated.format_ref_data = selectedConfig.label || null;
 
       let idx = this.formData.items[i].field_associated.findIndex(
-        (it) => it.layout_identifier_id == associated.layout_identifier_id
+        (it) => it.layout_identifier_id == associated.layout_identifier_id,
       );
       if (~idx) this.formData.items[i].field_associated[idx] = associated;
       this.modalRefDate = false;
@@ -1084,8 +1084,6 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         let dataPost = param;
-        console.log(dataPost);
-
         // return;
         this.$isLoading(true);
         let res = {};

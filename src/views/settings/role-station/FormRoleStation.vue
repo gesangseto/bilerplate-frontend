@@ -231,8 +231,6 @@ export default {
     handleSearchInput() {
       this.search = false;
       this.menu = this.defaultMenu;
-      console.log(this.keyword);
-
       if (this.keyword) {
         this.search = true;
         let search_menu = [];

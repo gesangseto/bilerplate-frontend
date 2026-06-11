@@ -1420,8 +1420,6 @@ export default {
     },
 
     async pauseProgressDevelopment($event) {
-      console.log('Pause Batch => ', $event);
-
       let station_type = $event.toLowerCase();
       this.$isLoading(true);
       let res = await changeProgressPO({
@@ -1444,7 +1442,6 @@ export default {
 
     async resumeProgressDevelopment($event) {
       let station_type = $event.toLowerCase();
-      console.log('Resume Batch => ', $event);
       this.$isLoading(true);
       let res = await changeProgressPO({
         id: this.formData.id,

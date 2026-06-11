@@ -226,8 +226,6 @@ export default {
       this.formData.file_name = file.name;
     },
     async restore() {
-      console.log(this.formData);
-
       if (!this.formData.file) {
         this.$toast.open({
           message: 'Please select a backup file first!',

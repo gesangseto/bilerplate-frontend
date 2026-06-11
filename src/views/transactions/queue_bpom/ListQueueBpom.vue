@@ -206,7 +206,6 @@ export default {
     sendToBpom(item) {
       let param = this.formData;
       param.data.trx_ref_id = item.trx_ref_id;
-      console.log(param);
 
       $axiosMertrack
         .post('/v3/connector/connector-action/execute', param)

@@ -183,8 +183,6 @@ export default {
   computed: {
     reformatDatas() {
       return this.items.map((item) => {
-        console.log(item);
-
         return {
           ...item,
           packagingl2_name: item.packagingl2_name || '-',

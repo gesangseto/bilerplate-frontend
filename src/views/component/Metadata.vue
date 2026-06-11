@@ -96,7 +96,6 @@ export default {
               error_metadata,
             });
           }
-          console.log(row, '================');
           this.reformat_metadata = row;
         }
       }
@@ -122,7 +121,7 @@ export default {
       let error_metadata = this.validation(
         newValue,
         item.pattern,
-        item.mandatory
+        item.mandatory,
       );
 
       // Update the item with the new value and error_metadata state

@@ -382,6 +382,15 @@
                   </CCol>
                 </CRow>
               </CCol>
+              <br />
+              <CCol sm="12" v-if="action == 'Update' || action == 'Create'">
+                <InputDefault
+                  :disabled="true"
+                  :col="[3, 9]"
+                  title="Default Password"
+                  v-model="configuration.password_default"
+                />
+              </CCol>
             </CForm>
             <Metadata
               :defaultMetadata="formData.metadata"
@@ -642,7 +651,7 @@ export default {
         });
       }
       let findSection = this.optionSections.find(
-        (it) => it.value == this.formData.mst_section_id
+        (it) => it.value == this.formData.mst_section_id,
       );
       if (!findSection) {
         this.formData.mst_section_id = '';

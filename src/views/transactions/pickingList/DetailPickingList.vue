@@ -452,7 +452,6 @@ export default {
       this.picking = data;
       this.items = data.items;
     }
-    console.log(getData);
   },
   methods: {
     back() {

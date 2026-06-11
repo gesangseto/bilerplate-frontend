@@ -360,7 +360,7 @@
                               @click="
                                 handleChangeMenuStation(
                                   'remarks_required',
-                                  index
+                                  index,
                                 )
                               "
                               size="sm"
@@ -459,12 +459,11 @@ export default {
       // filter menu berdasarkan type
       this.menuWeb = this.reformatingMenu(data.filter((it) => it.type == 0));
       this.menuAndroid = this.reformatingMenu(
-        data.filter((it) => it.type == 1)
+        data.filter((it) => it.type == 1),
       );
       this.menuStation = this.reformatStationMenu(
-        data.filter((it) => it.type == 2)
+        data.filter((it) => it.type == 2),
       );
-      console.log(this.menuStation);
     },
     handleChangeMenuWeb(name, index) {
       this.menuWeb[index][name] = !this.menuWeb[index][name];

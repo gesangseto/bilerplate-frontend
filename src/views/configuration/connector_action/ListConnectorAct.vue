@@ -111,7 +111,6 @@ export default {
           res = res.data;
           this.totalData = res.grand_total;
           this.items = res.data;
-          console.log(this.items);
         });
     },
     rowUpdate(item) {
