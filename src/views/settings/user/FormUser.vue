@@ -384,12 +384,14 @@
               </CCol>
               <br />
               <CCol sm="12" v-if="action == 'Update' || action == 'Create'">
-                <InputDefault
-                  :disabled="true"
-                  :col="[3, 9]"
-                  title="Default Password"
-                  v-model="configuration.password_default"
-                />
+                <div class="default-password-box">
+                  <InputDefault
+                    :disabled="true"
+                    :col="[3, 9]"
+                    title="Default Password"
+                    v-model="configuration.password_default"
+                  />
+                </div>
               </CCol>
             </CForm>
             <Metadata
@@ -824,3 +826,12 @@ export default {
   },
 };
 </script>
+<style>
+.default-password-box {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  border-radius: 8px;
+  padding: 5px;
+  padding-top: 26px;
+}
+</style>
