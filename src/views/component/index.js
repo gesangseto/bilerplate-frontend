@@ -7,7 +7,6 @@ import ShowLockedStatus from './ShowLockedStatus';
 import DetailBarcodeGenerator from './DetailBarcodeGenerator';
 import ModalBarcodeGenerator from './ModalBarcodeGenerator';
 import HeaderManualBarcodeGenerator from './HeaderManualBarcodeGenerator';
-import ModalPrintLabelV3 from './ModalPrintLabelV3';
 import FormAddItemV3 from './FormAddItemV3';
 import HeaderShowStatusV3 from './HeaderShowStatusV3';
 import DetailTransactionV3 from './DetailTransactionV3';
@@ -28,10 +27,10 @@ import TextareaDefault from './TextareaDefault';
 import TableDefault from './TableDefault';
 import TableTransaction from './TableTransaction';
 import ButtonDefault from './ButtonDefault';
-import ModalPrintLabelDummy from './ModalPrintLabelDummy';
+import ModalPrintLabelToZebra from './ModalPrintLabelToZebra';
 
 export {
-  ModalPrintLabelDummy,
+  ModalPrintLabelToZebra,
   ButtonDefault,
   TableTransaction,
   TableDefault,
@@ -48,7 +47,6 @@ export {
   DetailBarcodeGenerator,
   ModalBarcodeGenerator,
   HeaderManualBarcodeGenerator,
-  ModalPrintLabelV3,
   FormAddItemV3,
   HeaderShowStatusV3,
   DetailTransactionV3,

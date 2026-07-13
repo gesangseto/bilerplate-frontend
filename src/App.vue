@@ -25,8 +25,7 @@ import {
   ShowLockedStatus,
   DetailBarcodeGenerator,
   ModalBarcodeGenerator,
-  ModalPrintLabelV3,
-  ModalPrintLabelDummy,
+  ModalPrintLabelToZebra,
   FormAddItemV3,
   DetailTransactionV3,
   HeaderFilterTransactionV3,
@@ -73,8 +72,6 @@ Vue.component('CancelModal', CancelModal);
 Vue.component('ShowLockedStatus', ShowLockedStatus);
 Vue.component('DetailBarcodeGenerator', DetailBarcodeGenerator);
 Vue.component('ModalBarcodeGenerator', ModalBarcodeGenerator);
-Vue.component('ModalPrintLabelV3', ModalPrintLabelV3);
-Vue.component('ModalPrintLabelDummy', ModalPrintLabelDummy);
 Vue.component('FormAddItemV3', FormAddItemV3);
 Vue.component('HeaderFilterTransactionV3', HeaderFilterTransactionV3);
 Vue.component('DetailTransactionV3', DetailTransactionV3);
@@ -89,6 +86,7 @@ Vue.component('ButtonDownloadFilePath', ButtonDownloadFilePath);
 Vue.component('InputDefault', InputDefault);
 Vue.component('InputDateDefault', InputDateDefault);
 Vue.component('TextareaDefault', TextareaDefault);
+Vue.component('ModalPrintLabelToZebra', ModalPrintLabelToZebra);
 
 export default {
   name: 'App',

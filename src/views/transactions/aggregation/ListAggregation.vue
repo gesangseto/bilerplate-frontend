@@ -44,7 +44,7 @@
       :property="selected_barcode"
       v-on:onClose="selected_barcode = {}"
     />
-    <ModalPrintLabelV3
+    <ModalPrintLabelToZebra
       :item="selected_data"
       v-on:onClose="selected_data = {}"
     />

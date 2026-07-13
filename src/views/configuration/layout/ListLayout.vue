@@ -31,7 +31,8 @@
         </CCardBody>
       </CCard>
     </CCol>
-    <ModalPrintLabelDummy
+    <ModalPrintLabelToZebra
+      type="dummy"
       :item="selected_data"
       v-on:onClose="selected_data = {}"
     />
