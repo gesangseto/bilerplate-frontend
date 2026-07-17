@@ -180,7 +180,7 @@ export default {
       if (validationPassword(this.form_data.newPassword)) {
         this.required.newPassword.error = true;
         this.required.newPassword.message = validationPassword(
-          this.form_data.newPassword
+          this.form_data.newPassword,
         );
         return;
       } else if (this.form_data.have_error) {
@@ -190,7 +190,6 @@ export default {
       ) {
         return;
       }
-
       this.$isLoading(true);
       var body = {
         new_password: this.form_data.newPassword,
@@ -203,17 +202,14 @@ export default {
       this.$toast.open({
         message: res['error']
           ? `${res['message']}`
-          : 'Data has been saved successfully ',
+          : 'Password changed successfully. Please log in with your new password.',
         type: res.error ? 'error' : 'success',
         dissmissible: true,
         position: 'top-right',
-        duration: 5000,
+        duration: 10000,
       });
       if (!res['error']) {
-        this.profile.password_must_change = false;
-        this.profile.password_is_expiry = false;
-        setProfile(this.profile);
-        this.$router.push({ path: `/home` });
+        return this.logOut();
       }
     },
   },

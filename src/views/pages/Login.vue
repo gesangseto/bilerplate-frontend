@@ -181,21 +181,11 @@ export default {
           detail: {
             storage: localStorage.getItem('use_keyboard'),
           },
-        })
+        }),
       );
     },
     redirectReload() {
       let profile = getProfile();
-
-      if (
-        getConfig().password_must_change &&
-        profile &&
-        profile.id != 0 &&
-        profile.password_must_change
-      ) {
-        this.$router.push({ path: `/change-password?p-key=${profile.token}` });
-        return;
-      }
       let lastUrl = getLastUrl();
       if (lastUrl) {
         this.$router.push({ path: lastUrl });
@@ -238,6 +228,15 @@ export default {
       let res = await authLogin(param);
       this.$isLoading(false);
       if (res) {
+        if (res?.error && res?.status_code == 403) {
+          let profile = res?.data?.[0];
+          setProfile(profile);
+          this.$router.push({
+            path: `/change-password?p-key=${profile?.token}`,
+          });
+          return;
+        }
+
         this.$toast.open({
           message: `${res.message}`,
           type: res.error ? 'error' : 'success',
