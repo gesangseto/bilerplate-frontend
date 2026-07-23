@@ -85,19 +85,21 @@
                 :is-valid="
                   initialLoad ? null : !formData.mfg_date ? false : true
                 "
+                @change="calculateExpdate()"
               >
                 <template #append>
                   <InputDefault
-                    :title="null"
-                    style="width: 400px; margin-left: 10px"
                     :disabled="
                       action != 'Create' &&
                       (action != 'Update' || formData.status == '4')
                     "
+                    :title="null"
+                    style="width: 400px; margin-left: 10px"
                     :validasi="'integer'"
                     v-model="formData.shelf_life"
                     :description="formData.shelf_life ? 'Shelf Life' : null"
                     placeholder="Shelf Life"
+                    @change="calculateExpdate()"
                   >
                     <template #append>
                       <CButton disabled color="secondary">Month</CButton>
@@ -107,7 +109,10 @@
               </InputDateDefault>
 
               <InputDateDefault
-                :disabled="true"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 title="Exp Date"
                 v-model="formData.exp_date"
                 :options="{ format: 'dd/mm/yyyy' }"
@@ -119,7 +124,10 @@
               />
               <!-- Ini adalah HET yang menggunakan Currency, masih disimpan sampai ready -->
               <InputDefault
-                :disabled="action == 'Read' ? true : false"
+                :disabled="
+                  action != 'Create' &&
+                  (action != 'Update' || formData.status == '4')
+                "
                 :col="[3, 9]"
                 required
                 title="HET"
@@ -135,8 +143,11 @@
                     "
                   >
                     <SelectOption
+                      :disabled="
+                        action != 'Create' &&
+                        (action != 'Update' || formData.status == '4')
+                      "
                       placeholder="--Select Currency--"
-                      :disabled="action == 'Read' ? true : false"
                       required
                       v-on:onchange="formData.currency = $event"
                       :options="listCurrency"
@@ -718,34 +729,6 @@ export default {
         this.filterSerials();
       },
     },
-    'formData.shelf_life': {
-      deep: true,
-      handler(item) {
-        if (this.formData.shelf_life && this.formData.mfg_date) {
-          this.formData.exp_date = expFromShelfLife({
-            mfg_date: this.formData.mfg_date,
-            shelf_life: this.formData.shelf_life,
-            type: getConfig()?.expiry_type,
-          });
-        } else {
-          this.formData.exp_date = null;
-        }
-      },
-    },
-    'formData.mfg_date': {
-      deep: true,
-      handler(item) {
-        if (this.formData.shelf_life && this.formData.mfg_date) {
-          this.formData.exp_date = expFromShelfLife({
-            mfg_date: this.formData.mfg_date,
-            shelf_life: this.formData.shelf_life,
-            type: getConfig()?.expiry_type,
-          });
-        } else {
-          this.formData.exp_date = null;
-        }
-      },
-    },
 
     additionalSerial: {
       deep: true,
@@ -1034,6 +1017,15 @@ export default {
         }
       }
     },
+    calculateExpdate() {
+      if (this.formData.shelf_life && this.formData.mfg_date) {
+        this.formData.exp_date = expFromShelfLife({
+          mfg_date: this.formData.mfg_date,
+          shelf_life: this.formData.shelf_life,
+          type: getConfig()?.expiry_type,
+        });
+      }
+    },
     findActiveL1() {
       let level_1 = this.tabData.serials.filter(
         (it) => it.packaging_level == 1 && (it.status == 1 || it.status == 207),
@@ -1050,7 +1042,10 @@ export default {
       );
     },
     handleInputEXP($event) {
-      if ($event) this.formData.shelf_life = null;
+      if ($event) {
+        this.formData.shelf_life = null;
+        this.formData.exp_date = $event;
+      }
     },
     filterSerials() {
       let status = {
