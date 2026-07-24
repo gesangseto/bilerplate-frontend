@@ -19,6 +19,7 @@
             </CCol>
             <CCol sm="10" md="10" lg="10">
               <CTextarea
+                rows="5"
                 placeholder="Enter The Reason"
                 id="reject-reason"
                 invalid-feedback="Reason is required"
@@ -41,9 +42,9 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter } from "../../utils";
+import { capitalizeFirstLetter } from '../../utils';
 export default {
-  name: "CancelModal",
+  name: 'CancelModal',
   props: { property: Object, type: String },
   mounted() {},
   data() {
@@ -56,13 +57,13 @@ export default {
       return {
         id: null,
         modal: false,
-        reason: "",
+        reason: '',
       };
     },
     handleSubmit() {
       let msg = ` You are about to ${this.type} this transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(msg)) {
-        this.$emit("handleSubmit", this.property);
+        this.$emit('handleSubmit', this.property);
         this.property.modal = false;
       }
     },

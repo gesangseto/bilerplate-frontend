@@ -9,7 +9,7 @@
           <CRow>
             <CCol sm="6" md="6" lg="6">
               <InputDefault
-                :disabled="action != 'Create'"
+                :disabled="!isEditable()"
                 title="ERP PO No."
                 v-model="formData.process_order_erp"
                 :options="{ uppercase: true, nospace: true }"
@@ -25,8 +25,8 @@
               />
 
               <SelectOption
+                :disabled="!isEditable()"
                 title="Product Name"
-                :disabled="action == 'Create' ? false : true"
                 required
                 :options="productOptions"
                 v-on:onchange="formData.product_id = $event"
@@ -50,7 +50,7 @@
               />
 
               <InputDefault
-                :disabled="action == 'Create' ? false : true"
+                :disabled="!isEditable()"
                 title="Batch No"
                 :validasi="'alphanumeric'"
                 v-model="formData.batch_no"
@@ -63,7 +63,7 @@
               />
 
               <InputDefault
-                :disabled="action == 'Create' ? false : true"
+                :disabled="!isEditable()"
                 title="Lot No"
                 :validasi="'alphanumeric'"
                 v-model="formData.lot_no"
@@ -74,10 +74,7 @@
               />
 
               <InputDateDefault
-                :disabled="
-                  action != 'Create' &&
-                  (action != 'Update' || formData.status == '4')
-                "
+                :disabled="!isEditable('mfg_date')"
                 title="Mfg Date"
                 v-model="formData.mfg_date"
                 :options="{ format: 'dd/mm/yyyy' }"
@@ -89,10 +86,7 @@
               >
                 <template #append>
                   <InputDefault
-                    :disabled="
-                      action != 'Create' &&
-                      (action != 'Update' || formData.status == '4')
-                    "
+                    :disabled="!isEditable('shelf_life')"
                     :title="null"
                     style="width: 400px; margin-left: 10px"
                     :validasi="'integer'"
@@ -109,10 +103,7 @@
               </InputDateDefault>
 
               <InputDateDefault
-                :disabled="
-                  action != 'Create' &&
-                  (action != 'Update' || formData.status == '4')
-                "
+                :disabled="!isEditable('exp_date')"
                 title="Exp Date"
                 v-model="formData.exp_date"
                 :options="{ format: 'dd/mm/yyyy' }"
@@ -124,10 +115,7 @@
               />
               <!-- Ini adalah HET yang menggunakan Currency, masih disimpan sampai ready -->
               <InputDefault
-                :disabled="
-                  action != 'Create' &&
-                  (action != 'Update' || formData.status == '4')
-                "
+                :disabled="!isEditable('het')"
                 :col="[3, 9]"
                 required
                 title="HET"
@@ -143,10 +131,7 @@
                     "
                   >
                     <SelectOption
-                      :disabled="
-                        action != 'Create' &&
-                        (action != 'Update' || formData.status == '4')
-                      "
+                      :disabled="!isEditable()"
                       placeholder="--Select Currency--"
                       required
                       v-on:onchange="formData.currency = $event"
@@ -192,7 +177,7 @@
             </CCol>
             <CCol sm="6" md="6" lg="6">
               <InputDefault
-                :disabled="action == 'Create' ? false : true"
+                :disabled="!isEditable()"
                 title="Target L1 Qty"
                 :validasi="'integer'"
                 v-model="formData.generate_count_level_1"
@@ -209,10 +194,7 @@
               />
 
               <InputDefault
-                :disabled="
-                  action != 'Create' &&
-                  (action != 'Update' || formData.status == '4')
-                "
+                :disabled="!isEditable('buff')"
                 title="Buff (%)"
                 :validasi="'integer'"
                 v-model="formData.buff"
@@ -297,7 +279,7 @@
                 sorter
                 tableFilter
                 :pagination="true"
-                :items-per-page="20"
+                :items-per-page="10"
                 itemsPerPageSelect
                 :items="detailHistory"
                 :fields="fieldStationHistory"
@@ -818,6 +800,8 @@ export default {
         all: true,
       },
       formData: {
+        status: null,
+        is_manual: true,
         current_pack: 0,
         items: [],
         product_id: null,
@@ -1025,6 +1009,21 @@ export default {
           type: getConfig()?.expiry_type,
         });
       }
+    },
+    isEditable(form) {
+      let allowRoute = ['create', 'update'].includes(this.$route.params.type);
+      let allowStatus = [null, 0].includes(this.formData.status);
+      let allowForm = ['het', 'exp_date', 'mfg_date', 'shelf_life'].includes(
+        form,
+      );
+      if (allowRoute && allowStatus) {
+        if (this.formData.is_manual) {
+          return true;
+        } else if (!this.formData.is_manual && allowForm) {
+          return true;
+        }
+      }
+      return false;
     },
     findActiveL1() {
       let level_1 = this.tabData.serials.filter(
@@ -1317,6 +1316,7 @@ export default {
         delete param.weight_l4;
         if (this.action === 'Create' && param.id) {
           delete param.id;
+          param.is_manual = true;
         }
         if (param.id) {
           res = await updateProcessOrder(param);
