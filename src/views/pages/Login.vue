@@ -10,7 +10,7 @@
                 <img
                   v-bind:src="loginLogo"
                   class="mb-5"
-                  style="width: 120px; heigth: auto"
+                  style="width: auto; height: 80px"
                 />
                 <p class="text-muted">Sign In to your account</p>
                 <CInput
@@ -63,7 +63,7 @@
                 <CButton @click="appModal = true" color="default">
                   <img
                     v-bind:src="copyright"
-                    style="width: 120px; heigth: auto"
+                    style="width: 120px; height: auto"
                   />
                 </CButton>
               </div>

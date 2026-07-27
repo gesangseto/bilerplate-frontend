@@ -12,7 +12,7 @@
           <img
             v-bind:src="avatar_path"
             class="c-avatar-img"
-            style="width: 35px; heigth: auto"
+            style="width: auto; height: 40px"
           />
         </div>
       </CHeaderNavLink>

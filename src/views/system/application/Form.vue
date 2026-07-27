@@ -412,7 +412,7 @@
                       <CCol class="md-4">
                         <img
                           v-bind:src="whatsappStatus.qr_base64"
-                          style="width: 150px; heigth: auto"
+                          style="width: 150px; height: auto"
                         />
                       </CCol>
                     </CForm>

@@ -222,7 +222,7 @@
                         <CRow class="justify-content-left">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               :src="
                                 require(`../../../../public/img/avatars/${formData.mst_avatar_id}.png`)
                               "
@@ -236,7 +236,7 @@
                         <CRow class="justify-content-center">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               src="../../../../public/img/avatars/1.png"
                             />
                             <CInputRadioGroup
@@ -255,7 +255,7 @@
                         <CRow class="justify-content-center">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               src="../../../../public/img/avatars/2.png"
                             />
                             <CInputRadioGroup
@@ -273,7 +273,7 @@
                         <CRow class="justify-content-center">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               src="../../../../public/img/avatars/3.png" />
                             <CInputRadioGroup
                               id="avatar"
@@ -288,7 +288,7 @@
                         <CRow class="justify-content-center">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               src="../../../../public/img/avatars/4.png"
                             />
                             <CInputRadioGroup
@@ -312,7 +312,7 @@
                         <CRow class="justify-content-center">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               src="../../../../public/img/avatars/5.png"
                             />
                             <CInputRadioGroup
@@ -330,7 +330,7 @@
                         <CRow class="justify-content-center">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               src="../../../../public/img/avatars/6.png"
                             />
                             <CInputRadioGroup
@@ -348,7 +348,7 @@
                         <CRow class="justify-content-center">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               src="../../../../public/img/avatars/7.png"
                             />
                             <CInputRadioGroup
@@ -365,7 +365,7 @@
                         <CRow class="justify-content-center">
                           <label>
                             <img
-                              style="width: 50px; heigth: auto"
+                              style="width: 50px; height: auto"
                               src="../../../../public/img/avatars/8.png"
                             />
                             <CInputRadioGroup
@@ -587,7 +587,7 @@ export default {
     },
     async loadDepartment() {
       this.departmentOptions = [];
-      let _res = await getMstDepartment({ status: 'Active' });
+      let _res = await getMstDepartment({ status: 'Active', is_sys: 'null' });
       for (const it of _res.data) {
         this.departmentOptions.push({
           label: it.name,
@@ -644,6 +644,7 @@ export default {
       let _res = await getMstSection({
         mst_department_id: this.formData.mst_department_id,
         status: 'Active',
+        is_sys: 'null',
       });
       this.optionSections = [];
       for (const it of _res.data) {

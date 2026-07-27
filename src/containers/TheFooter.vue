@@ -7,7 +7,7 @@
     <div class="ml-auto">
       <span class="mr-1">Powered by</span>
       <CButton @click="appModal = true" color="default">
-        <img v-bind:src="mertrack_image" style="width: 70px; heigth: auto" />
+        <img v-bind:src="mertrack_image" style="width: auto; height: 40px" />
       </CButton>
     </div>
     <CModal
@@ -17,14 +17,14 @@
       size="lg"
     >
       <template #header>
-        <h5><strong>About Mertrack&reg; Integra</strong></h5>
+        <h5><strong>About MERTRACK&reg; Integra</strong></h5>
       </template>
       <CCardBody>
         <CRow>
           <CCol md="4">
             <img
               v-bind:src="mertrack_image"
-              style="width: 150px; heigth: auto"
+              style="width: auto; height: 80px"
             />
           </CCol>
           <CCol md="8">
@@ -59,7 +59,7 @@
       </CCardBody>
       <template #footer>
         <div style="display: block; margin-left: auto; margin-right: auto">
-          <img v-bind:src="merindo_image" style="width: 100px; heigth: auto" />
+          <img v-bind:src="merindo_image" style="width: auto; height: 40px" />
         </div>
         <div style="display: block; margin-left: auto; margin-right: auto">
           <span class="mr-1">Copyright</span>
@@ -120,7 +120,7 @@ export default {
       version: {
         web: APP_CONFIG.BUILD_VERSION,
         be: null,
-        mobile: '4.0.0',
+        mobile: '4.2.0',
         bpom: '3.0.1',
       },
       mertrack_image: logoMertrack,
@@ -140,7 +140,7 @@ export default {
     this.loadVersion();
     this.data = getConfig();
     this.data.about = `
-    This copy of <strong>Mertrack® Integra</strong> is licensed to: <br/>
+    This copy of <strong>MERTRACK® Integra</strong> is licensed to: <br/>
     <br/>
     Number of Entity: 1 <br/>
     Entity Name: ${this.data.identity_name} <br/>

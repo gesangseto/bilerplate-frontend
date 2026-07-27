@@ -109,8 +109,13 @@
                 :options="{ format: 'dd/mm/yyyy' }"
                 :required="true"
                 @input="handleInputEXP($event)"
-                :is-valid="
-                  initialLoad ? null : !formData.exp_date ? false : true
+                :is-valid="initialLoad ? null : !isValidasiExpDate().error"
+                :invalid_feedback="
+                  initialLoad
+                    ? null
+                    : isValidasiExpDate().error
+                    ? isValidasiExpDate().message
+                    : null
                 "
               />
               <!-- Ini adalah HET yang menggunakan Currency, masih disimpan sampai ready -->
@@ -1011,6 +1016,10 @@ export default {
       }
     },
     isEditable(form) {
+      if (this.$route.params.type == 'create') {
+        this.formData.is_manual = true;
+        return true;
+      }
       let allowRoute = ['create', 'update'].includes(this.$route.params.type);
       let allowStatus = [null, 0].includes(this.formData.status);
       let allowForm = ['het', 'exp_date', 'mfg_date', 'shelf_life'].includes(
@@ -1281,6 +1290,38 @@ export default {
         this.additionalSerial.generate_count_level_4 = '';
       }
     },
+    // Validasi untuk menjaga Exp Date tidak boleh kurang dari Mfg Date.
+    isValidasiExpDate() {
+      let res = { error: false, message: '' };
+      let config = getConfig();
+
+      const today = new Date();
+      const mfg = new Date(this.formData.mfg_date);
+      const exp = new Date(this.formData.exp_date);
+
+      //  Validasi Exp Date tidak boleh kurang dari Mfg Date. Error message: “Exp Date must be later than Mfg Date”.
+      if (exp <= mfg) {
+        res.error = true;
+        res.message = 'Exp Date must be later than Mfg Date.';
+        return res;
+      }
+
+      // Validasi untuk menjaga Exp Date tidak boleh kurang dari tanggal hari ini + <Minimum Remaining Shelf Life for Picking>.
+      // Reset waktu
+      today.setHours(0, 0, 0, 0);
+      exp.setHours(0, 0, 0, 0);
+      let limit = config?.delivery_day_limit || 0;
+      // Hitung tanggal minimum
+      let d_day_limit = today.setDate(today.getDate() + limit);
+
+      if (exp < d_day_limit) {
+        res.error = true;
+        res.message = `Exp Date must be later than today plus the Minimum Remaining Shelf Life for Picking (${limit} days).`;
+        return res;
+      }
+      return res;
+    },
+
     isValid() {
       if (!this.formData.process_order_erp) return false;
       if (!this.formData.product_id) return false;
@@ -1289,6 +1330,11 @@ export default {
       if (!this.formData.mfg_date) return false;
       if (!this.formData.exp_date) return false;
       if (!this.formData.generate_count_level_1) return false;
+
+      // Validasi MFG dan EXP date
+      let isDateValid = this.isValidasiExpDate();
+      if (isDateValid.error) return false;
+
       return true;
     },
     async save() {

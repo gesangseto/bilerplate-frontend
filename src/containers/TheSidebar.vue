@@ -8,23 +8,20 @@
     :show="show"
     @update:show="(value) => $store.commit('set', ['sidebarShow', value])"
   >
-    <CSidebarBrand to="/home">
-      <div
-        class="col-sm-12"
-        style="background-color: #000060"
-        id="app_image"
-        ref="app_image"
-      >
-        <img
-          v-bind:src="entityLogo"
-          style="
-            width: 90px;
-            heigth: auto;
-            display: block;
-            margin: auto;
-            padding-top: 14px;
-          "
-        />
+    <CSidebarBrand
+      to="/home"
+      style="
+        width: 100%;
+        height: 120px;
+        min-height: 120px;
+        flex: 0 0 120px;
+        padding: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+      "
+    >
+      <div id="app_image" ref="app_image">
+        <img :src="entityLogo" alt="Entity Logo" />
       </div>
     </CSidebarBrand>
     <!-- <CRenderFunction flat :content-to-render="nav" /> -->
@@ -179,7 +176,6 @@ export default {
   },
 };
 </script>
-<style scoped></style>
 <style scoped>
 .mainmenu .active-parent {
   border-left: 5px solid #f4d608;
@@ -199,12 +195,38 @@ export default {
   background-color: #cdd4fa;
   color: #0018ab;
 }
+
+#app_image {
+  width: 100%;
+  height: 100%;
+  padding: 10px 10px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #000060;
+}
+
+#app_image img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  object-fit: contain;
+}
+
 .navigation {
   overflow: hidden;
-  position: fixed;
+  flex: 1 1 auto;
+  /*position: fixed;*/
   width: 256px;
   overflow-y: scroll;
-  top: 80px;
+  /*top: 80px;*/
   bottom: 0;
   background-color: #000060;
 }

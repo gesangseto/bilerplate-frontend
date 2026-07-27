@@ -1,9 +1,9 @@
-import $axiosMertrack from "../apiMertrack";
+import $axiosMertrack from '../apiMertrack';
 
 let url = `/v3/master/department`;
 
 export const getMstDepartment = async (param = Object) => {
-  var query_string = "";
+  var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
   }
@@ -15,7 +15,7 @@ export const getMstDepartment = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -33,7 +33,7 @@ export const insertMstDepartment = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -51,7 +51,7 @@ export const updateMstDepartment = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });
@@ -68,7 +68,7 @@ export const deleteMstDepartment = async (param = Object) => {
         return resolve(res);
       })
       .catch((e) => {
-        console.log("ERROR => ", e);
+        console.log('ERROR => ', e);
         return resolve(false);
       });
   });

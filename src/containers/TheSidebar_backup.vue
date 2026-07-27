@@ -22,7 +22,7 @@
       />
       <div class="col-sm-3"></div>
       <div class="col-sm-6" style="padding: 10px">
-        <img v-bind:src="entityLogo" style="width: 80px; heigth: auto" />
+        <img v-bind:src="entityLogo" style="width: 80px; height: auto" />
       </div>
       <div class="col-sm-3"></div>
     </CSidebarBrand>
@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import { getLogo } from "../utils";
-import nav from "./_nav";
+import { getLogo } from '../utils';
+import nav from './_nav';
 
 export default {
   data() {
@@ -43,7 +43,7 @@ export default {
       entityLogo: null,
     };
   },
-  name: "TheSidebar",
+  name: 'TheSidebar',
   mounted() {
     this.entityLogo = getLogo();
   },

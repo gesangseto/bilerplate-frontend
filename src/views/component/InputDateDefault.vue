@@ -24,6 +24,18 @@
           <!-- Slot untuk append -->
           <slot name="append"></slot>
         </div>
+        <div
+          v-if="
+            isValid === null
+              ? false
+              : !isValid && invalid_feedback
+              ? true
+              : false
+          "
+          class="mb-0 mt-0"
+          style="font-size: x-small; color: red"
+          v-html="formattedInvalidFeedback"
+        ></div>
       </CCol>
     </CRow>
     <br v-if="!this.$slots.append" />
@@ -39,6 +51,7 @@ export default {
     required: { type: Boolean, default: false },
     isValid: { type: Boolean, default: null },
     disabled: { type: Boolean, default: false },
+    invalid_feedback: { type: String, default: null },
   },
   data() {
     return {
@@ -67,6 +80,14 @@ export default {
       } else {
         this.internalValue = ''; // Mengosongkan internalValue jika value kosong
       }
+    },
+  },
+  computed: {
+    formattedInvalidFeedback() {
+      // Mengganti karakter newline (\n) dengan <br>
+      return this.invalid_feedback
+        ? this.invalid_feedback.replace(/\n/g, '<br>')
+        : '';
     },
   },
 };

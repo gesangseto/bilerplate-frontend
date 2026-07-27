@@ -19,7 +19,7 @@
           v-bind:src="entityLogo"
           style="
             width: 90px;
-            heigth: auto;
+            height: auto;
             display: block;
             margin: auto;
             padding-top: 14px;
