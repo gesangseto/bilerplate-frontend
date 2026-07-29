@@ -113,7 +113,7 @@
         <CRow>
           <CCol sm="12" md="12" lg="12">
             <TextareaDefault
-              :rows="5"
+              rows="5"
               :col="[3, 8]"
               title="Remark"
               required

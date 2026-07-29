@@ -12,7 +12,7 @@
             sorter
             border
             table-filter
-            :items="items"
+            :items="reformatDatas"
             :fields="fields"
             style="font-size: 12px"
             items-per-page-select
@@ -72,8 +72,12 @@ export default {
       items: [],
       fields: [
         {
-          key: 'Timestamp',
-          label: 'Created Date',
+          key: 'Start Time',
+          label: 'Start Time',
+        },
+        {
+          key: 'End Time',
+          label: 'End Time',
         },
         {
           key: 'Action',
@@ -117,6 +121,16 @@ export default {
       }
     },
   },
-  computed: {},
+  computed: {
+    reformatDatas() {
+      return this.items.map((item) => {
+        return {
+          ...item,
+          ['End Time']: item['End Time'] || '-',
+          ['Result Message']: item['Result Message'] || '-',
+        };
+      });
+    },
+  },
 };
 </script>
