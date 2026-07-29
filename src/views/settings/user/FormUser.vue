@@ -162,14 +162,17 @@
                 />
               </CCol>
                -->
-
               <CCol sm="12">
                 <SelectOption
                   :disabled="action == 'Read' || formData.is_sys ? true : false"
                   :col="[3, 9]"
                   title="Department"
                   required
-                  :options="departmentOptions"
+                  :options="
+                    departmentOptions.filter((it) =>
+                      formData.is_sys ? it.is_sys : !it.is_sys,
+                    )
+                  "
                   v-on:onchange="formData.mst_department_id = $event"
                   :value="formData.mst_department_id"
                   :isValid="
@@ -187,7 +190,11 @@
                   :col="[3, 9]"
                   title="Section"
                   required
-                  :options="optionSections"
+                  :options="
+                    optionSections.filter((it) =>
+                      formData.is_sys ? it.is_sys : !it.is_sys,
+                    )
+                  "
                   v-on:onchange="formData.mst_section_id = $event"
                   :value="formData.mst_section_id"
                   :isValid="
@@ -537,6 +544,7 @@ export default {
         error: null,
         mst_department_id: null,
         mst_section_id: null,
+        is_sys: null,
       },
       statusOptions: [
         { value: 'Active', label: 'Active' },
@@ -587,9 +595,14 @@ export default {
     },
     async loadDepartment() {
       this.departmentOptions = [];
-      let _res = await getMstDepartment({ status: 'Active', is_sys: 'null' });
+      let param = {
+        status: 'Active',
+      };
+
+      let _res = await getMstDepartment(param);
       for (const it of _res.data) {
         this.departmentOptions.push({
+          is_sys: it.is_sys,
           label: it.name,
           value: `${it.id}`,
         });
@@ -625,7 +638,7 @@ export default {
         if (this.$route.params.id !== undefined) {
           delete this.formData.pwd;
         }
-        if (getUserId() == 0) this.formData.is_sys = 0;
+        // if (getUserId() == 0) this.formData.is_sys = 0;
         let tlp = '';
         if (data.tlp) {
           tlp = data.tlp.split('-');
@@ -644,11 +657,11 @@ export default {
       let _res = await getMstSection({
         mst_department_id: this.formData.mst_department_id,
         status: 'Active',
-        is_sys: 'null',
       });
       this.optionSections = [];
       for (const it of _res.data) {
         this.optionSections.push({
+          is_sys: it.is_sys,
           label: it.name,
           value: `${it.id}`,
         });
