@@ -195,7 +195,11 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter, handleBack } from '../../../utils';
+import {
+  capitalizeFirstLetter,
+  exportDataV3,
+  handleBack,
+} from '../../../utils';
 import $axiosMertrack from '../../../apiMertrack';
 import jsPDF from 'jspdf';
 import domtoimage from 'dom-to-image';
@@ -256,37 +260,47 @@ export default {
       }
       return true;
     },
-    handleClickExport() {
-      domtoimage
-        .toPng(this.$refs.content, {
-          width: 3508,
-          height: 2480,
-          style: {
-            transform: 'scale(0.6)',
-            'transform-origin': 'top left',
-          },
-        })
-        .then(function (data) {
-          var img = new Image();
-          img.src = data;
-          const doc = new jsPDF({
-            orientation: 'portrait',
-            format: 'a4',
-          });
-          doc.addImage(img, 'JPEG', 2, 0);
-          const date = new Date();
-          const filename =
-            'showstatus_' +
-            date.getFullYear() +
-            ('0' + (date.getMonth() + 1)).slice(-2) +
-            ('0' + date.getDate()).slice(-2) +
-            ('0' + date.getHours()).slice(-2) +
-            ('0' + date.getMinutes()).slice(-2) +
-            ('0' + date.getSeconds()).slice(-2) +
-            '.pdf';
-          doc.save(filename);
-        });
+    handleClickExport(type) {
+      exportDataV3({
+        alert: true,
+        param: {
+          id: this.$route.params.id,
+        },
+        exportType: type,
+        url: '/v3/system/audit-trail',
+      });
     },
+    // handleClickExport() {
+    //   domtoimage
+    //     .toPng(this.$refs.content, {
+    //       width: 3508,
+    //       height: 2480,
+    //       style: {
+    //         transform: 'scale(0.6)',
+    //         'transform-origin': 'top left',
+    //       },
+    //     })
+    //     .then(function (data) {
+    //       var img = new Image();
+    //       img.src = data;
+    //       const doc = new jsPDF({
+    //         orientation: 'portrait',
+    //         format: 'a4',
+    //       });
+    //       doc.addImage(img, 'JPEG', 2, 0);
+    //       const date = new Date();
+    //       const filename =
+    //         'showstatus_' +
+    //         date.getFullYear() +
+    //         ('0' + (date.getMonth() + 1)).slice(-2) +
+    //         ('0' + date.getDate()).slice(-2) +
+    //         ('0' + date.getHours()).slice(-2) +
+    //         ('0' + date.getMinutes()).slice(-2) +
+    //         ('0' + date.getSeconds()).slice(-2) +
+    //         '.pdf';
+    //       doc.save(filename);
+    //     });
+    // },
     cancel() {
       handleBack(this.$router, this.$route);
     },

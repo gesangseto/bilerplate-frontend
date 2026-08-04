@@ -15,6 +15,16 @@
             :filterBy="['All', 'created_by']"
             v-on:handleReload="loadData($event)"
           />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardBody>
       </CCard>
     </CCol>
@@ -23,7 +33,11 @@
 
 <script>
 import $axiosMertrack from '../../../apiMertrack';
-import { capitalizeFirstLetter, exportDataReport } from '../../../utils';
+import {
+  exportDataV3,
+  capitalizeFirstLetter,
+  exportDataReport,
+} from '../../../utils';
 
 export default {
   name: 'ListAuditTrail',
@@ -96,7 +110,11 @@ export default {
       });
     },
     handleClickExport(type) {
-      exportDataReport({ param: this.$route.query, exportType: type });
+      exportDataV3({
+        param: this.$route.query,
+        exportType: type,
+        url: '/v3/system/audit-trail',
+      });
     },
     rowViewClicked(item) {
       this.$router.push({ path: `audit_trail/read/${item.id}` });
