@@ -1,10 +1,10 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
 let url = `/v4/helper/whatsapp`;
 
 export const getWhatsappQr = async () => {
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(`${url}/qr`)
       .then((result) => {
         let res = result.data;
@@ -22,7 +22,7 @@ export const sendWhatsappMessage = async (param = Object) => {
     return false;
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(`${url}/send`, param)
       .then((result) => {
         let res = result.data;
@@ -37,7 +37,7 @@ export const sendWhatsappMessage = async (param = Object) => {
 
 export const deleteWhatsappSession = async () => {
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .delete(`${url}/session`)
       .then((result) => {
         let res = result.data;

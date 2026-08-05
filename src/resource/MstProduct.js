@@ -1,6 +1,6 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
-let url = `/v3/master/product`;
+let url = `/v1/master/product`;
 
 export const getMstProduct = async (param = Object) => {
   var query_string = '';
@@ -8,7 +8,7 @@ export const getMstProduct = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;
@@ -26,7 +26,7 @@ export const insertMstProduct = async (param = Object) => {
     return false;
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .put(url, param)
       .then((result) => {
         let res = result.data;
@@ -44,7 +44,7 @@ export const updateMstProduct = async (param = Object) => {
     return false;
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url, param)
       .then((result) => {
         let res = result.data;
@@ -61,7 +61,7 @@ export const deleteMstProduct = async (param = Object) => {
   if (!param.id) return false;
   param = { data: { ...param } };
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .delete(url, param)
       .then((result) => {
         let res = result.data;
@@ -78,9 +78,9 @@ export const insertMstProductV1 = async (param = Object) => {
   if (!param) {
     return false;
   }
-  let _url = 'v3/master/product/v1';
+  let _url = 'v1/master/product/v1';
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .put(_url, param)
       .then((result) => {
         let res = result.data;
@@ -97,9 +97,9 @@ export const updateMstProductV1 = async (param = Object) => {
   if (!param) {
     return false;
   }
-  let _url = 'v3/master/product/v1';
+  let _url = 'v1/master/product/v1';
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(_url, param)
       .then((result) => {
         let res = result.data;

@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3 } from '../../../utils';
 export default {
   name: 'ListInbound',
@@ -101,8 +101,8 @@ export default {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;
-      $axiosMertrack
-        .get(`/v3/transaction/pre-inbound?${param}&raw=true`)
+      $axios
+        .get(`/v1/transaction/pre-inbound?${param}&raw=true`)
         .then((res) => {
           res = res.data;
           this.totalData = res.grand_total || 0;

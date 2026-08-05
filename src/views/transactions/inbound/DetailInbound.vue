@@ -165,7 +165,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3, handleBack, toTitleCase } from '../../../utils';
 
 export default {
@@ -173,24 +173,22 @@ export default {
   mounted() {
     if (this.$route.params.id !== undefined) {
       let param = `id=${this.$route.params.id}`;
-      $axiosMertrack
-        .get(`/v3/transaction/inbound?${param}`)
-        .then((response) => {
-          let data = response.data.data[0];
-          this.inbound = data;
-          this.inbound.source = toTitleCase(data.source);
-          if (data.items.length > 0) {
-            this.items = data.items;
-          } else {
-            this.$toast.open({
-              message: `No data to be viewed`,
-              type: 'error',
-              dissmissible: true,
-              position: 'top-right',
-              duration: 5000,
-            });
-          }
-        });
+      $axios.get(`/v1/transaction/inbound?${param}`).then((response) => {
+        let data = response.data.data[0];
+        this.inbound = data;
+        this.inbound.source = toTitleCase(data.source);
+        if (data.items.length > 0) {
+          this.items = data.items;
+        } else {
+          this.$toast.open({
+            message: `No data to be viewed`,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+        }
+      });
     }
   },
   data() {
@@ -328,7 +326,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/inbound',
+        url: '/v1/transaction/inbound',
       });
     },
   },

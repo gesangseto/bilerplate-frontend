@@ -186,7 +186,7 @@ export function exportData({ param = {}, exportType = 'xls' }) {
   delete new_param.page;
   new_param.PrintTo = exportType;
   let url = `${
-    process.env.VUE_APP_URL_API_MERTRACK
+    process.env.VUE_APP_URL_API
   }/api/general/web?${new URLSearchParams(new_param).toString()}`;
   window.open(`${url}`, '_blank');
   delete new_param.PrintTo;
@@ -199,7 +199,7 @@ export function exportDataV3({
   url,
   alert = false,
 }) {
-  let endpoint = process.env.VUE_APP_URL_API_MERTRACK;
+  let endpoint = process.env.VUE_APP_URL_API;
   let new_param = { ...param };
   delete new_param.limit;
   delete new_param.page;
@@ -215,7 +215,7 @@ export function exportDataV3({
   // delete new_param.page;
   new_param.PrintTo = exportType;
   let _url = `${endpoint}/api${url}?${new URLSearchParams(
-    new_param
+    new_param,
   ).toString()}`;
   let next = true;
   if (new_param.totalData && alert) {
@@ -243,7 +243,7 @@ export function exportDataReport({ param = {}, exportType = 'xls' }) {
   delete new_param.page;
   new_param.PrintTo = exportType;
   let url = `${
-    process.env.VUE_APP_URL_API_MERTRACK
+    process.env.VUE_APP_URL_API
   }/api/general/report?${new URLSearchParams(new_param).toString()}`;
   window.open(`${url}`, '_blank');
   delete new_param.PrintTo;

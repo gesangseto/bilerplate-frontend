@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 export default {
   name: 'DetailTransactionV3',
   props: { item: Object, disable_header: Boolean },
@@ -210,28 +210,28 @@ export default {
           this.loading[`level_${pack_level}`] = true;
         }
         let param = {};
-        let url = `/v3/helper/detail-item/transaction?${param}`;
+        let url = `/v1/helper/detail-item/transaction?${param}`;
         if (item.pss_id && item.id) {
           param = { pss_id_parent: item.pss_id, item_id: item.id };
           param = new URLSearchParams(param).toString();
-          url = `/v3/helper/detail-item/transaction?raw=true&${param}`;
+          url = `/v1/helper/detail-item/transaction?raw=true&${param}`;
         } else if (item.batch_list_id) {
           param = { parent: item.id };
           param = new URLSearchParams(param).toString();
-          url = `/v3/helper/detail-item/production?raw=true&${param}`;
+          url = `/v1/helper/detail-item/production?raw=true&${param}`;
         } else if (item.pre_inbound_id) {
           param = {
             psl_id_parent: item.psl_id,
             pre_inbound_id: item.pre_inbound_id,
           };
           param = new URLSearchParams(param).toString();
-          url = `/v3/helper/detail-item/pre-inbound?raw=true&${param}`;
+          url = `/v1/helper/detail-item/pre-inbound?raw=true&${param}`;
         } else {
           param = { parent: item.id };
           param = new URLSearchParams(param).toString();
-          url = `/v3/helper/detail-item/stock?raw=true&${param}`;
+          url = `/v1/helper/detail-item/stock?raw=true&${param}`;
         }
-        $axiosMertrack.get(url).then((result) => {
+        $axios.get(url).then((result) => {
           // for Loading button
           if (this.initial_load) {
             this.initial_load = false;

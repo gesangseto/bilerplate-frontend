@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 import { dateFilter } from '../../../constants';
 
@@ -136,8 +136,8 @@ export default {
         approved: false,
         reason: `[CANCEL] ${reason}`,
       };
-      $axiosMertrack
-        .post(`/v3/transaction/stock-opname`, body)
+      $axios
+        .post(`/v1/transaction/stock-opname`, body)
         .then((result) => {
           this.loadData();
           this.$toast.open({
@@ -166,8 +166,8 @@ export default {
 
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/stock-opname?raw=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/transaction/stock-opname?raw=true&${param}`;
+      $axios.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePaginationV3({
           filter: this.filter,
@@ -184,7 +184,7 @@ export default {
         alert: true,
         param: this.$route.query,
         exportType: type,
-        url: '/v3/transaction/stock-opname',
+        url: '/v1/transaction/stock-opname',
       });
     },
     pageChange(page) {

@@ -118,7 +118,7 @@ export default {
       exportDataV3({
         param: this.$route.query,
         exportType: type,
-        url: '/v3/master/customer',
+        url: '/v1/master/customer',
       });
     },
     rowUpdate(item) {

@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import {
   printLabelV3,
   calculatePaginationV3,
@@ -204,8 +204,8 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/re-packing?raw=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/transaction/re-packing?raw=true&${param}`;
+      $axios.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePaginationV3({
           filter: this.filter,
@@ -222,7 +222,7 @@ export default {
         alert: true,
         param: this.$route.query,
         exportType: type,
-        url: '/v3/transaction/re-packing',
+        url: '/v1/transaction/re-packing',
       });
     },
     pageChange(page) {

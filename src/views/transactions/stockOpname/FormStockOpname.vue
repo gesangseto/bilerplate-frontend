@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import 'vue-select/dist/vue-select.css';
 import { handleBack } from '../../../utils';
 export default {
@@ -230,8 +230,8 @@ export default {
   },
   methods: {
     loadListWarehouse() {
-      let _url = `/v3/master/warehouse?status=Active`;
-      $axiosMertrack.get(_url).then((result) => {
+      let _url = `/v1/master/warehouse?status=Active`;
+      $axios.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.warehouseOptions.push({
@@ -270,8 +270,8 @@ export default {
       }
       this.items = [];
       this.views = false;
-      let _url = `/v3/transaction/stock-opname/generate?raw=true&warehouse_id=${this.stock.warehouse_id}`;
-      $axiosMertrack.get(_url).then((res) => {
+      let _url = `/v1/transaction/stock-opname/generate?raw=true&warehouse_id=${this.stock.warehouse_id}`;
+      $axios.get(_url).then((res) => {
         this.items = res.data.data;
         this.views = true;
       });
@@ -343,24 +343,22 @@ export default {
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack
-          .put('/v3/transaction/stock-opname', param)
-          .then((result) => {
-            this.$isLoading(false);
-            let res = result.data;
-            this.$toast.open({
-              message: res.error
-                ? `${res.message}`
-                : 'Data has been saved successfully',
-              type: res.error ? 'error' : 'success',
-              dissmissible: true,
-              position: 'top-right',
-              duration: 5000,
-            });
-            if (!res.error) {
-              handleBack(this.$router, this.$route);
-            }
+        $axios.put('/v1/transaction/stock-opname', param).then((result) => {
+          this.$isLoading(false);
+          let res = result.data;
+          this.$toast.open({
+            message: res.error
+              ? `${res.message}`
+              : 'Data has been saved successfully',
+            type: res.error ? 'error' : 'success',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
           });
+          if (!res.error) {
+            handleBack(this.$router, this.$route);
+          }
+        });
       }
       return;
     },

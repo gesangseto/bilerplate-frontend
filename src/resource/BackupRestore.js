@@ -1,11 +1,11 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
 let url = `/v4/maintenance`;
 
 export const getDatabaseLog = async (filter = {}) => {
   let param = `${new URLSearchParams(filter).toString()}`;
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(url + '/log', param)
       .then((result) => {
         let res = result.data;
@@ -19,7 +19,7 @@ export const getDatabaseLog = async (filter = {}) => {
 };
 export const getDatabaseBackup = async (params = {}) => {
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(url + '/backup', params)
       .then((result) => {
         let res = result.data;
@@ -33,7 +33,7 @@ export const getDatabaseBackup = async (params = {}) => {
 };
 export const DatabaseBackup = async (params = {}) => {
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url + '/backup', params)
       .then((result) => {
         let res = result.data;
@@ -52,7 +52,7 @@ export const DatabaseRestore = async (params = {}) => {
   }
 
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url + '/restore', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

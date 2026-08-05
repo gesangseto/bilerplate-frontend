@@ -156,7 +156,7 @@
 
 <script>
 import '../../../assets/js/jquery-ui';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { handleBack } from '../../../utils';
 // import vueSelect from 'vue-select';
 
@@ -390,8 +390,8 @@ export default {
     loadListWarehouse() {
       var param = { status: 'Active', category_id: 1 };
       param = new URLSearchParams(param).toString();
-      var _url = `/v3/master/warehouse?${param}`;
-      $axiosMertrack.get(_url).then((result) => {
+      var _url = `/v1/master/warehouse?${param}`;
+      $axios.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.listWarehouseFrom.push({
@@ -402,8 +402,8 @@ export default {
       });
       param = { status: 'Active', category_id: 3 };
       param = new URLSearchParams(param).toString();
-      _url = `/v3/master/warehouse?${param}`;
-      $axiosMertrack.get(_url).then((result) => {
+      _url = `/v1/master/warehouse?${param}`;
+      $axios.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.listWarehouseTo.push({
@@ -466,8 +466,8 @@ export default {
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack
-          .put('/v3/transaction/transfer', param)
+        $axios
+          .put('/v1/transaction/transfer', param)
           .then((result) => {
             this.$isLoading(false);
             let res = result.data;

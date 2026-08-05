@@ -158,7 +158,7 @@
 
 <script>
 let dataPost = [];
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import 'vue-select/dist/vue-select.css';
 import moment from 'moment';
 import { getMstProduct, insertMstProduct } from '../../../resource/MstProduct';
@@ -176,7 +176,7 @@ export default {
         }
         if (item.batch_no) {
           let idx = this.batchNumberOptions.findIndex(
-            (o) => o.value == item.batch_no
+            (o) => o.value == item.batch_no,
           );
           let batch = this.batchNumberOptions[idx];
           this.formData.batch_detail = batch;
@@ -361,8 +361,8 @@ export default {
         packaging_level: 1,
       };
       param = new URLSearchParams(param).toString();
-      let _url = `/v3/helper/detail-item/batch?${param}`;
-      $axiosMertrack.get(_url).then((result) => {
+      let _url = `/v1/helper/detail-item/batch?${param}`;
+      $axios.get(_url).then((result) => {
         let _data = result.data.data;
         this.batchNumberOptions = [];
         if (_data.length > 0) {

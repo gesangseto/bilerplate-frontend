@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 
 export default {
   name: 'ListWorkflow',
@@ -68,8 +68,8 @@ export default {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;
-      let url = `/v3/master/workflow?raw=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/master/workflow?raw=true&${param}`;
+      $axios.get(url).then((res) => {
         res = res.data;
         this.totalData = res.grand_total;
         this.items = res.data;

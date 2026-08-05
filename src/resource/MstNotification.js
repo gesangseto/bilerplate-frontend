@@ -1,7 +1,7 @@
-import $axiosMertrack from '../apiMertrack';
-import $axiosMertrackNonLoading from '../apiMertrackNonLoading';
+import $axios from '../api';
+import $axiosNonLoading from '../apiNonLoading';
 
-let url = `/v3/master/notification`;
+let url = `/v1/master/notification`;
 
 export const getMstNotification = async (param = Object) => {
   var query_string = '';
@@ -9,7 +9,7 @@ export const getMstNotification = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrackNonLoading
+    $axiosNonLoading
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;
@@ -27,7 +27,7 @@ export const updateMstNotification = async (param = Object) => {
     return false;
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url, param)
       .then((result) => {
         let res = result.data;
@@ -45,7 +45,7 @@ export const deleteMstNotification = async (param = Object) => {
   }
   param = { data: { ...param } };
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .delete(url, param)
       .then((result) => {
         let res = result.data;

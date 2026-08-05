@@ -1,4 +1,4 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
 let url = `/version`;
 
@@ -8,7 +8,7 @@ export const getVersion = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;

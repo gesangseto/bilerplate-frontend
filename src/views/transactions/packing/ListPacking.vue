@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { calculatePaginationV3, exportDataV3 } from '../../../utils';
 import { dateFilter } from '../../../constants';
 export default {
@@ -159,8 +159,8 @@ export default {
   methods: {
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/packing?raw=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/transaction/packing?raw=true&${param}`;
+      $axios.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePaginationV3({
           filter: this.filter,
@@ -177,7 +177,7 @@ export default {
         alert: true,
         param: this.$route.query,
         exportType: type,
-        url: '/v3/transaction/packing',
+        url: '/v1/transaction/packing',
       });
     },
     pageChange(page) {

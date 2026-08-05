@@ -102,7 +102,7 @@ export default {
       exportDataV3({
         param: this.$route.query,
         exportType: type,
-        url: '/v3/master/product-category',
+        url: '/v1/master/product-category',
       });
     },
     rowUpdate(item) {

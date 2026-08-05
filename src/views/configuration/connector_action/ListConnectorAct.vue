@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { readCron } from '../../../utils';
 
 export default {
@@ -105,13 +105,11 @@ export default {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;
-      $axiosMertrack
-        .get(`/v3/connector/connector-action?${param}`)
-        .then((res) => {
-          res = res.data;
-          this.totalData = res.grand_total;
-          this.items = res.data;
-        });
+      $axios.get(`/v1/connector/connector-action?${param}`).then((res) => {
+        res = res.data;
+        this.totalData = res.grand_total;
+        this.items = res.data;
+      });
     },
     rowUpdate(item) {
       this.$router.push({
@@ -133,8 +131,8 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let _param = { id: item.id };
-        $axiosMertrack
-          .delete(`v3/connector/connector-action`, { data: _param })
+        $axios
+          .delete(`v1/connector/connector-action`, { data: _param })
           .then((result) => {
             this.$isLoading(false);
             this.loadData();

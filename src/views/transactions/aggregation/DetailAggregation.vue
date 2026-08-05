@@ -214,7 +214,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3, handleBack } from '../../../utils';
 export default {
   name: 'DetailAggregation',
@@ -222,8 +222,8 @@ export default {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       let param = { id: this.$route.params.id, raw: true };
-      let url = `/v3/transaction/aggregation?${new URLSearchParams(param)}`;
-      $axiosMertrack.get(url).then((response) => {
+      let url = `/v1/transaction/aggregation?${new URLSearchParams(param)}`;
+      $axios.get(url).then((response) => {
         let data = response.data.data[0];
         this.aggregation = data;
         if (data.items.length > 0) {
@@ -366,7 +366,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/aggregation',
+        url: '/v1/transaction/aggregation',
       });
     },
   },

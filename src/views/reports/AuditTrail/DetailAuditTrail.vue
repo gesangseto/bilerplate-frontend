@@ -200,7 +200,7 @@ import {
   exportDataV3,
   handleBack,
 } from '../../../utils';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import jsPDF from 'jspdf';
 import domtoimage from 'dom-to-image';
 
@@ -244,8 +244,8 @@ export default {
       // this.dataBody = this.data["val3"];
       // this.dataBody = JSON.parse(this.dataBody);
       // return;
-      let url = `/v3/system/audit-trail?id=${this.$route.params.id}`;
-      $axiosMertrack.get(url).then((response) => {
+      let url = `/v1/system/audit-trail?id=${this.$route.params.id}`;
+      $axios.get(url).then((response) => {
         let data = response.data.data[0];
         this.data = data;
         this.dataBody = JSON.parse(this.data['data']);
@@ -267,7 +267,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/system/audit-trail',
+        url: '/v1/system/audit-trail',
       });
     },
     // handleClickExport() {

@@ -211,7 +211,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import {
   exportDataV3,
   getSectionId,
@@ -335,8 +335,8 @@ export default {
     loadData() {
       this.decomissioning = {};
       this.items = [];
-      let url = `/v3/transaction/comm-decomm?id=${this.$route.params.id}`;
-      $axiosMertrack.get(url).then((response) => {
+      let url = `/v1/transaction/comm-decomm?id=${this.$route.params.id}`;
+      $axios.get(url).then((response) => {
         let data = response.data.data[0];
         this.decomissioning = data;
         // Last Approval
@@ -362,9 +362,9 @@ export default {
           approved: true,
           reason: '',
         };
-        let url = `/v3/transaction/approval/comm-decomm`;
+        let url = `/v1/transaction/approval/comm-decomm`;
         this.$isLoading(true);
-        $axiosMertrack
+        $axios
           .post(url, data)
           .then((result) => {
             this.$isLoading(false);
@@ -403,9 +403,9 @@ export default {
         approved: false,
         reason: `[REJECT] ${reason}`,
       };
-      let url = `/v3/transaction/approval/comm-decomm`;
+      let url = `/v1/transaction/approval/comm-decomm`;
       this.$isLoading(true);
-      $axiosMertrack
+      $axios
         .post(url, data)
         .then((result) => {
           this.$isLoading(false);
@@ -461,7 +461,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/comm-decomm',
+        url: '/v1/transaction/comm-decomm',
       });
     },
   },

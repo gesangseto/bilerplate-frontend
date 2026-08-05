@@ -200,7 +200,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import {
   exportDataV3,
   getSectionId,
@@ -321,8 +321,8 @@ export default {
     loadData() {
       this.disposal = {};
       this.items = [];
-      let url = `/v3/transaction/disposal?id=${this.$route.params.id}`;
-      $axiosMertrack.get(url).then((response) => {
+      let url = `/v1/transaction/disposal?id=${this.$route.params.id}`;
+      $axios.get(url).then((response) => {
         let data = response.data.data[0];
         this.disposal = data;
         if (data.items.length > 0) {
@@ -348,8 +348,8 @@ export default {
           reason: '',
         };
         this.$isLoading(true);
-        let url = `/v3/transaction/approval/disposal`;
-        $axiosMertrack
+        let url = `/v1/transaction/approval/disposal`;
+        $axios
           .post(url, data)
           .then((result) => {
             this.$isLoading(false);
@@ -389,8 +389,8 @@ export default {
         reason: `[REJECT] ${reason}`,
       };
       this.$isLoading(true);
-      let url = `/v3/transaction/approval/disposal`;
-      $axiosMertrack
+      let url = `/v1/transaction/approval/disposal`;
+      $axios
         .post(url, data)
         .then((result) => {
           this.$isLoading(false);
@@ -452,7 +452,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/disposal',
+        url: '/v1/transaction/disposal',
       });
     },
   },

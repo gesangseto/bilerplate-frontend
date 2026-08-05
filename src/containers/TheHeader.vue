@@ -1,6 +1,17 @@
 <template>
-  <CHeader fixed with-subheader light>
-    <CSubheader class="px-3" style="position: relative">
+  <CHeader
+    fixed
+    with-subheader
+    light
+    style="
+      background-color: #f5f2eb;
+      border-bottom: 1px solid rgba(166, 119, 50, 0.18);
+    "
+  >
+    <CSubheader
+      class="px-3"
+      style="position: relative; background-color: transparent"
+    >
       <CToggler
         in-header
         class="ml-3 d-lg-none"
@@ -264,7 +275,7 @@ export default {
         .add(1, 'seconds')
         .format('DD/MM/YYYY HH:mm:ss:SSS');
       let time_diff = moment(time_out, 'DD/MM/YYYY HH:mm:ss').diff(
-        moment(time_now, 'DD/MM/YYYY HH:mm:ss')
+        moment(time_now, 'DD/MM/YYYY HH:mm:ss'),
       );
       let sisa = parseInt(time_diff / 1000);
       return sisa;

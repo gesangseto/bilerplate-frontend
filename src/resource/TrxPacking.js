@@ -1,6 +1,6 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
-let url = `/v3/transaction/packing`;
+let url = `/v1/transaction/packing`;
 let urlV4 = `/v4/transaction/packing`;
 
 export const getPacking = async (param = Object) => {
@@ -9,7 +9,7 @@ export const getPacking = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;
@@ -27,7 +27,7 @@ export const insertPacking = async (param = Object) => {
     return false;
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .put(url, param)
       .then((result) => {
         let res = result.data;
@@ -45,7 +45,7 @@ export const insertPackingV4 = async (param = Object) => {
     return false;
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .put(urlV4, param)
       .then((result) => {
         let res = result.data;

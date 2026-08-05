@@ -130,7 +130,7 @@ import bwipjs from 'bwip-js';
 import { parsingDataToBarcode, isValidEpcKey, isValidNie } from '../../utils';
 import invalid_barcode from '../../assets/invalid_barcode.png';
 import moment from 'moment';
-// import $axiosMertrack from "../../apiMertrack";
+// import $axios from "../../api";
 
 export default {
   name: 'HeaderManualBarcodeGenerator',

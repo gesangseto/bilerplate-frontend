@@ -1,6 +1,6 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
-let url = `/v3/helper/epc-status`;
+let url = `/v1/helper/epc-status`;
 
 export const getMstEpcStatus = async (param = Object) => {
   var query_string = '';
@@ -8,7 +8,7 @@ export const getMstEpcStatus = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;

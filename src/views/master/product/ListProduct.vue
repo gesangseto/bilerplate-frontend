@@ -142,7 +142,7 @@ export default {
       exportDataV3({
         param: this.$route.query,
         exportType: type,
-        url: '/v3/master/product',
+        url: '/v1/master/product',
       });
     },
     rowUpdate(item) {

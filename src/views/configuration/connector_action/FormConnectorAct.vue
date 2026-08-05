@@ -255,7 +255,7 @@
 
 <script>
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { getConfCron } from '../../../resource/ConfCron';
 
 export default {
@@ -306,8 +306,8 @@ export default {
   },
   methods: {
     loadData() {
-      $axiosMertrack
-        .get(`/v3/connector/connector-action?id=${this.$route.params.id}`)
+      $axios
+        .get(`/v1/connector/connector-action?id=${this.$route.params.id}`)
         .then((response) => {
           let data = response.data.data[0];
           this.form = data;
@@ -336,7 +336,7 @@ export default {
       return;
     },
     loadConnector() {
-      $axiosMertrack.get(`/v3/connector/connector-list`).then((response) => {
+      $axios.get(`/v1/connector/connector-list`).then((response) => {
         let data = response.data.data;
         for (const it of data) {
           this.listConnector.push({ label: it.name, value: it.id });
@@ -344,8 +344,8 @@ export default {
       });
     },
     getDetailConnector() {
-      $axiosMertrack
-        .get(`/v3/connector/connector-list?id=${this.form.connector_id}`)
+      $axios
+        .get(`/v1/connector/connector-list?id=${this.form.connector_id}`)
         .then((response) => {
           let data = response.data.data[0];
           this.detailConnector = data;
@@ -359,15 +359,15 @@ export default {
       }
       let prop = this.detailConnector.params[index];
       let idx = this.databaseList[index].findIndex(
-        (i) => i.value == prop.variable_value
+        (i) => i.value == prop.variable_value,
       );
       if (~idx && this.databaseList[index].length > 1) {
         return;
       }
       this.temp_selected_row = index;
       let param = `${new URLSearchParams(prop.properties).toString()}`;
-      $axiosMertrack
-        .get(`/v3/connector/connector-properties?${param}`)
+      $axios
+        .get(`/v1/connector/connector-properties?${param}`)
         .then((response) => {
           let data = response.data.data;
           for (const it of data) {
@@ -439,8 +439,8 @@ export default {
           }
         }
         if (this.$route.params.id) {
-          $axiosMertrack
-            .post(`v3/connector/connector-action`, this.form)
+          $axios
+            .post(`v1/connector/connector-action`, this.form)
             .then((result) => {
               this.$isLoading(false);
               let res = result.data;
@@ -458,8 +458,8 @@ export default {
               }
             });
         } else {
-          $axiosMertrack
-            .put(`v3/connector/connector-action`, this.form)
+          $axios
+            .put(`v1/connector/connector-action`, this.form)
             .then((result) => {
               this.$isLoading(false);
               let res = result.data;

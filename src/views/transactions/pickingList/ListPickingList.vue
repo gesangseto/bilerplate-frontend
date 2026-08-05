@@ -51,7 +51,7 @@
 
 <script>
 import moment from 'moment';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3 } from '../../../utils';
 export default {
   name: 'ListPickingList',
@@ -145,7 +145,7 @@ export default {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v4.2/transaction/picking?raw=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      $axios.get(url).then((res) => {
         res = res.data;
         this.totalData = res.grand_total || 0;
         this.items = res.data || 0;
@@ -171,7 +171,7 @@ export default {
       };
       let param = { data: { ...data } };
       this.$isLoading(true);
-      $axiosMertrack
+      $axios
         .delete('/v4.2/transaction/picking', param)
         .then((result) => {
           this.$isLoading(false);

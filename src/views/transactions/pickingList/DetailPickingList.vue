@@ -324,7 +324,7 @@
 
 <script>
 import { CDataTable } from '@coreui/vue';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3, handleBack } from '../../../utils';
 import { getPicking, isBpomGenerated } from '../../../resource/TrxPicking';
 export default {
@@ -502,7 +502,7 @@ export default {
           reason: '',
         };
         var _url = `/v4.2/transaction/picking/finish`;
-        $axiosMertrack
+        $axios
           .post(_url, param)
           .then((result) => {
             let res = result.data;

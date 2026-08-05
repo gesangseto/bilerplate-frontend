@@ -85,7 +85,7 @@
 let fileName;
 let isiFile;
 const reader = new FileReader();
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import 'vue-select/dist/vue-select.css';
 import $ from 'jquery';
 import { getMstSupplier } from '../../../resource/MstSupplier';
@@ -151,8 +151,8 @@ export default {
     handleChangeSupplier() {
       let param = { key: 'supplier_id', value: this.form.data.supplier_id };
       param = new URLSearchParams(param).toString();
-      $axiosMertrack
-        .get(`/v3/connector/connector-action?${param}`)
+      $axios
+        .get(`/v1/connector/connector-action?${param}`)
         .then((result) => {
           let data = result.data;
           if (data.error || data.data.length === 0) {
@@ -228,8 +228,8 @@ export default {
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack
-          .post('/v3/connector/connector-action/execute', this.form)
+        $axios
+          .post('/v1/connector/connector-action/execute', this.form)
           .then((result) => {
             this.$isLoading(false);
             this.$toast.open({

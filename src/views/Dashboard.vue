@@ -412,7 +412,7 @@ import { getDashboard, getInOutDashboard } from '../resource/Helper';
 // import WidgetsDropdown from "./widgets/WidgetsDropdown";
 // import WidgetsBrand from "./widgets/WidgetsBrand";
 // import CChartBarStockAll from "./charts/CChartBarStockAll";
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 import { getProfile } from '../utils';
 
 const interval_date = 11;

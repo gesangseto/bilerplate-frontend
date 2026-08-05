@@ -220,7 +220,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 import jsPDF from 'jspdf';
 import domtoimage from 'dom-to-image';
 import HeaderShowStatusV3 from '../component/HeaderShowStatusV3.vue';
@@ -268,8 +268,8 @@ export default {
     },
     getData() {
       let param = `${new URLSearchParams(this.result).toString()}`;
-      let url = `/v3/helper/detail-item/stock?show_barcode=true&show_history=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/helper/detail-item/stock?show_barcode=true&show_history=true&${param}`;
+      $axios.get(url).then((res) => {
         let data = res.data.data;
         if (data.length != 1) {
           this.$toast.open({
@@ -287,8 +287,8 @@ export default {
       });
     },
     getParent() {
-      let url = `/v3/helper/detail-item/stock?id=${this.detailData['parent']}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/helper/detail-item/stock?id=${this.detailData['parent']}`;
+      $axios.get(url).then((res) => {
         let data = res.data.data;
         this.parentData = data;
       });

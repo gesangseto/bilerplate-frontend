@@ -1,6 +1,6 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
-let url = `/v3/master/department`;
+let url = `/v1/master/department`;
 
 export const getMstDepartment = async (param = Object) => {
   var query_string = '';
@@ -8,7 +8,7 @@ export const getMstDepartment = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;
@@ -26,7 +26,7 @@ export const insertMstDepartment = async (param = Object) => {
     return false;
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .put(url, param)
       .then((result) => {
         let res = result.data;
@@ -44,7 +44,7 @@ export const updateMstDepartment = async (param = Object) => {
     return false;
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url, param)
       .then((result) => {
         let res = result.data;
@@ -61,7 +61,7 @@ export const deleteMstDepartment = async (param = Object) => {
   if (!param.id) return false;
   param = { data: { ...param } };
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .delete(url, param)
       .then((result) => {
         let res = result.data;

@@ -1,7 +1,7 @@
 <template>
   <CSidebar
     color-scheme="dark"
-    style="background-color: #000060"
+    style="background-color: #f5f2eb"
     class="bg-theme"
     fixed
     :minimize="minimize"
@@ -62,7 +62,7 @@
             class="submenu"
             v-for="(child_item, child_index) in item.items"
             :key="child_index"
-            :style="item.expand ? 'max-height: 200px;' : ''"
+            :style="{ maxHeight: item.expand ? '260px' : '0px' }"
           >
             <li>
               <a
@@ -178,35 +178,34 @@ export default {
 </script>
 <style scoped>
 .mainmenu .active-parent {
-  border-left: 5px solid #f4d608;
-  background-color: #0018ab;
-  color: #ffffff;
+  border-left: 5px solid #95c8a4;
+  background-color: #e9f7ed;
+  color: #225230;
 }
 .mainmenu .expand-parent {
-  border-left: 5px solid #0018ab;
-  background-color: #0018ab;
-  color: #ffffff;
+  border-left: 5px solid #b2d8ba;
+  background-color: #eef7ef;
+  color: #356a45;
 }
 .icon-style {
-  color: #f4d608;
+  color: #4a7a55;
 }
 .submenu .active-child {
-  border-left: 5px solid #f4d608;
-  background-color: #cdd4fa;
-  color: #0018ab;
+  border-left: 5px solid #b8dcbc;
+  background-color: #eef8ee;
+  color: #2e603a;
 }
 
 #app_image {
   width: 100%;
   height: 100%;
-  padding: 10px 10px;
+  padding: 16px;
   box-sizing: border-box;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background-color: #000060;
+  background-color: #f4ece0;
+  border-bottom: 1px solid rgba(166, 119, 50, 0.18);
 }
 
 #app_image img {
@@ -223,56 +222,81 @@ export default {
 .navigation {
   overflow: hidden;
   flex: 1 1 auto;
-  /*position: fixed;*/
-  width: 256px;
-  overflow-y: scroll;
-  /*top: 80px;*/
-  bottom: 0;
-  background-color: #000060;
+  width: 100%;
+  overflow-y: auto;
+  background-color: transparent;
 }
+
 .mainmenu,
 .submenu {
   list-style: none;
   padding: 0;
   margin: 0;
-  cursor: pointer;
 }
-.mainmenu a {
-  border-left: 5px solid #000060;
-  display: block;
-  background-color: #000060;
-  text-decoration: none;
-  padding: 15px;
-  color: #b5b5b5;
+
+.mainmenu li {
+  margin-bottom: 4px;
 }
-.mainmenu p {
-  padding: 10px;
-}
-.mainmenu a:hover {
-  border-left: 5px solid #f4d608;
-  color: white;
-}
-.mainmenu li:hover .submenu {
-  display: block;
-}
+
+.mainmenu a,
 .submenu a {
-  border-left: 5px solid #e9f1ff;
-  background-color: #e9f1ff;
-  color: #505050;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #334155;
+  padding: 14px 18px;
+  border-radius: 14px;
+  transition: background 0.2s ease, color 0.2s ease;
 }
+
+.mainmenu a {
+  background-color: transparent;
+}
+
+.mainmenu a:hover,
 .submenu a:hover {
-  border-left: 5px solid #f4d608;
-  color: #0018ab;
+  background-color: rgba(72, 157, 105, 0.14);
+  color: #164e2f;
 }
+
+.mainmenu .active-parent,
+.submenu .active-child {
+  color: #164e2f;
+}
+
+.mainmenu .active-parent .icon-style,
+.mainmenu .expand-parent .icon-style,
+.submenu .active-child .icon-style {
+  color: #15803d;
+}
+
+.mainmenu a .icon-style,
+.submenu a .icon-style {
+  transition: color 0.2s ease;
+}
+
+.mainmenu a .float-right {
+  margin-left: auto;
+  color: #94a3b8;
+}
+
 .submenu {
   overflow: hidden;
   max-height: 0;
-  /* transition: all 0.3 ease-in-out; */
-  transition: all 0.3s ease-in-out;
+  transition: max-height 0.3s ease;
 }
 
 ::-webkit-scrollbar {
-  width: 0px;
-  background: transparent; /* make scrollbar transparent */
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 </style>

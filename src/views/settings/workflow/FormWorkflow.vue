@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { getMstSection } from '../../../resource/MstSection';
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
 
@@ -131,7 +131,7 @@ export default {
     getErrorMessage(idx) {},
     loadWorkflowList() {
       let param = `raw=true&id=${this.$route.params.id}`;
-      $axiosMertrack.get(`/v3/master/workflow?${param}`).then((response) => {
+      $axios.get(`/v1/master/workflow?${param}`).then((response) => {
         let data = response.data.data[0];
         this.workflow = data;
       });
@@ -161,24 +161,22 @@ export default {
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack
-          .post('/v3/master/workflow', this.workflow)
-          .then((result) => {
-            this.$isLoading(false);
-            let res = result.data;
-            this.$toast.open({
-              message: res.error
-                ? res.message
-                : `Data has been saved successfully `,
-              type: res.error ? 'error' : 'success',
-              dissmissible: true,
-              position: 'top-right',
-              duration: 5000,
-            });
-            if (!res.error) {
-              handleBack(this.$router, this.$route);
-            }
+        $axios.post('/v1/master/workflow', this.workflow).then((result) => {
+          this.$isLoading(false);
+          let res = result.data;
+          this.$toast.open({
+            message: res.error
+              ? res.message
+              : `Data has been saved successfully `,
+            type: res.error ? 'error' : 'success',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
           });
+          if (!res.error) {
+            handleBack(this.$router, this.$route);
+          }
+        });
       }
       return;
     },

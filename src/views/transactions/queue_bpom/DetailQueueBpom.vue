@@ -139,7 +139,7 @@
 
 <script>
 import moment from 'moment';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import {
   calculatePaginationV3,
   exportDataV3,
@@ -265,8 +265,8 @@ export default {
       } else {
         param.trx_ref_id = this.$route.params.id;
       }
-      let url = `/v3/transaction/queue-bpom?${new URLSearchParams(param)}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/transaction/queue-bpom?${new URLSearchParams(param)}`;
+      $axios.get(url).then((res) => {
         let data = res.data.data;
         this.formData = data[0];
         this.items = this.formData.details;
@@ -283,8 +283,8 @@ export default {
         path = path.replace(params[key], '');
       }
       path = path.replace(/\/+$/, '');
-      $axiosMertrack
-        .get(`/v3/master/menu?link=${path}`)
+      $axios
+        .get(`/v1/master/menu?link=${path}`)
         .then((res) => {
           let _data = res.data.data[0];
           this.formConnector.data.menu_id = _data.id;
@@ -303,8 +303,8 @@ export default {
     loadConnector() {
       let param = { key: 'menu_id', value: this.formConnector.data.menu_id };
       param = new URLSearchParams(param).toString();
-      $axiosMertrack
-        .get(`/v3/connector/connector-action?${param}`)
+      $axios
+        .get(`/v1/connector/connector-action?${param}`)
         .then((result) => {
           let data = result.data;
           if (data.error || data.data.length === 0) {
@@ -343,8 +343,8 @@ export default {
     sendToBpom(item) {
       let param = this.formConnector;
       param.data.trx_ref_id = item.trx_ref_id;
-      $axiosMertrack
-        .post('/v3/connector/connector-action/execute', param)
+      $axios
+        .post('/v1/connector/connector-action/execute', param)
         .then((result) => {
           this.$isLoading(false);
           this.$toast.open({
@@ -393,8 +393,8 @@ export default {
       this.viewModal = false;
     },
     submitForceUpdate() {
-      $axiosMertrack
-        .post(`/v3/transaction/queue-bpom`, this.formForceUpdate)
+      $axios
+        .post(`/v1/transaction/queue-bpom`, this.formForceUpdate)
         .then((res) => {
           let data = res.data;
           if (data.error) {
@@ -417,7 +417,7 @@ export default {
           trx_ref_id: this.formData.trx_ref_id,
         },
         exportType: type,
-        url: '/v3/transaction/queue-bpom',
+        url: '/v1/transaction/queue-bpom',
       });
     },
   },

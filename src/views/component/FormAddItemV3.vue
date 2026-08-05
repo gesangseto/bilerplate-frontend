@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 import 'vue-select/dist/vue-select.css';
 import moment from 'moment';
 import { setConfig } from '../../utils';
@@ -333,9 +333,9 @@ export default {
         param.product_type = this.filter.product_type;
       }
       param = new URLSearchParams(param).toString();
-      let _url = `/v3/master/product?${param}`;
+      let _url = `/v1/master/product?${param}`;
       this.listProduct = [];
-      $axiosMertrack.get(_url).then((result) => {
+      $axios.get(_url).then((result) => {
         let data = result.data.data;
         let temps = [];
         for (const it of data) {
@@ -358,9 +358,9 @@ export default {
         parent: null,
       };
       param = new URLSearchParams(param).toString();
-      let _url = `/v3/helper/detail-item/batch?${param}`;
+      let _url = `/v1/helper/detail-item/batch?${param}`;
       this.listBatchNo = [];
-      $axiosMertrack.get(_url).then((result) => {
+      $axios.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let tmp = it;
@@ -383,8 +383,8 @@ export default {
         show_remark: true,
       };
       param = new URLSearchParams(param).toString();
-      let _url = `/v3/helper/detail-item/stock?${param}`;
-      $axiosMertrack.get(`${_url}`).then((result) => {
+      let _url = `/v1/helper/detail-item/stock?${param}`;
+      $axios.get(`${_url}`).then((result) => {
         let data = result.data.data;
         let available_quantity = 0;
         for (const it of data) {

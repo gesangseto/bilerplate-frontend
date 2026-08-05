@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import {
   calculatePaginationV3,
   exportDataV3,
@@ -222,8 +222,8 @@ export default {
     loadData() {
       this.items = [];
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      let url = `/v3/transaction/bpom?raw=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/transaction/bpom?raw=true&${param}`;
+      $axios.get(url).then((res) => {
         this.items = res.data.data;
         this.filter = calculatePaginationV3({
           filter: this.filter,
@@ -240,7 +240,7 @@ export default {
         alert: true,
         param: this.$route.query,
         exportType: type,
-        url: '/v3/transaction/bpom',
+        url: '/v1/transaction/bpom',
       });
     },
     pageChange(page) {
@@ -258,7 +258,7 @@ export default {
       body.PrintTo = 'csv';
       body.MertrackApiToken = getToken();
       let url = `${new URLSearchParams(body).toString()}`;
-      url = `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/transaction/bpom?raw=true&${url}`;
+      url = `${process.env.VUE_APP_URL_API}/api/v1/transaction/bpom?raw=true&${url}`;
       window.open(url, '_blank').focus();
     },
     rowUpdateClicked(item) {

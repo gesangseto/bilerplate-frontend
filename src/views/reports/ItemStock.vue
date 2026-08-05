@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 import { exportDataV3 } from '../../utils';
 
 export default {
@@ -160,7 +160,7 @@ export default {
       this.items = [];
       let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v4/report/item-stock?raw=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      $axios.get(url).then((res) => {
         res = res.data;
         this.totalData = res.grand_total || 0;
         this.items = res.data || 0;

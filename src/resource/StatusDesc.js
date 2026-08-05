@@ -1,6 +1,6 @@
-import $axiosMertrackNonLoading from '../apiMertrackNonLoading';
+import $axiosNonLoading from '../apiNonLoading';
 
-let url = `/v3/helper/status-desc`;
+let url = `/v1/helper/status-desc`;
 
 export const getStatusDesc = async (param = Object) => {
   var query_string = '';
@@ -8,7 +8,7 @@ export const getStatusDesc = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrackNonLoading
+    $axiosNonLoading
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;

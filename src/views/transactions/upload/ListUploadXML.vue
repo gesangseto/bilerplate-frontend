@@ -170,7 +170,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportData, calculatePaginationV3 } from '../../../utils';
 import { dateFilter } from '../../../constants';
 import Datepicker from 'vuejs-datepicker';
@@ -276,15 +276,13 @@ export default {
     },
     loadData() {
       let param = `${new URLSearchParams(this.filter).toString()}`;
-      $axiosMertrack
-        .get(`/v3/transaction/upload-xml?${param}&raw=true`)
-        .then((res) => {
-          this.items = res.data.data;
-          this.filter = calculatePaginationV3({
-            filter: this.filter,
-            item: res,
-          });
+      $axios.get(`/v1/transaction/upload-xml?${param}&raw=true`).then((res) => {
+        this.items = res.data.data;
+        this.filter = calculatePaginationV3({
+          filter: this.filter,
+          item: res,
         });
+      });
     },
     handleClickFilter(val) {
       this.filter = Object.assign(this.filter, val);
@@ -345,8 +343,8 @@ export default {
       }
       let message = `You are about to submit the Mfg Date information of this Upload XML data. Once submitted, the Mfg Date information cannot be modified. Would you like to continue?`;
       if (confirm(message)) {
-        $axiosMertrack
-          .post('/v3/transaction/upload-xml', this.MfgPostfix)
+        $axios
+          .post('/v1/transaction/upload-xml', this.MfgPostfix)
           .then((result) => {
             this.items = [];
             this.loadData();
@@ -381,8 +379,8 @@ export default {
         approved: false,
         reason: `[CANCEL] ${reason}`,
       };
-      $axiosMertrack
-        .post(`/v3/transaction/upload-xml/process`, body)
+      $axios
+        .post(`/v1/transaction/upload-xml/process`, body)
         .then((result) => {
           this.loadData();
           this.$toast.open({

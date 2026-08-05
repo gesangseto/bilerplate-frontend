@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 
 export default {
   name: 'ButtonDownloadFilePath',
@@ -63,11 +63,11 @@ export default {
   methods: {
     async downloadFile() {
       try {
-        let endpoint = process.env.VUE_APP_URL_API_MERTRACK;
+        let endpoint = process.env.VUE_APP_URL_API;
         let _url = `${endpoint}/api/v4/helper/download?file_path=${this.file_path}`;
 
         // 🔥 request dengan axios, responseType = blob
-        const response = await $axiosMertrack.get(_url, {
+        const response = await $axios.get(_url, {
           responseType: 'blob',
         });
 

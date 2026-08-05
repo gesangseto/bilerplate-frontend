@@ -1,12 +1,12 @@
-const path = require("path");
-const zlib = require("zlib");
+const path = require('path');
+const zlib = require('zlib');
 module.exports = {
   // Enable Compression Website
   pluginOptions: {
     compression: {
       brotli: {
-        filename: "[file].br[query]",
-        algorithm: "brotliCompress",
+        filename: '[file].br[query]',
+        algorithm: 'brotliCompress',
         include: /\.(js|css|html|svg|json)(\?.*)?$/i,
         compressionOptions: {
           params: {
@@ -16,15 +16,15 @@ module.exports = {
         minRatio: 0.8,
       },
       gzip: {
-        filename: "[file].gz[query]",
-        algorithm: "gzip",
+        filename: '[file].gz[query]',
+        algorithm: 'gzip',
         include: /\.(js|css|html|svg|json)(\?.*)?$/i,
         minRatio: 0.8,
       },
     },
   },
   // End Of Enable Compression Website
-  publicPath: "/",
+  publicPath: '/',
   lintOnSave: false,
   runtimeCompiler: true,
   configureWebpack: {
@@ -32,6 +32,6 @@ module.exports = {
       symlinks: false,
     },
   },
-  transpileDependencies: ["@coreui/utils"],
-  outputDir: path.resolve(__dirname, "../public"),
+  transpileDependencies: ['@coreui/utils'],
+  outputDir: path.resolve(__dirname, '../public'),
 };

@@ -157,15 +157,15 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3, handleBack, toTitleCase } from '../../../utils';
 
 export default {
   name: 'DetailOutbound',
   mounted() {
     if (this.$route.params.id != undefined) {
-      let url = `/v3/transaction/outbound?raw=true&id=${this.$route.params.id}`;
-      $axiosMertrack.get(url).then((response) => {
+      let url = `/v1/transaction/outbound?raw=true&id=${this.$route.params.id}`;
+      $axios.get(url).then((response) => {
         let data = response.data.data[0];
         this.outbound = data;
         this.outbound.type = toTitleCase(data.type);
@@ -317,7 +317,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/outbound',
+        url: '/v1/transaction/outbound',
       });
     },
   },

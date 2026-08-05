@@ -107,7 +107,7 @@ export default {
       exportDataV3({
         param: this.$route.query,
         exportType: type,
-        url: '/v3/master/currency',
+        url: '/v1/master/currency',
       });
     },
     rowUpdate(item) {

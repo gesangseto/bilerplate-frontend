@@ -192,7 +192,7 @@
   </div>
 </template>
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3, handleBack } from '../../../utils';
 export default {
   data() {
@@ -240,8 +240,8 @@ export default {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     // get data detail stock transfer
 
-    let url = `/v3/transaction/transfer?raw=true&id=${this.$route.params.id}`;
-    $axiosMertrack.get(url).then((response) => {
+    let url = `/v1/transaction/transfer?raw=true&id=${this.$route.params.id}`;
+    $axios.get(url).then((response) => {
       let data = response.data.data[0];
       //
       this.transfer = data;
@@ -288,7 +288,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/transfer',
+        url: '/v1/transaction/transfer',
       });
     },
   },

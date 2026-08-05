@@ -1,13 +1,36 @@
 <template>
-  <CFooter fixed light style="background-color: white">
+  <CFooter
+    fixed
+    light
+    style="
+      background-color: #f5f2eb;
+      border-top: 1px solid rgba(166, 119, 50, 0.18);
+    "
+  >
     <div>
       <span class="mr-1">Copyright &copy; {{ new Date().getFullYear() }}</span>
-      <a href="http://merindo.co.id/" target="_blank"> PT Merindo Makmur</a>
+      <a href="http://merindo.co.id/" target="_blank"> Gesang Aji Seto</a>
     </div>
-    <div class="ml-auto">
-      <span class="mr-1">Powered by</span>
-      <CButton @click="appModal = true" color="default">
-        <img v-bind:src="mertrack_image" style="width: auto; height: 40px" />
+    <div
+      class="ml-auto"
+      style="display: inline-flex; align-items: center; gap: 8px"
+    >
+      <CButton
+        @click="appModal = true"
+        color="default"
+        style="
+          padding: 0;
+          min-width: auto;
+          min-height: auto;
+          height: auto;
+          line-height: normal;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          overflow: visible;
+        "
+      >
+        <span class="mr-1">About</span>
       </CButton>
     </div>
     <CModal
@@ -17,42 +40,9 @@
       size="lg"
     >
       <template #header>
-        <h5><strong>About MERTRACK&reg; Integra</strong></h5>
+        <h5><strong>About Gastrack&reg; </strong></h5>
       </template>
       <CCardBody>
-        <CRow>
-          <CCol md="4">
-            <img
-              v-bind:src="mertrack_image"
-              style="width: auto; height: 80px"
-            />
-          </CCol>
-          <CCol md="8">
-            <table class="sticky-table">
-              <thead>
-                <tr>
-                  <th style="text-align: center" colspan="4">System Version</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Mertrack Core</td>
-                  <td>:&nbsp;{{ version.be }}</td>
-                  <td>Website</td>
-                  <td>:&nbsp;{{ version.web }}</td>
-                </tr>
-                <tr>
-                  <td>Mobile</td>
-                  <td>:&nbsp;{{ version.mobile }}</td>
-                  <td>Connector BPOM</td>
-                  <td>:&nbsp;{{ version.bpom }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </CCol>
-        </CRow>
-
-        <hr />
         <div class="container-area">
           <p v-html="data.about" class="text-area" />
         </div>
@@ -65,8 +55,7 @@
           <span class="mr-1">Copyright</span>
           <span class="ml-1">&copy; {{ new Date().getFullYear() }}</span>
           <span class="ml-1"
-            ><a href="http://merindo.co.id/" target="_blank">
-              PT.Merindo Makmur</a
+            ><a href="http://merindo.co.id/" target="_blank"> Gesang Aji Seto</a
             >.</span
           >
           <span class="ml-1">All rights reserved.</span>
@@ -140,27 +129,14 @@ export default {
     this.loadVersion();
     this.data = getConfig();
     this.data.about = `
-    This copy of <strong>MERTRACK® Integra</strong> is licensed to: <br/>
+    This copy of <strong>Gastrack® </strong> is licensed to: <br/>
     <br/>
-    Number of Entity: 1 <br/>
-    Entity Name: ${this.data.identity_name} <br/>
-    Entity Address: ${this.data.entity_address} <br/>
-    <br/>
-    <strong>License Limitation</strong><br/>
-    Warehouse: ${this.data.total_wh || 'unlimited'}<br/>
-    Date Format: ${this.data.total_conf_date || 'unlimited'}<br/>
-    Layout: ${this.data.total_conf_layout || 'unlimited'}<br/>
-    Department: ${this.data.total_department || 'unlimited'}<br/>
-    Section: ${this.data.total_section || 'unlimited'} <br/>
-    User: unlimited <br/>
-    User access: unlimited <br/>
-    Android Device: ${this.data.total_device} <br/>
-    <br/>
+    
     <strong>Warning</strong>
     <br/>
 This computer program is protected by copyright and international treaties. Unauthorized use or reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible under the law.
     <br/>
-Any modification to this program or any portion of it without approval from PT Merindo Makmur shall be considered as illegal act and could be prosecuted under the law, therefore any valid warranty will be terminated immediately and PT Merindo Makmur will be released from any responsibility and obligation to anything happened due to the illegal modification of the program or any portion of the program.
+Any modification to this program or any portion of it without approval from Gesang Aji Seto shall be considered as illegal act and could be prosecuted under the law, therefore any valid warranty will be terminated immediately and Gesang Aji Seto will be released from any responsibility and obligation to anything happened due to the illegal modification of the program or any portion of the program.
     <br/>
     <br/>
     <strong>Warranty</strong>
@@ -174,10 +150,10 @@ Any program modification requested by customer which is outside the scope of Fun
     <br/>
     <strong>Post Warranty</strong>
     <br/>
-Licensed customer can purchase support and service package or on demand support and service from PT Merindo Makmur after the warranty period ends. Both support and service package and on demand support and service is subject to then-current rates. Terms and condition of support and service after valid warranty ends will be subject to the terms and condition of purchased support and service (package or on demand).
+Licensed customer can purchase support and service package or on demand support and service from Gesang Aji Seto after the warranty period ends. Both support and service package and on demand support and service is subject to then-current rates. Terms and condition of support and service after valid warranty ends will be subject to the terms and condition of purchased support and service (package or on demand).
     <br/>
     <br/>
-Copyright © ${new Date().getFullYear()} PT Merindo Makmur. All rights reserved.
+Copyright © ${new Date().getFullYear()} Gesang Aji Seto. All rights reserved.
 `;
   },
   methods: {

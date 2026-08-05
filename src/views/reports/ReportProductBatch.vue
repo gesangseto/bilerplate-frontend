@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 import { exportDataV3 } from '../../utils';
 
 export default {
@@ -94,8 +94,8 @@ export default {
       if (!filter) filter = this.$route.query;
       if (filter) this.filter = filter;
       let param = `${new URLSearchParams(filter).toString()}`;
-      let url = `/v3/report/batch?raw=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/report/batch?raw=true&${param}`;
+      $axios.get(url).then((res) => {
         res = res.data;
         this.totalData = res.grand_total || 0;
         this.items = res.data || 0;
@@ -105,7 +105,7 @@ export default {
       exportDataV3({
         param: this.$route.query,
         exportType: type,
-        url: '/v3/report/batch',
+        url: '/v1/report/batch',
         alert: true,
       });
     },

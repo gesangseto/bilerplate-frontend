@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3, toTitleCase } from '../../../utils';
 export default {
   name: 'ListInbound',
@@ -135,20 +135,18 @@ export default {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;
-      $axiosMertrack
-        .get(`/v3/transaction/inbound?${param}&raw=true`)
-        .then((res) => {
-          res = res.data;
-          this.totalData = res.grand_total || 0;
-          this.items = res.data || [];
-        });
+      $axios.get(`/v1/transaction/inbound?${param}&raw=true`).then((res) => {
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || [];
+      });
     },
     handleClickExport(type) {
       exportDataV3({
         alert: true,
         param: this.$route.query,
         exportType: type,
-        url: '/v3/transaction/inbound',
+        url: '/v1/transaction/inbound',
       });
     },
   },

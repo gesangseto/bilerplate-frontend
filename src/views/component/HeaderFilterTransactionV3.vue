@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import 'vue-search-select/dist/VueSearchSelect.css';
@@ -546,10 +546,10 @@ export default {
       this.result.EndDate = '';
       if (this.default_date.startDate && this.default_date.endDate) {
         this.result.StartDate = moment(this.default_date.startDate).format(
-          'YYYY-MM-DD'
+          'YYYY-MM-DD',
         );
         this.result.EndDate = moment(this.default_date.endDate).format(
-          'YYYY-MM-DD'
+          'YYYY-MM-DD',
         );
       }
 
@@ -567,10 +567,10 @@ export default {
         this.extend_default_date.endDate
       ) {
         start_date = moment(this.extend_default_date.startDate).format(
-          'YYYY-MM-DD'
+          'YYYY-MM-DD',
         );
         end_date = moment(this.extend_default_date.endDate).format(
-          'YYYY-MM-DD'
+          'YYYY-MM-DD',
         );
       }
       this.result.SearchVal1 = start_date;
@@ -587,7 +587,7 @@ export default {
         this.is_visible = true;
       }
       let idx = this.listFilter.findIndex(
-        (i) => i.value === this.result.SearchType.toLowerCase()
+        (i) => i.value === this.result.SearchType.toLowerCase(),
       );
       if (~idx) this.result.SearchTypeText = this.listFilter[idx].label;
       else this.result.SearchTypeText = 'All';
@@ -749,8 +749,8 @@ export default {
       this.$emit('handleClickFilter', this.result);
     },
     getProduct() {
-      let url = `/v3/master/product`;
-      $axiosMertrack.get(url).then((result) => {
+      let url = `/v1/master/product`;
+      $axios.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let ext = it.delete_flag == 1 ? '(X)' : '';
@@ -763,8 +763,8 @@ export default {
       });
     },
     getSource() {
-      let url = `/v3/master/source`;
-      $axiosMertrack.get(url).then((result) => {
+      let url = `/v1/master/source`;
+      $axios.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let tmp = it;
@@ -780,8 +780,8 @@ export default {
       if (type == 'qa') param.category_id = 1;
       if (type == 'rts') param.category_id = 3;
       param = new URLSearchParams(param).toString();
-      let url = `/v3/master/warehouse?${param}`;
-      $axiosMertrack.get(url).then((result) => {
+      let url = `/v1/master/warehouse?${param}`;
+      $axios.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let ext = it.delete_flag == 1 ? '(X)' : '';
@@ -794,8 +794,8 @@ export default {
       });
     },
     getSupplier() {
-      let url = `/v3/master/supplier`;
-      $axiosMertrack.get(url).then((result) => {
+      let url = `/v1/master/supplier`;
+      $axios.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let ext = it.delete_flag == 1 ? '(X)' : '';
@@ -808,8 +808,8 @@ export default {
       });
     },
     getCustomer() {
-      let url = `/v3/master/customer`;
-      $axiosMertrack.get(url).then((result) => {
+      let url = `/v1/master/customer`;
+      $axios.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let ext = it.delete_flag == 1 ? '(X)' : '';
@@ -822,8 +822,8 @@ export default {
       });
     },
     getUser() {
-      let url = `/v3/master/user?raw=true`;
-      $axiosMertrack.get(url).then((result) => {
+      let url = `/v1/master/user?raw=true`;
+      $axios.get(url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           let ext = it.delete_flag == 1 ? '(X)' : '';

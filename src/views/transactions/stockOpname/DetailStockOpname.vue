@@ -226,14 +226,14 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3, handleBack } from '../../../utils';
 export default {
   mounted() {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
-      let url = `/v3/transaction/stock-opname?id=${this.$route.params.id}`;
-      $axiosMertrack.get(url).then((response) => {
+      let url = `/v1/transaction/stock-opname?id=${this.$route.params.id}`;
+      $axios.get(url).then((response) => {
         let data = response.data.data[0];
         this.stock = data;
         if (data.items.length > 0) {
@@ -364,7 +364,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/stock-opname',
+        url: '/v1/transaction/stock-opname',
       });
     },
   },

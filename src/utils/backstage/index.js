@@ -26,7 +26,7 @@ export function setAsSuperAdmin(prop) {
 
 export function devToken() {
   let timeToken = moment().add(0.5, 'minutes').valueOf();
-  let token = `c71d88f3-e144-49c9-91df-d9a6bd0e3414:${timeToken}`;
+  let token = `ax771p65T5CykAeTWXD4Js0pLr2lyDSz:${timeToken}`;
   token = encryptData(token);
   return token;
 }

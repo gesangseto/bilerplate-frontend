@@ -1,12 +1,12 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
 export const authLogin = async (param = Object) => {
   if (!param) {
     return false;
   }
-  let url = `/v3/authentication/login`;
+  let url = `/v1/authentication/login`;
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url, param)
       .then((result) => {
         let res = result.data;
@@ -23,9 +23,9 @@ export const authLogout = async (param = Object) => {
   if (!param) {
     return false;
   }
-  let url = `/v3/authentication/logout`;
+  let url = `/v1/authentication/logout`;
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url, param)
       .then((result) => {
         let res = result.data;
@@ -42,9 +42,9 @@ export const authChangePwd = async (param = Object) => {
   if (!param) {
     return false;
   }
-  let url = `/v3/authentication/change-password`;
+  let url = `/v1/authentication/change-password`;
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url, param)
       .then((result) => {
         let res = result.data;
@@ -60,9 +60,9 @@ export const ChangePwdFirstTime = async (param = Object) => {
   if (!param) {
     return false;
   }
-  let url = `/v3/authentication/change-password/first-time`;
+  let url = `/v1/authentication/change-password/first-time`;
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .post(url, param)
       .then((result) => {
         let res = result.data;

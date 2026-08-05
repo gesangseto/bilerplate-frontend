@@ -144,7 +144,7 @@
 
 <script>
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 
 export default {
   name: 'Connector',
@@ -184,8 +184,8 @@ export default {
   },
   methods: {
     loadData() {
-      $axiosMertrack
-        .get(`/v3/connector/connector-list?id=${this.$route.params.id}`)
+      $axios
+        .get(`/v1/connector/connector-list?id=${this.$route.params.id}`)
         .then((response) => {
           let data = response.data.data[0];
           this.connector = data;

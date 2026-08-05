@@ -216,7 +216,7 @@
 <script>
 const ekstensiFileValid = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
 import { CCol, CRow } from '@coreui/vue';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { handleBack } from '../../../utils';
 const reader = new FileReader();
 export default {
@@ -395,8 +395,8 @@ export default {
     loadListWarehouse() {
       var param = { status: 'Active', category_id: 3 };
       param = new URLSearchParams(param).toString();
-      var _url = `/v3/master/warehouse?${param}`;
-      $axiosMertrack.get(_url).then((result) => {
+      var _url = `/v1/master/warehouse?${param}`;
+      $axios.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.warehouseOptions.push({
@@ -410,8 +410,8 @@ export default {
     loadListCustomer() {
       var param = { status: 'Active' };
       param = new URLSearchParams(param).toString();
-      var _url = `/v3/master/customer?${param}`;
-      $axiosMertrack.get(_url).then((result) => {
+      var _url = `/v1/master/customer?${param}`;
+      $axios.get(_url).then((result) => {
         let data = result.data.data;
         for (const it of data) {
           this.customerOptions.push({
@@ -597,7 +597,7 @@ export default {
       var message = `You are about to create this new transaction. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        $axiosMertrack
+        $axios
           .put('/v4.2/transaction/picking', param)
           .then((result) => {
             this.$isLoading(false);

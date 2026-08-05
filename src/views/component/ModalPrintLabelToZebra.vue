@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 
 export default {
   name: 'ModalPrintLabelToZebra',
@@ -136,8 +136,8 @@ export default {
 
     loadData(itm) {
       if (this.type === 'dummy') {
-        $axiosMertrack
-          .get(`/v3/helper/print-layout-dummy?id=${itm.id}`)
+        $axios
+          .get(`/v1/helper/print-layout-dummy?id=${itm.id}`)
           .then((result) => {
             const _data = result.data;
             if (_data.error) {
@@ -167,24 +167,22 @@ export default {
           for (const it of itm.items) {
             _body.items.push(it);
           }
-          $axiosMertrack
-            .post(`/v3/helper/print-layout`, _body)
-            .then((result) => {
-              let _data = result.data;
-              if (_data.error) {
-                return this.$toast.open({
-                  message: `${_data.message}`,
-                  type: 'error',
-                  dissmissible: true,
-                  position: 'top-right',
-                  duration: 3000,
-                });
-              } else {
-                this.formData.items = _data.data;
-                this.formData.print_count = null;
-                this.isOpenModal = true;
-              }
-            });
+          $axios.post(`/v1/helper/print-layout`, _body).then((result) => {
+            let _data = result.data;
+            if (_data.error) {
+              return this.$toast.open({
+                message: `${_data.message}`,
+                type: 'error',
+                dissmissible: true,
+                position: 'top-right',
+                duration: 3000,
+              });
+            } else {
+              this.formData.items = _data.data;
+              this.formData.print_count = null;
+              this.isOpenModal = true;
+            }
+          });
         } else if (!itm.items) {
           let serial = itm.trx_pack_serial || itm.serial;
           let epc_key = itm.trx_pack_epc_key || itm.epc_key;
@@ -193,24 +191,22 @@ export default {
             epc_key: epc_key,
           };
           var _url = new URLSearchParams(_body).toString();
-          $axiosMertrack
-            .get(`/v3/helper/print-layout?${_url}`)
-            .then((result) => {
-              let _data = result.data;
-              if (_data.error) {
-                this.isOpenModal = false;
-                return this.$toast.open({
-                  message: `${_data.message}`,
-                  type: 'error',
-                  dissmissible: true,
-                  position: 'top-right',
-                  duration: 3000,
-                });
-              } else {
-                this.formData = _data.data[0];
-                this.isOpenModal = true;
-              }
-            });
+          $axios.get(`/v1/helper/print-layout?${_url}`).then((result) => {
+            let _data = result.data;
+            if (_data.error) {
+              this.isOpenModal = false;
+              return this.$toast.open({
+                message: `${_data.message}`,
+                type: 'error',
+                dissmissible: true,
+                position: 'top-right',
+                duration: 3000,
+              });
+            } else {
+              this.formData = _data.data[0];
+              this.isOpenModal = true;
+            }
+          });
         }
       }
     },
@@ -243,7 +239,7 @@ export default {
         this.doPrintZPL();
       } else {
         console.log('postAndPrint _body:', _body);
-        $axiosMertrack.post(`/v3/helper/print-layout`, _body).then((result) => {
+        $axios.post(`/v1/helper/print-layout`, _body).then((result) => {
           let _data = result.data;
           if (_data.error) {
             this.isOpenModal = false;

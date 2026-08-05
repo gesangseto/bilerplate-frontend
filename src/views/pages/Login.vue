@@ -1,115 +1,94 @@
 <template>
-  <CContainer class="d-flex content-center min-vh-100">
-    <CRow>
-      <CCol>
-        <CCardGroup>
-          <CCard class="p-4">
-            <CCardBody>
-              <CForm>
-                <!-- <h1>Login</h1> -->
-                <img
-                  v-bind:src="loginLogo"
-                  class="mb-5"
-                  style="width: auto; height: 80px"
-                />
-                <p class="text-muted">Sign In to your account</p>
-                <CInput
-                  placeholder="Username"
-                  autocomplete="username email"
-                  v-model="email"
-                  data-layout="normal"
-                  @focus="showKeyboard = $event"
-                >
-                  <template #prepend-content
-                    ><CIcon name="cil-user"
-                  /></template>
-                </CInput>
-                <CInput
-                  placeholder="Password"
-                  :type="showPassword == false ? 'password' : 'text'"
-                  autocomplete="curent-password"
-                  v-model="password"
-                  @keyup="loginEnter"
-                  @focus="showKeyboard = $event"
-                >
-                  <template #prepend-content
-                    ><CIcon name="cil-lock-locked"
-                  /></template>
-                  <template #append-content>
-                    <CButton
-                      style="font-size: 10pt; margin: -10pt"
-                      @click="showPassword = !showPassword"
-                    >
-                      <v-icon v-if="!showPassword" name="eye-slash" />
-                      <v-icon v-if="showPassword" name="eye" />
-                    </CButton>
-                  </template>
-                </CInput>
-                <CRow>
-                  <CCol col="12" class="text-center">
-                    <CButton color="primary" style="width: 50%" @click="login"
-                      >Login</CButton
-                    >
-                  </CCol>
-                </CRow>
-                <br />
-                <strong class="text-danger">{{ message }}</strong>
-              </CForm>
-              <!-- <CFooter :fixed="false"> -->
-              <br />
-              <br />
-              <br />
-              <div class="ml-auto">
-                <CButton @click="appModal = true" color="default">
-                  <img
-                    v-bind:src="copyright"
-                    style="width: 120px; height: auto"
-                  />
-                </CButton>
-              </div>
-              <div class="ml-auto">
-                <div>
-                  <span class="mr-1"
-                    >Copyright &copy; {{ new Date().getFullYear() }}</span
-                  >
-                  <a href="http://merindo.co.id/" target="_blank">
-                    PT Merindo Makmur</a
-                  >
+  <CContainer
+    fluid
+    class="login-shell min-vh-100 d-flex align-items-center justify-content-center"
+  >
+    <CRow class="w-100 justify-content-center">
+      <CCol xl="10" lg="11" md="12">
+        <div class="login-grid">
+          <aside class="info-panel">
+            <div class="info-card">
+              <span class="info-badge">Gastrack</span>
+              <h2>Inventory visibility made simple.</h2>
+              <p>
+                A clean dashboard for your warehouse, stock, and process flow.
+                Minimal layout for fast access and easy focus.
+              </p>
+              <ul>
+                <li>Fast product finding</li>
+                <li>Clear stock overview</li>
+                <li>Light, modern interface</li>
+              </ul>
+              <div class="info-footer">Gesang Aji Seto</div>
+            </div>
+          </aside>
+
+          <main class="form-panel">
+            <CCard class="login-card border-0 shadow-sm">
+              <CCardBody class="p-5">
+                <div class="form-header mb-4 text-center">
+                  <img :src="loginLogo" alt="Logo" class="login-logo" />
+                  <h3 class="mb-2">Sign in</h3>
+                  <p class="text-muted mb-0">
+                    Login with your username and password.
+                  </p>
                 </div>
-              </div>
-              <!-- </CFooter> -->
-            </CCardBody>
-          </CCard>
-          <!-- <CCard
-            color="primary"
-            text-color="white"
-            class="text-center py-5 d-sm-down-none"
-            body-wrapper
-          >
-            <h2>Sign up</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <CButton
-              color="primary"
-              class="active mt-3"
-            >
-              Register Now!
-            </CButton>
-          </CCard> -->
-        </CCardGroup>
+
+                <CForm @submit.prevent="login" class="login-form">
+                  <div class="field-row mb-3">
+                    <span class="field-icon"><CIcon name="cil-user" /></span>
+                    <input
+                      type="text"
+                      class="field-input"
+                      placeholder="Username"
+                      autocomplete="username"
+                      v-model="username"
+                      @focus="showKeyboard = $event"
+                      required
+                    />
+                  </div>
+
+                  <div class="field-row mb-4">
+                    <span class="field-icon"
+                      ><CIcon name="cil-lock-locked"
+                    /></span>
+                    <input
+                      :type="showPassword ? 'text' : 'password'"
+                      class="field-input"
+                      placeholder="Password"
+                      autocomplete="current-password"
+                      v-model="password"
+                      @focus="showKeyboard = $event"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      @click="togglePassword"
+                      aria-label="Toggle password"
+                    >
+                      <v-icon
+                        :name="showPassword ? 'eye' : 'eye-slash'"
+                        size="sm"
+                      />
+                    </button>
+                  </div>
+
+                  <CButton type="submit" color="primary" class="w-100 btn-login"
+                    >Login</CButton
+                  >
+                  <p class="login-message text-danger mt-3 mb-0" v-if="message">
+                    {{ message }}
+                  </p>
+                </CForm>
+              </CCardBody>
+            </CCard>
+          </main>
+        </div>
       </CCol>
     </CRow>
+
     <VirtualKeyboard :visible="showKeyboard" />
-    <!-- <vue-fab
-      size="small"
-      :mainBtnColor="useKeyboard ? '#ff9900' : '#b5adac'"
-      :icon="useKeyboard ? 'keyboard_hide' : 'keyboard'"
-      @clickMainBtn="clickMainBtn"
-      :menu="[]"
-      style="right: 99%; top: 95%"
-    >
-    </vue-fab> 
-    Ini adalah floating button untuk menampilkan virtual keyboard
-    -->
   </CContainer>
 </template>
 
@@ -141,13 +120,11 @@ export default {
       showKeyboard: false,
       copyright: logoMertrack,
       message: null,
-      email: null,
+      username: null,
       password: null,
       loginLogo: null,
       showPassword: false,
       useKeyboard: false,
-
-      // visible: false,
       layout: 'normal',
       input: null,
       options: {
@@ -202,19 +179,15 @@ export default {
         this.loginLogo = getLoginLogo();
       }
     },
-
-    loginEnter(event) {
-      if (event.keyCode === 13) {
-        this.login();
-      }
+    togglePassword() {
+      this.showPassword = !this.showPassword;
     },
-
     async login() {
       let param = {
-        email: this.email,
+        username: this.username,
         password: this.password,
       };
-      if (!this.email || !this.password) {
+      if (!this.username || !this.password) {
         this.$toast.open({
           message: `Please enter username and password`,
           type: 'error',
@@ -268,3 +241,177 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.login-shell {
+  background: #f4f7fb;
+}
+
+.login-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.info-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 3rem;
+  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.08);
+  min-height: 100%;
+}
+
+.info-badge {
+  display: inline-flex;
+  padding: 0.55rem 1rem;
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.info-card h2 {
+  font-size: 2rem;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  color: #0f172a;
+}
+
+.info-card p {
+  color: #475569;
+  margin-bottom: 1.5rem;
+  max-width: 34rem;
+}
+
+.info-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.75rem;
+}
+
+.info-card li {
+  margin-bottom: 0.85rem;
+  color: #334155;
+  position: relative;
+  padding-left: 1.45rem;
+}
+
+.info-card li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #6366f1;
+}
+
+.info-footer {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+.form-header {
+  text-align: center;
+}
+
+.login-logo {
+  max-width: 100px;
+  margin-bottom: 1rem;
+}
+
+.login-form {
+  margin-top: 1rem;
+}
+
+.field-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.field-icon {
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1rem;
+  color: #0f172a;
+  padding-right: 2.5rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field-input::placeholder {
+  color: #94a3b8;
+}
+
+.password-toggle {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.btn-login {
+  border-radius: 14px;
+  padding: 0.95rem 1.1rem;
+  font-weight: 700;
+}
+
+.login-message {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 992px) {
+  .login-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .info-card {
+    padding: 2rem;
+  }
+}
+</style>

@@ -154,7 +154,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { handleBack } from '../../../utils';
 export default {
   name: 'DetailUploadXML',
@@ -162,8 +162,8 @@ export default {
     if (this.$route.params.id != undefined) {
       this.$isLoading(true);
       let param = `id=${this.$route.params.id}`;
-      $axiosMertrack
-        .get(`/v3/transaction/upload-xml?${param}&raw=true`)
+      $axios
+        .get(`/v1/transaction/upload-xml?${param}&raw=true`)
         .then((res) => {
           this.$isLoading(false);
           this.upload = res.data.data[0];

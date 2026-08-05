@@ -82,12 +82,12 @@
 </template>
 
 <script>
-import { parsingBarcode } from "../../utils";
-// import $axiosMertrack from "../../apiMertrack";
+import { parsingBarcode } from '../../utils';
+// import $axios from "../../api";
 
 export default {
-  name: "HeaderShowStatus",
-  props: ["filter", "status_code", "costume_filter"],
+  name: 'HeaderShowStatus',
+  props: ['filter', 'status_code', 'costume_filter'],
   mounted() {
     if (this.costume_filter && this.costume_filter.constructor === Array) {
       for (const it of this.costume_filter) {
@@ -97,7 +97,7 @@ export default {
       }
     }
     if (!this.title) {
-      this.title = "Report";
+      this.title = 'Report';
     }
   },
   data() {
@@ -105,16 +105,16 @@ export default {
       is_error: false,
       valid: this.initial_valid(),
       role: this.initial_role(),
-      title: "*",
+      title: '*',
       result: this.initial_result(),
       listEpcType: [
         {
-          value: "sscc",
-          label: "SSCC",
+          value: 'sscc',
+          label: 'SSCC',
         },
         {
-          value: "sgtin",
-          label: "SGTIN",
+          value: 'sgtin',
+          label: 'SGTIN',
         },
       ],
     };
@@ -151,14 +151,14 @@ export default {
     },
     handleChangeEpc() {
       this.valid = this.initial_valid();
-      if (this.result.epc_type == "sgtin") {
-        this.title = "GTIN (14 digits)";
+      if (this.result.epc_type == 'sgtin') {
+        this.title = 'GTIN (14 digits)';
         this.role.disabled_serial = false;
-      } else if (this.result.epc_type == "sscc") {
+      } else if (this.result.epc_type == 'sscc') {
         this.role.disabled_serial = true;
-        this.title = "SSCC (18 digits)";
+        this.title = 'SSCC (18 digits)';
       } else {
-        this.title = "*";
+        this.title = '*';
       }
     },
     handleInput() {},
@@ -168,7 +168,7 @@ export default {
       var charCode = event.which ? event.which : event.keyCode;
       if (data && data.toString().length > max - 1) {
         event.preventDefault();
-      } else if (!type || type == "number") {
+      } else if (!type || type == 'number') {
         if (charCode > 31 && (charCode < 48 || charCode > 57)) {
           event.preventDefault();
         } else {
@@ -181,7 +181,7 @@ export default {
     validateEpcNumber({ type }) {
       let limit = this.role.length_gtin;
       let value = this.result.gtin;
-      if (type == "sscc") {
+      if (type == 'sscc') {
         limit = this.role.length_sscc;
         value = this.result.sscc;
       }
@@ -195,7 +195,7 @@ export default {
         var checksum = parseInt(value.substring(value.length - 1), 10);
         var calcSum = 0;
         var calcChecksum = 0;
-        barcode.split("").map(function (number, index) {
+        barcode.split('').map(function (number, index) {
           number = parseInt(number, 10);
           if (value.length % 2 === 0) {
             index += 1;
@@ -228,10 +228,10 @@ export default {
         this.valid.epc_type = false;
         this.is_error = true;
       } else {
-        if (this.result.epc_type == "sscc") {
-          this.validateEpcNumber({ type: "sscc" });
-        } else if (this.result.epc_type == "sgtin") {
-          this.validateEpcNumber({ type: "gtin" });
+        if (this.result.epc_type == 'sscc') {
+          this.validateEpcNumber({ type: 'sscc' });
+        } else if (this.result.epc_type == 'sgtin') {
+          this.validateEpcNumber({ type: 'gtin' });
           if (!this.result.serial) {
             this.valid.serial = false;
             this.is_error = true;
@@ -241,23 +241,23 @@ export default {
       if (this.is_error) {
         return;
       }
-      let barcode_2d = "";
+      let barcode_2d = '';
 
-      if (this.result.epc_type == "sgtin") {
+      if (this.result.epc_type == 'sgtin') {
         barcode_2d = `01${this.result.gtin}u001d21${this.result.serial}`;
       } else {
         barcode_2d = `00${this.result.sscc}`;
       }
       let parse = parsingBarcode(barcode_2d);
       delete parse.barcode_2d;
-      this.$emit("handleClickSearch", parse);
+      this.$emit('handleClickSearch', parse);
       return;
     },
     handleReset() {
       this.role = this.initial_role();
       this.result = this.initial_result();
       this.valid = this.initial_valid();
-      this.$emit("handleReset", this.result);
+      this.$emit('handleReset', this.result);
     },
   },
 };

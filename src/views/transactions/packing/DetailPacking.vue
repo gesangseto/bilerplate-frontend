@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import {
   exportDataV3,
   getUserId,
@@ -196,8 +196,8 @@ export default {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     if (this.$route.params.id !== undefined) {
       let param = { id: this.$route.params.id, raw: true };
-      let url = `/v3/transaction/packing?${new URLSearchParams(param)}`;
-      $axiosMertrack.get(url).then((response) => {
+      let url = `/v1/transaction/packing?${new URLSearchParams(param)}`;
+      $axios.get(url).then((response) => {
         let data = response.data.data[0];
         this.repack = data;
         if (data.items.length > 0) {
@@ -370,8 +370,8 @@ export default {
         this.selected_data = { items: _body };
         return;
       }
-      $axiosMertrack
-        .post(`/v3/helper/print-layout/pdf`, {
+      $axios
+        .post(`/v1/helper/print-layout/pdf`, {
           update_count: true,
           validate: true,
           items: _body,
@@ -388,7 +388,7 @@ export default {
           } else {
             printLabelV3({
               data: _body,
-              link: `${process.env.VUE_APP_URL_API_MERTRACK}/api/v3/helper/print-layout/pdf`,
+              link: `${process.env.VUE_APP_URL_API}/api/v1/helper/print-layout/pdf`,
             });
           }
         });
@@ -400,7 +400,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/packing',
+        url: '/v1/transaction/packing',
       });
     },
   },

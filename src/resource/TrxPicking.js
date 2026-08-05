@@ -1,4 +1,4 @@
-import $axiosMertrack from '../apiMertrack';
+import $axios from '../api';
 
 let url = `/v4.2/transaction/picking`;
 
@@ -8,7 +8,7 @@ export const getPicking = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(`${url}?${query_string}`)
       .then((result) => {
         let res = result.data;
@@ -26,7 +26,7 @@ export const isBpomGenerated = async (param = Object) => {
     query_string = new URLSearchParams(param).toString();
   }
   return new Promise((resolve) => {
-    $axiosMertrack
+    $axios
       .get(`${url}/is-bpom-generated?${query_string}`)
       .then((result) => {
         let res = result.data;

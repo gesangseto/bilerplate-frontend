@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { HeaderManualBarcodeGenerator } from '../../component';
 export default {
   name: 'BpomCompareTool',
@@ -191,7 +191,7 @@ export default {
       formData.append('file', this.formData.file);
       formData.append('batch_no', this.formData.batch_no);
 
-      $axiosMertrack
+      $axios
         .post(`/v4/helper/compare-bpom`, formData)
         .then((result) => {
           this.$toast.open({

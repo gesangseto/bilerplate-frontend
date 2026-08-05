@@ -143,7 +143,7 @@
 </style>
 <script>
 import bwipjs from 'bwip-js';
-import $axiosMertrack from '../../apiMertrack';
+import $axios from '../../api';
 import invalid_barcode from '../../assets/invalid_barcode.png';
 export default {
   components: {},
@@ -231,8 +231,8 @@ export default {
       let param = JSON.parse(JSON.stringify(item));
       param.packaging_level = item.packaging_level - 1;
       param.from_stock = 1;
-      let url = `/v3/transaction/stock?show_barcode=true&parent=${id}`;
-      $axiosMertrack.get(url).then((result) => {
+      let url = `/v1/transaction/stock?show_barcode=true&parent=${id}`;
+      $axios.get(url).then((result) => {
         this.is_loading = false;
         let data = result.data.data;
         this.list_data[`level_${param.packaging_level}`] = data;

@@ -48,7 +48,7 @@
 
 <script>
 import moment from 'moment';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { getUserId, humanize } from '../../../utils';
 export default {
   name: 'ListQueueBpom',
@@ -137,8 +137,8 @@ export default {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;
-      let url = `/v3/transaction/queue-bpom?${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/transaction/queue-bpom?${param}`;
+      $axios.get(url).then((res) => {
         res = res.data;
         this.totalData = res.grand_total || 0;
         this.items = res.data || 0;
@@ -146,8 +146,8 @@ export default {
     },
     loadMenu() {
       let path = this.$route.path;
-      $axiosMertrack
-        .get(`/v3/master/menu?link=${path}`)
+      $axios
+        .get(`/v1/master/menu?link=${path}`)
         .then((res) => {
           res = res.data;
           if (res.data.length > 0) this.formData.data.menu_id = res.data[0].id;
@@ -166,8 +166,8 @@ export default {
     loadConnector() {
       let param = { key: 'menu_id', value: this.formData.data.menu_id };
       param = new URLSearchParams(param).toString();
-      $axiosMertrack
-        .get(`/v3/connector/connector-action?${param}`)
+      $axios
+        .get(`/v1/connector/connector-action?${param}`)
         .then((result) => {
           let data = result.data;
           if (data.error || data.data.length === 0) {
@@ -207,8 +207,8 @@ export default {
       let param = this.formData;
       param.data.trx_ref_id = item.trx_ref_id;
 
-      $axiosMertrack
-        .post('/v3/connector/connector-action/execute', param)
+      $axios
+        .post('/v1/connector/connector-action/execute', param)
         .then((result) => {
           this.$isLoading(false);
           this.$toast.open({

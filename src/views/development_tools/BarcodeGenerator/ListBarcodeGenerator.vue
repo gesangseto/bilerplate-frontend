@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { calculatePaginationV3, exportData } from '../../../utils';
 export default {
   name: 'ListBarcodeGenerator',
@@ -119,8 +119,8 @@ export default {
       filter['parent'] = null;
       filter['advanced'] = true;
       let param = `${new URLSearchParams(filter).toString()}`;
-      let url = `/v3/transaction/stock?show_barcode=true&${param}`;
-      $axiosMertrack.get(url).then((res) => {
+      let url = `/v1/transaction/stock?show_barcode=true&${param}`;
+      $axios.get(url).then((res) => {
         res = res.data;
         this.totalData = res.grand_total || 0;
         this.items = res.data || 0;

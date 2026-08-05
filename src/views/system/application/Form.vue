@@ -118,7 +118,7 @@
                     :max="100"
                   />
                   <p style="font-weight: bold">
-                    MERTRACK Warehouse Mobile (MWM) Devices
+                    Gastrack Warehouse Mobile (MWM) Devices
                   </p>
                   <InputDefault
                     :col="[3, 7]"
@@ -815,7 +815,7 @@
 <script>
 const reader = new FileReader();
 import 'vue2-datepicker/index.css';
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import moment from 'moment';
 import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
 import { getSysConfig } from '../../../resource/SysConfig';
@@ -1116,24 +1116,22 @@ export default {
       param.list_device = param.list_device.slice(0, param.total_device);
       param.password_pattern = JSON.stringify(param.password_pattern);
       param.return_ext_aggregation = param.return_ext_aggregation ? 1 : 0;
-      $axiosMertrack
-        .post(`v3/configuration/application`, param)
-        .then((result) => {
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : 'Data has been saved successfully ',
-            type: res.error ? 'error' : 'success',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-          if (!res.error) {
-            setConfig(this.data);
-            handleBack(this.$router, this.$route);
-          }
+      $axios.post(`v1/configuration/application`, param).then((result) => {
+        let res = result.data;
+        this.$toast.open({
+          message: res.error
+            ? `${res.message}`
+            : 'Data has been saved successfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
         });
+        if (!res.error) {
+          setConfig(this.data);
+          handleBack(this.$router, this.$route);
+        }
+      });
       return;
     },
     cancel() {

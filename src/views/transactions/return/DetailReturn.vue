@@ -239,7 +239,7 @@
 </template>
 
 <script>
-import $axiosMertrack from '../../../apiMertrack';
+import $axios from '../../../api';
 import { exportDataV3, getSectionId, handleBack } from '../../../utils';
 export default {
   name: 'DetailReturn',
@@ -339,8 +339,8 @@ export default {
     loadData() {
       this.returnDetail = {};
       this.items = [];
-      let url = `/v3/transaction/return?id=${this.$route.params.id}`;
-      $axiosMertrack.get(url).then((response) => {
+      let url = `/v1/transaction/return?id=${this.$route.params.id}`;
+      $axios.get(url).then((response) => {
         let data = response.data.data[0];
         this.returnDetail = data;
         if (data.items.length > 0) {
@@ -366,8 +366,8 @@ export default {
           approved: true,
           reason: '',
         };
-        let url = `/v3/transaction/approval/return`;
-        $axiosMertrack
+        let url = `/v1/transaction/approval/return`;
+        $axios
           .post(url, param)
           .then((result) => {
             this.$isLoading(false);
@@ -407,8 +407,8 @@ export default {
         approved: false,
         reason: `[REJECT] ${reason}`,
       };
-      let url = `/v3/transaction/approval/return`;
-      $axiosMertrack
+      let url = `/v1/transaction/approval/return`;
+      $axios
         .post(url, param)
         .then((result) => {
           this.$isLoading(false);
@@ -470,7 +470,7 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v3/transaction/return',
+        url: '/v1/transaction/return',
       });
     },
   },
