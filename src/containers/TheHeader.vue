@@ -4,7 +4,7 @@
     with-subheader
     light
     style="
-      background-color: #f5f2eb;
+      background-color: #fafaf5;
       border-bottom: 1px solid rgba(166, 119, 50, 0.18);
     "
   >

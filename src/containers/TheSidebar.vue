@@ -1,7 +1,7 @@
 <template>
   <CSidebar
     color-scheme="dark"
-    style="background-color: #f5f2eb"
+    style="background-color: #fafaf5"
     class="bg-theme"
     fixed
     :minimize="minimize"
@@ -204,7 +204,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f4ece0;
+  background-color: #fafaf5;
   border-bottom: 1px solid rgba(166, 119, 50, 0.18);
 }
 
