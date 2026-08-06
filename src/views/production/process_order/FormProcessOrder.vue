@@ -121,6 +121,7 @@
               <!-- Ini adalah HET yang menggunakan Currency, masih disimpan sampai ready -->
               <InputDefault
                 :disabled="!isEditable('het')"
+                :required="true"
                 :col="[3, 9]"
                 required
                 title="HET"
@@ -1324,6 +1325,7 @@ export default {
 
     isValid() {
       if (!this.formData.process_order_erp) return false;
+      if (!this.formData.het) return false;
       if (!this.formData.product_id) return false;
       if (!this.formData.batch_no) return false;
       if (!this.formData.lot_no) return false;
