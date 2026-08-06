@@ -28,7 +28,7 @@ export function getStringBetween({ string, field1 = '$SF$', field2 = '$EF$' }) {
   if (string.indexOf(field1) > 0 && string.lastIndexOf(field2) > 0) {
     new_str = string.substring(
       string.indexOf(field1) + field1.length,
-      string.lastIndexOf(field2)
+      string.lastIndexOf(field2),
     );
   }
   return new_str;
@@ -111,7 +111,37 @@ export function dynamicSort(property) {
     return result * sortOrder;
   };
 }
+export function maskSensitiveData(key, value) {
+  // Daftar kata yang perlu di-mask
+  const sensitiveKeywords = [
+    'old_password',
+    'new_password',
+    'password',
+    'backup_password',
+    'pwd',
+    'users_password',
+    'user_password',
+    'db_pwd',
+  ];
 
+  // Cek apakah key mengandung kata sensitif (case insensitive)
+  const isSensitive = sensitiveKeywords.find(
+    (keyword) => key.toLowerCase() === keyword.toLowerCase(),
+  );
+
+  if (isSensitive) {
+    if (typeof value === 'string') {
+      // Mask string dengan *****
+      return value.length > 0 ? '*****' : '';
+    } else if (typeof value === 'object' && value !== null) {
+      // Jika value adalah object, mask seluruh object
+      return '[MASKED]';
+    }
+    return '*****';
+  }
+
+  return value;
+}
 export function humanize(str) {
   var i,
     frags = str.split('_');
@@ -415,4 +445,52 @@ export function expFromShelfLife({ mfg_date, shelf_life, type }) {
       return mfg.add(add, 'months').endOf('month').format('YYYY-MM-DD');
     }
   }
+}
+
+// Fungsi untuk mendeteksi apakah string adalah base64 image
+export function isBase64Image(str) {
+  if (typeof str !== 'string') return false;
+
+  // Cek pola base64 image
+  const patterns = [
+    /^data:image\/(png|jpeg|jpg|gif|bmp|webp|svg\+xml);base64,/,
+    /^[A-Za-z0-9+/=]+$/, // Base64 tanpa prefix
+    /^data:image\/\w+;base64,/,
+  ];
+
+  // Cek prefix
+  if (str.startsWith('data:image/')) {
+    return true;
+  }
+
+  // Cek panjang minimal (base64 image minimal 100 chars)
+  if (str.length < 100) return false;
+
+  // Cek karakter base64
+  const base64Regex = /^[A-Za-z0-9+/=]+$/;
+  if (base64Regex.test(str.substring(0, 100))) {
+    return true;
+  }
+
+  return false;
+}
+
+// Fungsi untuk membersihkan base64 string
+export function cleanBase64Image(base64Str) {
+  // Jika sudah ada prefix data:image, return as is
+  if (base64Str.startsWith('data:image/')) {
+    return base64Str;
+  }
+
+  // Jika pure base64 tanpa prefix, tambahkan prefix
+  return `data:image/png;base64,${base64Str}`;
+}
+
+// Fungsi untuk mendapatkan tipe image dari base64
+export function getImageType(base64Str) {
+  if (base64Str.startsWith('data:image/')) {
+    const match = base64Str.match(/data:image\/(\w+);base64,/);
+    return match ? match[1] : 'png';
+  }
+  return 'png'; // default
 }

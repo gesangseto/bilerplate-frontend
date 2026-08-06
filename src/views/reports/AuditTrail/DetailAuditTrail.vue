@@ -70,10 +70,17 @@
                 <hr />
                 <h5>Old Data</h5>
                 <hr />
-                <div v-for="(value, name, index) in oldDataBody" :key="index">
-                  <!-- VIEW JIKA KARAKTERNYA NORMAL -->
+
+                <div
+                  v-for="(value, name, index) in oldDataBody"
+                  :key="`${name}-${index}`"
+                >
+                  <!-- STRING / NUMBER -->
                   <CInput
-                    v-if="!Array.isArray(value) && value && value.length <= 100"
+                    v-if="
+                      (!isImage(value) && typeof value === 'string') ||
+                      typeof value === 'number'
+                    "
                     disabled
                     horizontal
                     :value="value"
@@ -83,42 +90,77 @@
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
+                        {{ humanizeText(name) }}
                       </p>
                     </template>
                   </CInput>
-                  <!-- VIEW JIKA KARAKTERNYA TERLALU BANYAK -->
+
+                  <!-- IMAGE -->
+                  <CRow v-else-if="isImage(value)">
+                    <CCol md="3">
+                      {{ humanizeText(name) }}
+                    </CCol>
+                    <CCol md="9">
+                      <CImg width="100" :src="getImage(value)" />
+                    </CCol>
+                  </CRow>
+
+                  <!-- ARRAY WITH DATA -->
+                  <div v-else-if="Array.isArray(value) && value.length > 0">
+                    <p>
+                      {{ humanizeText(name) }}
+                    </p>
+                    <CDataTable
+                      hover
+                      striped
+                      sorter
+                      border
+                      :items="value"
+                      class="data-table"
+                      style="font-size: 12px"
+                    />
+                  </div>
+
+                  <!-- OBJECT (bukan array) -->
                   <CTextarea
-                    v-if="!Array.isArray(value) && value && value.length > 100"
+                    v-else-if="
+                      typeof value === 'object' &&
+                      value !== null &&
+                      !Array.isArray(value) &&
+                      Object.keys(value).length > 0
+                    "
                     disabled
                     horizontal
-                    :value="value"
-                    rows="10"
+                    :value="JSON.stringify(value, null, 2)"
+                    rows="5"
                   >
                     <template #label>
                       <p
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
+                        {{ humanizeText(name) }}
                       </p>
                     </template>
                   </CTextarea>
 
-                  <!-- JIKA VIEW BERUPA ARRAY -->
-                  <p v-if="Array.isArray(value) && value.length > 0">Items</p>
-                  <CDataTable
-                    v-if="Array.isArray(value) && value.length > 0"
-                    hover
-                    striped
-                    sorter
-                    border
-                    :items="value"
-                    class="data-table"
-                    style="font-size: 12px"
-                  />
+                  <!-- EMPTY / NULL / UNDEFINED -->
+                  <div v-else>
+                    <!-- STRING / NUMBER -->
+                    <CInput disabled horizontal :value="value">
+                      <template #label>
+                        <p
+                          class="col-form-label col-sm-3"
+                          style="text-transform: capitalize"
+                        >
+                          {{ humanizeText(name) }}
+                        </p>
+                      </template>
+                    </CInput>
+                  </div>
                 </div>
               </div>
+              <!-- DATA BARU -->
               <div v-if="Object.keys(dataBody).length > 0">
                 <hr />
                 <hr />
@@ -126,61 +168,94 @@
                   {{ Object.keys(oldDataBody).length > 0 ? 'New' : '' }} Data
                 </h5>
                 <hr />
-                <div v-for="(value, name, index) in dataBody" :key="index">
-                  <!-- VIEW JIKA KARAKTERNYA NORMAL -->
+
+                <div
+                  v-for="(value, name, index) in dataBody"
+                  :key="`${name}-${index}`"
+                >
+                  <!-- STRING / NUMBER -->
                   <CInput
                     v-if="
-                      !Array.isArray(value) &&
-                      value &&
-                      value.toString().length <= 100
+                      (!isImage(value) && typeof value === 'string') ||
+                      typeof value === 'number'
                     "
                     disabled
                     horizontal
-                    :value="value.toString()"
+                    :value="value"
                   >
                     <template #label>
                       <p
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name.replace(/_/g, ' ').replace(/\bid\b/gi, 'ID') }}
+                        {{ humanizeText(name) }}
                       </p>
                     </template>
                   </CInput>
-                  <!-- VIEW JIKA KARAKTERNYA TERLALU BANYAK -->
+
+                  <!-- IMAGE -->
+                  <CRow v-else-if="isImage(value)">
+                    <CCol md="3">
+                      {{ humanizeText(name) }}
+                    </CCol>
+                    <CCol md="9">
+                      <CImg width="100" :src="getImage(value)" />
+                    </CCol>
+                  </CRow>
+
+                  <!-- ARRAY WITH DATA -->
+                  <div v-else-if="Array.isArray(value) && value.length > 0">
+                    <p>
+                      {{ humanizeText(name) }}
+                    </p>
+                    <CDataTable
+                      hover
+                      striped
+                      sorter
+                      border
+                      :items="value"
+                      class="data-table"
+                      style="font-size: 12px"
+                    />
+                  </div>
+
+                  <!-- OBJECT (bukan array) -->
                   <CTextarea
-                    v-if="
+                    v-else-if="
+                      typeof value === 'object' &&
+                      value !== null &&
                       !Array.isArray(value) &&
-                      value &&
-                      value.toString().length > 100
+                      Object.keys(value).length > 0
                     "
                     disabled
                     horizontal
-                    :value="value.toString()"
-                    rows="10"
+                    :value="JSON.stringify(value, null, 2)"
+                    rows="5"
                   >
                     <template #label>
                       <p
                         class="col-form-label col-sm-3"
                         style="text-transform: capitalize"
                       >
-                        {{ name === 'id' ? 'ID' : name.replace(/_/g, ' ') }}
+                        {{ humanizeText(name) }}
                       </p>
                     </template>
                   </CTextarea>
 
-                  <!-- JIKA VIEW BERUPA ARRAY -->
-                  <p v-if="Array.isArray(value) && value.length > 0">Items</p>
-                  <CDataTable
-                    v-if="Array.isArray(value) && value.length > 0"
-                    hover
-                    striped
-                    sorter
-                    border
-                    :items="value"
-                    class="data-table"
-                    style="font-size: 12px"
-                  />
+                  <!-- EMPTY / NULL / UNDEFINED -->
+                  <div v-else>
+                    <!-- STRING / NUMBER -->
+                    <CInput disabled horizontal :value="value">
+                      <template #label>
+                        <p
+                          class="col-form-label col-sm-3"
+                          style="text-transform: capitalize"
+                        >
+                          {{ humanizeText(name) }}
+                        </p>
+                      </template>
+                    </CInput>
+                  </div>
                 </div>
               </div>
             </CForm>
@@ -197,12 +272,16 @@
 <script>
 import {
   capitalizeFirstLetter,
+  cleanBase64Image,
   exportDataV3,
   handleBack,
+  isBase64Image,
+  humanize,
 } from '../../../utils';
 import $axiosMertrack from '../../../apiMertrack';
 import jsPDF from 'jspdf';
 import domtoimage from 'dom-to-image';
+import { CCol, CRow } from '@coreui/vue';
 
 export default {
   name: 'DetailAuditTrail',
@@ -238,6 +317,21 @@ export default {
     }
   },
   methods: {
+    humanizeText(text) {
+      if (typeof text === 'string') {
+        return humanize(text);
+      }
+      return text;
+    },
+    isImage(string) {
+      if (typeof string === 'string' && isBase64Image(string)) {
+        return true;
+      }
+      return false;
+    },
+    getImage(string) {
+      return cleanBase64Image(string);
+    },
     loadData() {
       // let _data = get_log();
       // this.data = _data.find((x) => x.api_log_id === this.$route.params.id);
@@ -250,6 +344,7 @@ export default {
         this.data = data;
         this.dataBody = JSON.parse(this.data['data']);
         this.oldDataBody = JSON.parse(this.data['old_data']) || {};
+        console.log('dataBody', this.dataBody);
       });
     },
     isJsonString(str) {
