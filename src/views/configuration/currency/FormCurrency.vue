@@ -1,105 +1,98 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <InputDefault
-                :disabled="true"
-                :col="[3, 9]"
-                title="ID"
-                v-model="formData.id"
-              />
-              <InputDefault
-                :disabled="action == 'Read' ? true : false"
-                required
-                :col="[3, 9]"
-                title="Name"
-                v-model="formData.name"
-                :is-valid="initial_load ? null : !formData.name ? false : true"
-              />
-              <InputDefault
-                :disabled="action == 'Read' ? true : false"
-                required
-                :col="[3, 9]"
-                title="Country"
-                v-model="formData.country"
-                :is-valid="
-                  initial_load ? null : !formData.country ? false : true
-                "
-              />
-
-              <InputDefault
-                :disabled="action == 'Read' ? true : false"
-                :col="[3, 9]"
-                required
-                title="Symbol / Country Code"
-                placeholder="Please input Country Code"
-                v-model="formData.code"
-                :is-valid="initial_load ? null : !formData.code ? false : true"
-              >
-                <template #prepend>
-                  <div
-                    style="
-                      width: 350px;
-                      margin-bottom: -50px;
-                      margin-right: 10px;
-                    "
-                  >
-                    <InputDefault
-                      :disabled="action == 'Read' ? true : false"
-                      :col="[3, 9]"
-                      required
-                      placeholder="Please input Symbol"
-                      v-model="formData.symbol"
-                      :is-valid="
-                        initial_load ? null : !formData.symbol ? false : true
-                      "
-                    />
-                  </div>
-                </template>
-              </InputDefault>
-
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
-                />
-              </CRow>
-            </CForm>
-
-            <Metadata
-              :defaultMetadata="formData.metadata"
-              v-on:handleChange="
-                (formData.metadata = $event.result),
-                  (formData.error_metadata = $event.error_metadata)
-              "
-              model="mst_packaging"
+  <CRow>
+    <CCol md="12">
+      <CCard
+        ><CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
+        </CCardHeader>
+        <CCardBody>
+          <CForm>
+            <InputDefault
+              :disabled="true"
+              :col="[3, 9]"
+              title="ID"
+              v-model="formData.id"
             />
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              v-if="action == 'Read' ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
+            <InputDefault
+              :disabled="action == 'Read' ? true : false"
+              required
+              :col="[3, 9]"
+              title="Name"
+              v-model="formData.name"
+              :is-valid="initial_load ? null : !formData.name ? false : true"
+            />
+            <InputDefault
+              :disabled="action == 'Read' ? true : false"
+              required
+              :col="[3, 9]"
+              title="Country"
+              v-model="formData.country"
+              :is-valid="initial_load ? null : !formData.country ? false : true"
+            />
+
+            <InputDefault
+              :disabled="action == 'Read' ? true : false"
+              :col="[3, 9]"
+              required
+              title="Symbol / Country Code"
+              placeholder="Please input Country Code"
+              v-model="formData.code"
+              :is-valid="initial_load ? null : !formData.code ? false : true"
             >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
-            <ButtonBack />
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+              <template #prepend>
+                <div
+                  style="width: 350px; margin-bottom: -50px; margin-right: 10px"
+                >
+                  <InputDefault
+                    :disabled="action == 'Read' ? true : false"
+                    :col="[3, 9]"
+                    required
+                    placeholder="Please input Symbol"
+                    v-model="formData.symbol"
+                    :is-valid="
+                      initial_load ? null : !formData.symbol ? false : true
+                    "
+                  />
+                </div>
+              </template>
+            </InputDefault>
+
+            <CRow form class="form-group">
+              <CCol sm="3"> Status </CCol>
+              <SwitchStatusMaster
+                :disabled="action == 'Read'"
+                :show_label="true"
+                :default_value="formData.status"
+                v-on:onChange="formData.status = $event"
+              />
+            </CRow>
+          </CForm>
+
+          <Metadata
+            :defaultMetadata="formData.metadata"
+            v-on:handleChange="
+              (formData.metadata = $event.result),
+                (formData.error_metadata = $event.error_metadata)
+            "
+            model="mst_packaging"
+          />
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            v-if="action == 'Read' ? false : true"
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="save()"
+          >
+            <CIcon name="cil-check-circle" /> Submit
+          </CButton>
+          <ButtonBack />
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>

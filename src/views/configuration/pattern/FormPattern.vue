@@ -1,76 +1,75 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
-          <CCardBody>
-            <CForm novalidate>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read'"
-                  required
-                  :col="[3, 9]"
-                  title="Name"
-                  placeholder="Enter pattern name"
-                  v-model="formData.name"
-                  :is-valid="initialLoad ? null : !formData.name ? false : true"
-                />
-              </CCol>
-              <CCol sm="12">
-                <TextareaDefault
-                  :disabled="action == 'Read'"
-                  :col="[3, 9]"
-                  title="Description"
-                  placeholder="Enter pattern description"
-                  v-model="formData.description"
-                />
-              </CCol>
+  <CRow>
+    <CCol md="12">
+      <CCard>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
+        </CCardHeader>
+        <CCardBody>
+          <CForm novalidate>
+            <CCol sm="12">
+              <InputDefault
+                :disabled="action == 'Read'"
+                required
+                :col="[3, 9]"
+                title="Name"
+                placeholder="Enter pattern name"
+                v-model="formData.name"
+                :is-valid="initialLoad ? null : !formData.name ? false : true"
+              />
+            </CCol>
+            <CCol sm="12">
+              <TextareaDefault
+                :disabled="action == 'Read'"
+                :col="[3, 9]"
+                title="Description"
+                placeholder="Enter pattern description"
+                v-model="formData.description"
+              />
+            </CCol>
 
-              <CCol sm="12">
-                <InputDefault
+            <CCol sm="12">
+              <InputDefault
+                :disabled="action == 'Read'"
+                required
+                :col="[3, 9]"
+                title="Regex"
+                placeholder="Enter regex pattern"
+                v-model="formData.pattern"
+                :is-valid="
+                  initialLoad ? null : !formData.pattern ? false : true
+                "
+              />
+            </CCol>
+            <CCol md="12">
+              <CRow form class="form-group">
+                <CCol sm="3"> Status </CCol>
+                <SwitchStatusMaster
                   :disabled="action == 'Read'"
-                  required
-                  :col="[3, 9]"
-                  title="Regex"
-                  placeholder="Enter regex pattern"
-                  v-model="formData.pattern"
-                  :is-valid="
-                    initialLoad ? null : !formData.pattern ? false : true
-                  "
+                  :default_value="formData.status"
+                  :show_label="true"
+                  v-on:onChange="formData.status = $event"
                 />
-              </CCol>
-              <CCol md="12">
-                <CRow form class="form-group">
-                  <CCol sm="3"> Status </CCol>
-                  <SwitchStatusMaster
-                    :disabled="action == 'Read'"
-                    :default_value="formData.status"
-                    :show_label="true"
-                    v-on:onChange="formData.status = $event"
-                  />
-                </CRow>
-              </CCol>
-            </CForm>
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              v-if="action == 'Read' ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
-            <ButtonBack />
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+              </CRow>
+            </CCol>
+          </CForm>
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            v-if="action == 'Read' ? false : true"
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="save()"
+          >
+            <CIcon name="cil-check-circle" /> Submit
+          </CButton>
+          <ButtonBack />
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>

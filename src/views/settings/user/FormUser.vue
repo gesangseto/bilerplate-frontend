@@ -1,112 +1,108 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
+  <CRow>
+    <CCol md="12">
+      <CCard>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
+        </CCardHeader>
 
-          <CCardBody>
-            <CForm>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="true"
-                  :col="[3, 9]"
-                  title="ID"
-                  v-model="formData.id"
-                />
-              </CCol>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
-                  required
-                  :col="[3, 9]"
-                  title="Global ID"
-                  placeholder="Enter Global ID"
-                  v-model="formData.employee_id"
-                  :is-valid="
-                    initial_load ? null : formData.employee_id ? true : false
-                  "
-                />
-              </CCol>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
-                  :col="[3, 9]"
-                  required
-                  title="Username"
-                  placeholder="Enter username"
-                  v-model="formData.username"
-                  :is-valid="
-                    initial_load ? null : formData.username ? true : false
-                  "
-                />
-              </CCol>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
-                  :col="[3, 9]"
-                  required
-                  title="Full Name"
-                  placeholder="Enter full name"
-                  v-model="formData.full_name"
-                  :is-valid="
-                    initial_load ? null : formData.full_name ? true : false
-                  "
-                />
-              </CCol>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
-                  :col="[3, 9]"
-                  required
-                  title="Phone Number"
-                  validasi="numeric"
-                  v-model="formData.tlp"
-                  :max="12"
-                  :is-valid="initial_load ? null : checkPhone(formData.tlp)"
-                  :invalid_feedback="required.tlp.message"
-                  placeholder="Enter phone number (Example : 81211223344)"
-                >
-                  <template #prepend>
-                    <div style="width: 350px; margin-bottom: -50px">
-                      <SelectOption
-                        :disabled="
-                          action == 'Read' || formData.is_sys ? true : false
-                        "
-                        required
-                        :options="CountryCode"
-                        v-on:onchange="handleChangeInput($event)"
-                        :value="formData.tlp_code"
-                        :is-valid="
-                          initial_load
-                            ? null
-                            : !formData.tlp_code
-                            ? false
-                            : true
-                        "
-                      />
-                    </div>
-                  </template>
-                </InputDefault>
-              </CCol>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
-                  :col="[3, 9]"
-                  required
-                  validasi="email"
-                  title="Email"
-                  placeholder="email.address@email.com"
-                  v-model="formData.email"
-                  :is-valid="initial_load ? null : checkEmail(formData.email)"
-                  :invalid_feedback="
-                    formData.email ? 'Please provide valid email address' : null
-                  "
-                />
-              </CCol>
-              <!-- 
+        <CCardBody>
+          <CForm>
+            <CCol sm="12">
+              <InputDefault
+                :disabled="true"
+                :col="[3, 9]"
+                title="ID"
+                v-model="formData.id"
+              />
+            </CCol>
+            <CCol sm="12">
+              <InputDefault
+                :disabled="action == 'Read' || formData.is_sys ? true : false"
+                required
+                :col="[3, 9]"
+                title="Global ID"
+                placeholder="Enter Global ID"
+                v-model="formData.employee_id"
+                :is-valid="
+                  initial_load ? null : formData.employee_id ? true : false
+                "
+              />
+            </CCol>
+            <CCol sm="12">
+              <InputDefault
+                :disabled="action == 'Read' || formData.is_sys ? true : false"
+                :col="[3, 9]"
+                required
+                title="Username"
+                placeholder="Enter username"
+                v-model="formData.username"
+                :is-valid="
+                  initial_load ? null : formData.username ? true : false
+                "
+              />
+            </CCol>
+            <CCol sm="12">
+              <InputDefault
+                :disabled="action == 'Read' || formData.is_sys ? true : false"
+                :col="[3, 9]"
+                required
+                title="Full Name"
+                placeholder="Enter full name"
+                v-model="formData.full_name"
+                :is-valid="
+                  initial_load ? null : formData.full_name ? true : false
+                "
+              />
+            </CCol>
+            <CCol sm="12">
+              <InputDefault
+                :disabled="action == 'Read' || formData.is_sys ? true : false"
+                :col="[3, 9]"
+                required
+                title="Phone Number"
+                validasi="numeric"
+                v-model="formData.tlp"
+                :max="12"
+                :is-valid="initial_load ? null : checkPhone(formData.tlp)"
+                :invalid_feedback="required.tlp.message"
+                placeholder="Enter phone number (Example : 81211223344)"
+              >
+                <template #prepend>
+                  <div style="width: 350px; margin-bottom: -50px">
+                    <SelectOption
+                      :disabled="
+                        action == 'Read' || formData.is_sys ? true : false
+                      "
+                      required
+                      :options="CountryCode"
+                      v-on:onchange="handleChangeInput($event)"
+                      :value="formData.tlp_code"
+                      :is-valid="
+                        initial_load ? null : !formData.tlp_code ? false : true
+                      "
+                    />
+                  </div>
+                </template>
+              </InputDefault>
+            </CCol>
+            <CCol sm="12">
+              <InputDefault
+                :disabled="action == 'Read' || formData.is_sys ? true : false"
+                :col="[3, 9]"
+                required
+                validasi="email"
+                title="Email"
+                placeholder="email.address@email.com"
+                v-model="formData.email"
+                :is-valid="initial_load ? null : checkEmail(formData.email)"
+                :invalid_feedback="
+                  formData.email ? 'Please provide valid email address' : null
+                "
+              />
+            </CCol>
+            <!-- 
               <CCol sm="12">
                 <InputDefault
                   :disabled="action == 'Read' || formData.is_sys ? true : false"
@@ -162,283 +158,282 @@
                 />
               </CCol>
                -->
-              <CCol sm="12">
-                <SelectOption
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
-                  :col="[3, 9]"
-                  title="Department"
-                  required
-                  :options="
-                    departmentOptions.filter((it) =>
-                      formData.is_sys ? it.is_sys : !it.is_sys,
-                    )
-                  "
-                  v-on:onchange="formData.mst_department_id = $event"
-                  :value="formData.mst_department_id"
-                  :isValid="
-                    initial_load
-                      ? null
-                      : formData.mst_department_id
-                      ? true
-                      : false
-                  "
+            <CCol sm="12">
+              <SelectOption
+                :disabled="action == 'Read' || formData.is_sys ? true : false"
+                :col="[3, 9]"
+                title="Department"
+                required
+                :options="
+                  departmentOptions.filter((it) =>
+                    formData.is_sys ? it.is_sys : !it.is_sys,
+                  )
+                "
+                v-on:onchange="formData.mst_department_id = $event"
+                :value="formData.mst_department_id"
+                :isValid="
+                  initial_load
+                    ? null
+                    : formData.mst_department_id
+                    ? true
+                    : false
+                "
+              />
+            </CCol>
+            <CCol sm="12">
+              <SelectOption
+                :disabled="action == 'Read' || formData.is_sys ? true : false"
+                :col="[3, 9]"
+                title="Section"
+                required
+                :options="
+                  optionSections.filter((it) =>
+                    formData.is_sys ? it.is_sys : !it.is_sys,
+                  )
+                "
+                v-on:onchange="formData.mst_section_id = $event"
+                :value="formData.mst_section_id"
+                :isValid="
+                  initial_load ? null : formData.mst_section_id ? true : false
+                "
+              />
+            </CCol>
+            <CCol sm="12">
+              <CRow form class="form-group">
+                <CCol sm="3"> Status </CCol>
+                <SwitchStatusMaster
+                  :disabled="action == 'Read'"
+                  :show_label="true"
+                  :default_value="formData.status"
+                  v-on:onChange="formData.status = $event"
                 />
-              </CCol>
-              <CCol sm="12">
-                <SelectOption
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
-                  :col="[3, 9]"
-                  title="Section"
-                  required
-                  :options="
-                    optionSections.filter((it) =>
-                      formData.is_sys ? it.is_sys : !it.is_sys,
-                    )
-                  "
-                  v-on:onchange="formData.mst_section_id = $event"
-                  :value="formData.mst_section_id"
-                  :isValid="
-                    initial_load ? null : formData.mst_section_id ? true : false
-                  "
-                />
-              </CCol>
-              <CCol sm="12">
-                <CRow form class="form-group">
-                  <CCol sm="3"> Status </CCol>
-                  <SwitchStatusMaster
-                    :disabled="action == 'Read'"
-                    :show_label="true"
-                    :default_value="formData.status"
-                    v-on:onChange="formData.status = $event"
-                  />
-                </CRow>
-              </CCol>
+              </CRow>
+            </CCol>
 
-              <CCol sm="12">
-                <CRow form class="form-group">
-                  <CCol sm="3"
-                    >Avatar
-                    <span class="text-danger"><strong>*</strong></span></CCol
+            <CCol sm="12">
+              <CRow form class="form-group">
+                <CCol sm="3"
+                  >Avatar
+                  <span class="text-danger"><strong>*</strong></span></CCol
+                >
+                <CCol sm="9">
+                  <CRow
+                    class="form-group"
+                    v-if="action == 'Read' || formData.is_sys"
                   >
-                  <CCol sm="9">
-                    <CRow
-                      class="form-group"
-                      v-if="action == 'Read' || formData.is_sys"
-                    >
-                      <CCol sm="12">
-                        <CRow class="justify-content-left">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              :src="
-                                require(`../../../../public/img/avatars/${formData.mst_avatar_id}.png`)
-                              "
-                            />
-                          </label>
-                        </CRow>
-                      </CCol>
-                    </CRow>
-                    <CRow class="form-group" v-if="action != 'Read'">
-                      <CCol sm="3">
-                        <CRow class="justify-content-center">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              src="../../../../public/img/avatars/1.png"
-                            />
-                            <CInputRadioGroup
-                              id="avatar"
-                              name="inlineRadioOptions"
-                              style="margin-left: 18px"
-                              :options="[{ value: '1' }]"
-                              :inline="false"
-                              :checked.sync="formData.mst_avatar_id"
-                            />
-                          </label>
-                        </CRow>
-                      </CCol>
+                    <CCol sm="12">
+                      <CRow class="justify-content-left">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            :src="
+                              require(`../../../../public/img/avatars/${formData.mst_avatar_id}.png`)
+                            "
+                          />
+                        </label>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+                  <CRow class="form-group" v-if="action != 'Read'">
+                    <CCol sm="3">
+                      <CRow class="justify-content-center">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            src="../../../../public/img/avatars/1.png"
+                          />
+                          <CInputRadioGroup
+                            id="avatar"
+                            name="inlineRadioOptions"
+                            style="margin-left: 18px"
+                            :options="[{ value: '1' }]"
+                            :inline="false"
+                            :checked.sync="formData.mst_avatar_id"
+                          />
+                        </label>
+                      </CRow>
+                    </CCol>
 
-                      <CCol sm="3">
-                        <CRow class="justify-content-center">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              src="../../../../public/img/avatars/2.png"
-                            />
-                            <CInputRadioGroup
-                              id="avatar"
-                              style="margin-left: 18px"
-                              :options="[{ value: '2' }]"
-                              :inline="false"
-                              :checked.sync="formData.mst_avatar_id"
-                            />
-                          </label>
-                        </CRow>
-                      </CCol>
+                    <CCol sm="3">
+                      <CRow class="justify-content-center">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            src="../../../../public/img/avatars/2.png"
+                          />
+                          <CInputRadioGroup
+                            id="avatar"
+                            style="margin-left: 18px"
+                            :options="[{ value: '2' }]"
+                            :inline="false"
+                            :checked.sync="formData.mst_avatar_id"
+                          />
+                        </label>
+                      </CRow>
+                    </CCol>
 
-                      <CCol sm="3">
-                        <CRow class="justify-content-center">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              src="../../../../public/img/avatars/3.png" />
-                            <CInputRadioGroup
-                              id="avatar"
-                              style="margin-left: 18px"
-                              :options="[{ value: '3' }]"
-                              :inline="false"
-                              :checked.sync="formData.mst_avatar_id"
-                          /></label>
-                        </CRow>
-                      </CCol>
-                      <CCol sm="3">
-                        <CRow class="justify-content-center">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              src="../../../../public/img/avatars/4.png"
-                            />
-                            <CInputRadioGroup
-                              id="avatar"
-                              style="margin-left: 18px"
-                              :options="[{ value: '4' }]"
-                              :inline="false"
-                              :checked.sync="formData.mst_avatar_id"
-                            />
-                          </label>
-                        </CRow>
-                      </CCol>
-                    </CRow>
+                    <CCol sm="3">
+                      <CRow class="justify-content-center">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            src="../../../../public/img/avatars/3.png" />
+                          <CInputRadioGroup
+                            id="avatar"
+                            style="margin-left: 18px"
+                            :options="[{ value: '3' }]"
+                            :inline="false"
+                            :checked.sync="formData.mst_avatar_id"
+                        /></label>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="3">
+                      <CRow class="justify-content-center">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            src="../../../../public/img/avatars/4.png"
+                          />
+                          <CInputRadioGroup
+                            id="avatar"
+                            style="margin-left: 18px"
+                            :options="[{ value: '4' }]"
+                            :inline="false"
+                            :checked.sync="formData.mst_avatar_id"
+                          />
+                        </label>
+                      </CRow>
+                    </CCol>
+                  </CRow>
 
-                    <CRow
-                      class="form-group"
-                      style="margin-top: 30px"
-                      v-if="action != 'Read'"
-                    >
-                      <CCol sm="3">
-                        <CRow class="justify-content-center">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              src="../../../../public/img/avatars/5.png"
-                            />
-                            <CInputRadioGroup
-                              id="avatar"
-                              style="margin-left: 18px"
-                              :options="[{ value: '5' }]"
-                              :inline="false"
-                              :checked.sync="formData.mst_avatar_id"
-                            />
-                          </label>
-                        </CRow>
-                      </CCol>
+                  <CRow
+                    class="form-group"
+                    style="margin-top: 30px"
+                    v-if="action != 'Read'"
+                  >
+                    <CCol sm="3">
+                      <CRow class="justify-content-center">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            src="../../../../public/img/avatars/5.png"
+                          />
+                          <CInputRadioGroup
+                            id="avatar"
+                            style="margin-left: 18px"
+                            :options="[{ value: '5' }]"
+                            :inline="false"
+                            :checked.sync="formData.mst_avatar_id"
+                          />
+                        </label>
+                      </CRow>
+                    </CCol>
 
-                      <CCol sm="3">
-                        <CRow class="justify-content-center">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              src="../../../../public/img/avatars/6.png"
-                            />
-                            <CInputRadioGroup
-                              id="avatar"
-                              style="margin-left: 18px"
-                              :options="[{ value: '6' }]"
-                              :inline="false"
-                              :checked.sync="formData.mst_avatar_id"
-                            />
-                          </label>
-                        </CRow>
-                      </CCol>
+                    <CCol sm="3">
+                      <CRow class="justify-content-center">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            src="../../../../public/img/avatars/6.png"
+                          />
+                          <CInputRadioGroup
+                            id="avatar"
+                            style="margin-left: 18px"
+                            :options="[{ value: '6' }]"
+                            :inline="false"
+                            :checked.sync="formData.mst_avatar_id"
+                          />
+                        </label>
+                      </CRow>
+                    </CCol>
 
-                      <CCol sm="3">
-                        <CRow class="justify-content-center">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              src="../../../../public/img/avatars/7.png"
-                            />
-                            <CInputRadioGroup
-                              id="avatar"
-                              style="margin-left: 18px"
-                              :options="[{ value: '7' }]"
-                              :inline="false"
-                              :checked.sync="formData.mst_avatar_id"
-                            />
-                          </label>
-                        </CRow>
-                      </CCol>
-                      <CCol sm="3">
-                        <CRow class="justify-content-center">
-                          <label>
-                            <img
-                              style="width: 50px; height: auto"
-                              src="../../../../public/img/avatars/8.png"
-                            />
-                            <CInputRadioGroup
-                              id="avatar"
-                              style="margin-left: 18px"
-                              :options="[{ value: '8' }]"
-                              :inline="false"
-                              :checked.sync="formData.mst_avatar_id"
-                            />
-                          </label>
-                        </CRow>
-                      </CCol>
-                    </CRow>
-                  </CCol>
-                </CRow>
-              </CCol>
-              <br />
-              <CCol sm="12" v-if="action == 'Update' || action == 'Create'">
-                <div class="default-password-box">
-                  <InputDefault
-                    :disabled="true"
-                    :col="[3, 9]"
-                    title="Default Password"
-                    v-model="configuration.password_default"
-                  />
-                </div>
-              </CCol>
-            </CForm>
-            <Metadata
-              :defaultMetadata="formData.metadata"
-              v-on:handleChange="
-                (formData.metadata = $event.result),
-                  (formData.error_metadata = $event.error_metadata)
-              "
-              model="mst_user"
-            />
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              v-if="action == 'Read' || formData.is_sys ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" />
-              Submit
-            </CButton>
-            <ButtonBack />
-            <CButton
-              v-if="action == 'Update'"
-              type="submit"
-              size="sm"
-              class="float-right"
-              color="warning"
-              title="Reset Password "
-              @click="resetPassword()"
-            >
-              <CIcon name="cil-sync" />
-              Reset Password
-            </CButton>
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+                    <CCol sm="3">
+                      <CRow class="justify-content-center">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            src="../../../../public/img/avatars/7.png"
+                          />
+                          <CInputRadioGroup
+                            id="avatar"
+                            style="margin-left: 18px"
+                            :options="[{ value: '7' }]"
+                            :inline="false"
+                            :checked.sync="formData.mst_avatar_id"
+                          />
+                        </label>
+                      </CRow>
+                    </CCol>
+                    <CCol sm="3">
+                      <CRow class="justify-content-center">
+                        <label>
+                          <img
+                            style="width: 50px; height: auto"
+                            src="../../../../public/img/avatars/8.png"
+                          />
+                          <CInputRadioGroup
+                            id="avatar"
+                            style="margin-left: 18px"
+                            :options="[{ value: '8' }]"
+                            :inline="false"
+                            :checked.sync="formData.mst_avatar_id"
+                          />
+                        </label>
+                      </CRow>
+                    </CCol>
+                  </CRow>
+                </CCol>
+              </CRow>
+            </CCol>
+            <br />
+            <CCol sm="12" v-if="action == 'Update' || action == 'Create'">
+              <div class="default-password-box">
+                <InputDefault
+                  :disabled="true"
+                  :col="[3, 9]"
+                  title="Default Password"
+                  v-model="configuration.password_default"
+                />
+              </div>
+            </CCol>
+          </CForm>
+          <Metadata
+            :defaultMetadata="formData.metadata"
+            v-on:handleChange="
+              (formData.metadata = $event.result),
+                (formData.error_metadata = $event.error_metadata)
+            "
+            model="mst_user"
+          />
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            v-if="action == 'Read' || formData.is_sys ? false : true"
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="save()"
+          >
+            <CIcon name="cil-check-circle" />
+            Submit
+          </CButton>
+          <ButtonBack />
+          <CButton
+            v-if="action == 'Update'"
+            type="submit"
+            size="sm"
+            class="float-right"
+            color="warning"
+            title="Reset Password "
+            @click="resetPassword()"
+          >
+            <CIcon name="cil-sync" />
+            Reset Password
+          </CButton>
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>

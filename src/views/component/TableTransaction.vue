@@ -408,6 +408,11 @@ export default {
           label: 'ID',
         },
         {
+          value: 'trx_ref_id',
+          code: 'trx_ref_id',
+          label: 'Trx ID',
+        },
+        {
           value: 'packaging_level',
           code: 'packaging_level',
           label: 'Packaging Level',
@@ -733,6 +738,9 @@ export default {
           this.filter.SearchVal1 = '';
           this.filter.SearchVal1Text = 'All';
         } else if (this.filter.SearchType.toLowerCase() == 'id') {
+          this.use_normal_form = true;
+          this.extendFilter = true;
+        } else if (this.filter.SearchType.toLowerCase() == 'trx_ref_id') {
           this.use_normal_form = true;
           this.extendFilter = true;
         } else if (this.filter.SearchType.toLowerCase() == 'packaging_level') {

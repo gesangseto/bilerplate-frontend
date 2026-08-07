@@ -1,11 +1,12 @@
 <template>
-  <div>
     <CRow>
       <CCol md="12">
         <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
+          
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
+        </CCardHeader>
           <CCardBody>
             <strong
               v-if="formData.production_batch_list_id"
@@ -123,7 +124,6 @@
         </CCard>
       </CCol>
     </CRow>
-  </div>
 </template>
 
 <script>

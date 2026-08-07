@@ -15,6 +15,8 @@ import vmodal from 'vue-js-modal';
 import VueFab from 'vue-float-action-button';
 
 import {
+  ButtonSubmit,
+  ButtonEdit,
   ButtonDefault,
   Button,
   ButtonBack,
@@ -44,6 +46,7 @@ import {
   TextareaDefault,
   TableDefault,
   TableTransaction,
+  ButtonInfo,
 } from './views/component';
 Vue.use(
   VueFab /* {
@@ -57,6 +60,7 @@ Vue.use(VueCustomTooltip);
 Vue.use(loading);
 Vue.use(vmodal);
 Vue.use(VueTouchKeyboard);
+Vue.component('ButtonEdit', ButtonEdit);
 Vue.component('ButtonDefault', ButtonDefault);
 Vue.component('TableTransaction', TableTransaction);
 Vue.component('TableDefault', TableDefault);
@@ -66,6 +70,8 @@ Vue.component('v-icon', Icon);
 Vue.component('MasterPid', MasterPid);
 Vue.component('Button', Button);
 Vue.component('ButtonBack', ButtonBack);
+Vue.component('ButtonInfo', ButtonInfo);
+Vue.component('ButtonSubmit', ButtonSubmit);
 Vue.component('ButtonPermission', ButtonPermission);
 Vue.component('HeaderShowStatus', HeaderShowStatus);
 Vue.component('CancelModal', CancelModal);

@@ -1,215 +1,213 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
-          <CCardBody>
-            <CForm novalidate>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter connector name"
-                autocomplete="name"
-                v-model="form.name"
-                :is-valid="initialLoad ? null : !form.name ? false : true"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Name
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CInput>
-              <CTextarea
-                :disabled="action == 'Read' ? true : false"
-                placeholder="Enter connector description"
-                horizontal
-                v-model="form.description"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Description</p>
-                </template>
-              </CTextarea>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter folder path"
-                v-model="form.folder_sftp"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Folder Path</p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                :placeholder="
-                  form.folder_sftp
-                    ? 'Default: ' +
-                      form.folder_sftp +
-                      form.folder_sftp.includes('/')
-                      ? '/Archive'
-                      : '\\Archive'
-                    : ''
-                "
-                v-model="form.folder_backup"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Archive Folder Path</p>
-                </template>
-              </CInput>
-              <SelectOption
-                title="Running Schedule"
-                :options="listCron"
-                v-on:onchange="form.schedule = $event"
-                :value="form.schedule"
-                :col="[3, 9]"
+  <CRow>
+    <CCol md="12">
+      <CCard>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="form" v-if="action !== 'Create'" />
+        </CCardHeader>
+        <CCardBody>
+          <CForm novalidate>
+            <CInput
+              :disabled="action == 'Read' ? true : false"
+              horizontal
+              placeholder="Enter connector name"
+              autocomplete="name"
+              v-model="form.name"
+              :is-valid="initialLoad ? null : !form.name ? false : true"
+            >
+              <template #label>
+                <p class="col-form-label col-sm-3">
+                  Name
+                  <span class="text-danger">
+                    <strong>*</strong>
+                  </span>
+                </p>
+              </template>
+            </CInput>
+            <CTextarea
+              :disabled="action == 'Read' ? true : false"
+              placeholder="Enter connector description"
+              horizontal
+              v-model="form.description"
+            >
+              <template #label>
+                <p class="col-form-label col-sm-3">Description</p>
+              </template>
+            </CTextarea>
+            <CInput
+              :disabled="action == 'Read' ? true : false"
+              horizontal
+              placeholder="Enter folder path"
+              v-model="form.folder_sftp"
+            >
+              <template #label>
+                <p class="col-form-label col-sm-3">Folder Path</p>
+              </template>
+            </CInput>
+            <CInput
+              :disabled="action == 'Read' ? true : false"
+              horizontal
+              :placeholder="
+                form.folder_sftp
+                  ? 'Default: ' +
+                    form.folder_sftp +
+                    form.folder_sftp.includes('/')
+                    ? '/Archive'
+                    : '\\Archive'
+                  : ''
+              "
+              v-model="form.folder_backup"
+            >
+              <template #label>
+                <p class="col-form-label col-sm-3">Archive Folder Path</p>
+              </template>
+            </CInput>
+            <SelectOption
+              title="Running Schedule"
+              :options="listCron"
+              v-on:onchange="form.schedule = $event"
+              :value="form.schedule"
+              :col="[3, 9]"
+            />
+            <CRow form class="form-group">
+              <CCol sm="3"> Using Connection </CCol>
+              <SwitchDefault
+                :disabled="action == 'Read'"
+                :show_label="true"
+                :default_value="form.using_connection"
+                v-on:onChange="form.using_connection = $event"
               />
-              <CRow form class="form-group">
-                <CCol sm="3"> Using Connection </CCol>
-                <SwitchDefault
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="form.using_connection"
-                  v-on:onChange="form.using_connection = $event"
+            </CRow>
+            <CCard v-if="form.using_connection">
+              <CCardBody>
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  required
+                  :col="[3, 9]"
+                  title="Host"
+                  placeholder="Enter Connection Host"
+                  v-model="connection.host"
+                  :is-valid="
+                    initialLoad ? null : !connection.host ? false : true
+                  "
                 />
-              </CRow>
-              <CCard v-if="form.using_connection">
-                <CCardBody>
-                  <InputDefault
-                    :disabled="action == 'Read' ? true : false"
-                    required
-                    :col="[3, 9]"
-                    title="Host"
-                    placeholder="Enter Connection Host"
-                    v-model="connection.host"
-                    :is-valid="
-                      initialLoad ? null : !connection.host ? false : true
-                    "
-                  />
-                  <InputDefault
-                    :disabled="action == 'Read' ? true : false"
-                    required
-                    :col="[3, 9]"
-                    title="Port"
-                    placeholder="Enter Connection PORT"
-                    v-model="connection.port"
-                    :is-valid="
-                      initialLoad ? null : !connection.port ? false : true
-                    "
-                  />
-                  <InputDefault
-                    :disabled="action == 'Read' ? true : false"
-                    required
-                    :col="[3, 9]"
-                    title="Username"
-                    v-model="connection.username"
-                    :is-valid="
-                      initialLoad ? null : !connection.username ? false : true
-                    "
-                  />
-                  <InputDefault
-                    :disabled="action == 'Read' ? true : false"
-                    required
-                    :col="[3, 9]"
-                    title="password"
-                    type="password"
-                    v-model="connection.password"
-                    :is-valid="
-                      initialLoad ? null : !connection.password ? false : true
-                    "
-                  />
-                </CCardBody>
-              </CCard>
-              <CSelect
-                placeholder="-Select-"
-                :options="listConnector"
-                horizontal
-                :value.sync="form.connector_id"
-                @change="handleChangeConnector()"
-                :is-valid="
-                  initialLoad ? null : !form.connector_id ? false : true
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Connector
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="form.status"
-                  v-on:onChange="form.status = $event"
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  required
+                  :col="[3, 9]"
+                  title="Port"
+                  placeholder="Enter Connection PORT"
+                  v-model="connection.port"
+                  :is-valid="
+                    initialLoad ? null : !connection.port ? false : true
+                  "
                 />
-              </CRow>
-              <CCard>
-                <CCardHeader>Connector Parameter</CCardHeader>
-                <CCardBody
-                  ><table style="width: 100%">
-                    <thead>
-                      <th style="text-align: center; width: 5%">Source Type</th>
-                      <th style="text-align: center; width: 5%">
-                        Parameter Name
-                      </th>
-                      <th style="text-align: center; width: 5%">
-                        Parameter Value
-                      </th>
-                      <th style="text-align: center; width: 5%">Required</th>
-                      <th style="text-align: center; width: 5%">Key</th>
-                    </thead>
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  required
+                  :col="[3, 9]"
+                  title="Username"
+                  v-model="connection.username"
+                  :is-valid="
+                    initialLoad ? null : !connection.username ? false : true
+                  "
+                />
+                <InputDefault
+                  :disabled="action == 'Read' ? true : false"
+                  required
+                  :col="[3, 9]"
+                  title="password"
+                  type="password"
+                  v-model="connection.password"
+                  :is-valid="
+                    initialLoad ? null : !connection.password ? false : true
+                  "
+                />
+              </CCardBody>
+            </CCard>
+            <CSelect
+              placeholder="-Select-"
+              :options="listConnector"
+              horizontal
+              :value.sync="form.connector_id"
+              @change="handleChangeConnector()"
+              :is-valid="initialLoad ? null : !form.connector_id ? false : true"
+            >
+              <template #label>
+                <p class="col-form-label col-sm-3">
+                  Connector
+                  <span class="text-danger">
+                    <strong>*</strong>
+                  </span>
+                </p>
+              </template>
+            </CSelect>
+            <CRow form class="form-group">
+              <CCol sm="3"> Status </CCol>
+              <SwitchStatusMaster
+                :disabled="action == 'Read'"
+                :show_label="true"
+                :default_value="form.status"
+                v-on:onChange="form.status = $event"
+              />
+            </CRow>
+            <CCard>
+              <CCardHeader>Connector Parameter</CCardHeader>
+              <CCardBody
+                ><table style="width: 100%">
+                  <thead>
+                    <th style="text-align: center; width: 5%">Source Type</th>
+                    <th style="text-align: center; width: 5%">
+                      Parameter Name
+                    </th>
+                    <th style="text-align: center; width: 5%">
+                      Parameter Value
+                    </th>
+                    <th style="text-align: center; width: 5%">Required</th>
+                    <th style="text-align: center; width: 5%">Key</th>
+                  </thead>
 
-                    <tbody
-                      v-for="(item, index) in detailConnector.params"
-                      :key="index"
-                    >
-                      <tr @click="handleClickRow(index)">
-                        <td style="align: center">
-                          <CInput readonly :value.sync="item.source" />
-                        </td>
-                        <td style="align: center">
-                          <CInput readonly :value.sync="item.variable_name" />
-                        </td>
-                        <td style="text-align: center">
-                          <CInput
-                            v-if="item.source !== 'database'"
-                            :readonly="
-                              item.source !== 'database' &&
-                              item.source !== 'string'
-                            "
-                            :value.sync="item.variable_value"
-                          />
-                          <CSelect
-                            v-if="item.source == 'database'"
-                            :value.sync="item.variable_value"
-                            placeholder="-Select-"
-                            :options="databaseList[index]"
-                            horizontal
-                          />
-                        </td>
-                        <td style="text-align: center">
-                          <CInputCheckbox
-                            class="mr-1"
-                            color="success"
-                            :disabled="true"
-                            horizontal
-                            inline
-                            :checked.sync="item.required"
-                          />
-                        </td>
-                        <td style="text-align: center">
-                          <!-- <CInputRadioGroup
+                  <tbody
+                    v-for="(item, index) in detailConnector.params"
+                    :key="index"
+                  >
+                    <tr @click="handleClickRow(index)">
+                      <td style="align: center">
+                        <CInput readonly :value.sync="item.source" />
+                      </td>
+                      <td style="align: center">
+                        <CInput readonly :value.sync="item.variable_name" />
+                      </td>
+                      <td style="text-align: center">
+                        <CInput
+                          v-if="item.source !== 'database'"
+                          :readonly="
+                            item.source !== 'database' &&
+                            item.source !== 'string'
+                          "
+                          :value.sync="item.variable_value"
+                        />
+                        <CSelect
+                          v-if="item.source == 'database'"
+                          :value.sync="item.variable_value"
+                          placeholder="-Select-"
+                          :options="databaseList[index]"
+                          horizontal
+                        />
+                      </td>
+                      <td style="text-align: center">
+                        <CInputCheckbox
+                          class="mr-1"
+                          color="success"
+                          :disabled="true"
+                          horizontal
+                          inline
+                          :checked.sync="item.required"
+                        />
+                      </td>
+                      <td style="text-align: center">
+                        <!-- <CInputRadioGroup
                             id="avatar"
                             name="inlineRadioOptions"
                             style="margin-left: 18px"
@@ -218,39 +216,38 @@
                             :checked.sync="form.key"
                           /> -->
 
-                          <CInputCheckbox
-                            class="mr-1"
-                            color="success"
-                            disabled
-                            horizontal
-                            inline
-                            :checked="
-                              form.key === item.variable_name ? true : false
-                            "
-                          />
-                        </td>
-                      </tr>
-                    </tbody></table
-                ></CCardBody>
-              </CCard>
-            </CForm>
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              v-if="action == 'Read' ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
-            <ButtonBack />
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+                        <CInputCheckbox
+                          class="mr-1"
+                          color="success"
+                          disabled
+                          horizontal
+                          inline
+                          :checked="
+                            form.key === item.variable_name ? true : false
+                          "
+                        />
+                      </td>
+                    </tr>
+                  </tbody></table
+              ></CCardBody>
+            </CCard>
+          </CForm>
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            v-if="action == 'Read' ? false : true"
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="save()"
+          >
+            <CIcon name="cil-check-circle" /> Submit
+          </CButton>
+          <ButtonBack />
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>
@@ -359,7 +356,7 @@ export default {
       }
       let prop = this.detailConnector.params[index];
       let idx = this.databaseList[index].findIndex(
-        (i) => i.value == prop.variable_value
+        (i) => i.value == prop.variable_value,
       );
       if (~idx && this.databaseList[index].length > 1) {
         return;

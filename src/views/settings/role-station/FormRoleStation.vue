@@ -2,9 +2,10 @@
   <CRow>
     <CCol col="12" xl="12">
       <CCard>
-        <CCardHeader
-          ><h5>{{ $activeMenu.name }} [{{ route_action }}]</h5></CCardHeader
-        >
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="role" v-if="action !== 'Create'" />
+        </CCardHeader>
         <CCardBody>
           <CRow style="margin: 10px 0">
             <CCol sm="12">

@@ -2,17 +2,11 @@
   <CRow>
     <CCol col="8" xl="8">
       <CCard>
-        <CCardHeader>
-          <h5>
-            {{ $activeMenu.name }} [{{
-              this.action == 'Create'
-                ? 'ADD'
-                : this.action == 'Read'
-                ? 'VIEW'
-                : 'EDIT'
-            }}]
-          </h5>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
         </CCardHeader>
+
         <CCardBody>
           <CRow>
             <CCol md="12">
@@ -432,7 +426,9 @@ export default {
   name: 'Customer',
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
-    this.page = 1;
+
+    this.route_action =
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     this.getGenerateType();
     this.getDateFormat();
     if (this.action == 'Create' && this.$route.params.id) {

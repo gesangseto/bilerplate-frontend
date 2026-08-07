@@ -98,6 +98,7 @@ import {
   cilSwapHorizontal,
   cilClipboard,
   cilRoom,
+  cilInfo,
 } from '@coreui/icons';
 import { logo } from './logo';
 
@@ -130,6 +131,7 @@ export const iconsSet = Object.assign(
     cilEuro,
     cilGlobeAlt,
     cilGrid,
+    cilInfo,
     cilFile,
     cilJustifyCenter,
     cilLaptop,
@@ -212,5 +214,5 @@ export const iconsSet = Object.assign(
     cibPaypal,
     cibGooglePay,
     cibCcAmex,
-  }
+  },
 );

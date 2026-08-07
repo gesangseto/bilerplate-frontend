@@ -1,84 +1,83 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
+  <CRow>
+    <CCol md="12">
+      <CCard>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
+        </CCardHeader>
 
-          <CCardBody>
-            <CForm>
-              <CInput :disabled="true" horizontal v-model="formData.id">
-                <template #label>
-                  <p class="col-form-label col-sm-3">ID</p>
-                </template>
-              </CInput>
-              <CInput
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter department name"
-                v-model="formData.name"
-                :is-valid="initial_load ? null : formData.name ? true : false"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Name <span class="text-danger"><strong>*</strong></span>
-                  </p>
-                </template>
-              </CInput>
-              <CTextarea
-                :disabled="action == 'Read' ? true : false"
-                horizontal
-                placeholder="Enter department description"
-                v-model="formData.description"
-                :is-valid="
-                  initial_load ? null : formData.description ? true : false
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Description
-                    <span class="text-danger"><strong>*</strong></span>
-                  </p>
-                </template>
-              </CTextarea>
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
-                />
-              </CRow>
-            </CForm>
-            <Metadata
-              :defaultMetadata="formData.metadata"
-              v-on:handleChange="
-                (formData.metadata = $event.result),
-                  (formData.error_metadata = $event.error_metadata)
-              "
-              model="mst_department"
-            />
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              v-if="action == 'Read' || formData.is_sys ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
+        <CCardBody>
+          <CForm>
+            <CInput :disabled="true" horizontal v-model="formData.id">
+              <template #label>
+                <p class="col-form-label col-sm-3">ID</p>
+              </template>
+            </CInput>
+            <CInput
+              :disabled="action == 'Read' ? true : false"
+              horizontal
+              placeholder="Enter department name"
+              v-model="formData.name"
+              :is-valid="initial_load ? null : formData.name ? true : false"
             >
-              <CIcon name="cil-check-circle" />
-              Submit
-            </CButton>
-            <ButtonBack />
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+              <template #label>
+                <p class="col-form-label col-sm-3">
+                  Name <span class="text-danger"><strong>*</strong></span>
+                </p>
+              </template>
+            </CInput>
+            <CTextarea
+              :disabled="action == 'Read' ? true : false"
+              horizontal
+              placeholder="Enter department description"
+              v-model="formData.description"
+              :is-valid="
+                initial_load ? null : formData.description ? true : false
+              "
+            >
+              <template #label>
+                <p class="col-form-label col-sm-3">
+                  Description
+                  <span class="text-danger"><strong>*</strong></span>
+                </p>
+              </template>
+            </CTextarea>
+            <CRow form class="form-group">
+              <CCol sm="3"> Status </CCol>
+              <SwitchStatusMaster
+                :disabled="action == 'Read'"
+                :show_label="true"
+                :default_value="formData.status"
+                v-on:onChange="formData.status = $event"
+              />
+            </CRow>
+          </CForm>
+          <Metadata
+            :defaultMetadata="formData.metadata"
+            v-on:handleChange="
+              (formData.metadata = $event.result),
+                (formData.error_metadata = $event.error_metadata)
+            "
+            model="mst_department"
+          />
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            v-if="action == 'Read' || formData.is_sys ? false : true"
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="save()"
+          >
+            <CIcon name="cil-check-circle" />
+            Submit
+          </CButton>
+          <ButtonBack />
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>

@@ -1,87 +1,86 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
-          <CCardBody>
-            <strong
-              v-if="formData.is_lock"
-              style="color: red; font-size: x-small; margin-bottom: 10px"
-              class="mb-5"
-            >
-              This record is referenced by another transaction.
-            </strong>
-            <br />
-            <br />
-            <CCol sm="12">
-              <InputDefault
-                :disabled="true"
-                :col="[3, 9]"
-                title="ID"
-                placeholder="ID"
-                v-model="formData.id"
+  <CRow>
+    <CCol md="12">
+      <CCard>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
+        </CCardHeader>
+        <CCardBody>
+          <strong
+            v-if="formData.is_lock"
+            style="color: red; font-size: x-small; margin-bottom: 10px"
+            class="mb-5"
+          >
+            This record is referenced by another transaction.
+          </strong>
+          <br />
+          <br />
+          <CCol sm="12">
+            <InputDefault
+              :disabled="true"
+              :col="[3, 9]"
+              title="ID"
+              placeholder="ID"
+              v-model="formData.id"
+            />
+          </CCol>
+          <CCol sm="12">
+            <InputDefault
+              :disabled="action == 'Read' || formData.is_lock ? true : false"
+              :col="[3, 9]"
+              title="Name"
+              placeholder="Enter Name"
+              v-model="formData.name"
+              :is-valid="initialLoad ? null : formData.name ? true : false"
+            />
+          </CCol>
+          <CCol sm="12">
+            <InputDefault
+              :disabled="action == 'Read' || formData.is_lock ? true : false"
+              :col="[3, 9]"
+              title="Cron Schedule"
+              placeholder="* * * * * (5 / 6 length of *)"
+              v-model="formData.cron"
+              :is-valid="!formData.cron ? null : testCron(formData.cron)"
+              :invalid_feedback="'Invalid cron expression. Please visit https://crontab.guru/ for assistance.'"
+            />
+          </CCol>
+          <CCol sm="12">
+            <InputDefault
+              :disabled="'Read'"
+              :col="[3, 9]"
+              title="Info"
+              v-model="formData.description"
+            />
+          </CCol>
+          <CCol sm="12">
+            <CRow form class="form-group">
+              <CCol sm="3"> Show </CCol>
+              <SwitchStatusMaster
+                :disabled="action == 'Read'"
+                :show_label="true"
+                :default_value="formData.status"
+                v-on:onChange="formData.status = $event"
               />
-            </CCol>
-            <CCol sm="12">
-              <InputDefault
-                :disabled="action == 'Read' || formData.is_lock ? true : false"
-                :col="[3, 9]"
-                title="Name"
-                placeholder="Enter Name"
-                v-model="formData.name"
-                :is-valid="initialLoad ? null : formData.name ? true : false"
-              />
-            </CCol>
-            <CCol sm="12">
-              <InputDefault
-                :disabled="action == 'Read' || formData.is_lock ? true : false"
-                :col="[3, 9]"
-                title="Cron Schedule"
-                placeholder="* * * * * (5 / 6 length of *)"
-                v-model="formData.cron"
-                :is-valid="!formData.cron ? null : testCron(formData.cron)"
-                :invalid_feedback="'Invalid cron expression. Please visit https://crontab.guru/ for assistance.'"
-              />
-            </CCol>
-            <CCol sm="12">
-              <InputDefault
-                :disabled="'Read'"
-                :col="[3, 9]"
-                title="Info"
-                v-model="formData.description"
-              />
-            </CCol>
-            <CCol sm="12">
-              <CRow form class="form-group">
-                <CCol sm="3"> Show </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
-                />
-              </CRow>
-            </CCol>
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              v-if="action == 'Read' ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
-            <ButtonBack />
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+            </CRow>
+          </CCol>
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            v-if="action == 'Read' ? false : true"
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="save()"
+          >
+            <CIcon name="cil-check-circle" /> Submit
+          </CButton>
+          <ButtonBack />
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>

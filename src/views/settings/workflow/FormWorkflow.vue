@@ -1,78 +1,77 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <InputDefault
-                :disabled="true"
-                title="Transaction"
-                v-model="workflow['transaction_label']"
-              />
-              <SelectOption
-                title="Approval 1"
-                :disabled="action == 'Read' ? true : false"
-                :options="section"
-                required
-                v-on:onchange="workflow.approval_1 = $event"
-                :value="workflow.approval_1"
-                :col="[3, 9]"
-                :isValid="initialLoad ? null : checkError(1) ? false : true"
-                :invalid_feedback="checkError(1)"
-              />
-              <SelectOption
-                title="Approval 2"
-                :disabled="action == 'Read' ? true : false"
-                :options="section"
-                v-on:onchange="workflow.approval_2 = $event"
-                :value="workflow.approval_2"
-                :col="[3, 9]"
-                :isValid="initialLoad ? null : checkError(2) ? false : true"
-                :invalid_feedback="checkError(2)"
-              />
-              <SelectOption
-                title="Approval 3"
-                :disabled="action == 'Read' ? true : false"
-                :options="section"
-                v-on:onchange="workflow.approval_3 = $event"
-                :value="workflow.approval_3"
-                :col="[3, 9]"
-                :isValid="initialLoad ? null : checkError(3) ? false : true"
-                :invalid_feedback="checkError(3)"
-              />
-              <SelectOption
-                title="Approval 4"
-                :disabled="action == 'Read' ? true : false"
-                :options="section"
-                v-on:onchange="workflow.approval_4 = $event"
-                :value="workflow.approval_4"
-                :col="[3, 9]"
-                :isValid="initialLoad ? null : checkError(4) ? false : true"
-                :invalid_feedback="checkError(4)"
-              />
-            </CForm>
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-              v-if="action != 'Read'"
-            >
-              <CIcon name="cil-check-circle" />
-              Submit
-            </CButton>
-            <ButtonBack />
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+  <CRow>
+    <CCol md="12">
+      <CCard>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="workflow" v-if="action !== 'Create'" />
+        </CCardHeader>
+        <CCardBody>
+          <CForm>
+            <InputDefault
+              :disabled="true"
+              title="Transaction"
+              v-model="workflow['transaction_label']"
+            />
+            <SelectOption
+              title="Approval 1"
+              :disabled="action == 'Read' ? true : false"
+              :options="section"
+              required
+              v-on:onchange="workflow.approval_1 = $event"
+              :value="workflow.approval_1"
+              :col="[3, 9]"
+              :isValid="initialLoad ? null : checkError(1) ? false : true"
+              :invalid_feedback="checkError(1)"
+            />
+            <SelectOption
+              title="Approval 2"
+              :disabled="action == 'Read' ? true : false"
+              :options="section"
+              v-on:onchange="workflow.approval_2 = $event"
+              :value="workflow.approval_2"
+              :col="[3, 9]"
+              :isValid="initialLoad ? null : checkError(2) ? false : true"
+              :invalid_feedback="checkError(2)"
+            />
+            <SelectOption
+              title="Approval 3"
+              :disabled="action == 'Read' ? true : false"
+              :options="section"
+              v-on:onchange="workflow.approval_3 = $event"
+              :value="workflow.approval_3"
+              :col="[3, 9]"
+              :isValid="initialLoad ? null : checkError(3) ? false : true"
+              :invalid_feedback="checkError(3)"
+            />
+            <SelectOption
+              title="Approval 4"
+              :disabled="action == 'Read' ? true : false"
+              :options="section"
+              v-on:onchange="workflow.approval_4 = $event"
+              :value="workflow.approval_4"
+              :col="[3, 9]"
+              :isValid="initialLoad ? null : checkError(4) ? false : true"
+              :invalid_feedback="checkError(4)"
+            />
+          </CForm>
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="save()"
+            v-if="action != 'Read'"
+          >
+            <CIcon name="cil-check-circle" />
+            Submit
+          </CButton>
+          <ButtonBack />
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>

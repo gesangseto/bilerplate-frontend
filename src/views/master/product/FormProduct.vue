@@ -2,8 +2,9 @@
   <CRow>
     <CCol sm="12" md="12" lg="12" xl="12">
       <CCard>
-        <CCardHeader>
-          <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="product" v-if="action !== 'Create'" />
         </CCardHeader>
         <CCardBody>
           <CForm>
@@ -401,7 +402,7 @@ export default {
     'product.mst_pid': {
       handler(item = Array) {
         let pid = item.find(
-          (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
+          (it) => it.packaging_level == 1 && it.epc_type == 'sgtin',
         );
         let id1 = null;
         if (this.product.gtin) id1 = Array.from(this.product.gtin)[0];
@@ -550,7 +551,7 @@ export default {
     handleChangeGtin() {
       // Jika terjadi perubahan yang mempengaruhi gtin
       let pid_l1 = this.product.mst_pid.find(
-        (it) => it.packaging_level == 1 && it.epc_type == 'sgtin'
+        (it) => it.packaging_level == 1 && it.epc_type == 'sgtin',
       );
       if (!pid_l1) {
         this.product.gtin = null;
@@ -610,7 +611,7 @@ export default {
       let mst_pid = JSON.parse(JSON.stringify(this.product.mst_pid));
       let have_nie = mst_pid.find((it) => it.epc_type == 'nie');
       let have_gtin_sscc = mst_pid.find(
-        (it) => it.epc_type == 'sgtin' || it.epc_type == 'sscc'
+        (it) => it.epc_type == 'sgtin' || it.epc_type == 'sscc',
       );
       if ((type == 'all' || type == 'nie') && have_nie && !this.product.nie) {
         return false;

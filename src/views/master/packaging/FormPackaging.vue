@@ -1,84 +1,83 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <InputDefault
-                :disabled="true"
-                :col="[3, 9]"
-                title="ID"
-                v-model="formData.id"
-              />
-              <InputDefault
-                :disabled="action == 'Read' ? true : false"
-                required
-                :col="[3, 9]"
-                title="Name"
-                placeholder="Enter packaging name"
-                v-model="formData.name"
-                :is-valid="initial_load ? null : formData.name ? true : false"
-              />
-              <InputDefault
-                :disabled="action == 'Read' ? true : false"
-                required
-                :col="[3, 9]"
-                title="Code"
-                placeholder="Enter Code name"
-                v-model="formData.code"
-                :is-valid="initial_load ? null : formData.code ? true : false"
-              />
-              <TextareaDefault
-                :disabled="action == 'Read' ? true : false"
-                :col="[3, 9]"
-                required
-                title="Description"
-                placeholder="Enter Description"
-                v-model="formData.description"
-                :is-valid="
-                  initial_load ? null : formData.description ? true : false
-                "
-              />
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
-                />
-              </CRow>
-            </CForm>
-
-            <Metadata
-              :defaultMetadata="formData.metadata"
-              v-on:handleChange="
-                (formData.metadata = $event.result),
-                  (formData.error_metadata = $event.error_metadata)
-              "
-              model="mst_packaging"
+  <CRow>
+    <CCol md="12">
+      <CCard>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
+        </CCardHeader>
+        <CCardBody>
+          <CForm>
+            <InputDefault
+              :disabled="true"
+              :col="[3, 9]"
+              title="ID"
+              v-model="formData.id"
             />
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              v-if="action == 'Read' ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
-            <ButtonBack />
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+            <InputDefault
+              :disabled="action == 'Read' ? true : false"
+              required
+              :col="[3, 9]"
+              title="Name"
+              placeholder="Enter packaging name"
+              v-model="formData.name"
+              :is-valid="initial_load ? null : formData.name ? true : false"
+            />
+            <InputDefault
+              :disabled="action == 'Read' ? true : false"
+              required
+              :col="[3, 9]"
+              title="Code"
+              placeholder="Enter Code name"
+              v-model="formData.code"
+              :is-valid="initial_load ? null : formData.code ? true : false"
+            />
+            <TextareaDefault
+              :disabled="action == 'Read' ? true : false"
+              :col="[3, 9]"
+              required
+              title="Description"
+              placeholder="Enter Description"
+              v-model="formData.description"
+              :is-valid="
+                initial_load ? null : formData.description ? true : false
+              "
+            />
+            <CRow form class="form-group">
+              <CCol sm="3"> Status </CCol>
+              <SwitchStatusMaster
+                :disabled="action == 'Read'"
+                :show_label="true"
+                :default_value="formData.status"
+                v-on:onChange="formData.status = $event"
+              />
+            </CRow>
+          </CForm>
+
+          <Metadata
+            :defaultMetadata="formData.metadata"
+            v-on:handleChange="
+              (formData.metadata = $event.result),
+                (formData.error_metadata = $event.error_metadata)
+            "
+            model="mst_packaging"
+          />
+        </CCardBody>
+        <CCardFooter class="d-flex justify-content-start gap-2">
+          <ButtonEdit
+            v-if="action == 'Update'"
+            :property="formData"
+            type="update"
+            :reason.sync="formData.reason"
+            :reason-required="true"
+            @handleSubmit="save()"
+          />
+          <ButtonSubmit v-if="action == 'Create'" @handleSubmit="save()" />
+          <ButtonBack />
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>

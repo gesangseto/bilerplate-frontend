@@ -11,9 +11,8 @@
         <div class="input-wrapper">
           <!-- Slot untuk prepend -->
           <slot name="prepend"></slot>
-
           <textarea
-            :rows="rows"
+            :rows="rows.toString()"
             :disabled="disabled"
             class="form-control"
             :type="type"
@@ -81,7 +80,7 @@ export default {
     isValid: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
     disabled: { type: Boolean, default: null }, // Properti isValid untuk menentukan validasi input
     col: { type: Array, default: () => [3, 9] }, // Properti isValid untuk menentukan validasi input
-    rows: { type: String, default: 2 }, // Properti isValid untuk menentukan validasi input
+    rows: { type: [String, Number], default: '2' }, // Properti isValid untuk menentukan validasi input
   },
   data() {
     return {

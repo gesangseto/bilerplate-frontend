@@ -1,4 +1,8 @@
 import ButtonPermission from './ButtonPermission';
+
+import ButtonInfo from './ButtonInfo';
+import ButtonEdit from './ButtonEdit';
+import ButtonSubmit from './ButtonSubmit';
 import Button from './Button';
 import HeaderShowStatus from './HeaderShowStatus';
 import MasterPid from './MasterPid';
@@ -30,6 +34,9 @@ import ButtonDefault from './ButtonDefault';
 import ModalPrintLabelToZebra from './ModalPrintLabelToZebra';
 
 export {
+  ButtonInfo,
+  ButtonEdit,
+  ButtonSubmit,
   ModalPrintLabelToZebra,
   ButtonDefault,
   TableTransaction,

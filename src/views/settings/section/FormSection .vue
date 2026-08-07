@@ -1,89 +1,84 @@
 <template>
-  <div>
-    <CRow>
-      <CCol md="12">
-        <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
-          </CCardHeader>
-          <CCardBody>
-            <CForm novalidate>
-              <InputDefault
-                :disabled="true"
-                :col="[3, 9]"
-                title="ID"
-                placeholder="ID"
-                v-model="formData.id"
-              />
-              <SelectOption
-                required
-                :disabled="action == 'Read' ? true : false"
-                title="Department "
-                :options="departmentOptions"
-                v-on:onchange="formData.mst_department_id = $event"
-                :value="formData.mst_department_id"
-                :col="[3, 9]"
-                :is-valid="
-                  initial_load
-                    ? null
-                    : formData.mst_department_id
-                    ? true
-                    : false
-                "
-              />
-              <InputDefault
-                required
-                :disabled="action == 'Read' ? true : false"
-                :col="[3, 9]"
-                title="Name"
-                v-model="formData.name"
-                :is-valid="initial_load ? null : formData.name ? true : false"
-              />
-              <TextareaDefault
-                :disabled="action == 'Read' ? true : false"
-                :col="[3, 9]"
-                required
-                title="Description"
-                v-model="formData.description"
-                :is-valid="
-                  initial_load ? null : formData.description ? true : false
-                "
-              />
-              <CRow form class="form-group">
-                <CCol sm="3"> Status </CCol>
-                <SwitchStatusMaster
-                  :disabled="action == 'Read'"
-                  :show_label="true"
-                  :default_value="formData.status"
-                  v-on:onChange="formData.status = $event"
-                />
-              </CRow>
-            </CForm>
-            <Metadata
-              :defaultMetadata="formData.metadata"
-              v-on:handleChange="
-                (formData.metadata = $event.result),
-                  (formData.error_metadata = $event.error_metadata)
-              "
-              model="mst_section"
+  <CRow>
+    <CCol md="12">
+      <CCard>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
+        </CCardHeader>
+        <CCardBody>
+          <CForm novalidate>
+            <InputDefault
+              :disabled="true"
+              :col="[3, 9]"
+              title="ID"
+              placeholder="ID"
+              v-model="formData.id"
             />
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              v-if="action == 'Read' || formData.is_sys ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
-            <ButtonBack />
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-  </div>
+            <SelectOption
+              required
+              :disabled="action == 'Read' ? true : false"
+              title="Department "
+              :options="departmentOptions"
+              v-on:onchange="formData.mst_department_id = $event"
+              :value="formData.mst_department_id"
+              :col="[3, 9]"
+              :is-valid="
+                initial_load ? null : formData.mst_department_id ? true : false
+              "
+            />
+            <InputDefault
+              required
+              :disabled="action == 'Read' ? true : false"
+              :col="[3, 9]"
+              title="Name"
+              v-model="formData.name"
+              :is-valid="initial_load ? null : formData.name ? true : false"
+            />
+            <TextareaDefault
+              :disabled="action == 'Read' ? true : false"
+              :col="[3, 9]"
+              required
+              title="Description"
+              v-model="formData.description"
+              :is-valid="
+                initial_load ? null : formData.description ? true : false
+              "
+            />
+            <CRow form class="form-group">
+              <CCol sm="3"> Status </CCol>
+              <SwitchStatusMaster
+                :disabled="action == 'Read'"
+                :show_label="true"
+                :default_value="formData.status"
+                v-on:onChange="formData.status = $event"
+              />
+            </CRow>
+          </CForm>
+          <Metadata
+            :defaultMetadata="formData.metadata"
+            v-on:handleChange="
+              (formData.metadata = $event.result),
+                (formData.error_metadata = $event.error_metadata)
+            "
+            model="mst_section"
+          />
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            v-if="action == 'Read' || formData.is_sys ? false : true"
+            type="submit"
+            size="sm"
+            color="primary"
+            @click="save()"
+          >
+            <CIcon name="cil-check-circle" /> Submit
+          </CButton>
+          <ButtonBack />
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 </template>
 
 <script>

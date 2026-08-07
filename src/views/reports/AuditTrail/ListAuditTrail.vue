@@ -12,7 +12,19 @@
             :items="reformatItems"
             :status_code="'sys_audit_trail'"
             :action="['read']"
-            :filterBy="['All', 'created_by']"
+            :filterBy="['All', 'created_by', 'trx_ref_id']"
+            :costumeFilter="[
+              {
+                value: 'type',
+                code: 'type',
+                label: 'Method',
+                data: [
+                  { value: 'PUT', label: 'Insert' },
+                  { value: 'POST', label: 'Update' },
+                  { value: 'DELETE', label: 'Delete' },
+                ],
+              },
+            ]"
             v-on:handleReload="loadData($event)"
           />
           <ButtonPermission
@@ -61,6 +73,10 @@ export default {
           key: 'created_full_name',
           label: 'User (Full Name)',
           _classes: 'font-weight-bold',
+        },
+        {
+          key: 'trx_ref_id',
+          label: 'Trx ID',
         },
         {
           key: '_action',
@@ -125,6 +141,7 @@ export default {
       return this.items.map((item, index) => {
         return {
           ...item,
+          trx_ref_id: item.trx_ref_id || '-',
           _action: item.action,
           type: capitalizeFirstLetter(item.type),
           dep_sec: item.department_name + ' - ' + item.section_name,
