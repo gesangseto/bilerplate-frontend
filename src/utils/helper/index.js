@@ -122,6 +122,7 @@ export function maskSensitiveData(key, value) {
     'users_password',
     'user_password',
     'db_pwd',
+    'token',
   ];
 
   // Cek apakah key mengandung kata sensitif (case insensitive)
@@ -477,6 +478,8 @@ export function isBase64Image(str) {
 
 // Fungsi untuk membersihkan base64 string
 export function cleanBase64Image(base64Str) {
+  console.log(base64Str);
+
   // Jika sudah ada prefix data:image, return as is
   if (base64Str.startsWith('data:image/')) {
     return base64Str;

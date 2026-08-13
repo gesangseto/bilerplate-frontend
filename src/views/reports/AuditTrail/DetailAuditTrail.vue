@@ -4,14 +4,7 @@
       <CCol md="12">
         <CCard>
           <CCardHeader>
-            <h5>
-              {{ $activeMenu.name }} [{{ route_action }}]
-              <ButtonPermission
-                exportType="pdf"
-                :permission="'print'"
-                @click="handleClickExport('pdf')"
-              />
-            </h5>
+            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
           </CCardHeader>
 
           <CCardBody ref="content">
@@ -173,9 +166,27 @@
                   v-for="(value, name, index) in dataBody"
                   :key="`${name}-${index}`"
                 >
+                  <div v-if="isJSONString(value)">
+                    <CTextarea
+                      disabled
+                      horizontal
+                      :value="formatJSONString(value)"
+                      rows="5"
+                    >
+                      <template #label>
+                        <p
+                          class="col-form-label col-sm-3"
+                          style="text-transform: capitalize"
+                        >
+                          {{ humanizeText(name) }}
+                        </p>
+                      </template>
+                    </CTextarea>
+                  </div>
+
                   <!-- STRING / NUMBER -->
                   <CInput
-                    v-if="
+                    v-else-if="
                       (!isImage(value) && typeof value === 'string') ||
                       typeof value === 'number'
                     "
@@ -203,44 +214,24 @@
                     </CCol>
                   </CRow>
 
-                  <!-- ARRAY WITH DATA -->
-                  <div v-else-if="Array.isArray(value) && value.length > 0">
-                    <p>
-                      {{ humanizeText(name) }}
-                    </p>
-                    <CDataTable
-                      hover
-                      striped
-                      sorter
-                      border
-                      :items="value"
-                      class="data-table"
-                      style="font-size: 12px"
-                    />
+                  <!-- ARRAY ATAU OBJECT - Tampilkan di TextArea -->
+                  <div v-else-if="shouldShowAsTextArea(value)">
+                    <CTextarea
+                      disabled
+                      horizontal
+                      :value="formatValue(value)"
+                      :rows="getRows(value)"
+                    >
+                      <template #label>
+                        <p
+                          class="col-form-label col-sm-3"
+                          style="text-transform: capitalize"
+                        >
+                          {{ humanizeText(name) }}
+                        </p>
+                      </template>
+                    </CTextarea>
                   </div>
-
-                  <!-- OBJECT (bukan array) -->
-                  <CTextarea
-                    v-else-if="
-                      typeof value === 'object' &&
-                      value !== null &&
-                      !Array.isArray(value) &&
-                      Object.keys(value).length > 0
-                    "
-                    disabled
-                    horizontal
-                    :value="JSON.stringify(value, null, 2)"
-                    rows="5"
-                  >
-                    <template #label>
-                      <p
-                        class="col-form-label col-sm-3"
-                        style="text-transform: capitalize"
-                      >
-                        {{ humanizeText(name) }}
-                      </p>
-                    </template>
-                  </CTextarea>
 
                   <!-- EMPTY / NULL / UNDEFINED -->
                   <div v-else>
@@ -262,6 +253,11 @@
           </CCardBody>
           <CCardFooter>
             <ButtonBack />
+            <ButtonPermission
+              exportType="pdf"
+              :permission="'print'"
+              @click="handleClickExport('pdf')"
+            />
           </CCardFooter>
         </CCard>
       </CCol>
@@ -317,6 +313,52 @@ export default {
     }
   },
   methods: {
+    shouldShowAsTextArea(value) {
+      // Return true jika value adalah array atau object yang tidak kosong
+      if (value === null || value === undefined) return false;
+      if (Array.isArray(value)) return value.length > 0;
+      if (typeof value === 'object') return Object.keys(value).length > 0;
+      return false;
+    }, // Format JSON string menjadi rapi
+    formatJSONString(str) {
+      try {
+        const parsed = JSON.parse(str);
+        return JSON.stringify(parsed, null, 2);
+      } catch (e) {
+        return str; // Return asli jika gagal parse
+      }
+    },
+    formatValue(value) {
+      if (value === null) return 'null';
+      if (value === undefined) return 'undefined';
+
+      if (Array.isArray(value)) {
+        if (value.length === 0) return '[]';
+        // Cek apakah ada object di dalam array
+        const hasObject = value.some(
+          (item) => typeof item === 'object' && item !== null,
+        );
+        return hasObject ? JSON.stringify(value, null, 2) : value.join(', ');
+      }
+
+      if (typeof value === 'object') {
+        if (Object.keys(value).length === 0) return '{}';
+        return JSON.stringify(value, null, 2);
+      }
+
+      return String(value);
+    },
+
+    getRows(value) {
+      if (Array.isArray(value)) {
+        return Math.min(Math.max(value.length, 3), 10);
+      }
+      if (typeof value === 'object' && value !== null) {
+        const keys = Object.keys(value);
+        return Math.min(Math.max(keys.length, 3), 10);
+      }
+      return 5;
+    },
     humanizeText(text) {
       if (typeof text === 'string') {
         return humanize(text);
@@ -344,16 +386,17 @@ export default {
         this.data = data;
         this.dataBody = JSON.parse(this.data['data']);
         this.oldDataBody = JSON.parse(this.data['old_data']) || {};
-        console.log('dataBody', this.dataBody);
+        console.log('dataBody', this.dataBody?.password_pattern);
       });
-    },
-    isJsonString(str) {
+    }, // Cek apakah string adalah JSON valid
+    isJSONString(str) {
+      if (typeof str !== 'string') return false;
       try {
-        JSON.parse(str);
+        const parsed = JSON.parse(str);
+        return typeof parsed === 'object' && parsed !== null;
       } catch (e) {
         return false;
       }
-      return true;
     },
     handleClickExport(type) {
       exportDataV3({
@@ -401,18 +444,18 @@ export default {
     },
   },
   computed: {
-    re_renderItems() {
-      return this.dataBody.items.map((item) => {
-        for (const key in item) {
-          if (Array.isArray(item[key])) {
-            item[key] = JSON.stringify(item[key], null, 4);
-          }
-        }
-        return {
-          ...item,
-        };
-      });
-    },
+    // re_renderItems() {
+    //   return this.dataBody.items.map((item) => {
+    //     for (const key in item) {
+    //       if (Array.isArray(item[key])) {
+    //         item[key] = JSON.stringify(item[key], null, 4);
+    //       }
+    //     }
+    //     return {
+    //       ...item,
+    //     };
+    //   });
+    // },
   },
 };
 </script>

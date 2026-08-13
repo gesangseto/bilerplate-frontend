@@ -20,9 +20,9 @@
             pagination
             table-class="table-fixed"
           >
-            <template #Remarks="{ item }">
+            <template #remarks="{ item }">
               <td class="break-text">
-                {{ item['Remarks'] }}
+                {{ item['remarks'] }}
               </td>
             </template>
             <template #databaseName="{ item }">
@@ -72,39 +72,43 @@ export default {
       items: [],
       fields: [
         {
-          key: 'Start Time',
+          key: 'id',
+          label: 'ID',
+        },
+        {
+          key: 'created_date',
           label: 'Start Time',
         },
         {
-          key: 'End Time',
+          key: 'modified_date',
           label: 'End Time',
         },
         {
-          key: 'Action',
+          key: 'action',
           label: 'Action',
         },
         {
-          key: 'Status',
+          key: 'status',
           label: 'Status',
         },
         {
-          key: 'resultMessage',
+          key: 'result_message',
           label: 'Result Message',
         },
         {
-          key: 'databaseName',
+          key: 'database_name',
           label: 'Database Name',
         },
         {
-          key: 'targetSourceFile',
+          key: 'path',
           label: 'Target/Source File',
         },
         {
-          key: 'Username',
+          key: 'username',
           label: 'Username',
         },
         {
-          key: 'Remarks',
+          key: 'remarks',
           label: 'Remarks',
         },
       ],
@@ -126,8 +130,8 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          ['End Time']: item['End Time'] || '-',
-          ['Result Message']: item['Result Message'] || '-',
+          ['modified_date']: item['modified_date'] || '-',
+          ['result_message']: item['result_message'] || '-',
         };
       });
     },
