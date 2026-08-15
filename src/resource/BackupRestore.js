@@ -6,7 +6,7 @@ export const getDatabaseLog = async (filter = {}) => {
   let param = `${new URLSearchParams(filter).toString()}`;
   return new Promise((resolve) => {
     $axiosMertrack
-      .get(url + '/log', param)
+      .get(url + `/log?${param}`)
       .then((result) => {
         let res = result.data;
         return resolve(res);
@@ -17,10 +17,11 @@ export const getDatabaseLog = async (filter = {}) => {
       });
   });
 };
-export const getDatabaseBackup = async (params = {}) => {
+export const getDatabaseBackup = async (filter = {}) => {
+  let param = `${new URLSearchParams(filter).toString()}`;
   return new Promise((resolve) => {
     $axiosMertrack
-      .get(url + '/backup', params)
+      .get(url + `/backup?${param}`)
       .then((result) => {
         let res = result.data;
         return resolve(res);

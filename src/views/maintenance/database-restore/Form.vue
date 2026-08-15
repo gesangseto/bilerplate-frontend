@@ -64,7 +64,7 @@
                               {{ item.remarks }}
                             </td>
                             <td style="padding-left: 10px">
-                              {{ item.Timestamp }}
+                              {{ item.created_date }}
                             </td>
                           </tr>
                         </template>

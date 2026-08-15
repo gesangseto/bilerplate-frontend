@@ -6,41 +6,35 @@
           <h5>Database Log</h5>
         </CCardHeader>
         <CCardBody>
-          <CDataTable
-            hover
-            striped
-            sorter
-            border
-            table-filter
-            :items="reformatDatas"
+          <TableTransaction
+            :totalData="totalData"
             :fields="fields"
-            style="font-size: 12px"
-            items-per-page-select
-            :items-per-page="10"
-            pagination
-            table-class="table-fixed"
-          >
-            <template #remarks="{ item }">
-              <td class="break-text">
-                {{ item['remarks'] }}
-              </td>
-            </template>
-            <template #databaseName="{ item }">
-              <td class="break-text">
-                {{ item['Database Name'] }}
-              </td>
-            </template>
-            <template #targetSourceFile="{ item }">
-              <td class="break-text">
-                {{ item['Target/Source File'] }}
-              </td>
-            </template>
-            <template #resultMessage="{ item }">
-              <td class="break-text">
-                {{ item['Result Message'] }}
-              </td>
-            </template>
-          </CDataTable>
+            :items="reformatItems"
+            :status_code="'sys_audit_trail'"
+            :filterBy="['All']"
+            :costumeFilter="[
+              {
+                value: 'action',
+                code: 'action',
+                label: 'Action',
+                data: [
+                  { value: 'DB BACKUP', label: 'Backup' },
+                  { value: 'DB RESTORE', label: 'Restore' },
+                ],
+              },
+            ]"
+            v-on:handleReload="loadData($event)"
+          />
+          <ButtonPermission
+            exportType="excel"
+            :permission="'print'"
+            @click="handleClickExport('xls')"
+          />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf')"
+          />
         </CCardBody>
       </CCard>
     </CCol>
@@ -60,10 +54,20 @@
 </style>
 <script>
 import { getDatabaseLog } from '../../../resource/BackupRestore';
+import { exportDataV3 } from '../../../utils';
 export default {
   name: 'ListBarcodeGenerator',
   mounted() {
     this.loadData();
+  },
+  watch: {
+    $route: {
+      deep: true,
+      handler(route) {
+        let query = route.query;
+        this.loadData({ ...query });
+      },
+    },
   },
   data() {
     return {
@@ -84,7 +88,7 @@ export default {
           label: 'End Time',
         },
         {
-          key: 'action',
+          key: 'act',
           label: 'Action',
         },
         {
@@ -116,20 +120,45 @@ export default {
   },
 
   methods: {
+    splitLongString(value, chunkSize = 65) {
+      if (typeof value !== 'string') return value;
+      return value.replace(new RegExp(`(.{1,${chunkSize}})`, 'g'), '$1\u200B');
+    },
+
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
+      if (filter) this.filter = filter;
+
       let _res = await getDatabaseLog(filter);
       if (!_res.error) {
+        console.log(_res);
+
         let data = _res.data;
-        this.items = data;
+        this.totalData = _res.grand_total || 0;
+        this.items = [];
+        for (const it of data) {
+          let item = {};
+          for (const key in it) {
+            item[key] = this.splitLongString(it[key], 30);
+          }
+          this.items.push(item);
+        }
       }
+    },
+    handleClickExport(type) {
+      exportDataV3({
+        param: this.$route.query,
+        exportType: type,
+        url: '/v4/maintenance/log',
+      });
     },
   },
   computed: {
-    reformatDatas() {
+    reformatItems() {
       return this.items.map((item) => {
         return {
           ...item,
+          act: item?.action,
           ['modified_date']: item['modified_date'] || '-',
           ['result_message']: item['result_message'] || '-',
         };
