@@ -143,6 +143,15 @@
         :fields="fields"
         style="font-size: 12px"
       >
+        <template #remarks="{ item }">
+          <td style="white-space: pre-line">{{ item.remarks }}</td>
+        </template>
+        <template #remark="{ item }">
+          <td style="white-space: pre-line">{{ item.remark }}</td>
+        </template>
+        <template #reason="{ item }">
+          <td style="white-space: pre-line">{{ item.reason }}</td>
+        </template>
         <template #action="{ item, index }">
           <td>
             <ButtonPermission
