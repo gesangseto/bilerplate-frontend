@@ -406,25 +406,26 @@
             model="mst_user"
           />
         </CCardBody>
-        <CCardFooter>
-          <CButton
-            v-if="action == 'Read' || formData.is_sys ? false : true"
-            type="submit"
-            size="sm"
-            color="primary"
-            @click="save()"
-          >
-            <CIcon name="cil-check-circle" />
-            Submit
-          </CButton>
+
+        <CCardFooter class="d-flex align-items-center">
+          <ButtonEdit
+            v-if="action == 'Update' && !formData.is_sys"
+            :property="formData"
+            type="update"
+            :reason.sync="formData.reason"
+            :reason-required="true"
+            @handleSubmit="save()"
+          />
+          <ButtonSubmit v-if="action == 'Create'" @handleSubmit="save()" />
           <ButtonBack />
+
           <CButton
             v-if="action == 'Update'"
             type="submit"
             size="sm"
-            class="float-right"
             color="warning"
-            title="Reset Password "
+            title="Reset Password"
+            class="ml-auto"
             @click="resetPassword()"
           >
             <CIcon name="cil-sync" />

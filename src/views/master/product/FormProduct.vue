@@ -358,16 +358,16 @@
           v-on:onSubmit="handleChangeWeight($event)"
         />
 
-        <CCardFooter>
-          <CButton
-            v-if="action == 'Read' ? false : true"
-            @click="save()"
-            color="primary"
-            size="sm"
-            type="submit"
-          >
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton>
+        <CCardFooter class="d-flex justify-content-start gap-2">
+          <ButtonEdit
+            v-if="action == 'Update'"
+            :property="product"
+            type="update"
+            :reason.sync="product.reason"
+            :reason-required="true"
+            @handleSubmit="save()"
+          />
+          <ButtonSubmit v-if="action == 'Create'" @handleSubmit="save()" />
           <ButtonBack />
         </CCardFooter>
       </CCard>

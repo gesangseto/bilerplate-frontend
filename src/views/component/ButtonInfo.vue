@@ -43,14 +43,14 @@
               <CCol sm="6">
                 <InputDefault
                   :col="[4, 8]"
-                  title="Update Date"
+                  title="Last Update Date"
                   :value="localData.modified_date"
                   disabled
                 />
 
                 <InputDefault
                   :col="[4, 8]"
-                  title="Update By"
+                  title="Last Update By"
                   :value="localData.modified_full_name"
                   disabled
                 />
@@ -59,7 +59,7 @@
                   v-if="localData.reason"
                   rows="3"
                   :col="[4, 8]"
-                  title="Reason"
+                  title="Last Update Reason"
                   v-model="localData.reason"
                   disabled
                 />
@@ -69,7 +69,9 @@
 
           <!-- Footer -->
           <div class="custom-modal-footer">
-            <CButton color="secondary" @click="closeModal"> Close </CButton>
+            <CButton size="sm" color="danger" type="button" @click="closeModal">
+              <CIcon name="cil-x-circle" /> Close
+            </CButton>
           </div>
         </div>
       </div>

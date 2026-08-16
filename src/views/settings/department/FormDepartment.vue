@@ -62,17 +62,17 @@
             model="mst_department"
           />
         </CCardBody>
-        <CCardFooter>
-          <CButton
-            v-if="action == 'Read' || formData.is_sys ? false : true"
-            type="submit"
-            size="sm"
-            color="primary"
-            @click="save()"
-          >
-            <CIcon name="cil-check-circle" />
-            Submit
-          </CButton>
+
+        <CCardFooter class="d-flex justify-content-start gap-2">
+          <ButtonEdit
+            v-if="action == 'Update' && !formData.is_sys"
+            :property="formData"
+            type="update"
+            :reason.sync="formData.reason"
+            :reason-required="true"
+            @handleSubmit="save()"
+          />
+          <ButtonSubmit v-if="action == 'Create'" @handleSubmit="save()" />
           <ButtonBack />
         </CCardFooter>
       </CCard>

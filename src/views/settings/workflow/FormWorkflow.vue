@@ -56,17 +56,17 @@
             />
           </CForm>
         </CCardBody>
-        <CCardFooter>
-          <CButton
-            type="submit"
-            size="sm"
-            color="primary"
-            @click="save()"
-            v-if="action != 'Read'"
-          >
-            <CIcon name="cil-check-circle" />
-            Submit
-          </CButton>
+
+        <CCardFooter class="d-flex justify-content-start gap-2">
+          <ButtonEdit
+            v-if="action == 'Update'"
+            :property="workflow"
+            type="update"
+            :reason.sync="workflow.reason"
+            :reason-required="true"
+            @handleSubmit="save()"
+          />
+          <ButtonSubmit v-if="action == 'Create'" @handleSubmit="save()" />
           <ButtonBack />
         </CCardFooter>
       </CCard>
