@@ -86,12 +86,22 @@ export default {
       appConfig: getConfig(),
       initialLoad: true,
       action: 'Edit',
-      formData: { file_name: null, remark: null, modal: false },
+      formData: {
+        file_name: null,
+        file_prefix: null,
+        remark: null,
+        modal: false,
+        file_path: null,
+      },
     };
   },
   mounted() {},
   methods: {
     async backup() {
+      this.formData.file_prefix = !this.formData?.file_name
+        ? `${this.appConfig?.backup_prefix}<default_name>`
+        : ' ';
+      this.formData.file_path = this.appConfig?.backup_path;
       let eksekusi = await DatabaseBackup(this.formData);
       this.$toast.open({
         message: eksekusi.message.replace(/\n/g, '<br>'),
