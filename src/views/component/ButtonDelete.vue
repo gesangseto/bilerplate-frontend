@@ -60,7 +60,7 @@
 import { capitalizeFirstLetter } from '../../utils';
 
 export default {
-  name: 'ButtonEdit',
+  name: 'ButtonDelete',
 
   props: {
     property: Object,

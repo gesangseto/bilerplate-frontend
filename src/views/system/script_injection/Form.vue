@@ -3,9 +3,13 @@
     <CRow>
       <CCol md="12">
         <CCard>
-          <CCardHeader>
-            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <CCardHeader
+            class="d-flex justify-content-between align-items-center"
+          >
+            <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+            <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
           </CCardHeader>
+
           <CCardBody>
             <CCardBody>
               <CForm>
@@ -92,24 +96,27 @@
               />
             </CCardBody>
           </CCardBody>
-          <CCardFooter>
+
+          <CCardFooter class="d-flex justify-content-start gap-2">
             <CButton
               v-if="action == 'Approve' && userInfo.id == 0"
               color="warning"
+              class="m-1"
               size="sm"
               @click="execution()"
             >
-              <CIcon size="sm" name="cil-warning" /> Execute
+              <CIcon name="cil-warning" /> Execute
             </CButton>
-            <CButton
-              v-if="action == 'Create' || action == 'Update'"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
+
+            <ButtonEdit
+              v-if="action == 'Update'"
+              :property="formData"
+              type="update"
+              :reason.sync="formData.reason"
+              :reason-required="true"
+              @handleSubmit="save()"
+            />
+            <ButtonSubmit v-if="action == 'Create'" @handleSubmit="save()" />
             <ButtonBack />
           </CCardFooter>
         </CCard>

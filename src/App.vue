@@ -47,6 +47,7 @@ import {
   TableDefault,
   TableTransaction,
   ButtonInfo,
+  ButtonDelete,
 } from './views/component';
 Vue.use(
   VueFab /* {
@@ -71,6 +72,7 @@ Vue.component('MasterPid', MasterPid);
 Vue.component('Button', Button);
 Vue.component('ButtonBack', ButtonBack);
 Vue.component('ButtonInfo', ButtonInfo);
+Vue.component('ButtonDelete', ButtonDelete);
 Vue.component('ButtonSubmit', ButtonSubmit);
 Vue.component('ButtonPermission', ButtonPermission);
 Vue.component('HeaderShowStatus', HeaderShowStatus);

@@ -22,8 +22,9 @@
             :action="['copy', 'print', 'read', 'update', 'delete']"
             :filterBy="['All', 'id', 'packaging_level']"
             removeTrxDate
-            v-on:handlePrint="selected_data = $event"
+            :delete_reason="true"
             v-on:handleDelete="deleteRow($event)"
+            v-on:handlePrint="selected_data = $event"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"
             v-on:handleReload="loadData($event)"
@@ -160,7 +161,7 @@ export default {
       let message = `You are about to delete to this data.\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = { id: item.id };
+        let param = { id: item.id, reason: item?.reason || '' };
         let _res = await deleteConfLayout(param);
         this.$isLoading(false);
         this.$toast.open({

@@ -132,9 +132,9 @@ export default {
       let message = `You are about to delete to this data.\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let _param = { id: item.id };
+        let param = { id: item.id, reason: item?.reason || '' };
         $axiosMertrack
-          .delete(`v3/connector/connector-action`, { data: _param })
+          .delete(`v3/connector/connector-action`, { data: param })
           .then((result) => {
             this.$isLoading(false);
             this.loadData();

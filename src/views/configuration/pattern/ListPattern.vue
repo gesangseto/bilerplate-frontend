@@ -107,8 +107,8 @@ export default {
       let message = `You are about to delete to this data.\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let _param = { id: item.id };
-        let res = await deleteConfPattern(_param);
+        let param = { id: item.id, reason: item?.reason || '' };
+        let res = await deleteConfPattern(param);
         this.$isLoading(false);
         this.$toast.open({
           message: res.error

@@ -93,7 +93,9 @@
               v-if="getActions(item).includes('delete')"
               :buttonProperty="actionProperty.delete || null"
               :permission="'delete'"
-              @click="rowDelete(item, index)"
+              @click="
+                delete_reason ? openModal(item, index) : rowDelete(item, index)
+              "
             />
             <ButtonPermission
               v-if="getActions(item).includes('update')"
@@ -149,6 +151,13 @@
         />
       </template>
     </CCol>
+    <CancelModal
+      :skip_confirmation="true"
+      type="delete"
+      :is_master="is_master"
+      :property="modal_property"
+      v-on:handleSubmit="rowDelete(modal_property)"
+    />
   </CRow>
 </template>
 
@@ -164,7 +173,9 @@ export default {
   props: {
     fields: { type: Array },
     items: { type: Array, default: () => [] },
+    is_master: { type: Boolean, default: true },
     // Action Property
+    delete_reason: { type: Boolean, default: true }, // digunakan untuk tombol yang ingin menggunakan reason saat delete
     action: { type: Array, default: () => [] },
     filterAction: { type: Function, default: null },
     actionProperty: { type: Object, default: () => ({}) },
@@ -200,6 +211,12 @@ export default {
   },
   data() {
     return {
+      modal_property: {
+        title: 'Record',
+        modal: false,
+        id: null,
+        reason: '',
+      },
       filtering: {},
       filter: {
         totalPages: 1,
@@ -247,6 +264,10 @@ export default {
         return this.filterAction(item); // gunakan fungsi dari parent
       }
       return this.action || [];
+    },
+    openModal(item, index) {
+      this.modal_property.id = item.id;
+      this.modal_property.modal = true;
     },
     async rowCopy(item) {
       this.$emit('handleCopy', item);

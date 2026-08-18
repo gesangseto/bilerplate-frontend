@@ -105,7 +105,7 @@ export default {
       let message = `You are about to delete to this data (Name: ${item.full_name}).\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let param = { id: item.id };
+        let param = { id: item.id, reason: item?.reason || '' };
         let _res = await deleteMstUser(param);
         this.$isLoading(false);
         this.$toast.open({

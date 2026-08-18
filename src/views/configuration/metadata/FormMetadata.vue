@@ -7,7 +7,6 @@
             class="d-flex justify-content-between align-items-center"
           >
             <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
-            <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
           </CCardHeader>
           <CCardBody>
             <CForm novalidate>
@@ -83,13 +82,28 @@
       </CCol>
     </CRow>
     <CModal
-      :title="
-        formData.sys_database_content_id ? 'Edit Metadata' : 'Add Metedata'
-      "
+      :title="modalData.id ? 'Edit Metadata' : 'Add Metedata'"
       color="warning"
       :show.sync="showModalDialog"
       size="lg"
     >
+      <template #header>
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <h5 class="modal-title mb-0">
+            {{ modalData.id ? 'Edit Metadata' : 'Add Metadata' }}
+          </h5>
+          <div class="d-flex align-items-center">
+            <ButtonInfo
+              :formData="modalData"
+              v-if="modalData.id"
+              class="mr-2"
+            />
+            <button class="close-btn" @click="showModalDialog = false">
+              ×
+            </button>
+          </div>
+        </div>
+      </template>
       <CRow v-if="modalData">
         <CCol sm="12">
           <InputDefault
@@ -147,9 +161,13 @@
         </CCol>
       </CRow>
       <template #footer>
-        <CButton size="sm" color="success" type="button" @click="onSave()">
-          <CIcon name="cil-check-circle" /> Save
-        </CButton>
+        <ButtonEdit
+          :property="modalData"
+          type="update"
+          :reason.sync="modalData.reason"
+          :reason-required="true"
+          @handleSubmit="onSave()"
+        />
       </template>
     </CModal>
   </div>
@@ -371,3 +389,19 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.close-btn {
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  margin-bottom: 1;
+}
+
+.close-btn:hover {
+  opacity: 0.8;
+}
+</style>

@@ -13,8 +13,9 @@
             :items="reformatDatas"
             :status_code="'mst_product'"
             :filterAction="customActionFilter"
-            :action="['copy', 'read', 'update', 'delete']"
-            :filterBy="['All', 'mst_product_category_id']"
+            :action="['copy', 'read', 'update', 'delete', 'approve']"
+            :actionProperty="{ approve: btn_approve }"
+            :filterBy="['All', 'mst_product']"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleReload="loadData($event)"
@@ -46,6 +47,14 @@ export default {
   mounted() {},
   data() {
     return {
+      btn_approve: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'warning',
+        icon: 'exclamation-triangle',
+        text: '',
+        tooltip: 'Execute Script',
+      },
       userInfo: getProfile(),
       user_id: getUserId(),
       totalData: 0,
@@ -90,7 +99,7 @@ export default {
   },
   methods: {
     customActionFilter(item) {
-      let action = ['create', 'read', 'copy', 'update', 'delete'];
+      let action = ['create', 'read', 'copy', 'update', 'delete', 'approve'];
       // if (this.user_id == 0) {
       //   action.push('copy');
       // }
@@ -123,8 +132,8 @@ export default {
       let message = `You are about to delete to this data.\nThis operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
         this.$isLoading(true);
-        let _param = { id: item.id };
-        let res = await deleteSysScriptInj(_param);
+        let param = { id: item.id, reason: item?.reason || '' };
+        let res = await deleteSysScriptInj(param);
         this.$isLoading(false);
         this.$toast.open({
           message: res.error

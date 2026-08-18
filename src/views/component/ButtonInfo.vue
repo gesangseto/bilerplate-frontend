@@ -39,19 +39,24 @@
                   disabled
                 />
               </CCol>
-
               <CCol sm="6">
                 <InputDefault
                   :col="[4, 8]"
                   title="Last Update Date"
-                  :value="localData.modified_date"
+                  :value="
+                    localData.modified_full_name ? localData.modified_date : '-'
+                  "
                   disabled
                 />
 
                 <InputDefault
                   :col="[4, 8]"
                   title="Last Update By"
-                  :value="localData.modified_full_name"
+                  :value="
+                    localData.modified_full_name
+                      ? localData.modified_full_name
+                      : '-'
+                  "
                   disabled
                 />
 
@@ -153,7 +158,6 @@
   justify-content: flex-end;
 }
 </style>
-<
 
 <script>
 export default {

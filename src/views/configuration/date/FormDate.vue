@@ -138,16 +138,17 @@
             />
           </CRow>
         </CCardBody>
-        <CCardFooter>
-          <CButton
-            v-if="action == 'Read' ? false : true"
-            type="submit"
-            size="sm"
-            color="primary"
-            @click="save()"
-          >
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton>
+
+        <CCardFooter class="d-flex justify-content-start gap-2">
+          <ButtonEdit
+            v-if="action == 'Update'"
+            :property="data"
+            type="update"
+            :reason.sync="data.reason"
+            :reason-required="true"
+            @handleSubmit="save()"
+          />
+          <ButtonSubmit v-if="action == 'Create'" @handleSubmit="save()" />
           <ButtonBack />
         </CCardFooter>
       </CCard>
@@ -334,6 +335,7 @@ export default {
       if (_res) {
         let data = _res.data[0];
         let _data = data;
+        this.data = _data;
         this.data.status = _data.status;
         this.data.id = _data.id ?? '';
         this.data.used_in_layout = _data.used_in_layout ?? null;
@@ -536,6 +538,7 @@ export default {
         return;
       }
       let body = {
+        ...this.data,
         id: this.$route.params.id,
         name: this.data.format,
         delimiter: this.data.delimiter,

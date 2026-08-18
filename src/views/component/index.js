@@ -1,5 +1,6 @@
 import ButtonPermission from './ButtonPermission';
 
+import ButtonDelete from './ButtonDelete';
 import ButtonInfo from './ButtonInfo';
 import ButtonEdit from './ButtonEdit';
 import ButtonSubmit from './ButtonSubmit';
@@ -34,6 +35,7 @@ import ButtonDefault from './ButtonDefault';
 import ModalPrintLabelToZebra from './ModalPrintLabelToZebra';
 
 export {
+  ButtonDelete,
   ButtonInfo,
   ButtonEdit,
   ButtonSubmit,

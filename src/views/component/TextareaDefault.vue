@@ -1,7 +1,7 @@
 <template>
   <div>
     <CRow>
-      <CCol v-if="title" :md="col[0]">
+      <CCol v-if="title" :md="col[0]" style="color: #3c4b64">
         {{ title }}
         <span v-if="required" class="text-danger">
           <strong>*</strong>

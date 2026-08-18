@@ -158,7 +158,9 @@
               v-if="getActions(item).includes('delete')"
               :buttonProperty="actionProperty.delete || null"
               :permission="'delete'"
-              @click="rowDelete(item, index)"
+              @click="
+                delete_reason ? openModal(item, index) : rowDelete(item, index)
+              "
             />
             <ButtonPermission
               v-if="getActions(item).includes('update')"
@@ -215,6 +217,13 @@
         />
       </template>
     </CCol>
+    <CancelModal
+      :skip_confirmation="true"
+      type="delete"
+      :is_master="true"
+      :property="modal_property"
+      v-on:handleSubmit="rowDelete(modal_property)"
+    />
   </CRow>
 </template>
 
@@ -235,6 +244,7 @@ export default {
     fields: { type: Array },
     items: { type: Array, default: () => [] },
     // Action Property
+    delete_reason: { type: Boolean, default: false }, // digunakan untuk tombol yang ingin menggunakan reason saat delete
     action: { type: Array, default: () => [] },
     filterAction: { type: Function, default: null },
     actionProperty: { type: Object, default: () => ({}) },
@@ -327,6 +337,12 @@ export default {
   },
   data() {
     return {
+      modal_property: {
+        title: 'Record',
+        modal: false,
+        id: null,
+        reason: '',
+      },
       btn_print: {
         size: 'sm',
         class: 'float-right',
@@ -530,6 +546,10 @@ export default {
     };
   },
   methods: {
+    openModal(item, index) {
+      this.modal_property.id = item.id;
+      this.modal_property.modal = true;
+    },
     getButtonPrint(item) {
       let prop = JSON.parse(JSON.stringify(this.btn_print));
       if (item.hasOwnProperty('allow_print')) {
