@@ -243,7 +243,7 @@ export default {
       } else if (validationPassword(this.form_data.newPassword)) {
         this.required.newPassword.error = true;
         this.required.newPassword.message = validationPassword(
-          this.form_data.newPassword
+          this.form_data.newPassword,
         );
         return;
       }
@@ -251,6 +251,7 @@ export default {
       var body = {
         old_password: this.form_data.oldPassword,
         new_password: this.form_data.newPassword,
+        reason: 'Change user password.',
       };
       let res = await authChangePwd(body);
 

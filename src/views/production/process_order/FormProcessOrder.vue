@@ -2,8 +2,9 @@
   <div class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
       <CCard>
-        <CCardHeader>
-          <h5>Process Order [{{ route_action }}]</h5>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <ButtonInfo :formData="formData" v-if="action !== 'Create'" />
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -295,20 +296,18 @@
             </CCardBody>
           </CCard>
         </CCardBody>
-        <CCardFooter>
+        <CCardFooter class="d-flex justify-content-start gap-2">
+          <!-- Simpan data saat update-->
+          <ButtonEdit
+            v-if="formData.status == 0 && action == 'Update'"
+            :property="formData"
+            type="update"
+            :reason.sync="formData.reason"
+            :reason-required="true"
+            @handleSubmit="save()"
+          />
           <!-- Simpan data saat create-->
-          <CButton
-            v-if="
-              action == 'Create' || (formData.status == 0 && action == 'Update')
-            "
-            type="submit"
-            size="sm"
-            @click="save()"
-            class="mr-2"
-            color="primary"
-          >
-            <CIcon name="cil-check-circle" /> Submit</CButton
-          >
+          <ButtonSubmit v-if="action == 'Create'" @handleSubmit="save()" />
           <!-- Generate Serial data saat update-->
           <CButton
             v-if="formData.status == 0 && action == 'Approve'"
@@ -320,14 +319,18 @@
           >
             <CIcon name="cil-check-circle" /> Generate Serial</CButton
           >
+          <!-- Buton Cancel-->
+          <ButtonBack />
 
+          <!-- RESET BATCH PALING KANAN -->
           <ButtonPermission
             v-if="formData.status == 4 && userInfo.id == 0 && !is_copy"
             :buttonProperty="buttonReset"
-            class="float-right"
+            class="ml-auto"
             :permission="'approve'"
             @click="reset_status()"
           />
+
           <!-- Generate Serial data saat update-->
           <!-- Status 3 berarti belum dimulai batch -->
           <div v-if="formData.status == 3 && userInfo.id == 0 && !is_copy">
@@ -340,7 +343,6 @@
               mt="-8"
             />
           </div>
-
           <!-- Status 4 berarti proses sudah dimulai -->
           <!-- Khusus station OFFLINE -->
           <div
@@ -422,9 +424,6 @@
               @click="start_batch('online')"
             />
           </div>
-
-          <!-- Buton Cancel-->
-          <ButtonBack />
         </CCardFooter>
       </CCard>
     </div>
@@ -1364,8 +1363,11 @@ export default {
         delete param.weight_l4;
         if (this.action === 'Create' && param.id) {
           delete param.id;
+          delete param.modified_by;
+          delete param.reason;
           param.is_manual = true;
         }
+
         if (param.id) {
           res = await updateProcessOrder(param);
         } else {

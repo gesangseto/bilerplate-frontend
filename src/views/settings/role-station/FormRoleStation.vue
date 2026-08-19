@@ -121,16 +121,15 @@
             </div>
           </template>
         </CCardBody>
-        <CCardFooter>
-          <CButton
-            v-if="action == 'Read' ? false : true"
-            type="submit"
-            size="sm"
-            color="primary"
-            @click="save()"
-          >
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton>
+        <CCardFooter class="d-flex justify-content-start gap-2">
+          <ButtonEdit
+            v-if="action == 'Update'"
+            :property="role"
+            type="update"
+            :reason.sync="role.reason"
+            :reason-required="true"
+            @handleSubmit="save()"
+          />
           <ButtonBack />
         </CCardFooter>
       </CCard>
@@ -336,6 +335,7 @@ export default {
 
       let dataPost = {
         id: this.role.id,
+        reason: `[STATION] ${this.role.reason}`,
         type: 2,
         section_id: this.role.section_id,
         department_id: this.role.department_id,

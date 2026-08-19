@@ -764,6 +764,7 @@ export default {
         new_password: this.configuration.password_default || '',
         password_must_change: true,
         reset_password: true,
+        reason: 'Reset user password.',
       };
 
       var message = `You are about to reset password to this data. This operation cannot be undone. Would you like to continue?`;
