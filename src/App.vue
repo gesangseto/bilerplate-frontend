@@ -16,7 +16,7 @@ import VueFab from 'vue-float-action-button';
 
 import {
   ButtonSubmit,
-  ButtonEdit,
+  ButtonReason,
   ButtonDefault,
   Button,
   ButtonBack,
@@ -61,7 +61,7 @@ Vue.use(VueCustomTooltip);
 Vue.use(loading);
 Vue.use(vmodal);
 Vue.use(VueTouchKeyboard);
-Vue.component('ButtonEdit', ButtonEdit);
+Vue.component('ButtonReason', ButtonReason);
 Vue.component('ButtonDefault', ButtonDefault);
 Vue.component('TableTransaction', TableTransaction);
 Vue.component('TableDefault', TableDefault);

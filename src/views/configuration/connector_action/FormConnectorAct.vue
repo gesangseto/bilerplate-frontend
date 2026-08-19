@@ -235,7 +235,7 @@
         </CCardBody>
 
         <CCardFooter class="d-flex justify-content-start gap-2">
-          <ButtonEdit
+          <ButtonReason
             v-if="action == 'Update'"
             :property="form"
             type="update"

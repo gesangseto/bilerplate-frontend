@@ -408,7 +408,7 @@
         </CCardBody>
 
         <CCardFooter class="d-flex align-items-center">
-          <ButtonEdit
+          <ButtonReason
             v-if="action == 'Update' && !formData.is_sys"
             :property="formData"
             type="update"

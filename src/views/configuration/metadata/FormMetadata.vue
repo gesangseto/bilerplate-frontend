@@ -161,7 +161,7 @@
         </CCol>
       </CRow>
       <template #footer>
-        <ButtonEdit
+        <ButtonReason
           :property="modalData"
           type="update"
           :reason.sync="modalData.reason"

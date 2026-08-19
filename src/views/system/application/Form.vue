@@ -795,7 +795,7 @@
             </CForm>
           </CCardBody>
           <CCardFooter class="d-flex justify-content-start gap-2">
-            <ButtonEdit
+            <ButtonReason
               :property="data"
               type="update"
               :reason.sync="data.reason"

@@ -4,11 +4,11 @@
       <CButton
         type="reset"
         size="sm"
-        color="primary"
+        :color="button.color"
         class="m-1"
         @click="openModal"
       >
-        <CIcon name="cil-check-circle" /> {{ judul }}
+        <CIcon v-if="button.icon" :name="button.icon" /> {{ button.text }}
       </CButton>
     </a>
     <CModal
@@ -60,7 +60,7 @@
 import { capitalizeFirstLetter } from '../../utils';
 
 export default {
-  name: 'ButtonEdit',
+  name: 'ButtonReason',
 
   props: {
     property: Object,
@@ -69,11 +69,13 @@ export default {
       default: 'update',
     },
     title: String,
+    icon: String,
     href: String,
     reason: {
       type: String,
       default: '',
     },
+    buttonProperty: { default: null },
     required: {
       type: Boolean,
       default: true,
@@ -83,9 +85,14 @@ export default {
   data() {
     return {
       initial_load: true,
-      judul: 'Submit',
       showModal: false,
       localReason: '',
+      button: {
+        color: 'primary',
+        text: 'Submit',
+        tooltip: '',
+        icon: 'cil-check-circle',
+      },
     };
   },
 
@@ -102,10 +109,15 @@ export default {
   },
 
   mounted() {
-    this.icon = 'cil-ban';
+    if (this.buttonProperty) {
+      this.button = { ...this.button, ...this.buttonProperty };
+    }
 
     if (this.title) {
-      this.judul = this.title;
+      this.button.text = this.title;
+    }
+    if (this.icon) {
+      this.button.icon = this.icon;
     }
   },
 

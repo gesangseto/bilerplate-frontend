@@ -108,7 +108,7 @@
               <CIcon name="cil-warning" /> Execute
             </CButton>
 
-            <ButtonEdit
+            <ButtonReason
               v-if="action == 'Update'"
               :property="formData"
               type="update"

@@ -298,7 +298,7 @@
         </CCardBody>
         <CCardFooter class="d-flex justify-content-start gap-2">
           <!-- Simpan data saat update-->
-          <ButtonEdit
+          <ButtonReason
             v-if="formData.status == 0 && action == 'Update'"
             :property="formData"
             type="update"
@@ -317,7 +317,7 @@
             class="mr-2"
             color="primary"
           >
-            <CIcon name="cil-check-circle" /> Generate Serial</CButton
+            <CIcon name="cil-check-circle" size="sm" /> Generate Serial</CButton
           >
           <!-- Buton Cancel-->
           <ButtonBack />
@@ -1235,6 +1235,7 @@ export default {
       this.$isLoading(true);
       let res = await generateProcessOrder({
         id: this.formData.id,
+        reason: '[GENERATE SERIAL]',
         approve: true,
         mfg_date: this.formData.mfg_date,
         exp_date: this.formData.exp_date,
@@ -1270,6 +1271,7 @@ export default {
         return false;
       }
       this.$isLoading(true);
+      this.additionalSerial.reason = '[GENERATE ADDITIONAL SERIAL]';
       let res = await requestAdditionalSerial(this.additionalSerial);
       this.$isLoading(false);
       this.$toast.open({

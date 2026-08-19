@@ -500,7 +500,7 @@ export default {
           id: this.$route.params.id,
           approved: true,
           do_number: this.doNumber,
-          reason: 'Input DO',
+          reason: '[INPUT DO]',
         };
         var _url = `/v4.2/transaction/picking/finish`;
         $axiosMertrack
