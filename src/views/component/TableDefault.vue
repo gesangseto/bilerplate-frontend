@@ -266,6 +266,7 @@ export default {
       return this.action || [];
     },
     openModal(item, index) {
+      this.modal_property = { ...this.modal_property, ...item };
       this.modal_property.id = item.id;
       this.modal_property.modal = true;
     },

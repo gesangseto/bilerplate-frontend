@@ -37,7 +37,7 @@
                 id="reject-reason"
                 :value="localReason"
                 @input="handleReasonChange"
-                :is-valid="initial_load ? null : !localReason ? false : true"
+                :is-valid="initial_load ? null : is_valid"
                 invalid-feedback="Reason is required"
               />
             </CCol>
@@ -178,13 +178,16 @@ export default {
       }
     },
 
+    is_valid() {
+      return !!this.property.reason?.trim();
+    },
     /**
      * Handle submit
      */
     handleSubmit() {
       this.initial_load = false;
       // Validasi jika reason required
-      if (this.required && !this.localReason) {
+      if (this.required && !this.is_valid()) {
         return;
       }
 

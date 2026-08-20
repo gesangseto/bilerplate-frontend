@@ -25,9 +25,7 @@
                 id="reject-reason"
                 invalid-feedback="Reason is required"
                 v-model="property.reason"
-                :is-valid="
-                  initial_load ? null : !property.reason ? false : true
-                "
+                :is-valid="initial_load ? null : is_valid"
               />
             </CCol>
           </CRow>

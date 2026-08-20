@@ -547,6 +547,7 @@ export default {
   },
   methods: {
     openModal(item, index) {
+      this.modal_property = { ...this.modal_property, ...item };
       this.modal_property.id = item.id;
       this.modal_property.modal = true;
     },
