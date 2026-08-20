@@ -251,7 +251,6 @@ export default {
       var body = {
         old_password: this.form_data.oldPassword,
         new_password: this.form_data.newPassword,
-        reason: 'Change user password.',
       };
       let res = await authChangePwd(body);
 
