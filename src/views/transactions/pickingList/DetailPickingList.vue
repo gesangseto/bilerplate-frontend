@@ -3,7 +3,7 @@
     <div class="col-lg-12 col-md-12 col-sm-12">
       <CCard>
         <CCardHeader class="d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">{{ $activeMenu.name }} [{{ route_action }}]</h5>
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ action }}]</h5>
           <ButtonInfo :formData="picking" v-if="action !== 'Create'" />
         </CCardHeader>
         <CCardBody>

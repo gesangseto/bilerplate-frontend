@@ -314,10 +314,10 @@
             type="submit"
             size="sm"
             @click="generate_serial()"
-            class="mr-2"
+            class="m-1"
             color="primary"
           >
-            <CIcon name="cil-check-circle" size="sm" /> Generate Serial</CButton
+            <CIcon name="cil-check-circle" /> Generate Serial</CButton
           >
           <!-- Buton Cancel-->
           <ButtonBack />
@@ -333,16 +333,15 @@
 
           <!-- Generate Serial data saat update-->
           <!-- Status 3 berarti belum dimulai batch -->
-          <div v-if="formData.status == 3 && userInfo.id == 0 && !is_copy">
-            <ButtonPopover
-              :buttonProperty="buttonStart"
-              :popover_list="['Online', 'Serialization']"
-              class="float-right"
-              :permission="'approve'"
-              @handleClick="start_batch($event)"
-              mt="-8"
-            />
-          </div>
+          <ButtonPopover
+            v-if="formData.status == 3 && userInfo.id == 0 && !is_copy"
+            :buttonProperty="buttonStart"
+            :popover_list="['Online', 'Serialization']"
+            class="ml-auto"
+            :permission="'approve'"
+            @handleClick="start_batch($event)"
+            mt="-8"
+          />
           <!-- Status 4 berarti proses sudah dimulai -->
           <!-- Khusus station OFFLINE -->
           <div
