@@ -1,22 +1,15 @@
 {
-  "name": "MERTRACK-Integra",
+  "name": "mertrack-integra-web",
   "version": "4.2.0",
-  "description": "MERTRACK PharmaTrust Track & Trace for Pharma Manufacturer",
+  "description": "MERTRACK PharmaTrust Track & Trace System for Pharmaceutical Manufacturers - MERTRACK Integra Web Platform",
   "author": {
-    "name": "CoreUI",
-    "url": "https://coreui.io",
-    "github": "https://github.com/coreui",
-    "twitter": "https://twitter.com/core_ui"
+    "name": "PT MERINDO MAKMUR",
+    "url": "https://merindo.co.id"
   },
-  "contributors": [
-    {
-      "name": "CoreUI Team",
-      "url": "https://github.com/orgs/coreui/people"
-    }
-  ],
-  "homepage": "http://merindo.co.id",
-  "copyright": "Copyright 2020 creativeLabs Łukasz Holeczek",
-  "license": "MIT",
+  "homepage": "https://merindo.co.id",
+  "copyright": "Copyright © 2026 PT MERINDO MAKMUR. All rights reserved.",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
     "serve": "node ./scripts/set-git-hash.js && vue-cli-service serve",
     "start": "node ./scripts/set-git-hash.js && vue-cli-service serve",

@@ -58,197 +58,66 @@
                   <p class="col-form-label col-sm-3">Message</p>
                 </template>
               </CInput>
-              <div v-if="Object.keys(oldDataBody).length > 0">
-                <hr />
-                <hr />
-                <h5>Old Data</h5>
-                <hr />
-
-                <div
-                  v-for="(value, name, index) in oldDataBody"
-                  :key="`${name}-${index}`"
-                >
-                  <!-- STRING / NUMBER -->
-                  <CInput
-                    v-if="
-                      (!isImage(value) && typeof value === 'string') ||
-                      typeof value === 'number'
-                    "
-                    disabled
-                    horizontal
-                    :value="value"
-                  >
-                    <template #label>
-                      <p
-                        class="col-form-label col-sm-3"
-                        style="text-transform: capitalize"
-                      >
-                        {{ humanizeText(name) }}
-                      </p>
-                    </template>
-                  </CInput>
-
-                  <!-- IMAGE -->
-                  <CRow v-else-if="isImage(value)">
-                    <CCol md="3">
-                      {{ humanizeText(name) }}
-                    </CCol>
-                    <CCol md="9">
-                      <CImg width="100" :src="getImage(value)" />
-                    </CCol>
-                  </CRow>
-
-                  <!-- ARRAY WITH DATA -->
-                  <div v-else-if="Array.isArray(value) && value.length > 0">
-                    <p>
-                      {{ humanizeText(name) }}
-                    </p>
-                    <CDataTable
-                      hover
-                      striped
-                      sorter
-                      border
-                      :items="value"
-                      class="data-table"
-                      style="font-size: 12px"
-                    />
-                  </div>
-
-                  <!-- OBJECT (bukan array) -->
-                  <CTextarea
-                    v-else-if="
-                      typeof value === 'object' &&
-                      value !== null &&
-                      !Array.isArray(value) &&
-                      Object.keys(value).length > 0
-                    "
-                    disabled
-                    horizontal
-                    :value="JSON.stringify(value, null, 2)"
-                    rows="5"
-                  >
-                    <template #label>
-                      <p
-                        class="col-form-label col-sm-3"
-                        style="text-transform: capitalize"
-                      >
-                        {{ humanizeText(name) }}
-                      </p>
-                    </template>
-                  </CTextarea>
-
-                  <!-- EMPTY / NULL / UNDEFINED -->
-                  <div v-else>
-                    <!-- STRING / NUMBER -->
-                    <CInput disabled horizontal :value="value">
-                      <template #label>
-                        <p
-                          class="col-form-label col-sm-3"
-                          style="text-transform: capitalize"
-                        >
-                          {{ humanizeText(name) }}
-                        </p>
-                      </template>
-                    </CInput>
-                  </div>
-                </div>
-              </div>
-              <!-- DATA BARU -->
-              <div v-if="Object.keys(dataBody).length > 0">
-                <hr />
-                <hr />
-                <h5>
-                  {{ Object.keys(oldDataBody).length > 0 ? 'New' : '' }} Data
-                </h5>
-                <hr />
-
-                <div
-                  v-for="(value, name, index) in dataBody"
-                  :key="`${name}-${index}`"
-                >
-                  <div v-if="isJSONString(value)">
-                    <CTextarea
-                      disabled
-                      horizontal
-                      :value="formatJSONString(value)"
-                      rows="5"
+              <table
+                v-if="parameterBody.length > 0"
+                style="width: 100%"
+                border="1"
+                cellpadding="4"
+                cellspacing="0"
+              >
+                <thead>
+                  <tr style="font-size: 3mm; font-weight: bold">
+                    <td style="width: 20%">PARAMETER</td>
+                    <td
+                      v-if="Object.keys(oldDataBody).length > 0"
+                      style="width: 40%"
                     >
-                      <template #label>
-                        <p
-                          class="col-form-label col-sm-3"
-                          style="text-transform: capitalize"
-                        >
-                          {{ humanizeText(name) }}
-                        </p>
-                      </template>
-                    </CTextarea>
-                  </div>
-
-                  <!-- STRING / NUMBER -->
-                  <CInput
-                    v-else-if="
-                      (!isImage(value) && typeof value === 'string') ||
-                      typeof value === 'number'
-                    "
-                    disabled
-                    horizontal
-                    :value="value"
+                      OLD DATA
+                    </td>
+                    <td style="width: 40%">DATA</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="key in parameterBody"
+                    :key="key"
+                    style="font-size: 3mm"
                   >
-                    <template #label>
-                      <p
-                        class="col-form-label col-sm-3"
-                        style="text-transform: capitalize"
-                      >
-                        {{ humanizeText(name) }}
-                      </p>
-                    </template>
-                  </CInput>
-
-                  <!-- IMAGE -->
-                  <CRow v-else-if="isImage(value)">
-                    <CCol md="3">
-                      {{ humanizeText(name) }}
-                    </CCol>
-                    <CCol md="9">
-                      <CImg width="100" :src="getImage(value)" />
-                    </CCol>
-                  </CRow>
-
-                  <!-- ARRAY ATAU OBJECT - Tampilkan di TextArea -->
-                  <div v-else-if="shouldShowAsTextArea(value)">
-                    <CTextarea
-                      disabled
-                      horizontal
-                      :value="formatValue(value)"
-                      :rows="getRows(value)"
+                    <td>{{ humanizeText(key) }}</td>
+                    <td
+                      v-if="Object.keys(oldDataBody).length > 0"
+                      style="white-space: pre-wrap; word-break: break-word"
                     >
-                      <template #label>
-                        <p
-                          class="col-form-label col-sm-3"
-                          style="text-transform: capitalize"
-                        >
-                          {{ humanizeText(name) }}
-                        </p>
+                      <template v-if="isImage(getBodyValue(oldDataBody, key))">
+                        <CImg
+                          width="100"
+                          :src="getImage(getBodyValue(oldDataBody, key))"
+                        />
                       </template>
-                    </CTextarea>
-                  </div>
-
-                  <!-- EMPTY / NULL / UNDEFINED -->
-                  <div v-else>
-                    <!-- STRING / NUMBER -->
-                    <CInput disabled horizontal :value="value">
-                      <template #label>
-                        <p
-                          class="col-form-label col-sm-3"
-                          style="text-transform: capitalize"
-                        >
-                          {{ humanizeText(name) }}
-                        </p>
+                      <template
+                        v-else-if="getBodyValue(oldDataBody, key) !== undefined"
+                      >
+                        {{
+                          formatTableValue(getBodyValue(oldDataBody, key), key)
+                        }}
                       </template>
-                    </CInput>
-                  </div>
-                </div>
-              </div>
+                    </td>
+                    <td style="white-space: pre-wrap; word-break: break-word">
+                      <template v-if="isImage(getBodyValue(dataBody, key))">
+                        <CImg
+                          width="100"
+                          :src="getImage(getBodyValue(dataBody, key))"
+                        />
+                      </template>
+                      <template
+                        v-else-if="getBodyValue(dataBody, key) !== undefined"
+                      >
+                        {{ formatTableValue(getBodyValue(dataBody, key), key) }}
+                      </template>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </CForm>
           </CCardBody>
           <CCardFooter>
@@ -374,6 +243,36 @@ export default {
     getImage(string) {
       return cleanBase64Image(string);
     },
+    isMaskedField(key) {
+      const maskedKeys = [
+        'old_password',
+        'new_password',
+        'password',
+        'backup_password',
+        'pwd',
+        'users_password',
+        'user_password',
+        'db_pwd',
+        'token',
+      ];
+      return maskedKeys.includes(key);
+    },
+    formatTableValue(value, key) {
+      if (value === null || value === 'null' || value === undefined) return '';
+      if (this.isMaskedField(key)) return '********';
+      if (this.isImage(value)) return value;
+      if (typeof value === 'string' && this.isJSONString(value)) return value;
+
+      if (Array.isArray(value)) {
+        if (value.length === 0) return '[]';
+        return JSON.stringify(value, null, 2);
+      }
+      if (typeof value === 'object') {
+        return JSON.stringify(value);
+      }
+
+      return String(value).trim();
+    },
     loadData() {
       // let _data = get_log();
       // this.data = _data.find((x) => x.api_log_id === this.$route.params.id);
@@ -442,8 +341,40 @@ export default {
     cancel() {
       handleBack(this.$router, this.$route);
     },
+    getBodyValue(body, key) {
+      const aliases = { mst_pid: 'pid', pid: 'mst_pid' };
+      if (body[key] !== undefined) return body[key];
+      if (aliases[key] && body[aliases[key]] !== undefined)
+        return body[aliases[key]];
+      return undefined;
+    },
   },
   computed: {
+    parameterBody() {
+      const aliases = { pid: 'mst_pid' };
+      const normalize = (key) => aliases[key] || key;
+
+      if (Object.keys(this.oldDataBody).length == 0) {
+        return Object.keys(this.dataBody).map((k) => normalize(k));
+      }
+
+      const keysOld = Object.keys(this.oldDataBody);
+      const keysNew = Object.keys(this.dataBody);
+      const normalizedNew = keysNew.map(normalize);
+
+      const seen = new Set();
+      return keysOld
+        .filter((key) => {
+          const n = normalize(key);
+          if (seen.has(n)) return false;
+          if (keysNew.includes(key) || normalizedNew.includes(n)) {
+            seen.add(n);
+            return true;
+          }
+          return false;
+        })
+        .map((key) => normalize(key));
+    },
     // re_renderItems() {
     //   return this.dataBody.items.map((item) => {
     //     for (const key in item) {

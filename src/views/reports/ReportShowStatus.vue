@@ -214,6 +214,14 @@
             </CCol>
           </CRow>
         </CCardBody>
+        <CCardFooter>
+          <ButtonBack />
+          <ButtonPermission
+            exportType="pdf"
+            :permission="'print'"
+            @click="handleClickExport('pdf', detailData)"
+          />
+        </CCardFooter>
       </CCard>
     </CCol>
   </CRow>
@@ -227,6 +235,7 @@ import HeaderShowStatusV3 from '../component/HeaderShowStatusV3.vue';
 import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline';
 import 'vue-cute-timeline/dist/index.css';
 import moment from 'moment';
+import { exportDataV3 } from '../../utils/index.js';
 
 export default {
   components: { HeaderShowStatusV3 },
@@ -293,42 +302,50 @@ export default {
         this.parentData = data;
       });
     },
-    handleClickExport() {
-      domtoimage
-        .toPng(this.$refs.content, {
-          width: 3508,
-          height: 2480,
-          style: {
-            transform: 'scale(0.7)',
-            'transform-origin': 'top left',
-          },
-        })
-        .then(function (data) {
-          var img = new Image();
-          img.src = data;
-          const doc = new jsPDF({
-            orientation: 'portrait',
-            format: 'a4',
-          });
-          doc.addImage(img, 'JPEG', 2, 0);
-          const date = new Date();
-          const filename =
-            'showstatus_' +
-            date.getFullYear() +
-            ('0' + (date.getMonth() + 1)).slice(-2) +
-            ('0' + date.getDate()).slice(-2) +
-            ('0' + date.getHours()).slice(-2) +
-            ('0' + date.getMinutes()).slice(-2) +
-            ('0' + date.getSeconds()).slice(-2) +
-            '.pdf';
-          doc.save(filename);
-        });
-    },
+    // handleClickExport() {
+    //   domtoimage
+    //     .toPng(this.$refs.content, {
+    //       width: 3508,
+    //       height: 2480,
+    //       style: {
+    //         transform: 'scale(0.7)',
+    //         'transform-origin': 'top left',
+    //       },
+    //     })
+    //     .then(function (data) {
+    //       var img = new Image();
+    //       img.src = data;
+    //       const doc = new jsPDF({
+    //         orientation: 'portrait',
+    //         format: 'a4',
+    //       });
+    //       doc.addImage(img, 'JPEG', 2, 0);
+    //       const date = new Date();
+    //       const filename =
+    //         'showstatus_' +
+    //         date.getFullYear() +
+    //         ('0' + (date.getMonth() + 1)).slice(-2) +
+    //         ('0' + date.getDate()).slice(-2) +
+    //         ('0' + date.getHours()).slice(-2) +
+    //         ('0' + date.getMinutes()).slice(-2) +
+    //         ('0' + date.getSeconds()).slice(-2) +
+    //         '.pdf';
+    //       doc.save(filename);
+    //     });
+    // },
     renderEpcHr(item) {
       if (!item) return '';
       item = item.replace(/\(/g, ' (');
       item = item.trim();
       return item;
+    },
+    handleClickExport(type, item) {
+      exportDataV3({
+        alert: true,
+        param: { id: item.id },
+        exportType: type,
+        url: '/v3/helper/detail-item/stock',
+      });
     },
   },
   computed: {

@@ -34,4 +34,13 @@ module.exports = {
   },
   transpileDependencies: ["@coreui/utils"],
   outputDir: path.resolve(__dirname, "../public"),
+  chainWebpack: (config) => {
+    config.plugin("copy").tap((args) => {
+      args[0].push({
+        from: path.resolve(__dirname, "LICENSE.txt"),
+        to: path.resolve(__dirname, "../public"),
+      });
+      return args;
+    });
+  },
 };
