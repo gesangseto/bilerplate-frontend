@@ -19,7 +19,7 @@
               required
               :disabled="action == 'Read' ? true : false"
               title="Department "
-              :options="departmentOptions"
+              :options="departmentOptions.filter((it) => it.is_sys == false)"
               v-on:onchange="formData.mst_department_id = $event"
               :value="formData.mst_department_id"
               :col="[3, 9]"
@@ -145,6 +145,7 @@ export default {
       if (_res) {
         for (const it of _res.data) {
           this.departmentOptions.push({
+            is_sys: it.is_sys ? true : false,
             label: it.name,
             value: `${it.id}`,
           });

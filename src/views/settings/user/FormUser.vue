@@ -165,9 +165,7 @@
                 title="Department"
                 required
                 :options="
-                  departmentOptions.filter((it) =>
-                    formData.is_sys ? it.is_sys : !it.is_sys,
-                  )
+                  departmentOptions.filter((it) => it.is_sys == formData.is_sys)
                 "
                 v-on:onchange="formData.mst_department_id = $event"
                 :value="formData.mst_department_id"
@@ -187,9 +185,7 @@
                 title="Section"
                 required
                 :options="
-                  optionSections.filter((it) =>
-                    formData.is_sys ? it.is_sys : !it.is_sys,
-                  )
+                  optionSections.filter((it) => it.is_sys == formData.is_sys)
                 "
                 v-on:onchange="formData.mst_section_id = $event"
                 :value="formData.mst_section_id"
@@ -599,7 +595,7 @@ export default {
       let _res = await getMstDepartment(param);
       for (const it of _res.data) {
         this.departmentOptions.push({
-          is_sys: it.is_sys,
+          is_sys: it.is_sys ? true : false,
           label: it.name,
           value: `${it.id}`,
         });
@@ -635,6 +631,8 @@ export default {
         if (this.$route.params.id !== undefined) {
           delete this.formData.pwd;
         }
+        this.formData.is_sys = this.formData.is_sys ? true : false;
+
         // if (getUserId() == 0) this.formData.is_sys = 0;
         let tlp = '';
         if (data.tlp) {
@@ -658,7 +656,7 @@ export default {
       this.optionSections = [];
       for (const it of _res.data) {
         this.optionSections.push({
-          is_sys: it.is_sys,
+          is_sys: it.is_sys ? true : false,
           label: it.name,
           value: `${it.id}`,
         });
