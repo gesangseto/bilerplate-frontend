@@ -537,7 +537,7 @@ export default {
         error: null,
         mst_department_id: null,
         mst_section_id: null,
-        is_sys: null,
+        is_sys: false,
       },
       statusOptions: [
         { value: 'Active', label: 'Active' },
