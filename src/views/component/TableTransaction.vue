@@ -547,6 +547,9 @@ export default {
   },
   methods: {
     openModal(item, index) {
+      if (Object.keys(item).length > 0) {
+        delete item.reason;
+      }
       this.modal_property = { ...this.modal_property, ...item };
       this.modal_property.id = item.id;
       this.modal_property.modal = true;

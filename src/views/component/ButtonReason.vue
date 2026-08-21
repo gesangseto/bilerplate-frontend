@@ -112,7 +112,6 @@ export default {
     if (this.buttonProperty) {
       this.button = { ...this.button, ...this.buttonProperty };
     }
-
     if (this.title) {
       this.button.text = this.title;
     }
