@@ -81,6 +81,7 @@ export default {
       },
       totalData: 0,
       items: [],
+      currentFilter: {},
       fields: [
         {
           key: 'id',
@@ -142,7 +143,8 @@ export default {
       return action;
     },
     async loadData(filter) {
-      if (!filter) filter = this.$route.query;
+      if (!filter) filter = this.currentFilter || this.$route.query;
+      this.currentFilter = filter;
       let param = `${new URLSearchParams(filter).toString()}`;
       let url = `/v4.2/transaction/picking?raw=true&${param}`;
       $axiosMertrack.get(url).then((res) => {
@@ -175,7 +177,7 @@ export default {
         .delete('/v4.2/transaction/picking', param)
         .then((result) => {
           this.$isLoading(false);
-          this.loadData();
+          this.loadData(this.currentFilter);
           this.$toast.open({
             message: result.data.error
               ? `${result.data.message}`
