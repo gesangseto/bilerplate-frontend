@@ -17,12 +17,6 @@
       <CCard>
         <CCardHeader>
           <strong>Details</strong>
-
-          <ButtonPermission
-            exportType="pdf"
-            :permission="'print'"
-            @click="handleClickExport('pdf')"
-          />
         </CCardHeader>
         <CCardBody ref="content">
           <CRow>
