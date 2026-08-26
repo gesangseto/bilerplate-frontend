@@ -20,7 +20,7 @@
                       disable_type[`field${index}`].year ||
                       (index > 1 && !data[`field${index - 1}_type`])
                     "
-                    @:variant="
+                    :variant="
                       disable_type[`field${index}`].year ||
                       (index > 1 && !data[`field${index - 1}_type`])
                         ? 'block'
@@ -39,7 +39,7 @@
                       (index > 1 && !data[`field${index - 1}_type`])
                     "
                     style="margin-bottom: 15px; width: 100%"
-                    @:variant="
+                    :variant="
                       disable_type[`field${index}`].month ||
                       (index > 1 && !data[`field${index - 1}_type`])
                         ? 'block'
@@ -58,7 +58,7 @@
                       (index > 1 && !data[`field${index - 1}_type`])
                     "
                     style="margin-bottom: 15px; width: 100%"
-                    @:variant="
+                    :variant="
                       disable_type[`field${index}`].day ||
                       (index > 1 && !data[`field${index - 1}_type`])
                         ? 'block'
@@ -73,7 +73,7 @@
                   </CButton>
                   <div class="text-center">
                     <CButton
-                      :disabled="action == 'Read' || !data.can_update"
+                      :disabled="action == 'Read' || (action !== 'Create' && !data.can_update)"
                       style="margin-bottom: 15px; width: 50%"
                       color="danger"
                       @click="handleClickClear(index)"
@@ -84,7 +84,7 @@
                 </CCardBody>
                 <CCardFooter>
                   <CSelect
-                    :disabled="action == 'Read' || !data.can_update"
+                    :disabled="action == 'Read' || (action !== 'Create' && !data.can_update)"
                     placeholder="Please select"
                     @change="handleChangeFormat(index)"
                     :value.sync="data[`field${index}_format`]"
@@ -115,7 +115,7 @@
                   >
 
                   <CSelect
-                    :disabled="action == 'Read' || !data.can_update"
+                    :disabled="action == 'Read' || (action !== 'Create' && !data.can_update)"
                     v-if="data[`field${index}_type`] == 'day'"
                     :label="'Overwrite Option '"
                     placeholder="Please select"
@@ -160,7 +160,7 @@
         </CCardHeader>
         <CCardBody>
           <CSelect
-            :disabled="action == 'Read' || !data.can_update"
+            :disabled="action == 'Read' || (action !== 'Create' && !data.can_update)"
             :options="delimiter_list"
             placeholder="Please select"
             :value.sync="data.delimiter"
@@ -169,7 +169,7 @@
             <template #prepend-content>Delimiter</template>
           </CSelect>
           <CSelect
-            :disabled="action == 'Read' || !data.can_update"
+            :disabled="action == 'Read' || (action !== 'Create' && !data.can_update)"
             :options="around_list"
             placeholder="Please select"
             :value.sync="data.around"
