@@ -1,8 +1,12 @@
 <template>
   <div>
-    <a @click="openModal">
-      <CIcon name="cil-info" size="xl" style="cursor: pointer" />
-    </a>
+    <CButton
+      @click="openModal"
+      class="btn-info-custom"
+      style="display: flex; align-items: center; justify-content: center"
+    >
+      <v-icon name="info" style="cursor: pointer" />
+    </CButton>
 
     <transition name="fade">
       <div
@@ -14,7 +18,7 @@
           <!-- Header -->
           <div class="custom-modal-header">
             <div class="header-title">
-              <CIcon name="cil-info" size="xl" />
+              <v-icon name="info" />
               <span>Information</span>
             </div>
 
@@ -157,9 +161,21 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.btn-info-custom {
+  background: white;
+  border: 1px solid #6c757d;
+  color: #6c757d;
+}
+.btn-info-custom:hover {
+  background: #6c757d;
+  color: white;
+}
 </style>
 
 <script>
+import { CButton } from '@coreui/vue';
+
 export default {
   name: 'ButtonInfo',
 

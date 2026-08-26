@@ -58,6 +58,7 @@
                   <p class="col-form-label col-sm-3">Message</p>
                 </template>
               </CInput>
+              <strong>DATA</strong>
               <table
                 v-if="parameterBody.length > 0"
                 style="width: 100%"
@@ -72,9 +73,9 @@
                       v-if="Object.keys(oldDataBody).length > 0"
                       style="width: 40%"
                     >
-                      OLD DATA
+                      OLD VALUE
                     </td>
-                    <td style="width: 40%">DATA</td>
+                    <td style="width: 40%">NEW VALUE</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -257,21 +258,44 @@ export default {
       ];
       return maskedKeys.includes(key);
     },
+    trimValues(obj) {
+      if (typeof obj === 'string') {
+        const trimmed = obj.trim();
+        if (this.isJSONString(trimmed)) {
+          return this.trimValues(JSON.parse(trimmed));
+        }
+        return trimmed;
+      }
+      if (Array.isArray(obj)) return obj.map((item) => this.trimValues(item));
+      if (obj !== null && typeof obj === 'object') {
+        const trimmed = {};
+        for (const key in obj) {
+          trimmed[key] = this.trimValues(obj[key]);
+        }
+        return trimmed;
+      }
+      return obj;
+    },
     formatTableValue(value, key) {
       if (value === null || value === 'null' || value === undefined) return '';
       if (this.isMaskedField(key)) return '********';
       if (this.isImage(value)) return value;
-      if (typeof value === 'string' && this.isJSONString(value)) return value;
-
+      if (typeof value === 'string' && this.isJSONString(value)) {
+        return JSON.stringify(this.trimValues(JSON.parse(value)), null, 2);
+      }
       if (Array.isArray(value)) {
         if (value.length === 0) return '[]';
         return JSON.stringify(value, null, 2);
       }
       if (typeof value === 'object') {
-        return JSON.stringify(value);
+        return JSON.stringify(value, null, 2);
       }
 
-      return String(value).trim();
+      if (key === 'mst_pid') {
+        return typeof value === 'string' ? value.trim() : String(value).trim();
+      }
+
+      return typeof value === 'string' ? value.trim() : String(value);
     },
     loadData() {
       // let _data = get_log();
@@ -283,9 +307,9 @@ export default {
       $axiosMertrack.get(url).then((response) => {
         let data = response.data.data[0];
         this.data = data;
-        this.dataBody = JSON.parse(this.data['data']);
-        this.oldDataBody = JSON.parse(this.data['old_data']) || {};
-        console.log('dataBody', this.dataBody?.password_pattern);
+        this.dataBody = this.trimValues(JSON.parse(this.data['data']));
+        this.oldDataBody =
+          this.trimValues(JSON.parse(this.data['old_data'])) || {};
       });
     }, // Cek apakah string adalah JSON valid
     isJSONString(str) {
@@ -343,10 +367,19 @@ export default {
     },
     getBodyValue(body, key) {
       const aliases = { mst_pid: 'pid', pid: 'mst_pid' };
-      if (body[key] !== undefined) return body[key];
-      if (aliases[key] && body[aliases[key]] !== undefined)
-        return body[aliases[key]];
-      return undefined;
+      const trimKeys = ['mst_pid', 'pid'];
+      let value;
+      if (body[key] !== undefined) {
+        value = body[key];
+      } else if (aliases[key] && body[aliases[key]] !== undefined) {
+        value = body[aliases[key]];
+      } else {
+        return undefined;
+      }
+      if (trimKeys.includes(key) && typeof value === 'string') {
+        return value.trim();
+      }
+      return value;
     },
   },
   computed: {
