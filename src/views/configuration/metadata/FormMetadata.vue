@@ -43,6 +43,7 @@
                 </template>
               </CInput>
             </CForm>
+
             <ButtonPermission
               v-if="action == 'Update'"
               :permission="'create'"
@@ -63,8 +64,9 @@
                     v-if="action == 'Update'"
                     :id="item.id"
                     :permission="'delete'"
-                    @click="deleteRow(item, index)"
+                    @click="openModalReason(item, index)"
                   />
+
                   <ButtonPermission
                     v-if="action == 'Update'"
                     :id="item.id"
@@ -81,6 +83,16 @@
         </CCard>
       </CCol>
     </CRow>
+
+    <!-- Modal Reason -->
+    <CancelModal
+      :skip_confirmation="true"
+      type="delete"
+      :is_master="true"
+      :property="modal_reason"
+      v-on:handleSubmit="deleteRow(modal_reason)"
+    />
+
     <CModal
       :title="modalData.id ? 'Edit Metadata' : 'Add Metedata'"
       color="warning"
@@ -92,10 +104,11 @@
           <h5 class="modal-title mb-0">
             {{ modalData.id ? 'Edit Metadata' : 'Add Metadata' }}
           </h5>
+
           <div class="d-flex align-items-center">
             <ButtonInfo
-              :formData="modalData"
               v-if="modalData.id"
+              :formData="modalData"
               class="mr-2"
             />
             <button class="close-btn" @click="showModalDialog = false">
@@ -161,7 +174,9 @@
         </CCol>
       </CRow>
       <template #footer>
+        <ButtonSubmit v-if="!modalData.id" @handleSubmit="onSave()" />
         <ButtonReason
+          v-if="modalData.id"
           :property="modalData"
           type="update"
           :reason.sync="modalData.reason"
@@ -182,6 +197,7 @@ import {
   insertConfMetadata,
   updateConfMetadata,
 } from '../../../resource/ConfMetadata';
+import { CCardBody, CCol, CRow } from '@coreui/vue';
 
 export default {
   name: 'FormMetadata',
@@ -197,6 +213,12 @@ export default {
     return {
       initial_load: true,
       showModalDialog: false,
+      modal_reason: {
+        title: 'Record',
+        modal: false,
+        id: null,
+        reason: '',
+      },
       initialData: {
         sys_database_content_id: null,
         name: null,
@@ -267,6 +289,14 @@ export default {
     }
   },
   methods: {
+    openModalReason(item, index) {
+      if (Object.keys(item).length > 0) {
+        delete item.reason;
+      }
+      this.modal_reason = { ...this.modal_reason, ...item };
+      this.modal_reason.id = item.id;
+      this.modal_reason.modal = true;
+    },
     async loadOption() {
       let _res = await getConfPattern({ status: 'Active' });
       if (_res) {

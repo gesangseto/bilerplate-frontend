@@ -178,7 +178,7 @@ export default {
     },
 
     is_valid() {
-      return !!this.property.reason?.trim();
+      return !!this.localReason?.trim();
     },
     /**
      * Handle submit
