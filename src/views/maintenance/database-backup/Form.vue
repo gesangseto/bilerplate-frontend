@@ -15,13 +15,17 @@
             />
           </CCardBody>
           <CCardFooter>
-            <ButtonPermission
-              :permission="'create'"
-              @click="formData.modal = true"
+            <ButtonReason
+              :property="formData"
+              type="create"
+              label="Remark"
+              :reason.sync="formData.remark"
+              :reason-required="true"
+              @handleSubmit="backup($event)"
               :buttonProperty="{
                 size: 'sm',
                 color: 'success',
-                icon: 'file',
+                icon: 'cilStorage',
                 text: 'Backup',
                 tooltip: 'Backup Database',
               }"
@@ -30,47 +34,6 @@
         </CCard>
       </CCol>
     </CRow>
-    <!-- START REMARK MODAL -->
-    <div>
-      <CModal
-        centered="centered"
-        :show.sync="formData.modal"
-        :title="`Create Backup`"
-        color="danger"
-      >
-        <CRow>
-          <CCol sm="12" md="12" lg="12">
-            <TextareaDefault
-              :rows="5"
-              :col="[3, 8]"
-              title="Remark"
-              required
-              v-model="formData.remark"
-              :is-valid="formData.remark ? true : false"
-            />
-            <p>
-              This will create a new backup of your database. The file will be
-              saved in
-              {{ appConfig.backup_path }}\{{
-                formData.file_name
-                  ? `${formData.file_name}.7z`
-                  : `[default file name]`
-              }}. Do you want to continue?
-            </p>
-          </CCol>
-        </CRow>
-        <template #footer>
-          <CButton @click="backup()" color="success">
-            <CIcon name="cil-check-circle" />
-            Backup Now
-          </CButton>
-          <CButton @click="formData.modal = false" color="danger">
-            <CIcon name="cil-ban" /> Cancel</CButton
-          >
-        </template>
-      </CModal>
-    </div>
-    <!-- END REJECT MODAL -->
   </div>
 </template>
 
@@ -90,19 +53,19 @@ export default {
         file_name: null,
         file_prefix: null,
         remark: null,
-        modal: false,
         file_path: null,
       },
     };
   },
   mounted() {},
   methods: {
-    async backup() {
-      this.formData.file_prefix = !this.formData?.file_name
+    async backup(payload) {
+      const data = { ...this.formData, remark: payload?.reason };
+      data.file_prefix = !data?.file_name
         ? `${this.appConfig?.backup_prefix}<default_name>`
         : ' ';
-      this.formData.file_path = this.appConfig?.backup_path;
-      let eksekusi = await DatabaseBackup(this.formData);
+      data.file_path = this.appConfig?.backup_path;
+      let eksekusi = await DatabaseBackup(data);
       this.$toast.open({
         message: eksekusi.message.replace(/\n/g, '<br>'),
         type: eksekusi.error ? 'error' : 'success',
@@ -110,9 +73,6 @@ export default {
         position: 'top-right',
         duration: 10000,
       });
-      if (!eksekusi.error) {
-        this.formData.modal = false;
-      }
       return;
     },
   },

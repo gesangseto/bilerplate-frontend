@@ -5,16 +5,23 @@
         type="reset"
         size="sm"
         :color="button.color"
+        :disabled="button.disabled"
         class="m-1"
         @click="openModal"
       >
-        <CIcon v-if="button.icon" :name="button.icon" /> {{ button.text }}
+        <CIcon
+          v-if="button.icon"
+          :name="button.icon"
+          class="align-middle"
+          style="margin-right: 4px"
+        />
+        {{ button.text }}
       </CButton>
     </a>
     <CModal
       centered="centered"
       :show.sync="showModal"
-      title="Reason"
+      :title="label"
       color="danger"
       @show="onModalShow"
       @hidden="onModalHidden"
@@ -24,21 +31,21 @@
           <CRow>
             <p style="margin-left: 20px; margin-right: 20px">
               You are about to {{ type }} this data. This operation cannot be
-              undone. If you wish to continue, please input the Reason and click
-              Submit button.
+              undone. If you wish to continue, please input the {{ label }} and
+              click Submit button.
             </p>
             <CCol sm="2" md="2" lg="2">
-              <label for="reason">Reason</label>
+              <label for="reason">{{ label }}</label>
             </CCol>
             <CCol sm="10" md="10" lg="10">
               <CTextarea
                 rows="5"
-                placeholder="Enter The Reason"
+                :placeholder="`Enter The ${label}`"
                 id="reject-reason"
                 :value="localReason"
                 @input="handleReasonChange"
                 :is-valid="initial_load ? null : is_valid"
-                invalid-feedback="Reason is required"
+                :invalid-feedback="`${label} is required`"
               />
             </CCol>
           </CRow>
@@ -75,6 +82,11 @@ export default {
       type: String,
       default: '',
     },
+    label: {
+      type: String,
+      default: 'Reason',
+    },
+    beforeOpen: Function,
     buttonProperty: { default: null },
     required: {
       type: Boolean,
@@ -92,6 +104,7 @@ export default {
         text: 'Submit',
         tooltip: '',
         icon: 'cil-check-circle',
+        disabled: false,
       },
     };
   },
@@ -125,6 +138,10 @@ export default {
      * Buka modal dan reset reason
      */
     openModal() {
+      // Jika beforeOpen disediakan dan mengembalikan false, jangan buka modal
+      if (this.beforeOpen && this.beforeOpen() === false) {
+        return;
+      }
       // Reset reason sebelum modal terbuka
       this.localReason = '';
       this.showModal = true;

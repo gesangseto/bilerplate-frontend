@@ -88,13 +88,18 @@
             </CRow>
           </CCardBody>
           <CCardFooter>
-            <ButtonPermission
-              :permission="'create'"
-              @click="formData.modal = true"
+            <ButtonReason
+              :property="formData"
+              type="restore"
+              label="Remark"
+              :reason.sync="formData.remark"
+              :reason-required="true"
+              @handleSubmit="restore($event)"
+              :before-open="validateSourceFile"
               :buttonProperty="{
                 size: 'sm',
                 color: 'success',
-                icon: 'file',
+                icon: 'cilActionUndo',
                 text: 'Restore',
               }"
             />
@@ -102,41 +107,6 @@
         </CCard>
       </CCol>
     </CRow>
-    <!-- START RESTORE MODAL -->
-    <div>
-      <CModal
-        centered="centered"
-        :show.sync="formData.modal"
-        :title="`Restore`"
-        color="danger"
-      >
-        <CRow>
-          <CCol sm="12" md="12" lg="12">
-            <TextareaDefault
-              rows="5"
-              :col="[3, 8]"
-              title="Remark"
-              required
-              v-model="formData.remark"
-              :is-valid="formData.remark ? true : false"
-            />
-            <p>
-              This action will restore your database from the selected backup
-              file. Existing data may be overwritten. Do you want to continue?
-            </p>
-          </CCol>
-        </CRow>
-        <template #footer>
-          <CButton @click="restore()" color="success">
-            <CIcon name="cil-check-circle" />
-            Restore Now
-          </CButton>
-          <CButton @click="formData.modal = false" color="danger">
-            <CIcon name="cil-ban" /> Cancel</CButton
-          >
-        </template>
-      </CModal>
-    </div>
   </div>
 </template>
 
@@ -160,7 +130,6 @@ export default {
         file_path: null,
         source: null,
         remark: null,
-        modal: false,
       },
       listFiles: [],
     };
@@ -226,27 +195,35 @@ export default {
       this.formData.file = file;
       this.formData.file_name = file.name;
     },
-    async restore() {
+    validateSourceFile() {
+      if (!this.formData.source) {
+        this.$toast.open({
+          message: 'Please select a Source first!',
+          type: 'error',
+          position: 'top-right',
+        });
+        return false;
+      }
       if (!this.formData.file) {
         this.$toast.open({
           message: 'Please select a backup file first!',
           type: 'error',
           position: 'top-right',
         });
-        return;
+        return false;
       }
-
+      return true;
+    },
+    async restore(payload) {
+      const data = { ...this.formData, remark: payload?.reason };
       try {
-        let eksekusi = await DatabaseRestore(this.formData); // pastikan axios request kirim multipart/form-data
+        let eksekusi = await DatabaseRestore(data); // pastikan axios request kirim multipart/form-data
         this.$toast.open({
           message: eksekusi.message.replace(/\n/g, '<br>'),
           type: eksekusi.error ? 'error' : 'success',
           position: 'top-right',
           duration: 10000,
         });
-        if (!eksekusi.error) {
-          this.formData.modal = false;
-        }
       } catch (err) {
         this.$toast.open({
           message: err.message.replace(/\n/g, '<br>'),
