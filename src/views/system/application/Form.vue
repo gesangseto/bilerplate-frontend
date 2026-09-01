@@ -21,6 +21,8 @@
                   <!-- COMPANY INFORMATION -->
                   <p style="font-weight: bold">Login Information</p>
                   <InputDefault
+                    required
+                    :is-valid="!data.users_name ? false : true"
                     :col="[3, 7]"
                     title="Username"
                     v-model="data.users_name"
@@ -53,11 +55,15 @@
                     :col="[3, 7]"
                     title="Entity Name"
                     v-model="data.identity_name"
+                    required
+                    :is-valid="!data.identity_name ? false : true"
                   />
                   <TextareaDefault
                     :col="[3, 7]"
                     title="Entity Address"
                     v-model="data.entity_address"
+                    required
+                    :is-valid="!data.entity_address ? false : true"
                   />
                   <!-- GS1 INFORMATION -->
                   <p style="font-weight: bold">GS1 Information</p>
@@ -170,13 +176,27 @@
                     Leave blank to disable password expiration."
                   />
                   <InputDefault
+                    required
                     :col="[3, 7]"
                     :title="'Password History Limit'"
                     :validasi="'integer'"
                     v-model="data.password_history_limit"
+                    :min="1"
                     :max="50"
-                    description="Specifies how many previous passwords cannot be reused."
-                  />
+                    :is-valid="!data.password_history_limit ? false : true"
+                    description="Specifies how many previous passwords cannot be reused. Minimum value = 1"
+                  >
+                    <template #append>
+                      <CButton
+                        size="sm"
+                        color="warning"
+                        style="white-space: nowrap; margin-left: 8px"
+                        @click="resetHsitory()"
+                      >
+                        Reset Pwd History
+                      </CButton>
+                    </template>
+                  </InputDefault>
 
                   <p style="font-weight: bold">Password Policy</p>
                   <InputDefault
@@ -312,9 +332,15 @@
                       custom
                       class="input-form-upload"
                       @change="uploadLogo($event, 'identity')"
+                      :is-valid="!data.identity_logo_path ? false : true"
                     >
                       <template #label>
-                        <p class="col-form-label col-sm-3">Identity Logo</p>
+                        <div class="col-form-label col-sm-3">
+                          Identity Logo
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </div>
                       </template>
                     </CInputFile>
                   </CCol>
@@ -336,13 +362,19 @@
                   <CCol sm="10" lg="10">
                     <CInputFile
                       :placeholder="labelLogo.home"
+                      :is-valid="!data.home_logo ? false : true"
                       horizontal
                       custom
                       class="input-form-upload"
                       @change="uploadLogo($event, 'home')"
                     >
                       <template #label>
-                        <p class="col-form-label col-sm-3">Home Page Picture</p>
+                        <div class="col-form-label col-sm-3">
+                          Home Page Picture
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </div>
                       </template>
                     </CInputFile>
                   </CCol>
@@ -360,13 +392,19 @@
                   <CCol sm="10" lg="10">
                     <CInputFile
                       :placeholder="labelLogo.login"
+                      :is-valid="!data.login_logo ? false : true"
                       horizontal
                       custom
                       class="input-form-upload"
                       @change="uploadLogo($event, 'login')"
                     >
                       <template #label>
-                        <p class="col-form-label col-sm-3">Login Logo</p>
+                        <div class="col-form-label col-sm-3">
+                          Login Logo
+                          <span class="text-danger">
+                            <strong>*</strong>
+                          </span>
+                        </div>
                       </template>
                     </CInputFile>
                   </CCol>
@@ -635,36 +673,30 @@
                   </p>
 
                   <InputDefault
-                    :required="true"
+                    required
+                    :isValid="!data.id_location ? false : true"
                     :col="[3, 7]"
                     title="ID Sarana"
                     v-model="data.id_location"
                     :validasi="'integer'"
                     :max="100"
-                    :isValid="
-                      initialLoad ? null : !data.id_location ? false : true
-                    "
                     description="'ID Sarana' as registered in the BPOM TTAC system, used for reporting Track & Trace data."
                   />
                   <InputDefault
-                    :required="true"
+                    required
                     :col="[3, 7]"
                     title="Latitude"
                     v-model="data.latitude"
                     :validasi="'float'"
-                    :isValid="
-                      initialLoad ? null : !data.latitude ? false : true
-                    "
+                    :isValid="!data.latitude ? false : true"
                   />
                   <InputDefault
-                    :required="true"
+                    required
                     :col="[3, 7]"
                     title="Longitude"
                     v-model="data.longitude"
                     :validasi="'float'"
-                    :isValid="
-                      initialLoad ? null : !data.longitude ? false : true
-                    "
+                    :isValid="!data.longitude ? false : true"
                   />
                   <p style="font-weight: bold">BPOM TTAC Reporting Settings</p>
 
@@ -816,7 +848,11 @@ import 'vue2-datepicker/index.css';
 import $axiosMertrack from '../../../apiMertrack';
 import moment from 'moment';
 import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
-import { getSysConfig } from '../../../resource/SysConfig';
+import {
+  getSysConfig,
+  updateSysConfig,
+  resetPasswordHistory,
+} from '../../../resource/SysConfig';
 import {
   getWhatsappQr,
   sendWhatsappMessage,
@@ -1068,7 +1104,11 @@ export default {
       return val ? val.length >= 4 : false;
     },
     formValidation() {
-      let required = ['identity_name', 'entity_address'];
+      let required = [
+        'identity_name',
+        'entity_address',
+        'password_history_limit',
+      ];
       // Check Pattern
       if (this.data.password_pattern) {
         let patt = this.data.password_pattern;
@@ -1085,7 +1125,7 @@ export default {
       }
       return true;
     },
-    save() {
+    async save() {
       this.initialLoad = false;
       if (!this.formValidation()) {
         this.$toast.open({
@@ -1114,34 +1154,55 @@ export default {
       param.list_device = param.list_device.slice(0, param.total_device);
       param.password_pattern = JSON.stringify(param.password_pattern);
       param.return_ext_aggregation = param.return_ext_aggregation ? 1 : 0;
-      $axiosMertrack
-        .post(`v3/configuration/application`, param)
-        .then((result) => {
-          let res = result.data;
-          this.$toast.open({
-            message: res.error
-              ? `${res.message}`
-              : 'Data has been saved successfully ',
-            type: res.error ? 'error' : 'success',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-          if (!res.error) {
-            setConfig(this.data);
-            handleBack(this.$router, this.$route);
-          }
-        });
+      let res = await updateSysConfig(param);
+      this.$toast.open({
+        message: res.error
+          ? `${res.message}`
+          : 'Data has been saved successfully ',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (!res.error) {
+        setConfig(this.data);
+        handleBack(this.$router, this.$route);
+      }
+
       return;
     },
     cancel() {
       handleBack(this.$router, this.$route);
     },
+    async resetHsitory() {
+      if (confirm('Are you sure you want to reset the password history?')) {
+        this.data.reason = '[REST PASSWORD HISTORY]';
+        let res = await resetPasswordHistory(this.data);
+        this.$toast.open({
+          message: res.error
+            ? `${res.message}`
+            : 'Data has been saved successfully ',
+          type: res.error ? 'error' : 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+
+        if (!res.error) {
+          this.loadConfig();
+          this.loadEpcStatus();
+          this.loadCron();
+          this.loadWhatsapp();
+        }
+
+        return;
+      }
+    },
     getFullNameBackup() {
       let timestamp = moment(new Date()).format('YYYYMMDD-hhmmss');
       return `${this.data.backup_prefix || ''}${this.info.database}_L3v${
         this.info.app_version
-      }_Full_${timestamp}.pgb`;
+      }_Full_${timestamp}.7z`;
     },
   },
 };

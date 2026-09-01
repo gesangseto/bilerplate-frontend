@@ -83,6 +83,7 @@ export default {
     validasi: { type: String, default: null },
     max: { type: Number, default: null },
     maxValue: { type: Number, default: null },
+    min: { type: Number, default: null },
     title: { type: String, default: null },
     description: { type: String, default: '' },
     placeholder: { type: String },
@@ -151,6 +152,9 @@ export default {
       }
       if (this.validasi == 'integer') {
         cleanedValue = cleanedValue.replace(/^0+/, '');
+        if (this.min && cleanedValue !== '' && parseInt(cleanedValue) < this.min) {
+          cleanedValue = String(this.min);
+        }
       }
 
       // Hitung perbedaan panjang sebelum dan sesudah modifikasi
