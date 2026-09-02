@@ -40,7 +40,7 @@
       <CCol col="6" xl="6">
         <CCard>
           <CCardHeader>
-            <strong>Update Password</strong>
+            <strong>Change Password</strong>
           </CCardHeader>
           <CCardBody>
             <CRow class="mt-3">
@@ -48,7 +48,7 @@
                 <InputDefault
                   :col="[4, 8]"
                   :type="showPassword == false ? 'password' : 'text'"
-                  title="Old Password"
+                  title="Current Password"
                   v-model="form_data.oldPassword"
                   :is-valid="
                     !initial_load && !form_data.oldPassword ? false : null
@@ -80,7 +80,7 @@
                 <InputDefault
                   :col="[4, 8]"
                   :type="showPassword == false ? 'password' : 'text'"
-                  title="Confirm Password"
+                  title="Confirm New Password"
                   v-model="form_data.confirmPassword"
                   :is-valid="
                     !initial_load && !form_data.confirmPassword
@@ -91,7 +91,7 @@
                   "
                   :invalid_feedback="
                     !form_data.confirmPassword
-                      ? 'Confirm password is required'
+                      ? 'Confirm new password is required'
                       : 'Confirmation password does not match'
                   "
                 />

@@ -8,10 +8,16 @@
               <h4>Change Password</h4>
               <small
                 v-if="password_is_expiry && !password_must_change"
-                style="color: red"
+                style="color: red; font-size: 16px"
               >
-                Your password has expired. Please create a new password to
-                continue.
+                Your password has expired. Please set a new password.
+              </small>
+              <small
+                v-if="password_must_change && !password_is_expiry"
+                style="color: red; font-size: 16px"
+              >
+                Your are still using the default password. Please set a new
+                password.
               </small>
             </CCardHeader>
             <CCardBody class="p-4">
@@ -39,7 +45,7 @@
                     <InputDefault
                       :col="[4, 8]"
                       :type="showPassword == false ? 'password' : 'text'"
-                      title="Confirm Password"
+                      title="Confirm New Password"
                       v-model="form_data.confirmPassword"
                       :is-valid="
                         !initial_load && !form_data.confirmPassword
@@ -50,7 +56,7 @@
                       "
                       :invalid_feedback="
                         !form_data.confirmPassword
-                          ? 'Confirm password is required'
+                          ? 'Confirm new password is required'
                           : 'Confirmation password does not match'
                       "
                     />
