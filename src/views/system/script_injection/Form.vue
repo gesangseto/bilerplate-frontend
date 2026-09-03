@@ -92,7 +92,7 @@
                   (formData.metadata = $event.result),
                     (formData.error_metadata = $event.error_metadata)
                 "
-                model="mst_customer"
+                model="sys_script_injection"
               />
             </CCardBody>
           </CCardBody>

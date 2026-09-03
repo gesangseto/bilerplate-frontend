@@ -75,7 +75,7 @@
               (formData.metadata = $event.result),
                 (formData.error_metadata = $event.error_metadata)
             "
-            model="mst_packaging"
+            model="mst_currency"
           />
         </CCardBody>
 

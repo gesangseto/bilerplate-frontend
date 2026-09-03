@@ -199,7 +199,7 @@ export default {
       conf_user_app: {},
       profile: {},
       required: {
-        oldPassword: { error: false, message: 'Old password is required' },
+        oldPassword: { error: false, message: 'Current password is required' },
         newPassword: { error: false, message: 'New password is required' },
         confirmPassword: {
           error: false,
