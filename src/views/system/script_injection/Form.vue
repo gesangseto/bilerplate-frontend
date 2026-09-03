@@ -169,9 +169,9 @@ export default {
       let _res = await getSysScriptInj({ id: this.$route.params.id });
       if (_res) {
         this.formData = _res.data[0];
-        this.formData.last_execute = moment(this.formData.last_execute)
-          .utc()
-          .format('YYYY-MM-DD HH:mm:ss');
+        this.formData.last_execute = this.formData.last_execute
+          ? moment(this.formData.last_execute).format('YYYY-MM-DD HH:mm:ss')
+          : '-';
       }
     },
     async loadCron() {
@@ -235,6 +235,7 @@ export default {
         this.$isLoading(true);
         let res = {};
         if (this.action === 'Create' && formData.id) {
+          delete formData.last_execute;
           delete formData.id;
         }
         if (formData.id) {
