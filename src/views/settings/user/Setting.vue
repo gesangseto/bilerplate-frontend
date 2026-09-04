@@ -37,7 +37,7 @@
     </CRow>
 
     <CRow>
-      <CCol col="6" xl="6">
+      <CCol col="6" xl="6" v-if="profile && profile.id != 0">
         <CCard>
           <CCardHeader>
             <strong>Change Password</strong>
@@ -274,7 +274,16 @@ export default {
         id: getUserId(),
         conf_app: this.conf_user_app,
       };
-      await updateMstUser(params);
+      let res = await updateMstUser(params);
+      this.$toast.open({
+        message: res['error']
+          ? `${res['message']}`
+          : 'Data has been saved successfully ',
+        type: res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
     },
   },
 };

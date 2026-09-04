@@ -19,7 +19,9 @@
               required
               :disabled="action == 'Read' ? true : false"
               title="Department "
-              :options="departmentOptions.filter((it) => it.is_sys == false)"
+              :options="
+                departmentOptions.filter((it) => it.is_sys == formData.is_sys)
+              "
               v-on:onchange="formData.mst_department_id = $event"
               :value="formData.mst_department_id"
               :col="[3, 9]"
@@ -110,7 +112,7 @@ export default {
           label: 'Ready To Sell',
         },
       ],
-      formData: { status: 'Active' },
+      formData: { status: 'Active', is_sys: false },
       departmentOptions: [],
       statusOptions: ['Active', 'Inactive'],
       listProvince: [],
