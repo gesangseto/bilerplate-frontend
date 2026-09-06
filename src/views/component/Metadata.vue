@@ -85,8 +85,8 @@ export default {
           let row = [];
           for (const it of this.config_metadata) {
             let result = this.defaultMetadata[it.name];
-            let pattern = it.conf_pattern.pattern || null;
-            let pattern_description = it.conf_pattern.description || null;
+            let pattern = it.conf_pattern?.pattern || null;
+            let pattern_description = it.conf_pattern?.description || null;
             let error_metadata = this.validation(result, pattern, it.mandatory);
             row.push({
               ...it,
