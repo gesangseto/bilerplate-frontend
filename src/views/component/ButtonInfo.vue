@@ -32,7 +32,7 @@
                 <InputDefault
                   :col="[4, 8]"
                   title="Created Date"
-                  :value="localData.created_date"
+                  :value="formatDate(localData.created_date)"
                   disabled
                 />
 
@@ -48,7 +48,9 @@
                   :col="[4, 8]"
                   title="Last Update Date"
                   :value="
-                    localData.modified_full_name ? localData.modified_date : '-'
+                    localData.modified_full_name
+                      ? formatDate(localData.modified_date)
+                      : '-'
                   "
                   disabled
                 />
@@ -175,6 +177,7 @@
 
 <script>
 import { CButton } from '@coreui/vue';
+import moment from 'moment';
 
 export default {
   name: 'ButtonInfo',
@@ -220,6 +223,10 @@ export default {
   },
 
   methods: {
+    formatDate(value) {
+      if (!value) return '-';
+      return moment(value).format('YYYY-MM-DD HH:mm');
+    },
     openModal() {
       this.showModal = true;
     },

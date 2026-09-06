@@ -103,8 +103,15 @@ export default {
     testMatch(regex, value) {
       if (!value) value = '';
       if (!regex) return true;
-      const pattern = new RegExp(regex, 'g');
-      return pattern.test(value);
+      try {
+        // Anchor pattern agar validasi mencocokkan SELURUH string,
+        // bukan hanya sebagian (RegExp.test() = partial match).
+        const pattern = new RegExp(`^(?:${regex})$`);
+        return pattern.test(value);
+      } catch (e) {
+        // Regex tidak valid → anggap tidak lolos validasi
+        return false;
+      }
     },
     validation(result, pattern, mandatory) {
       if (mandatory && !result) {
