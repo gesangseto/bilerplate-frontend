@@ -332,6 +332,7 @@ export default {
     },
     rowUpdate(item, index) {
       this.modalData = JSON.parse(JSON.stringify(item));
+      this.modalData.id = typeof item.id === 'number' ? `${item.id}` : null;
       this.showModalDialog = true;
     },
     async deleteRow(item, index) {
