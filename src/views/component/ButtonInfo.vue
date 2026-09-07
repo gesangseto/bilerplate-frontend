@@ -225,7 +225,7 @@ export default {
   methods: {
     formatDate(value) {
       if (!value) return '-';
-      return moment(value).format('YYYY-MM-DD HH:mm');
+      return moment(value).format('YYYY-MM-DD HH:mm:ss');
     },
     openModal() {
       this.showModal = true;
