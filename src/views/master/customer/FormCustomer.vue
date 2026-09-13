@@ -60,7 +60,7 @@
                   required
                   title="Phone Number"
                   validasi="numeric"
-                  v-model="formData.tlp"
+                  v-model="formData.phone"
                   :max="12"
                   :is-valid="checkPrimaryPhone()"
                   :invalid_feedback="'Please provide 7-12 digits phone number'"
@@ -76,7 +76,7 @@
                         :value="formData.tlp_code"
                         :is-valid="checkPrimaryPhone()"
                         :invalid_feedback="
-                          checkPhone(formData.tlp) ? null : '   '
+                          checkPhone(formData.phone) ? null : '   '
                         "
                       />
                     </div>
@@ -89,7 +89,7 @@
                   :col="[3, 9]"
                   title="Alternative Phone Number"
                   validasi="numeric"
-                  v-model="formData.tlp_alt"
+                  v-model="formData.phone_alt"
                   :max="12"
                   :is-valid="checkAltPhone()"
                   :invalid_feedback="'Please provide 7-12 digits phone number'"
@@ -104,7 +104,7 @@
                         :value="formData.tlp_alt_code"
                         :is-valid="checkAltPhone()"
                         :invalid_feedback="
-                          checkPhone(formData.tlp_alt) ? null : '   '
+                          checkPhone(formData.phone_alt) ? null : '   '
                         "
                       />
                     </div>
@@ -231,7 +231,7 @@ export default {
       formData: {
         status: 'Active',
         tlp_code: null,
-        tlp: null,
+        phone: null,
       },
       statusOptions: [
         { value: 'Active', label: 'Active' },
@@ -279,15 +279,15 @@ export default {
       if (res) {
         let data = res.data[0];
         this.formData = data;
-        let tlp = this.splitPhone(data.tlp);
+        let tlp = this.splitPhone(data.phone);
         if (tlp) {
           this.formData.tlp_code = tlp[0];
-          this.formData.tlp = tlp[1];
+          this.formData.phone = tlp[1];
         }
-        let tlp_alt = this.splitPhone(data.tlp_alt);
+        let tlp_alt = this.splitPhone(data.phone_alt);
         if (tlp_alt) {
           this.formData.tlp_alt_code = tlp_alt[0];
-          this.formData.tlp_alt = tlp_alt[1];
+          this.formData.phone_alt = tlp_alt[1];
         }
       }
     },
@@ -305,7 +305,7 @@ export default {
     },
     checkPrimaryPhone() {
       let code = this.formData.tlp_code;
-      let phone = this.formData.tlp;
+      let phone = this.formData.phone;
       if (this.initial_load) return null;
       if (!phone && !code) return false;
       if (phone && !code) return false;
@@ -314,7 +314,7 @@ export default {
     },
     checkAltPhone() {
       let code = this.formData.tlp_alt_code;
-      let phone = this.formData.tlp_alt;
+      let phone = this.formData.phone_alt;
       if (this.initial_load) return null;
       if (!phone && !code) return null;
       if (phone && !code) return false;
@@ -351,8 +351,8 @@ export default {
         });
         return;
       } else if (
-        this.joinPhone(this.formData.tlp_code, this.formData.tlp) ==
-        this.joinPhone(this.formData.tlp_alt_code, this.formData.tlp_alt)
+        this.joinPhone(this.formData.tlp_code, this.formData.phone) ==
+        this.joinPhone(this.formData.tlp_alt_code, this.formData.phone_alt)
       ) {
         this.$toast.open({
           message:
@@ -368,11 +368,11 @@ export default {
 
       let dataPost = JSON.parse(JSON.stringify(this.formData));
 
-      if (_form_data.tlp && _form_data.tlp_code) {
-        dataPost.tlp = `${_form_data.tlp_code.toString()}-${_form_data.tlp.toString()}`;
+      if (_form_data.phone && _form_data.tlp_code) {
+        dataPost.phone = `${_form_data.tlp_code.toString()}-${_form_data.phone.toString()}`;
       }
-      if (_form_data.tlp_alt && _form_data.tlp_alt_code) {
-        dataPost.tlp_alt = `${_form_data.tlp_alt_code.toString()}-${_form_data.tlp_alt.toString()}`;
+      if (_form_data.phone_alt && _form_data.tlp_alt_code) {
+        dataPost.phone_alt = `${_form_data.tlp_alt_code.toString()}-${_form_data.phone_alt.toString()}`;
       }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`

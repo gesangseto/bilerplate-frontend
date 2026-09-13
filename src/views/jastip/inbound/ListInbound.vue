@@ -3,6 +3,11 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
+          <ButtonPermission
+            exportType="add"
+            :permission="'create'"
+            @click="handleAdd()"
+          />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -58,6 +63,9 @@ export default {
         this.totalData = res.grand_total || 0;
         this.items = res.data || [];
       });
+    },
+    handleAdd() {
+      this.$router.push({ path: '/jastip/inbound/create' });
     },
   },
   computed: {

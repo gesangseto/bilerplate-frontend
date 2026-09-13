@@ -69,11 +69,11 @@ export default {
           label: 'Person In Charge',
         },
         {
-          key: 'tlp',
+          key: 'phone',
           label: 'Phone No',
         },
         {
-          key: 'tlp_alt',
+          key: 'phone_alt',
           label: 'Alternative Phone No',
         },
         {
@@ -163,8 +163,8 @@ export default {
         if (item.address) addr = `${item.address.substring(0, 30)}`;
         return {
           ...item,
-          tlp: item.tlp ?? '',
-          tlp_alt: item.tlp_alt ?? '',
+          phone: item.phone ?? '',
+          phone_alt: item.phone_alt ?? '',
           address: addr,
         };
       });

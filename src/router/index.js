@@ -244,6 +244,28 @@ const ManualBarcodeGenerator = () =>
   );
 const BpomCompareTool = () =>
   import('@/views/development_tools/BpomCompareTool/BpomCompareTool');
+// ========================JASTIP========================
+const JastipDashboard = () => import('@/views/jastip/dashboard/Dashboard');
+const JastipListItemRegistry = () =>
+  import('@/views/jastip/item-registry/ListItemRegistry');
+const JastipFormItemRegistry = () =>
+  import('@/views/jastip/item-registry/FormItemRegistry');
+const JastipListOutboundManifest = () =>
+  import('@/views/jastip/outbound-manifest/ListOutboundManifest');
+const JastipFormOutboundManifest = () =>
+  import('@/views/jastip/outbound-manifest/FormOutboundManifest');
+const JastipListInbound = () => import('@/views/jastip/inbound/ListInbound');
+const JastipFormInbound = () => import('@/views/jastip/inbound/FormInbound');
+const JastipListPicking = () => import('@/views/jastip/picking/ListPicking');
+const JastipFormPicking = () => import('@/views/jastip/picking/FormPicking');
+const JastipListItemStock = () =>
+  import('@/views/jastip/item-stock/ListItemStock');
+const JastipFormItemStock = () =>
+  import('@/views/jastip/item-stock/FormItemStock');
+const JastipListItemDisposal = () =>
+  import('@/views/jastip/disposal/ListItemDisposal');
+const JastipFormItemDisposal = () =>
+  import('@/views/jastip/disposal/FormItemDisposal');
 // ========================CONFIGURATION========================
 Vue.use(Router);
 let router = new Router({
@@ -1270,11 +1292,140 @@ function configRoutes() {
       name: 'Setting User',
       component: UserSetting,
     },
+
+    // ========================JASTIP========================
+    {
+      path: 'jastip',
+      redirect: '/jastip/dashboard',
+      name: 'Jastip',
+      meta: { login: true },
+      component: {
+        render(c) {
+          return c('router-view');
+        },
+      },
+      children: [
+        {
+          path: 'dashboard',
+          name: 'Jastip Dashboard',
+          meta: { login: true },
+          component: JastipDashboard,
+        },
+        {
+          path: 'item-registry/:type/:id',
+          name: 'Item Registry (Details)',
+          meta: { login: true },
+          component: JastipFormItemRegistry,
+        },
+        {
+          path: 'item-registry/:type',
+          name: 'Item Registry (Details)',
+          meta: { login: true },
+          component: JastipFormItemRegistry,
+        },
+        {
+          path: 'item-registry',
+          name: 'Item Registry (Home)',
+          meta: { login: true },
+          component: JastipListItemRegistry,
+        },
+        {
+          path: 'outbound-manifest/:type/:id',
+          name: 'Outbound Manifest (Details)',
+          meta: { login: true },
+          component: JastipFormOutboundManifest,
+        },
+        {
+          path: 'outbound-manifest/:type',
+          name: 'Outbound Manifest (Details)',
+          meta: { login: true },
+          component: JastipFormOutboundManifest,
+        },
+        {
+          path: 'outbound-manifest',
+          name: 'Outbound Manifest (Home)',
+          meta: { login: true },
+          component: JastipListOutboundManifest,
+        },
+        {
+          path: 'inbound/:type/:id',
+          name: 'Inbound (Details)',
+          meta: { login: true },
+          component: JastipFormInbound,
+        },
+        {
+          path: 'inbound/:type',
+          name: 'Inbound (Details)',
+          meta: { login: true },
+          component: JastipFormInbound,
+        },
+        {
+          path: 'inbound',
+          name: 'Inbound (Home)',
+          meta: { login: true },
+          component: JastipListInbound,
+        },
+        {
+          path: 'picking/:type/:id',
+          name: 'Picking (Details)',
+          meta: { login: true },
+          component: JastipFormPicking,
+        },
+        {
+          path: 'picking/:type',
+          name: 'Picking (Details)',
+          meta: { login: true },
+          component: JastipFormPicking,
+        },
+        {
+          path: 'picking',
+          name: 'Picking (Home)',
+          meta: { login: true },
+          component: JastipListPicking,
+        },
+        {
+          path: 'item-stock/:type/:id',
+          name: 'Item Stock (Details)',
+          meta: { login: true },
+          component: JastipFormItemStock,
+        },
+        {
+          path: 'item-stock/:type',
+          name: 'Item Stock (Details)',
+          meta: { login: true },
+          component: JastipFormItemStock,
+        },
+        {
+          path: 'item-stock',
+          name: 'Item Stock (Home)',
+          meta: { login: true },
+          component: JastipListItemStock,
+        },
+        {
+          path: 'item-disposal/:type/:id',
+          name: 'Item Disposal (Details)',
+          meta: { login: true },
+          component: JastipFormItemDisposal,
+        },
+        {
+          path: 'item-disposal/:type',
+          name: 'Item Disposal (Details)',
+          meta: { login: true },
+          component: JastipFormItemDisposal,
+        },
+        {
+          path: 'item-disposal',
+          name: 'Item Disposal (Home)',
+          meta: { login: true },
+          component: JastipListItemDisposal,
+        },
+      ],
+    },
   ];
   return [
     {
       path: '/',
-      redirect: '/home',
+      redirect: '/login',
       name: 'TheContainer',
       meta: {
         login: true,

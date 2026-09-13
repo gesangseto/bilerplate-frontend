@@ -3,6 +3,11 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
+          <ButtonPermission
+            exportType="add"
+            :permission="'create'"
+            @click="handleAdd()"
+          />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -17,11 +22,6 @@
                 :filterBy="['All', 'id', 'customer_name', 'status']"
                 :orderFilter="['All', 'id', 'customer_name', 'status']"
                 v-on:handleReload="loadData($event)"
-              />
-              <ButtonPermission
-                exportType="add"
-                :permission="'create'"
-                @click="handleAdd()"
               />
             </CCol>
           </CRow>
@@ -75,7 +75,7 @@ export default {
       });
     },
     handleAdd() {
-      this.$router.push({ path: '/jastip/item-registry/add' });
+      this.$router.push({ path: '/jastip/item-registry/create' });
     },
     formatCurrency(val) {
       return new Intl.NumberFormat('id-ID', {
