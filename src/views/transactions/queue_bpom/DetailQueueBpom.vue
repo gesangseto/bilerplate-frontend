@@ -138,7 +138,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import $axiosMertrack from '../../../apiMertrack';
 import {
   calculatePaginationV3,
@@ -441,9 +440,7 @@ export default {
           status_code: item.status_code || '',
           message: item.message || '',
           parent: item.parent || '',
-          modified_date: moment
-            .utc(item.modified_date)
-            .format('YYYY-MM-DD HH:mm'),
+          modified_date: item.modified_date,
         };
       });
     },

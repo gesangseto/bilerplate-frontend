@@ -240,9 +240,7 @@ export default {
   computed: {
     reformatItems() {
       return this.items.map((item) => {
-        let lastUpdate = moment
-          .utc(item.modified_date)
-          .format('YYYY-MM-DD HH:mm');
+        let lastUpdate = item.modified_date;
         return {
           ...item,
           nie: item.nie || '-',
