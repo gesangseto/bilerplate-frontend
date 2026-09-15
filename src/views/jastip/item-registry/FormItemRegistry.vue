@@ -57,9 +57,14 @@
                 v-model="formData.selling_price"
               />
               <InputDefault
-                title="Price Code"
+                title="Cost Code"
                 placeholder="--"
-                v-model="formData.price_code"
+                v-model="formData.cost_code"
+              />
+              <InputDefault
+                title="Selling Code"
+                placeholder="--"
+                v-model="formData.selling_code"
               />
               <CRow form class="form-group">
                 <CCol sm="3"> Photo </CCol>
@@ -102,7 +107,8 @@ export default {
         quantity: null,
         cost_price: null,
         selling_price: null,
-        price_code: null,
+        cost_code: null,
+        selling_code: null,
       },
       listCustomer: [],
       listProduct: [],
@@ -159,7 +165,8 @@ export default {
             quantity: item.quantity,
             cost_price: item.cost_price,
             selling_price: item.selling_price,
-            price_code: item.price_code,
+            cost_code: item.cost_code,
+            selling_code: item.selling_code,
           };
         }
       });
@@ -196,7 +203,8 @@ export default {
       formData.append('quantity', this.formData.quantity);
       formData.append('cost_price', this.formData.cost_price);
       formData.append('selling_price', this.formData.selling_price || 0);
-      formData.append('price_code', this.formData.price_code || '');
+      formData.append('cost_code', this.formData.cost_code || '');
+      formData.append('selling_code', this.formData.selling_code || '');
       if (this.photoFile) {
         formData.append('photo', this.photoFile);
       }

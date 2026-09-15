@@ -55,8 +55,13 @@
                 disabled
               />
               <InputDefault
-                title="Price Code"
-                :value="formData.price_code"
+                title="Cost Code"
+                :value="formData.cost_code"
+                disabled
+              />
+              <InputDefault
+                title="Selling Code"
+                :value="formData.selling_code"
                 disabled
               />
               <InputDefault
@@ -112,7 +117,8 @@ export default {
         cost_price: null,
         selling_price: null,
         shipment_price: null,
-        price_code: null,
+        cost_code: null,
+        selling_code: null,
         status_name: null,
         payment_status: null,
         created_full_name: null,
@@ -148,7 +154,8 @@ export default {
             shipment_price: item.shipment_price
               ? this.formatCurrency(item.shipment_price)
               : '-',
-            price_code: item.price_code || '-',
+            cost_code: item.cost_code || '-',
+            selling_code: item.selling_code || '-',
             status_name: STATUS_ITEM[item.status] || item.status_name || '-',
             payment_status: payment,
             created_full_name: item.created_full_name || '-',
