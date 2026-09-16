@@ -49,7 +49,7 @@
       </CCardBody>
       <template #footer>
         <div style="display: block; margin-left: auto; margin-right: auto">
-          <img v-bind:src="merindo_image" style="width: auto; height: 40px" />
+          <img v-bind:src="gastrack_image" style="width: auto; height: 40px" />
         </div>
         <div style="display: block; margin-left: auto; margin-right: auto">
           <span class="mr-1">Copyright</span>
@@ -98,7 +98,7 @@
 }
 </style>
 <script>
-import { logoGastrack, logoMerindo } from '../constants';
+import { logoGastrack } from '../constants';
 import { getVersion } from '../resource/Version';
 import { getConfig } from '../utils';
 import { APP_CONFIG } from '@/config';
@@ -113,7 +113,6 @@ export default {
         bpom: '3.0.1',
       },
       gastrack_image: logoGastrack,
-      merindo_image: logoMerindo,
       appModal: false,
       data: {
         about: null,
