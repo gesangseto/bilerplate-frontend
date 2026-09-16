@@ -108,7 +108,7 @@ import {
   getLastUrl,
   getConfig,
 } from '../../utils';
-import { logoMertrack } from '../../constants';
+import { logoGastrack } from '../../constants';
 import { getSysConfig } from '../../resource/SysConfig';
 import { authLogin } from '../../resource/SysAuth';
 
@@ -118,7 +118,7 @@ export default {
   data() {
     return {
       showKeyboard: false,
-      copyright: logoMertrack,
+      copyright: logoGastrack,
       message: null,
       username: null,
       password: null,

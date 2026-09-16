@@ -256,7 +256,7 @@ export default {
       let body = {};
       body.id = item.id;
       body.PrintTo = 'csv';
-      body.MertrackApiToken = getToken();
+      body.GastrackApiToken = getToken();
       let url = `${new URLSearchParams(body).toString()}`;
       url = `${process.env.VUE_APP_URL_API}/api/v1/transaction/bpom?raw=true&${url}`;
       window.open(url, '_blank').focus();

@@ -98,7 +98,7 @@
 }
 </style>
 <script>
-import { logoMertrack, logoMerindo } from '../constants';
+import { logoGastrack, logoMerindo } from '../constants';
 import { getVersion } from '../resource/Version';
 import { getConfig } from '../utils';
 import { APP_CONFIG } from '@/config';
@@ -112,7 +112,7 @@ export default {
         mobile: '4.2.0',
         bpom: '3.0.1',
       },
-      mertrack_image: logoMertrack,
+      gastrack_image: logoGastrack,
       merindo_image: logoMerindo,
       appModal: false,
       data: {
