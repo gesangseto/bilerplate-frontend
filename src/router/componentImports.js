@@ -185,7 +185,6 @@ export const BpomCompareTool = () =>
   import('@/views/development_tools/BpomCompareTool/BpomCompareTool');
 
 // JASTIP
-export const JastipDashboard = () => import('@/views/jastip/dashboard/Dashboard');
 export const JastipListItemRegistry = () =>
   import('@/views/jastip/item-registry/ListItemRegistry');
 export const JastipFormItemRegistry = () =>

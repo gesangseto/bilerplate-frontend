@@ -245,7 +245,6 @@ const ManualBarcodeGenerator = () =>
 const BpomCompareTool = () =>
   import('@/views/development_tools/BpomCompareTool/BpomCompareTool');
 // ========================JASTIP========================
-const JastipDashboard = () => import('@/views/jastip/dashboard/Dashboard');
 const JastipListItemRegistry = () =>
   import('@/views/jastip/item-registry/ListItemRegistry');
 const JastipFormItemRegistry = () =>
@@ -1296,7 +1295,7 @@ function configRoutes() {
     // ========================JASTIP========================
     {
       path: 'jastip',
-      redirect: '/jastip/dashboard',
+      redirect: '/jastip/item-registry',
       name: 'Jastip',
       meta: { login: true },
       component: {
@@ -1305,12 +1304,6 @@ function configRoutes() {
         },
       },
       children: [
-        {
-          path: 'dashboard',
-          name: 'Jastip Dashboard',
-          meta: { login: true },
-          component: JastipDashboard,
-        },
         {
           path: 'item-registry/:type/:id',
           name: 'Item Registry (Details)',

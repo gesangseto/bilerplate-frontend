@@ -518,7 +518,7 @@ export default function configRoutes() {
         },
         {
           path: 'jastip',
-          redirect: '/jastip/dashboard',
+          redirect: '/jastip/item-registry',
           name: 'Jastip',
           meta: { login: true },
           component: {
@@ -527,12 +527,6 @@ export default function configRoutes() {
             },
           },
           children: [
-            {
-              path: 'dashboard',
-              name: 'Jastip Dashboard',
-              meta: { login: true },
-              component: components.JastipDashboard,
-            },
             {
               path: 'item-registry/:type/:id',
               name: 'Item Registry (Details) ',
