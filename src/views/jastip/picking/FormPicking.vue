@@ -83,6 +83,10 @@
             <CIcon name="cil-check-circle" /> Submit
           </CButton>
           <ButtonBack />
+          <ExportButtons
+            v-if="action !== 'ADD'"
+            @export="handleClickExport"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -133,7 +137,7 @@
 
 <script>
 import $axios from '../../../api';
-import { handleBack } from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
 
 export default {
   name: 'FormPicking',
@@ -182,6 +186,13 @@ export default {
     }
   },
   methods: {
+    handleClickExport(type) {
+      exportDataV3({
+        param: { id: this.$route.params.id },
+        exportType: type,
+        url: '/v1/jastip/picking',
+      });
+    },
     loadListCustomer() {
       let param = new URLSearchParams({ status: 'Active' }).toString();
       $axios.get(`/v1/master/customer?${param}`).then((result) => {
@@ -243,10 +254,13 @@ export default {
     loadGrnItems() {
       let param = new URLSearchParams({
         status: 203,
+        payment_status: 1,
         customer_id: this.formData.customer_id,
       }).toString();
       $axios.get(`/v1/jastip/item-stock?${param}`).then((res) => {
-        this.grnItems = res.data.data || [];
+        this.grnItems = (res.data.data || []).filter(
+          (item) => Number(item.payment_status) === 1,
+        );
       });
     },
     isSelected(id) {

@@ -117,6 +117,10 @@
             <CIcon name="cil-check-circle" /> Confirm Inbound
           </CButton>
           <ButtonBack />
+          <ExportButtons
+            v-if="action !== 'ADD'"
+            @export="handleClickExport"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -125,7 +129,7 @@
 
 <script>
 import $axios from '../../../api';
-import { handleBack } from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
 
 export default {
   name: 'FormInbound',
@@ -166,6 +170,13 @@ export default {
     }
   },
   methods: {
+    handleClickExport(type) {
+      exportDataV3({
+        param: { id: this.$route.params.id },
+        exportType: type,
+        url: '/v1/jastip/inbound',
+      });
+    },
     loadListBatch() {
       let param = new URLSearchParams({ status: 'Shipping' }).toString();
       $axios.get(`/v1/jastip/outbound-manifest?${param}`).then((res) => {

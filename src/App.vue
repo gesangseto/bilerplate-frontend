@@ -44,6 +44,7 @@ import {
   TextareaDefault,
   TableDefault,
   TableTransaction,
+  ExportButtons,
 } from './views/component';
 Vue.use(
   VueFab /* {
@@ -59,6 +60,7 @@ Vue.use(vmodal);
 Vue.use(VueTouchKeyboard);
 Vue.component('ButtonDefault', ButtonDefault);
 Vue.component('TableTransaction', TableTransaction);
+Vue.component('ExportButtons', ExportButtons);
 Vue.component('TableDefault', TableDefault);
 Vue.component('ButtonPopover', ButtonPopover);
 Vue.component('VirtualKeyboard', VirtualKeyboard);

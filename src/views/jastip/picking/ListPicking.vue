@@ -8,6 +8,7 @@
             :permission="'create'"
             @click="handleAdd()"
           />
+          <ExportButtons @export="handleClickExport" />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -33,6 +34,7 @@
 
 <script>
 import $axios from '../../../api';
+import { exportDataV3 } from '../../../utils';
 
 const STATUS_PICKING = {
   '-1': 'Canceled',
@@ -75,6 +77,13 @@ export default {
     },
     handleAdd() {
       this.$router.push({ path: '/jastip/picking/create' });
+    },
+    handleClickExport(type) {
+      exportDataV3({
+        param: this.$route.query,
+        exportType: type,
+        url: '/v1/jastip/picking',
+      });
     },
     formatCurrency(val) {
       return new Intl.NumberFormat('id-ID', {

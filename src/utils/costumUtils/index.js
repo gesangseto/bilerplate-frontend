@@ -175,7 +175,7 @@ export function buttonPermission({ path }) {
 
 export function exportData({ param = {}, exportType = 'xls' }) {
   let new_param = param;
-  new_param.GastrackApiToken = getToken();
+  new_param.token = getToken();
   if (!new_param.SearchVal1Text) {
     new_param.SearchVal1Text = 'All';
   }
@@ -203,7 +203,7 @@ export function exportDataV3({
   let new_param = { ...param };
   delete new_param.limit;
   delete new_param.page;
-  new_param.GastrackApiToken = getToken();
+  new_param.token = getToken();
   new_param['User-Type'] = 'Website App';
   if (!new_param.SearchVal1Text) {
     new_param.SearchVal1Text = 'All';
@@ -232,7 +232,7 @@ export function exportDataV3({
 
 export function exportDataReport({ param = {}, exportType = 'xls' }) {
   let new_param = param;
-  new_param.GastrackApiToken = localStorage.getItem('token');
+  new_param.token = localStorage.getItem('token');
   if (!new_param.SearchVal1Text) {
     new_param.SearchVal1Text = 'All';
   }

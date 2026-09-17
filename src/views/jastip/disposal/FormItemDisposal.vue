@@ -48,6 +48,10 @@
             <CIcon name="cil-check-circle" /> Submit
           </CButton>
           <ButtonBack />
+          <ExportButtons
+            v-if="action !== 'ADD'"
+            @export="handleClickExport"
+          />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -98,7 +102,7 @@
 
 <script>
 import $axios from '../../../api';
-import { handleBack } from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
 
 export default {
   name: 'FormItemDisposal',
@@ -134,6 +138,13 @@ export default {
     this.action = this.$route.params.id === undefined ? 'ADD' : 'EDIT';
   },
   methods: {
+    handleClickExport(type) {
+      exportDataV3({
+        param: { id: this.$route.params.id },
+        exportType: type,
+        url: '/v1/jastip/disposal',
+      });
+    },
     openModalAdd() {
       this.loadDraftItems();
       this.modalAdd = true;

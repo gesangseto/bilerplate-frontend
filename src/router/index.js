@@ -49,6 +49,8 @@ const FormPackaging = () => import('@/views/master/packaging/FormPackaging');
 // Courier
 const ListCourier = () => import('@/views/master/courier/ListCourier');
 const FormCourier = () => import('@/views/master/courier/FormCourier');
+// Finance & Revenue
+const FinanceList = () => import('@/views/finance/FinanceList');
 // ========================MASTER========================
 
 // ========================SETTING========================
@@ -1315,6 +1317,12 @@ function configRoutes() {
     },
 
     // ========================JASTIP========================
+    {
+      path: 'finance/:view',
+      name: 'Finance & Revenue',
+      meta: { login: true },
+      component: FinanceList,
+    },
     {
       path: 'jastip',
       redirect: '/jastip/item-registry',

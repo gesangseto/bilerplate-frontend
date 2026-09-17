@@ -84,6 +84,7 @@
         </CCardBody>
         <CCardFooter>
           <ButtonBack />
+          <ExportButtons @export="handleClickExport" />
         </CCardFooter>
       </CCard>
     </CCol>
@@ -92,6 +93,7 @@
 
 <script>
 import $axios from '../../../api';
+import { exportDataV3 } from '../../../utils';
 
 const STATUS_ITEM = {
   200: 'Draft',
@@ -129,6 +131,13 @@ export default {
     this.loadData();
   },
   methods: {
+    handleClickExport(type) {
+      exportDataV3({
+        param: { id: this.$route.params.id },
+        exportType: type,
+        url: '/v1/jastip/item-stock',
+      });
+    },
     loadData() {
       let id = this.$route.params.id;
       $axios.get(`/v1/jastip/item-stock?id=${id}`).then((res) => {

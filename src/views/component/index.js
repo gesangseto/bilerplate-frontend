@@ -28,9 +28,11 @@ import TableDefault from './TableDefault';
 import TableTransaction from './TableTransaction';
 import ButtonDefault from './ButtonDefault';
 import ModalPrintLabelToZebra from './ModalPrintLabelToZebra';
+import ExportButtons from './ExportButtons';
 
 export {
   ModalPrintLabelToZebra,
+  ExportButtons,
   ButtonDefault,
   TableTransaction,
   TableDefault,

@@ -8,6 +8,7 @@
             :permission="'create'"
             @click="handleAdd()"
           />
+          <ExportButtons @export="handleClickExport" />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -33,6 +34,7 @@
 
 <script>
 import $axios from '../../../api';
+import { exportDataV3 } from '../../../utils';
 
 const STATUS_ITEM = {
   200: 'Draft',
@@ -76,6 +78,13 @@ export default {
     },
     handleAdd() {
       this.$router.push({ path: '/jastip/item-registry/create' });
+    },
+    handleClickExport(type) {
+      exportDataV3({
+        param: this.$route.query,
+        exportType: type,
+        url: '/v1/jastip/item-registry',
+      });
     },
     formatCurrency(val) {
       return new Intl.NumberFormat('id-ID', {

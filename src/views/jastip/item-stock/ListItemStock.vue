@@ -3,6 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
+          <ExportButtons @export="handleClickExport" />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -28,6 +29,7 @@
 
 <script>
 import $axios from '../../../api';
+import { exportDataV3 } from '../../../utils';
 
 const STATUS_ITEM = {
   200: 'Draft',
@@ -60,6 +62,13 @@ export default {
     };
   },
   methods: {
+    handleClickExport(type) {
+      exportDataV3({
+        param: this.$route.query,
+        exportType: type,
+        url: '/v1/jastip/item-stock',
+      });
+    },
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;
