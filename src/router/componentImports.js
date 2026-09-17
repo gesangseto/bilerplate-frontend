@@ -27,6 +27,8 @@ export const FormProduct = () =>
   import('@/views/master/product/FormProduct');
 export const ListPackaging = () => import('@/views/master/packaging/ListPackaging');
 export const FormPackaging = () => import('@/views/master/packaging/FormPackaging');
+export const ListCourier = () => import('@/views/master/courier/ListCourier');
+export const FormCourier = () => import('@/views/master/courier/FormCourier');
 
 // SETTING
 export const UserSetting = () => import('@/views/settings/user/Setting');

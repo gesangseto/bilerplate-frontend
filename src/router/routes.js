@@ -140,6 +140,24 @@ export default function configRoutes() {
               component: components.ListPackaging,
               meta: { login: true },
             },
+            {
+              path: 'courier/:type/:id',
+              name: 'Courier (Details)',
+              component: components.FormCourier,
+              meta: { login: true },
+            },
+            {
+              path: 'courier/:type',
+              name: 'Courier (Details)',
+              component: components.FormCourier,
+              meta: { login: true },
+            },
+            {
+              path: 'courier',
+              name: 'Courier (Home)',
+              component: components.ListCourier,
+              meta: { login: true },
+            },
           ],
         },
         {
