@@ -11,8 +11,6 @@ import { iconsSet as icons } from './assets/icons/icons.js';
 import store from './store';
 import 'vue-toast-notification/dist/theme-default.css';
 // import JQuery from 'jquery'
-// import "./assets/js/select2.min.js";
-// import "./assets/css/select2.min.css";
 import './assets/css/jquery-ui.css';
 import vSelect from 'vue-select';
 import { MLInstaller } from 'vue-multilanguage';

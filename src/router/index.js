@@ -46,6 +46,9 @@ const FormProduct = () =>
 // Packaging
 const ListPackaging = () => import('@/views/master/packaging/ListPackaging');
 const FormPackaging = () => import('@/views/master/packaging/FormPackaging');
+// Courier
+const ListCourier = () => import('@/views/master/courier/ListCourier');
+const FormCourier = () => import('@/views/master/courier/FormCourier');
 // ========================MASTER========================
 
 // ========================SETTING========================
@@ -464,6 +467,25 @@ function configRoutes() {
           path: 'packaging',
           name: 'Packaging (Home)',
           component: ListPackaging,
+          meta: { login: true },
+        },
+        // COURIER
+        {
+          path: 'courier/:type/:id',
+          name: 'Courier (Details) ',
+          component: FormCourier,
+          meta: { login: true },
+        },
+        {
+          path: 'courier/:type',
+          name: 'Courier (Details)',
+          component: FormCourier,
+          meta: { login: true },
+        },
+        {
+          path: 'courier',
+          name: 'Courier (Home)',
+          component: ListCourier,
           meta: { login: true },
         },
       ],
@@ -1304,6 +1326,12 @@ function configRoutes() {
         },
       },
       children: [
+        {
+          path: 'dashboard',
+          name: 'Jastip Dashboard',
+          meta: { login: true },
+          component: Dashboard,
+        },
         {
           path: 'item-registry/:type/:id',
           name: 'Item Registry (Details)',
