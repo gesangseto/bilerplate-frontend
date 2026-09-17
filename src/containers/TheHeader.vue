@@ -5,7 +5,7 @@
     light
     style="
       background-color: #fafaf5;
-      border-bottom: 1px solid rgba(166, 119, 50, 0.18);
+      border-bottom: 1px solid rgba(85, 59, 156, 0.18);
     "
   >
     <CSubheader

@@ -1,7 +1,7 @@
 <template>
   <CSidebar
     color-scheme="dark"
-    style="background-color: #fafaf5"
+    style="background-color: #553b9c"
     class="bg-theme"
     fixed
     :minimize="minimize"
@@ -112,6 +112,9 @@ export default {
     console.log('%cWhat are You looking for?', 'color:red;font-size:24pt');
     this.navMenu = this.renderMenu();
     this.entityLogo = getLogo();
+    this.$nextTick(() => {
+      this.autoExpandActiveMenu();
+    });
   },
   computed: {
     show() {
@@ -128,6 +131,9 @@ export default {
         // this.full_path = route.matched[1];
         this.full_path = route.path;
         this.part_path = this.full_path.split('/');
+        this.$nextTick(() => {
+          this.autoExpandActiveMenu();
+        });
       },
     },
   },
@@ -165,35 +171,50 @@ export default {
       }, 100);
     },
     handleClickParentMenu(item, index) {
-      this.getExpandMenu(index);
-      if (item.link === this.full_path) {
+      if (this.navMenu[index].expand === true) {
+        this.navMenu[index].expand = false;
         return;
       }
-      if (item.link) {
+      this.getExpandMenu(index);
+      if (item.link && item.link !== this.full_path) {
         this.$router.push({ path: `${item.link}` });
       }
+    },
+    autoExpandActiveMenu() {
+      if (this.part_path.length < 3) return;
+      const activePath = `/${this.part_path[1]}/${this.part_path[2]}`;
+      this.navMenu.forEach((item) => {
+        if (item.items && Array.isArray(item.items)) {
+          const hasActiveChild = item.items.some(
+            (child) => child.link === activePath,
+          );
+          if (hasActiveChild) {
+            item.expand = true;
+          }
+        }
+      });
     },
   },
 };
 </script>
 <style scoped>
 .mainmenu .active-parent {
-  border-left: 5px solid #95c8a4;
-  background-color: #e9f7ed;
-  color: #225230;
+  border-left: 5px solid #ffffff;
+  background-color: #f6f4fb;
+  color: #3d2a6e;
 }
 .mainmenu .expand-parent {
-  border-left: 5px solid #b2d8ba;
-  background-color: #eef7ef;
-  color: #356a45;
+  border-left: 5px solid rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
 }
 .icon-style {
-  color: #4a7a55;
+  color: #ffffff;
 }
 .submenu .active-child {
-  border-left: 5px solid #b8dcbc;
-  background-color: #eef8ee;
-  color: #2e603a;
+  border-left: 5px solid #553b9c;
+  background-color: #edeffd;
+  color: #553b9c;
 }
 
 #app_image {
@@ -204,8 +225,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fafaf5;
-  border-bottom: 1px solid rgba(166, 119, 50, 0.18);
+  background-color: #553b9c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 #app_image img {
@@ -244,10 +265,15 @@ export default {
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  color: #334155;
+  color: #e9e4f5;
   padding: 14px 18px;
   border-radius: 14px;
   transition: background 0.2s ease, color 0.2s ease;
+}
+
+.submenu a {
+  color: #3d2a6e;
+  border-radius: 0;
 }
 
 .mainmenu a {
@@ -256,19 +282,29 @@ export default {
 
 .mainmenu a:hover,
 .submenu a:hover {
-  background-color: rgba(72, 157, 105, 0.14);
-  color: #164e2f;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
 }
 
-.mainmenu .active-parent,
-.submenu .active-child {
-  color: #164e2f;
+.mainmenu .active-parent:hover {
+  color: #3d2a6e;
+}
+
+.submenu a:hover {
+  background-color: #edeffd;
+  color: #3d2a6e;
+}
+
+.mainmenu .active-parent {
+  color: #3d2a6e;
 }
 
 .mainmenu .active-parent .icon-style,
-.mainmenu .expand-parent .icon-style,
 .submenu .active-child .icon-style {
-  color: #15803d;
+  color: #553b9c;
+}
+.mainmenu .expand-parent .icon-style {
+  color: #ffffff;
 }
 
 .mainmenu a .icon-style,
@@ -278,13 +314,16 @@ export default {
 
 .mainmenu a .float-right {
   margin-left: auto;
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .submenu {
   overflow: hidden;
   max-height: 0;
-  transition: max-height 0.3s ease;
+  transition: max-height 0.15s ease;
+  background-color: #f6f4fb;
+  border-radius: 0;
+  margin: 0 8px;
 }
 
 ::-webkit-scrollbar {

@@ -103,20 +103,6 @@
                     :validasi="'integer'"
                     :max="100"
                   />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum Label Layout"
-                    v-model="data.total_conf_layout"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum Date Format"
-                    v-model="data.total_conf_date"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
                   <p style="font-weight: bold">
                     Gastrack Warehouse Mobile (MWM) Devices
                   </p>

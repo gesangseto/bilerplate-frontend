@@ -4,7 +4,7 @@
     light
     style="
       background-color: #fafaf5;
-      border-top: 1px solid rgba(166, 119, 50, 0.18);
+      border-top: 1px solid rgba(85, 59, 156, 0.18);
     "
   >
     <div>

@@ -244,7 +244,7 @@ export default {
 
 <style scoped>
 .login-shell {
-  background: #f4f7fb;
+  background: #fafaf5;
 }
 
 .login-grid {
@@ -271,8 +271,8 @@ export default {
 .info-badge {
   display: inline-flex;
   padding: 0.55rem 1rem;
-  background: #eef2ff;
-  color: #3730a3;
+  background: #edeffd;
+  color: #3d2a6e;
   border-radius: 999px;
   font-weight: 700;
   margin-bottom: 1.25rem;
@@ -308,7 +308,7 @@ export default {
   content: '•';
   position: absolute;
   left: 0;
-  color: #6366f1;
+  color: #553b9c;
 }
 
 .info-footer {
@@ -346,8 +346,8 @@ export default {
   align-items: center;
   gap: 0.75rem;
   padding: 0.95rem 1rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #f6f4fb;
+  border: 1px solid #e4def5;
   border-radius: 16px;
 }
 
