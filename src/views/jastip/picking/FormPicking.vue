@@ -18,6 +18,16 @@
                   initialLoad ? null : !formData.customer_id ? false : true
                 "
               />
+              <SelectOption
+                title="Courier"
+                placeholder="--Select Active Courier--"
+                required
+                :options="listCourier"
+                v-model="formData.courier_id"
+                :is-valid="
+                  initialLoad ? null : !formData.courier_id ? false : true
+                "
+              />
               <TextareaDefault
                 title="Customer Address"
                 placeholder="Address"
@@ -133,10 +143,12 @@ export default {
       action: 'ADD',
       formData: {
         customer_id: null,
+        courier_id: null,
         customer_address: null,
         weight: null,
       },
       listCustomer: [],
+      listCourier: [],
       items: [],
       grnItems: [],
       selectedIds: [],
@@ -164,6 +176,7 @@ export default {
   mounted() {
     this.action = this.$route.params.id === undefined ? 'ADD' : 'EDIT';
     this.loadListCustomer();
+    this.loadListCourier();
     if (this.action === 'EDIT') {
       this.loadData();
     }
@@ -178,6 +191,16 @@ export default {
         }
       });
     },
+    loadListCourier() {
+      const param = new URLSearchParams({ status: 'Active' }).toString();
+      $axios.get(`/v1/master/courier?${param}`).then((result) => {
+        const data = result.data.data || [];
+        this.listCourier = data.map((it) => ({
+          value: it.id,
+          label: `${it.name} (${it.code})`,
+        }));
+      });
+    },
     loadData() {
       let id = this.$route.params.id;
       $axios.get(`/v1/jastip/picking?id=${id}`).then((res) => {
@@ -185,6 +208,7 @@ export default {
         if (item) {
           this.formData = {
             customer_id: item.customer_id,
+            courier_id: item.courier_id,
             customer_address: item.customer_address,
             weight: item.weight,
           };
@@ -196,6 +220,16 @@ export default {
       if (!this.formData.customer_id) {
         this.$toast.open({
           message: 'Please select customer first.',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      }
+      if (!this.formData.courier_id) {
+        this.$toast.open({
+          message: 'Please select courier.',
           type: 'error',
           dissmissible: true,
           position: 'top-right',
@@ -264,6 +298,7 @@ export default {
       }
       let param = {
         customer_id: this.formData.customer_id,
+        courier_id: this.formData.courier_id,
         customer_address: this.formData.customer_address,
         weight: this.formData.weight,
         items: this.items.map((it) => ({ id: it.id })),

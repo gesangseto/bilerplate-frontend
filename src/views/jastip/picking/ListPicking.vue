@@ -53,6 +53,7 @@ export default {
         { key: 'customer_phone', label: 'Phone' },
         { key: 'quantity', label: 'Qty' },
         { key: 'weight', label: 'Weight' },
+        { key: 'courier_name', label: 'Courier' },
         { key: 'courier_number', label: 'Resi No' },
         { key: 'courier_price', label: 'Courier Price' },
         { key: 'selling_price', label: 'Selling' },
@@ -90,6 +91,9 @@ export default {
           ...item,
           customer_name: item.customer_name || '-',
           customer_phone: item.customer_phone || '-',
+          courier_name: item.courier_name
+            ? `${item.courier_name}${item.courier_code ? ` (${item.courier_code})` : ''}`
+            : '-',
           courier_number: item.courier_number || '-',
           courier_price: item.courier_price
             ? this.formatCurrency(item.courier_price)
