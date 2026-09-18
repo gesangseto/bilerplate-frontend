@@ -13,7 +13,8 @@
                 placeholder="--Select--"
                 required
                 :options="listCustomer"
-                v-model="formData.customer_id"
+                :value="formData.customer_id"
+                v-on:onchange="formData.customer_id = $event"
                 :is-valid="
                   initialLoad ? null : !formData.customer_id ? false : true
                 "
@@ -23,7 +24,8 @@
                 placeholder="--Select Active Courier--"
                 required
                 :options="listCourier"
-                v-model="formData.courier_id"
+                :value="formData.courier_id"
+                v-on:onchange="formData.courier_id = $event"
                 :is-valid="
                   initialLoad ? null : !formData.courier_id ? false : true
                 "

@@ -75,7 +75,8 @@ export default {
     },
     // Emit event jika nilai data lokal berubah
     localValue(newValue) {
-      this.$emit('update:value', newValue); // Gunakan 'update:value' untuk v-model
+      this.$emit('update:value', newValue); // untuk :value.sync
+      this.$emit('input', newValue); // untuk v-model bawaan Vue 2
     },
   },
   mounted() {},

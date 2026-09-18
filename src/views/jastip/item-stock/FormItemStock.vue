@@ -133,14 +133,14 @@ export default {
   methods: {
     handleClickExport(type) {
       exportDataV3({
-        param: { id: this.$route.params.id },
+        param: { item_id: this.$route.params.id },
         exportType: type,
         url: '/v1/jastip/item-stock',
       });
     },
     loadData() {
       let id = this.$route.params.id;
-      $axios.get(`/v1/jastip/item-stock?id=${id}`).then((res) => {
+      $axios.get(`/v1/jastip/item-stock?item_id=${id}`).then((res) => {
         let item = res.data.data[0];
         if (item) {
           let payment = '-';

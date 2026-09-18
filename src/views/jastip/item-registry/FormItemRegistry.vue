@@ -13,7 +13,8 @@
                 placeholder="--Select--"
                 required
                 :options="listCustomer"
-                v-model="formData.customer_id"
+                :value="formData.customer_id"
+                v-on:onchange="formData.customer_id = $event"
                 :is-valid="
                   initialLoad ? null : !formData.customer_id ? false : true
                 "
@@ -22,13 +23,15 @@
                 title="Product"
                 placeholder="--Select--"
                 :options="listProduct"
-                v-model="formData.product_id"
+                :value="formData.product_id"
+                v-on:onchange="formData.product_id = $event"
               />
               <SelectOption
                 title="Warehouse"
                 placeholder="--Select--"
                 :options="listWarehouse"
-                v-model="formData.warehouse_id"
+                :value="formData.warehouse_id"
+                v-on:onchange="formData.warehouse_id = $event"
               />
               <InputDefault
                 title="Quantity"
@@ -132,7 +135,7 @@ export default {
   methods: {
     handleClickExport(type) {
       exportDataV3({
-        param: { id: this.$route.params.id },
+        param: { item_id: this.$route.params.id },
         exportType: type,
         url: '/v1/jastip/item-registry',
       });
@@ -166,7 +169,7 @@ export default {
     },
     loadData() {
       let id = this.$route.params.id;
-      $axios.get(`/v1/jastip/item-registry?id=${id}`).then((res) => {
+      $axios.get(`/v1/jastip/item-registry?item_id=${id}`).then((res) => {
         let item = res.data.data[0];
         if (item) {
           this.formData = {
