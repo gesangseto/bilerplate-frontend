@@ -181,6 +181,9 @@ const ListAuditTrail = () =>
 const DetailAuditTrail = () =>
   import('@/views/reports/AuditTrail/DetailAuditTrail');
 const ReportShowStatus = () => import('@/views/reports/ReportShowStatus');
+const ReportSession = () => import('@/views/reports/ReportSession');
+const ReportSessionDetail = () =>
+  import('@/views/reports/ReportSessionDetail');
 // ========================REPORT========================
 
 // ========================MAINTENANCE========================
@@ -940,6 +943,19 @@ function configRoutes() {
           name: 'Item Stock',
           meta: { login: true },
           component: ItemStock,
+        },
+        // Session Report
+        {
+          path: 'session',
+          name: 'Session Report',
+          meta: { login: true },
+          component: ReportSession,
+        },
+        {
+          path: 'session/:id',
+          name: 'Session Report (Details)',
+          meta: { login: true },
+          component: ReportSessionDetail,
         },
       ],
     },
