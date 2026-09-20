@@ -139,7 +139,7 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3, handleBack } from '../../../utils';
+import { exportDataV3, handleBack, generateIdempotencyKey } from '../../../utils';
 
 export default {
   name: 'FormPicking',
@@ -318,6 +318,7 @@ export default {
         customer_address: this.formData.customer_address,
         weight: this.formData.weight,
         items: this.items.map((it) => ({ id: it.id })),
+        idempotency_key: generateIdempotencyKey(),
       };
       this.$isLoading(true);
       $axios.put('/v1/jastip/picking', param).then((result) => {

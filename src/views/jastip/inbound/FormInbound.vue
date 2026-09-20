@@ -129,7 +129,7 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3, handleBack } from '../../../utils';
+import { exportDataV3, handleBack, generateIdempotencyKey } from '../../../utils';
 
 export default {
   name: 'FormInbound',
@@ -233,7 +233,10 @@ export default {
         });
         return;
       }
-      let param = { id: this.formData.batch_id };
+      let param = {
+        id: this.formData.batch_id,
+        idempotency_key: generateIdempotencyKey(),
+      };
       this.$isLoading(true);
       $axios.post('/v1/jastip/inbound', param).then((result) => {
         this.$isLoading(false);

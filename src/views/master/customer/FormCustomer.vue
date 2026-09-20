@@ -59,57 +59,24 @@
                   :col="[3, 9]"
                   required
                   title="Phone Number"
-                  validasi="numeric"
                   v-model="formData.phone"
-                  :max="12"
+                  :max="18"
                   :is-valid="checkPrimaryPhone()"
-                  :invalid_feedback="'Please provide 7-12 digits phone number'"
-                  placeholder="Enter phone number (Example : 81211223344)"
-                >
-                  <template #prepend>
-                    <div style="width: 350px; margin-bottom: -50px">
-                      <SelectOption
-                        :disabled="action == 'Read' ? true : false"
-                        required
-                        :options="CountryCode"
-                        v-on:onchange="handleChangeInput($event)"
-                        :value="formData.tlp_code"
-                        :is-valid="checkPrimaryPhone()"
-                        :invalid_feedback="
-                          checkPhone(formData.phone) ? null : '   '
-                        "
-                      />
-                    </div>
-                  </template>
-                </InputDefault>
+                  :invalid_feedback="'Please provide valid phone number (7-15 digits)'"
+                  placeholder="Contoh: 08123456780 atau +628123456780"
+                />
               </CCol>
               <CCol sm="12">
                 <InputDefault
                   :disabled="action == 'Read' ? true : false"
                   :col="[3, 9]"
                   title="Alternative Phone Number"
-                  validasi="numeric"
                   v-model="formData.phone_alt"
-                  :max="12"
+                  :max="18"
                   :is-valid="checkAltPhone()"
-                  :invalid_feedback="'Please provide 7-12 digits phone number'"
-                  placeholder="Enter phone number (Example : 81211223344)"
-                >
-                  <template #prepend>
-                    <div style="width: 350px; margin-bottom: -50px">
-                      <SelectOption
-                        :disabled="action == 'Read' ? true : false"
-                        :options="CountryCode"
-                        v-on:onchange="handleChangeInput($event, 'alt_code')"
-                        :value="formData.tlp_alt_code"
-                        :is-valid="checkAltPhone()"
-                        :invalid_feedback="
-                          checkPhone(formData.phone_alt) ? null : '   '
-                        "
-                      />
-                    </div>
-                  </template>
-                </InputDefault>
+                  :invalid_feedback="'Please provide valid phone number (7-15 digits)'"
+                  placeholder="Contoh: 08123456780 atau +628123456780"
+                />
               </CCol>
               <CCol sm="12">
                 <InputDefault
@@ -125,34 +92,6 @@
                     formData.email ? 'Please provide valid email address' : null
                   "
                 />
-              </CCol>
-
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read' ? true : false"
-                  :col="[3, 9]"
-                  optional
-                  :validasi="'integer'"
-                  title="ID Sarana (BPOM)"
-                  placeholder="Enter ID sarana"
-                  v-model="formData.id_sarana"
-                  :is-valid="
-                    initial_load ? null : formData.id_sarana ? true : null
-                  "
-                >
-                  <template #description>
-                    <p style="font-size: x-small">
-                      <span>
-                        <strong>WARNING: </strong>
-                      </span>
-                      If the ID Sarana (BPOM) is blank, system will not generate
-                      distribution BPOM report (Queue BPOM) in both .xlsx file
-                      format nor reporting to BPOM TTAC server via API for any
-                      completed Picking List transaction involving this
-                      customer.
-                    </p>
-                  </template>
-                </InputDefault>
               </CCol>
 
               <CCol sm="12">
@@ -196,14 +135,7 @@
 </template>
 
 <script>
-import {
-  coutryCode,
-  isPhone,
-  capitalizeFirstLetter,
-  onlyNumber,
-  isEmail,
-  handleBack,
-} from '../../../utils';
+import { capitalizeFirstLetter, isEmail, handleBack } from '../../../utils';
 import {
   getMstCustomer,
   insertMstCustomer,
@@ -221,7 +153,6 @@ export default {
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
-    this.reformatCountryCode();
   },
   data() {
     return {
@@ -230,15 +161,12 @@ export default {
       action: 'Edit',
       formData: {
         status: 'Active',
-        tlp_code: null,
         phone: null,
       },
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
       ],
-
-      CountryCode: coutryCode(),
     };
   },
   validations: {},
@@ -246,80 +174,34 @@ export default {
     checkEmail(val) {
       return isEmail(val);
     },
-    checkPhone(val) {
-      return isPhone(val);
+    checkPhoneValid(val) {
+      if (!val) return false;
+      const digits = String(val).replace(/\D/g, '');
+      return digits.length >= 7 && digits.length <= 15;
     },
-    limitPhone({ event, data, max }) {
-      onlyNumber({ event, data, max });
-    },
-    checkValidEmail(email) {
-      return isEmail(email);
-    },
-    checkValidPhone(item) {
-      return isPhone(item);
-    },
-    handleChangeInput($value, code) {
-      if (code == 'alt_code') {
-        this.formData.tlp_alt_code = $value;
-      } else {
-        this.formData.tlp_code = $value;
-      }
-      this.$forceUpdate(); // Memaksa update komponen
-    },
-    splitPhone(phone) {
-      if (!phone) return null;
-      if (phone) return phone.split('-');
-    },
-    joinPhone(code, phone) {
-      if (!code && !phone) return null;
-      if (code && phone) return `${code}-${phone}`;
+    normalizePhoneDigits(val) {
+      let digits = String(val || '').replace(/\D/g, '');
+      if (!digits) return '';
+      if (digits.startsWith('00')) digits = digits.replace(/^0+/, '');
+      if (digits.startsWith('0')) return `62${digits.slice(1)}`;
+      if (digits.startsWith('8')) return `62${digits}`;
+      return digits;
     },
     async loadData() {
       let res = await getMstCustomer({ id: this.$route.params.id });
       if (res) {
         let data = res.data[0];
         this.formData = data;
-        let tlp = this.splitPhone(data.phone);
-        if (tlp) {
-          this.formData.tlp_code = tlp[0];
-          this.formData.phone = tlp[1];
-        }
-        let tlp_alt = this.splitPhone(data.phone_alt);
-        if (tlp_alt) {
-          this.formData.tlp_alt_code = tlp_alt[0];
-          this.formData.phone_alt = tlp_alt[1];
-        }
-      }
-    },
-    reformatCountryCode() {
-      let list = this.CountryCode;
-      this.CountryCode = [];
-      for (const it of list) {
-        if (it.value) {
-          this.CountryCode.push({
-            value: it.value,
-            label: `(${it.value}) ${it.label}`,
-          });
-        }
       }
     },
     checkPrimaryPhone() {
-      let code = this.formData.tlp_code;
-      let phone = this.formData.phone;
       if (this.initial_load) return null;
-      if (!phone && !code) return false;
-      if (phone && !code) return false;
-      if (!phone && code) return false;
-      return isPhone(phone);
+      return this.checkPhoneValid(this.formData.phone);
     },
     checkAltPhone() {
-      let code = this.formData.tlp_alt_code;
-      let phone = this.formData.phone_alt;
       if (this.initial_load) return null;
-      if (!phone && !code) return null;
-      if (phone && !code) return false;
-      if (!phone && code) return false;
-      return isPhone(phone);
+      if (!this.formData.phone_alt) return null;
+      return this.checkPhoneValid(this.formData.phone_alt);
     },
     valid() {
       if (!this.formData.name) {
@@ -351,8 +233,10 @@ export default {
         });
         return;
       } else if (
-        this.joinPhone(this.formData.tlp_code, this.formData.phone) ==
-        this.joinPhone(this.formData.tlp_alt_code, this.formData.phone_alt)
+        this.formData.phone &&
+        this.formData.phone_alt &&
+        this.normalizePhoneDigits(this.formData.phone) ===
+          this.normalizePhoneDigits(this.formData.phone_alt)
       ) {
         this.$toast.open({
           message:
@@ -364,16 +248,7 @@ export default {
         });
         return;
       }
-      let _form_data = JSON.parse(JSON.stringify(this.formData));
-
       let dataPost = JSON.parse(JSON.stringify(this.formData));
-
-      if (_form_data.phone && _form_data.tlp_code) {
-        dataPost.phone = `${_form_data.tlp_code.toString()}-${_form_data.phone.toString()}`;
-      }
-      if (_form_data.phone_alt && _form_data.tlp_alt_code) {
-        dataPost.phone_alt = `${_form_data.tlp_alt_code.toString()}-${_form_data.phone_alt.toString()}`;
-      }
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;

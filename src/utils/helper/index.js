@@ -149,6 +149,19 @@ export function getBrowserType() {
   }
   return result;
 }
+export function generateIdempotencyKey() {
+  // UUID v4 — dipakai sebagai Idempotency-Key untuk POST/PUT yang wajib
+  // idempotent di backend (mis. /v1/jastip/inbound, /v1/jastip/picking).
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback untuk browser lama
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 export function getOsType() {
   let result = '';
   var userAgent = navigator.userAgent;
