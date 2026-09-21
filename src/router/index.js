@@ -80,20 +80,6 @@ const FormSection = () => import('@/views/settings/section/FormSection ');
 // ========================SETTING========================
 
 // ========================PRODUCTION========================
-// Process Order
-const ListProcessOrder = () =>
-  import('@/views/production/process_order/ListProcessOrder');
-// Picking List
-const FormProcessOrder = () =>
-  import('@/views/production/process_order/FormProcessOrder');
-// ========================TRANSACTION========================
-// Picking List V4.2
-const ListPickingList = () =>
-  import('@/views/transactions/pickingList/ListPickingList');
-const FormPickingList = () =>
-  import('@/views/transactions/pickingList/FormPickingList');
-const DetailPickingList = () =>
-  import('@/views/transactions/pickingList/DetailPickingList');
 // Upload XML
 const FormUploadXML = () => import('@/views/transactions/upload/FormUploadXML');
 const DetailUploadXML = () =>
@@ -182,8 +168,7 @@ const DetailAuditTrail = () =>
   import('@/views/reports/AuditTrail/DetailAuditTrail');
 const ReportShowStatus = () => import('@/views/reports/ReportShowStatus');
 const ReportSession = () => import('@/views/reports/ReportSession');
-const ReportSessionDetail = () =>
-  import('@/views/reports/ReportSessionDetail');
+const ReportSessionDetail = () => import('@/views/reports/ReportSessionDetail');
 // ========================REPORT========================
 
 // ========================MAINTENANCE========================
@@ -263,8 +248,13 @@ const JastipFormOutboundManifest = () =>
   import('@/views/jastip/outbound-manifest/FormOutboundManifest');
 const JastipListInbound = () => import('@/views/jastip/inbound/ListInbound');
 const JastipFormInbound = () => import('@/views/jastip/inbound/FormInbound');
+
+// PICKING SESSION
 const JastipListPicking = () => import('@/views/jastip/picking/ListPicking');
 const JastipFormPicking = () => import('@/views/jastip/picking/FormPicking');
+const JastipDetailPicking = () =>
+  import('@/views/jastip/picking/DetailPicking');
+
 const JastipListItemStock = () =>
   import('@/views/jastip/item-stock/ListItemStock');
 const JastipFormItemStock = () =>
@@ -648,25 +638,7 @@ function configRoutes() {
           meta: { login: true },
           component: ListSampling,
         },
-        // PICKING LIST
-        {
-          path: 'picking_list/:type/:id',
-          name: 'Picking List (Details) ',
-          meta: { login: true },
-          component: DetailPickingList,
-        },
-        {
-          path: 'picking_list/:type',
-          name: 'Picking List (Details)',
-          meta: { login: true },
-          component: FormPickingList,
-        },
-        {
-          path: 'picking_list',
-          name: 'Picking List (Home)',
-          meta: { login: true },
-          component: ListPickingList,
-        },
+
         // UPLOAD XML
         {
           path: 'upload_xml/:type/:id',
@@ -1291,39 +1263,6 @@ function configRoutes() {
         },
       ],
     },
-    // PRODUCTION MENU
-    {
-      path: 'production',
-      redirect: '/home',
-      name: 'Production',
-      meta: { login: true },
-      component: {
-        render(c) {
-          return c('router-view');
-        },
-      },
-      children: [
-        // Process Order
-        {
-          path: 'process-order/:type/:id',
-          name: 'Process Order (Details) ',
-          component: FormProcessOrder,
-          meta: { login: true },
-        },
-        {
-          path: 'process-order/:type',
-          name: 'Process Order (Details)',
-          component: FormProcessOrder,
-          meta: { login: true },
-        },
-        {
-          path: 'process-order',
-          name: 'Process Order (Home)',
-          component: ListProcessOrder,
-          meta: { login: true },
-        },
-      ],
-    },
 
     // OTHER PAGE
     {
@@ -1410,6 +1349,7 @@ function configRoutes() {
           meta: { login: true },
           component: JastipListInbound,
         },
+
         {
           path: 'picking/:type/:id',
           name: 'Picking (Details)',

@@ -126,28 +126,30 @@
           </CDataTable>
         </CCardBody>
         <CCardFooter>
-          <!-- <CButton type="button" size="sm" color="primary" @click="save()">
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton> -->
-          <CButton
-            type="submit"
-            size="sm"
-            @click="proccess_all()"
-            class="mr-2"
-            color="primary"
-            ><CIcon name="cil-check-circle" /> Submit</CButton
-          >
-          <ButtonBack />
-          <!-- <CButton
-            v-if="can_print == true"
-            type="button"
-            size="sm"
-            class="m-1"
-            color="warning"
-            @click="print_all()"
-          >
-            <CIcon name="cil-print" /> Print
-          </CButton> -->
+          <div class="float-left">
+            <!-- <CButton type="button" size="sm" color="primary" @click="save()">
+              <CIcon name="cil-check-circle" /> Submit
+            </CButton> -->
+            <CButton
+              type="submit"
+              size="sm"
+              @click="proccess_all()"
+              class="mr-2"
+              color="primary"
+              ><CIcon name="cil-check-circle" /> Submit</CButton
+            >
+            <ButtonBack />
+            <!-- <CButton
+              v-if="can_print == true"
+              type="button"
+              size="sm"
+              class="m-1"
+              color="warning"
+              @click="print_all()"
+            >
+              <CIcon name="cil-print" /> Print
+            </CButton> -->
+          </div>
         </CCardFooter>
 
         <!-- Modal Detail Barang Dipilih  -->

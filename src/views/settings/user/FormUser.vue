@@ -411,29 +411,30 @@
             />
           </CCardBody>
           <CCardFooter>
-            <CButton
-              v-if="action == 'Read' || formData.is_sys ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" />
-              Submit
-            </CButton>
-            <ButtonBack />
-            <CButton
-              v-if="action == 'Update'"
-              type="submit"
-              size="sm"
-              class="float-right"
-              color="warning"
-              title="Reset Password "
-              @click="resetPassword()"
-            >
-              <CIcon name="cil-sync" />
-              Reset Password
-            </CButton>
+            <div class="float-left">
+              <CButton
+                v-if="action == 'Read' || formData.is_sys ? false : true"
+                type="submit"
+                size="sm"
+                color="primary"
+                @click="save()"
+              >
+                <CIcon name="cil-check-circle" />
+                Submit
+              </CButton>
+              <ButtonBack />
+              <CButton
+                v-if="action == 'Update'"
+                type="submit"
+                size="sm"
+                color="warning"
+                title="Reset Password "
+                @click="resetPassword()"
+              >
+                <CIcon name="cil-sync" />
+                Reset Password
+              </CButton>
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

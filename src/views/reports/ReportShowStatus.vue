@@ -17,12 +17,6 @@
       <CCard>
         <CCardHeader>
           <strong>Details</strong>
-
-          <ButtonPermission
-            exportType="pdf"
-            :permission="'print'"
-            @click="handleClickExport('pdf')"
-          />
         </CCardHeader>
         <CCardBody ref="content">
           <CRow>
@@ -214,6 +208,15 @@
             </CCol>
           </CRow>
         </CCardBody>
+        <CCardFooter>
+          <div class="float-right">
+            <ButtonPermission
+              exportType="pdf"
+              :permission="'print'"
+              @click="handleClickExport('pdf')"
+            />
+          </div>
+        </CCardFooter>
       </CCard>
     </CCol>
   </CRow>

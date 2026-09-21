@@ -74,7 +74,9 @@
             </CDataTable>
           </CCardBody>
           <CCardFooter>
-            <ButtonBack :title="'Back'" />
+            <div class="float-left">
+              <ButtonBack :title="'Back'" />
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

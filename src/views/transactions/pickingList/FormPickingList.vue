@@ -152,10 +152,12 @@
           </CDataTable>
         </CCardBody>
         <CCardFooter>
-          <CButton type="button" size="sm" color="primary" @click="save()">
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton>
-          <ButtonBack />
+          <div class="float-left">
+            <CButton type="button" size="sm" color="primary" @click="save()">
+              <CIcon name="cil-check-circle" /> Submit
+            </CButton>
+            <ButtonBack />
+          </div>
         </CCardFooter>
 
         <CModal

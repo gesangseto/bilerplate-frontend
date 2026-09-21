@@ -83,8 +83,12 @@
           </CForm>
         </CCardBody>
         <CCardFooter>
-          <ButtonBack />
-          <ExportButtons @export="handleClickExport" />
+          <div class="float-left">
+            <ButtonBack />
+          </div>
+          <div class="float-right">
+            <ExportButtons @export="handleClickExport" />
+          </div>
         </CCardFooter>
       </CCard>
     </CCol>

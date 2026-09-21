@@ -69,16 +69,18 @@
             />
           </CCardBody>
           <CCardFooter>
-            <CButton
-              v-if="action == 'Read' || formData.is_sys ? false : true"
-              type="submit"
-              size="sm"
-              color="primary"
-              @click="save()"
-            >
-              <CIcon name="cil-check-circle" /> Submit
-            </CButton>
-            <ButtonBack />
+            <div class="float-left">
+              <CButton
+                v-if="action == 'Read' || formData.is_sys ? false : true"
+                type="submit"
+                size="sm"
+                color="primary"
+                @click="save()"
+              >
+                <CIcon name="cil-check-circle" /> Submit
+              </CButton>
+              <ButtonBack />
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

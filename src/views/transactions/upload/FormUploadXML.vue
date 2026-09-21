@@ -71,10 +71,12 @@
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <CButton @click="save()" type="submit" size="sm" color="primary">
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton>
-          <ButtonBack />
+          <div class="float-left">
+            <CButton @click="save()" type="submit" size="sm" color="primary">
+              <CIcon name="cil-check-circle" /> Submit
+            </CButton>
+            <ButtonBack />
+          </div>
         </CCardFooter>
       </CCard>
     </div>

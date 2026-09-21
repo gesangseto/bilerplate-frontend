@@ -95,15 +95,17 @@
             </div>
           </CCardBody>
           <CCardFooter>
-            <CButton
-              type="submit"
-              size="sm"
-              @click="save()"
-              class="mr-2"
-              color="primary"
-              ><CIcon name="cil-check-circle" /> Submit</CButton
-            >
-            <ButtonBack />
+            <div class="float-left">
+              <CButton
+                type="submit"
+                size="sm"
+                @click="save()"
+                class="mr-2"
+                color="primary"
+                ><CIcon name="cil-check-circle" /> Submit</CButton
+              >
+              <ButtonBack />
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

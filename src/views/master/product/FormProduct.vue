@@ -358,16 +358,18 @@
         />
 
         <CCardFooter>
-          <CButton
-            v-if="action == 'Read' ? false : true"
-            @click="save()"
-            color="primary"
-            size="sm"
-            type="submit"
-          >
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton>
-          <ButtonBack />
+          <div class="float-left">
+            <CButton
+              v-if="action == 'Read' ? false : true"
+              @click="save()"
+              color="primary"
+              size="sm"
+              type="submit"
+            >
+              <CIcon name="cil-check-circle" /> Submit
+            </CButton>
+            <ButtonBack />
+          </div>
         </CCardFooter>
       </CCard>
     </CCol>

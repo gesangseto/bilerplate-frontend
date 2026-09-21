@@ -25,19 +25,23 @@
                 ]"
                 v-on:handleReload="loadData($event)"
               />
-              <ButtonPermission
-                exportType="excel"
-                :permission="'print'"
-                @click="handleClickExport('xls')"
-              />
-              <ButtonPermission
-                exportType="pdf"
-                :permission="'print'"
-                @click="handleClickExport('pdf')"
-              />
             </CCol>
           </CRow>
         </CCardBody>
+        <CCardFooter>
+          <div class="float-right">
+            <ButtonPermission
+              exportType="excel"
+              :permission="'print'"
+              @click="handleClickExport('xls')"
+            />
+            <ButtonPermission
+              exportType="pdf"
+              :permission="'print'"
+              @click="handleClickExport('pdf')"
+            />
+          </div>
+        </CCardFooter>
       </CCard>
     </CCol>
   </CRow>

@@ -8,7 +8,6 @@
             :permission="'create'"
             @click="handleAdd()"
           />
-          <ExportButtons @export="handleClickExport" />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -27,6 +26,11 @@
             </CCol>
           </CRow>
         </CCardBody>
+        <CCardFooter>
+          <div class="float-right">
+            <ExportButtons @export="handleClickExport" />
+          </div>
+        </CCardFooter>
       </CCard>
     </CCol>
   </CRow>

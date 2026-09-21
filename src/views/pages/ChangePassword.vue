@@ -59,26 +59,26 @@
               </CForm>
             </CCardBody>
             <CCardFooter>
-              <CButton
-                size="sm"
-                class="float-right ml-2"
-                color="success"
-                @click="changePassword"
-              >
-                Save
-              </CButton>
+              <div class="float-left">
+                <CButton
+                  size="sm"
+                  color="success"
+                  @click="changePassword"
+                >
+                  Save
+                </CButton>
 
-              <CButton
-                size="sm"
-                class="float-right"
-                @click="showPassword = !showPassword"
-              >
-                <v-icon v-if="!showPassword" name="eye-slash" size="sm" />
-                <v-icon v-if="showPassword" name="eye" size="sm" />
-              </CButton>
-              <CButton color="danger" size="sm" @click="logOut">
-                Cancel
-              </CButton>
+                <CButton
+                  size="sm"
+                  @click="showPassword = !showPassword"
+                >
+                  <v-icon v-if="!showPassword" name="eye-slash" size="sm" />
+                  <v-icon v-if="showPassword" name="eye" size="sm" />
+                </CButton>
+                <CButton color="danger" size="sm" @click="logOut">
+                  Cancel
+                </CButton>
+              </div>
             </CCardFooter>
           </CCard>
         </CCol>

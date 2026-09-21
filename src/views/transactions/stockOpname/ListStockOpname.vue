@@ -55,17 +55,21 @@
               @update:activePage="pageChange"
             />
           </template>
-          <ButtonPermission
-            exportType="excel"
-            :permission="'print'"
-            @click="handleClickExport('xls')"
-          />
-          <ButtonPermission
-            exportType="pdf"
-            :permission="'print'"
-            @click="handleClickExport('pdf')"
-          />
         </CCardBody>
+        <CCardFooter>
+          <div class="float-right">
+            <ButtonPermission
+              exportType="excel"
+              :permission="'print'"
+              @click="handleClickExport('xls')"
+            />
+            <ButtonPermission
+              exportType="pdf"
+              :permission="'print'"
+              @click="handleClickExport('pdf')"
+            />
+          </div>
+        </CCardFooter>
       </CCard>
     </CCol>
     <!-- START REJECT MODAL -->

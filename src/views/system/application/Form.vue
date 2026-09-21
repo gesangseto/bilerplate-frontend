@@ -777,20 +777,22 @@
             </CForm>
           </CCardBody>
           <CCardFooter>
-            <CButton type="submit" size="sm" color="primary" @click="save()">
-              <CIcon name="cil-check-circle" />
-              Submit
-            </CButton>
-            <CButton
-              type="reset"
-              size="sm"
-              color="danger"
-              class="m-1"
-              @click="cancel()"
-            >
-              <CIcon name="cil-ban" />
-              Cancel
-            </CButton>
+            <div class="float-left">
+              <CButton type="submit" size="sm" color="primary" @click="save()">
+                <CIcon name="cil-check-circle" />
+                Submit
+              </CButton>
+              <CButton
+                type="reset"
+                size="sm"
+                color="danger"
+                class="m-1"
+                @click="cancel()"
+              >
+                <CIcon name="cil-ban" />
+                Cancel
+              </CButton>
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

@@ -94,12 +94,16 @@
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <ButtonBack />
-          <ButtonPermission
-            exportType="excel"
-            :permission="'print'"
-            @click="handleClickExport('xls')"
-          />
+          <div class="float-left">
+            <ButtonBack />
+          </div>
+          <div class="float-right">
+            <ButtonPermission
+              exportType="excel"
+              :permission="'print'"
+              @click="handleClickExport('xls')"
+            />
+          </div>
         </CCardFooter>
       </CCard>
     </CCol>

@@ -2,8 +2,9 @@
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12">
       <CCard>
-        <CCardHeader>
-          <h5>{{ $activeMenu.name }} [{{ action }}]</h5>
+        <CCardHeader class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ $activeMenu.name }} [{{ action }}]</h5>
+          <ButtonInfo :formData="picking" v-if="action !== 'Create'" />
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -503,7 +504,7 @@ export default {
           id: this.$route.params.id,
           approved: true,
           do_number: this.doNumber,
-          reason: '',
+          reason: '[INPUT DO]',
         };
         var _url = `/v4.2/transaction/picking/finish`;
         $axios

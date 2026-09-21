@@ -136,17 +136,21 @@
           </div>
         </CCardBody>
         <CCardFooter>
-          <ButtonBack />
-          <ButtonPermission
-            exportType="excel"
-            :permission="'print'"
-            @click="handleClickExport('xls')"
-          />
-          <ButtonPermission
-            exportType="pdf"
-            :permission="'print'"
-            @click="handleClickExport('pdf')"
-          />
+          <div class="float-left">
+            <ButtonBack />
+          </div>
+          <div class="float-right">
+            <ButtonPermission
+              exportType="excel"
+              :permission="'print'"
+              @click="handleClickExport('xls')"
+            />
+            <ButtonPermission
+              exportType="pdf"
+              :permission="'print'"
+              @click="handleClickExport('pdf')"
+            />
+          </div>
         </CCardFooter>
       </CCard>
     </div>

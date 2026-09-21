@@ -15,17 +15,19 @@
             />
           </CCardBody>
           <CCardFooter>
-            <ButtonPermission
-              :permission="'create'"
-              @click="formData.modal = true"
-              :buttonProperty="{
-                size: 'sm',
-                color: 'success',
-                icon: 'file',
-                text: 'Backup',
-                tooltip: 'Backup Database',
-              }"
-            />
+            <div class="float-left">
+              <ButtonPermission
+                :permission="'create'"
+                @click="formData.modal = true"
+                :buttonProperty="{
+                  size: 'sm',
+                  color: 'success',
+                  icon: 'file',
+                  text: 'Backup',
+                  tooltip: 'Backup Database',
+                }"
+              />
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

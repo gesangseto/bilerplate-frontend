@@ -138,44 +138,48 @@
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <CButton
-            v-if="
-              rework.status == 0 &&
-              rework.approval_id == section_id &&
-              $route.params.type == 'approve'
-            "
-            type="submit"
-            size="sm"
-            color="success"
-            @click="save()"
-          >
-            <CIcon name="cil-check-circle" /> Approve
-          </CButton>
-          <CButton
-            v-if="
-              rework.status == 0 &&
-              rework.approval_id == section_id &&
-              $route.params.type == 'approve'
-            "
-            type="button"
-            size="sm"
-            class="m-1"
-            color="danger"
-            @click="handleClickReject()"
-          >
-            <CIcon name="cil-ban" /> Reject
-          </CButton>
-          <ButtonBack />
-          <ButtonPermission
-            exportType="excel"
-            :permission="'print'"
-            @click="handleClickExport('xls')"
-          />
-          <ButtonPermission
-            exportType="pdf"
-            :permission="'print'"
-            @click="handleClickExport('pdf')"
-          />
+          <div class="float-left">
+            <CButton
+              v-if="
+                rework.status == 0 &&
+                rework.approval_id == section_id &&
+                $route.params.type == 'approve'
+              "
+              type="submit"
+              size="sm"
+              color="success"
+              @click="save()"
+            >
+              <CIcon name="cil-check-circle" /> Approve
+            </CButton>
+            <CButton
+              v-if="
+                rework.status == 0 &&
+                rework.approval_id == section_id &&
+                $route.params.type == 'approve'
+              "
+              type="button"
+              size="sm"
+              class="m-1"
+              color="danger"
+              @click="handleClickReject()"
+            >
+              <CIcon name="cil-ban" /> Reject
+            </CButton>
+            <ButtonBack />
+          </div>
+          <div class="float-right">
+            <ButtonPermission
+              exportType="excel"
+              :permission="'print'"
+              @click="handleClickExport('xls')"
+            />
+            <ButtonPermission
+              exportType="pdf"
+              :permission="'print'"
+              @click="handleClickExport('pdf')"
+            />
+          </div>
         </CCardFooter>
       </CCard>
     </CCol>

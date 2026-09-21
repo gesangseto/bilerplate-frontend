@@ -134,7 +134,9 @@
             </CForm>
           </CCardBody>
           <CCardFooter>
-            <ButtonBack />
+            <div class="float-left">
+              <ButtonBack />
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

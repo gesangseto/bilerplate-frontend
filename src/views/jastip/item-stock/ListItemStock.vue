@@ -3,7 +3,6 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ExportButtons @export="handleClickExport" />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -22,6 +21,11 @@
             </CCol>
           </CRow>
         </CCardBody>
+        <CCardFooter>
+          <div class="float-right">
+            <ExportButtons @export="handleClickExport" />
+          </div>
+        </CCardFooter>
       </CCard>
     </CCol>
   </CRow>
@@ -29,7 +33,7 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3 } from '../../../utils';
+import { costFormating, exportDataV3 } from '../../../utils';
 
 const STATUS_ITEM = {
   200: 'Draft',
@@ -47,14 +51,16 @@ export default {
       totalData: 0,
       items: [],
       fields: [
-        { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
-        { key: 'barcode', label: 'Barcode' },
         { key: 'customer_name', label: 'Customer' },
         { key: 'product_name', label: 'Product' },
-        { key: 'warehouse_name', label: 'Warehouse' },
         { key: 'quantity', label: 'Qty' },
         { key: 'cost_price', label: 'Cost' },
         { key: 'selling_price', label: 'Selling' },
+        { key: 'cost_format', label: 'Session' },
+        { key: 'selling_format', label: 'Local' },
+        { key: 'profit_currency', label: 'Currency' },
+        { key: 'shipment_info', label: 'Shipping' },
+        { key: 'profit_info', label: 'Profit' },
         { key: 'status_name', label: 'Status' },
         { key: 'payment_status', label: 'Payment' },
         { key: 'action', label: 'Action', sorter: false, filter: false },
@@ -89,6 +95,8 @@ export default {
   computed: {
     reformatItems() {
       return this.items.map((item) => {
+        console.log(item);
+
         let payment = '-';
         if (item.payment_status === 0) payment = 'Waiting';
         else if (item.payment_status === 1) payment = 'Paid';
@@ -97,12 +105,8 @@ export default {
           customer_name: item.customer_name || '-',
           product_name: item.product_name || '-',
           warehouse_name: item.warehouse_name || '-',
-          cost_price: item.cost_price
-            ? this.formatCurrency(item.cost_price)
-            : '-',
-          selling_price: item.selling_price
-            ? this.formatCurrency(item.selling_price)
-            : '-',
+          profit_info: `${item.profit_currency} ${item.profit}`,
+          shipment_info: `${item.shipment_currency} ${item.shipment_price}`,
           status_name: STATUS_ITEM[item.status] || item.status_name || '-',
           payment_status: payment,
         };

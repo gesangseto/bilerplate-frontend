@@ -4,6 +4,13 @@ import { getConfig } from '../storage';
 import cronstrue from 'cronstrue';
 const CryptoJs = require('crypto-js');
 
+export function costFormating(item) {
+  return `${item.cost_currency} ${item.cost_price}`;
+  console.log(item);
+
+  return item;
+}
+
 export function calculatePagination({ filter = Object, item = Object }) {
   if (item.hasOwnProperty('status') && item.hasOwnProperty('headers')) {
     item = item.data;
@@ -28,7 +35,7 @@ export function getStringBetween({ string, field1 = '$SF$', field2 = '$EF$' }) {
   if (string.indexOf(field1) > 0 && string.lastIndexOf(field2) > 0) {
     new_str = string.substring(
       string.indexOf(field1) + field1.length,
-      string.lastIndexOf(field2)
+      string.lastIndexOf(field2),
     );
   }
   return new_str;

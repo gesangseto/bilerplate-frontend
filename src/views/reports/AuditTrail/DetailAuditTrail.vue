@@ -4,14 +4,7 @@
       <CCol md="12">
         <CCard>
           <CCardHeader>
-            <h5>
-              {{ $activeMenu.name }} [{{ route_action }}]
-              <ButtonPermission
-                exportType="pdf"
-                :permission="'print'"
-                @click="handleClickExport('pdf')"
-              />
-            </h5>
+            <h5>{{ $activeMenu.name }} [{{ route_action }}]</h5>
           </CCardHeader>
 
           <CCardBody ref="content">
@@ -186,7 +179,16 @@
             </CForm>
           </CCardBody>
           <CCardFooter>
-            <ButtonBack />
+            <div class="float-left">
+              <ButtonBack />
+            </div>
+            <div class="float-right">
+              <ButtonPermission
+                exportType="pdf"
+                :permission="'print'"
+                @click="handleClickExport('pdf')"
+              />
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

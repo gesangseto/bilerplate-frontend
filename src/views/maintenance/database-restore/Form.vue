@@ -88,16 +88,18 @@
             </CRow>
           </CCardBody>
           <CCardFooter>
-            <ButtonPermission
-              :permission="'create'"
-              @click="formData.modal = true"
-              :buttonProperty="{
-                size: 'sm',
-                color: 'success',
-                icon: 'file',
-                text: 'Restore',
-              }"
-            />
+            <div class="float-left">
+              <ButtonPermission
+                :permission="'create'"
+                @click="formData.modal = true"
+                :buttonProperty="{
+                  size: 'sm',
+                  color: 'success',
+                  icon: 'file',
+                  text: 'Restore',
+                }"
+              />
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

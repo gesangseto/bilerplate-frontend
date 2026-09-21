@@ -222,19 +222,23 @@
           </CDataTable>
         </CCardBody>
         <CCardFooter>
-          <ButtonBack />
-          <ButtonPermission
-            exportType="excel"
-            :permission="'print'"
-            @click="handleClickExport('xls')"
-          />
-          <ButtonPopover
-            permission="print"
-            exportType="pdf"
-            :popover_list="['Summary', 'Details', 'Weighing']"
-            @handleClick="handleExportPdf($event)"
-            mt="-10"
-          />
+          <div class="float-left">
+            <ButtonBack />
+          </div>
+          <div class="float-right">
+            <ButtonPermission
+              exportType="excel"
+              :permission="'print'"
+              @click="handleClickExport('xls')"
+            />
+            <ButtonPopover
+              permission="print"
+              exportType="pdf"
+              :popover_list="['Summary', 'Details', 'Weighing']"
+              @handleClick="handleExportPdf($event)"
+              mt="-10"
+            />
+          </div>
         </CCardFooter>
       </CCard>
     </CCol>

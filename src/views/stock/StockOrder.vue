@@ -32,8 +32,10 @@
             </CForm>
           </CCardBody>
           <CCardFooter>
-            <CButton type="submit" size="sm" color="primary"><CIcon name="cil-check-circle"/> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
+            <div class="float-left">
+              <CButton type="submit" size="sm" color="primary"><CIcon name="cil-check-circle"/> Submit</CButton>
+              <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
+            </div>
           </CCardFooter>
         </CCard>
       </CCol>

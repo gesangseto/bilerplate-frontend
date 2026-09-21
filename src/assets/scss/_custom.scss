@@ -19,3 +19,12 @@
 .card-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
+
+// Tombol danger: paksa warna teks/icon putih.
+// $danger (#f57878) terlalu terang sehingga color-yiq() memilih teks gelap (#4f5d73),
+// membuat icon (fill: currentColor) tampak hitam di atas background merah.
+.btn-danger,
+.btn-danger.disabled,
+.btn-danger:disabled {
+  color: #fff;
+}

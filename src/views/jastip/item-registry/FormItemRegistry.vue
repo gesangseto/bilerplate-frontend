@@ -83,14 +83,18 @@
           </CForm>
         </CCardBody>
         <CCardFooter>
-          <CButton @click="save()" color="primary" size="sm" type="submit">
-            <CIcon name="cil-check-circle" /> Submit
-          </CButton>
-          <ButtonBack />
-          <ExportButtons
-            v-if="action !== 'ADD'"
-            @export="handleClickExport"
-          />
+          <div class="float-left">
+            <CButton @click="save()" color="primary" size="sm" type="submit">
+              <CIcon name="cil-check-circle" /> Submit
+            </CButton>
+            <ButtonBack />
+          </div>
+          <div class="float-right">
+            <ExportButtons
+              v-if="action !== 'ADD'"
+              @export="handleClickExport"
+            />
+          </div>
         </CCardFooter>
       </CCard>
     </CCol>

@@ -3,23 +3,7 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ButtonBack type="back" title="Back" />
           <h5 class="d-inline ml-2">{{ $activeMenu.name }}</h5>
-          <ButtonPermission
-            exportType="excel"
-            :permission="'print'"
-            @click="handleExport('xls')"
-          />
-          <ButtonPermission
-            exportType="pdf"
-            :permission="'print'"
-            @click="handleExport('pdf')"
-          />
-          <ButtonPermission
-            :permission="'print'"
-            :buttonProperty="btn_export_stock"
-            @click="handleExportStock()"
-          />
         </CCardHeader>
         <CCardBody v-if="session">
           <!-- Info Session -->
@@ -258,6 +242,28 @@
             </CCardBody>
           </CCard>
         </CCardBody>
+        <CCardFooter>
+          <div class="float-left">
+            <ButtonBack type="back" title="Back" />
+          </div>
+          <div class="float-right">
+            <ButtonPermission
+              exportType="excel"
+              :permission="'print'"
+              @click="handleExport('xls')"
+            />
+            <ButtonPermission
+              exportType="pdf"
+              :permission="'print'"
+              @click="handleExport('pdf')"
+            />
+            <ButtonPermission
+              :permission="'print'"
+              :buttonProperty="btn_export_stock"
+              @click="handleExportStock()"
+            />
+          </div>
+        </CCardFooter>
       </CCard>
     </CCol>
   </CRow>

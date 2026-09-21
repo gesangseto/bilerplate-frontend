@@ -3,7 +3,6 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <ExportButtons @export="handleClickExport" />
           <h5>{{ title }}</h5>
         </CCardHeader>
         <CCardBody>
@@ -21,6 +20,11 @@
           />
           <pre v-else class="mb-0">{{ JSON.stringify(rows, null, 2) }}</pre>
         </CCardBody>
+        <CCardFooter>
+          <div class="float-right">
+            <ExportButtons @export="handleClickExport" />
+          </div>
+        </CCardFooter>
       </CCard>
     </CCol>
   </CRow>

@@ -295,135 +295,127 @@
           </CCard>
         </CCardBody>
         <CCardFooter>
-          <!-- Simpan data saat create-->
-          <CButton
-            v-if="
-              action == 'Create' || (formData.status == 0 && action == 'Update')
-            "
-            type="submit"
-            size="sm"
-            @click="save()"
-            class="mr-2"
-            color="primary"
-          >
-            <CIcon name="cil-check-circle" /> Submit</CButton
-          >
-          <!-- Generate Serial data saat update-->
-          <CButton
-            v-if="formData.status == 0 && action == 'Approve'"
-            type="submit"
-            size="sm"
-            @click="generate_serial()"
-            class="mr-2"
-            color="primary"
-          >
-            <CIcon name="cil-check-circle" /> Generate Serial</CButton
-          >
+          <div class="float-left">
+            <!-- Simpan data saat create-->
+            <CButton
+              v-if="
+                action == 'Create' || (formData.status == 0 && action == 'Update')
+              "
+              type="submit"
+              size="sm"
+              @click="save()"
+              class="mr-2"
+              color="primary"
+            >
+              <CIcon name="cil-check-circle" /> Submit</CButton
+            >
+            <!-- Generate Serial data saat update-->
+            <CButton
+              v-if="formData.status == 0 && action == 'Approve'"
+              type="submit"
+              size="sm"
+              @click="generate_serial()"
+              class="mr-2"
+              color="primary"
+            >
+              <CIcon name="cil-check-circle" /> Generate Serial</CButton
+            >
 
-          <ButtonPermission
-            v-if="formData.status == 4 && userInfo.id == 0 && !is_copy"
-            :buttonProperty="buttonReset"
-            class="float-right"
-            :permission="'approve'"
-            @click="reset_status()"
-          />
-          <!-- Generate Serial data saat update-->
-          <!-- Status 3 berarti belum dimulai batch -->
-          <div v-if="formData.status == 3 && userInfo.id == 0 && !is_copy">
-            <ButtonPopover
-              :buttonProperty="buttonStart"
-              :popover_list="['Online', 'Serialization']"
-              class="float-right"
+            <ButtonPermission
+              v-if="formData.status == 4 && userInfo.id == 0 && !is_copy"
+              :buttonProperty="buttonReset"
               :permission="'approve'"
-              @handleClick="start_batch($event)"
-              mt="-8"
+              @click="reset_status()"
             />
-          </div>
+            <!-- Generate Serial data saat update-->
+            <!-- Status 3 berarti belum dimulai batch -->
+            <div v-if="formData.status == 3 && userInfo.id == 0 && !is_copy">
+              <ButtonPopover
+                :buttonProperty="buttonStart"
+                :popover_list="['Online', 'Serialization']"
+                :permission="'approve'"
+                @handleClick="start_batch($event)"
+                mt="-8"
+              />
+            </div>
 
-          <!-- Status 4 berarti proses sudah dimulai -->
-          <!-- Khusus station OFFLINE -->
-          <div
-            v-if="
-              formData.status == 4 &&
-              userInfo.id == 0 &&
-              !is_copy &&
-              station_type != 'online'
-            "
-          >
-            <ButtonPopover
-              :buttonProperty="buttonClose"
-              :popover_list="['End Serialization', 'Partial', 'Final']"
-              class="float-right"
-              :permission="'approve'"
-              @handleClick="closeDevelopment($event)"
-              mt="-11"
-            />
-            <ButtonPopover
-              :buttonProperty="buttonPause"
-              :popover_list="['Serialization', 'Aggregation']"
-              class="float-right"
-              :permission="'approve'"
-              @handleClick="pauseProgressDevelopment($event)"
-              mt="-8"
-            />
-            <ButtonPopover
-              :buttonProperty="buttonResume"
-              :popover_list="['Serialization', 'Aggregation']"
-              class="float-right"
-              :permission="'approve'"
-              @handleClick="resumeProgressDevelopment($event)"
-              mt="-8"
-            />
-            <ButtonPopover
-              :buttonProperty="buttonStart"
-              :popover_list="['Serialization', 'Aggregation']"
-              class="float-right"
-              :permission="'approve'"
-              @handleClick="start_batch($event)"
-              mt="-8"
-            />
-          </div>
-          <!-- Status 4 berarti proses sudah dimulai -->
-          <!-- Khusus station ONLINE -->
-          <div
-            v-if="
-              formData.status == 4 &&
-              userInfo.id == 0 &&
-              !is_copy &&
-              station_type == 'online'
-            "
-          >
-            <ButtonPopover
-              :buttonProperty="buttonClose"
-              :popover_list="['Partial', 'Final']"
-              class="float-right"
-              :permission="'approve'"
-              @handleClick="closeDevelopment($event)"
-              mt="-8"
-            />
-            <Button
-              :buttonProperty="buttonPause"
-              class="float-right"
-              :permission="'approve'"
-              @click="pauseProgressDevelopment('online')"
-            />
-            <Button
-              :buttonProperty="buttonResume"
-              class="float-right"
-              :permission="'approve'"
-              @click="resumeProgressDevelopment('online')"
-              mt="-8"
-            />
-            <Button
-              :buttonProperty="buttonStart"
-              class="float-right"
-              :permission="'approve'"
-              @click="start_batch('online')"
-            />
-          </div>
+            <!-- Status 4 berarti proses sudah dimulai -->
+            <!-- Khusus station OFFLINE -->
+            <div
+              v-if="
+                formData.status == 4 &&
+                userInfo.id == 0 &&
+                !is_copy &&
+                station_type != 'online'
+              "
+            >
+              <ButtonPopover
+                :buttonProperty="buttonClose"
+                :popover_list="['End Serialization', 'Partial', 'Final']"
+                :permission="'approve'"
+                @handleClick="closeDevelopment($event)"
+                mt="-11"
+              />
+              <ButtonPopover
+                :buttonProperty="buttonPause"
+                :popover_list="['Serialization', 'Aggregation']"
+                :permission="'approve'"
+                @handleClick="pauseProgressDevelopment($event)"
+                mt="-8"
+              />
+              <ButtonPopover
+                :buttonProperty="buttonResume"
+                :popover_list="['Serialization', 'Aggregation']"
+                :permission="'approve'"
+                @handleClick="resumeProgressDevelopment($event)"
+                mt="-8"
+              />
+              <ButtonPopover
+                :buttonProperty="buttonStart"
+                :popover_list="['Serialization', 'Aggregation']"
+                :permission="'approve'"
+                @handleClick="start_batch($event)"
+                mt="-8"
+              />
+            </div>
+            <!-- Status 4 berarti proses sudah dimulai -->
+            <!-- Khusus station ONLINE -->
+            <div
+              v-if="
+                formData.status == 4 &&
+                userInfo.id == 0 &&
+                !is_copy &&
+                station_type == 'online'
+              "
+            >
+              <ButtonPopover
+                :buttonProperty="buttonClose"
+                :popover_list="['Partial', 'Final']"
+                :permission="'approve'"
+                @handleClick="closeDevelopment($event)"
+                mt="-8"
+              />
+              <Button
+                :buttonProperty="buttonPause"
+                :permission="'approve'"
+                @click="pauseProgressDevelopment('online')"
+              />
+              <Button
+                :buttonProperty="buttonResume"
+                :permission="'approve'"
+                @click="resumeProgressDevelopment('online')"
+                mt="-8"
+              />
+              <Button
+                :buttonProperty="buttonStart"
+                :permission="'approve'"
+                @click="start_batch('online')"
+              />
+            </div>
 
-          <!-- Buton Cancel-->
-          <ButtonBack />
+            <!-- Buton Cancel-->
+            <ButtonBack />
+          </div>
         </CCardFooter>
       </CCard>
     </div>
