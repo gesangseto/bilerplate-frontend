@@ -215,7 +215,6 @@ import DateRangePicker from 'vue2-daterange-picker';
 import { ModelSelect } from 'vue-search-select';
 import 'vue-search-select/dist/VueSearchSelect.css';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
-import { getMstProductCategory } from '../../resource/MstProductCategory';
 import { getStatusDesc } from '../../resource/StatusDesc';
 import moment from 'moment';
 import { dateFilter } from '../../constants';
@@ -968,19 +967,6 @@ export default {
         frags[i] = frags[i].charAt(0).toUpperCase() + frags[i].slice(1);
       }
       return frags.join(' ');
-    },
-    async getProductCategory() {
-      this.listExtendFilter = [];
-      let _res = await getMstProductCategory({ include_delete: 1 });
-      let data = _res.data || [];
-      for (const it of data) {
-        let ext = it.delete_flag == 1 ? '(X)' : '';
-        let tmp = it;
-        tmp.value = it.id;
-        tmp.label = `${ext} ${it.name}`;
-        tmp.text = `${ext} ${it.name}`;
-        this.listExtendFilter.push(tmp);
-      }
     },
   },
   filters: {

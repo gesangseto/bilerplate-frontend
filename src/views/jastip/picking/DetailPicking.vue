@@ -27,64 +27,12 @@
                   </td>
                 </tr>
                 <tr style="height: 50px">
-                  <td>Requsted By</td>
+                  <td>Requested By</td>
                   <td>
                     <input
                       readonly
                       class="form-control"
                       v-model="picking.created_full_name"
-                    />
-                  </td>
-                </tr>
-                <tr style="height: 50px">
-                  <td>SO No</td>
-                  <td>
-                    <input
-                      readonly
-                      class="form-control"
-                      v-model="picking.so_number"
-                    />
-                  </td>
-                </tr>
-                <tr style="height: 50px">
-                  <td>SO Date</td>
-                  <td>
-                    <input
-                      readonly
-                      class="form-control"
-                      v-model="picking.so_date"
-                    />
-                  </td>
-                </tr>
-                <tr style="height: 50px">
-                  <td>SO File</td>
-                  <td>
-                    <ButtonDownloadFilePath :file_path="picking.file_path_1" />
-                  </td>
-                </tr>
-                <tr style="height: 50px">
-                  <td>ERP Picking List No</td>
-                  <td>
-                    <input
-                      readonly
-                      class="form-control"
-                      v-model="picking.erp_number"
-                    />
-                  </td>
-                </tr>
-                <tr style="height: 50px">
-                  <td>ERP PL File</td>
-                  <td>
-                    <ButtonDownloadFilePath :file_path="picking.file_path_2" />
-                  </td>
-                </tr>
-                <tr style="height: 50px">
-                  <td>Warehouse</td>
-                  <td>
-                    <input
-                      readonly
-                      class="form-control"
-                      v-model="picking.warehouse_name"
                     />
                   </td>
                 </tr>
@@ -98,6 +46,26 @@
                     />
                   </td>
                 </tr>
+                <tr style="height: 50px">
+                  <td>Customer Phone</td>
+                  <td>
+                    <input
+                      readonly
+                      class="form-control"
+                      v-model="picking.customer_phone"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Warehouse</td>
+                  <td>
+                    <input
+                      readonly
+                      class="form-control"
+                      v-model="picking.warehouse_name"
+                    />
+                  </td>
+                </tr>
               </table>
             </CCol>
             <CCol md="6">
@@ -105,101 +73,106 @@
                 <tr style="height: 50px">
                   <td style="width: 40%">Status</td>
                   <td style="width: 60%">
+                    <input readonly class="form-control" :value="statusText" />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Receiver Name</td>
+                  <td>
                     <input
                       readonly
                       class="form-control"
-                      v-model="picking.status_desc"
+                      v-model="picking.receiver_name"
                     />
                   </td>
                 </tr>
-                <tr style="height: 50px" v-if="picking.status != 0">
+                <tr style="height: 50px">
+                  <td>Receiver Phone</td>
+                  <td>
+                    <input
+                      readonly
+                      class="form-control"
+                      v-model="picking.receiver_phone"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Receiver Address</td>
+                  <td>
+                    <textarea
+                      readonly
+                      class="form-control"
+                      v-model="picking.receiver_address"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Courier</td>
+                  <td>
+                    <input
+                      readonly
+                      class="form-control"
+                      v-model="courierText"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Resi No</td>
+                  <td>
+                    <input
+                      readonly
+                      class="form-control"
+                      v-model="picking.courier_number"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Courier Price</td>
+                  <td>
+                    <input
+                      readonly
+                      class="form-control"
+                      v-model="picking.courier_price"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Weight</td>
+                  <td>
+                    <input
+                      readonly
+                      class="form-control"
+                      v-model="picking.weight"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
+                  <td>Total Qty</td>
+                  <td>
+                    <input
+                      readonly
+                      class="form-control"
+                      v-model="picking.quantity"
+                    />
+                  </td>
+                </tr>
+                <tr style="height: 50px">
                   <td>Last Action By</td>
                   <td>
                     <input
-                      class="form-control"
                       readonly
+                      class="form-control"
                       v-model="picking.modified_full_name"
                     />
                   </td>
                 </tr>
-                <tr style="height: 50px" v-if="picking.status != 0">
+                <tr style="height: 50px">
                   <td>Last Action Date</td>
                   <td>
                     <input
-                      class="form-control"
                       readonly
+                      class="form-control"
                       v-model="picking.modified_date"
-                    />
-                  </td>
-                </tr>
-                <tr
-                  style="height: 50px"
-                  v-if="picking.status != 0 && picking.remark"
-                >
-                  <td>Remark</td>
-                  <td>
-                    <textarea
-                      class="form-control"
-                      readonly
-                      v-model="picking.remark"
-                    />
-                  </td>
-                </tr>
-                <tr
-                  style="height: 50px"
-                  v-if="picking.status != 0 && picking.do_number"
-                >
-                  <td>DO No</td>
-                  <td>
-                    <input
-                      class="form-control"
-                      readonly
-                      v-model="picking.do_number"
-                    />
-                  </td>
-                </tr>
-                <tr style="height: 50px" v-if="picking.status == 2">
-                  <td>Reason</td>
-                  <td>
-                    <textarea
-                      class="form-control"
-                      readonly
-                      v-model="picking.reason"
-                    />
-                  </td>
-                </tr>
-
-                <tr style="height: 50px" v-for="index in 1" :key="index">
-                  <td
-                    style="width: 40%"
-                    v-if="picking[`quantity_lvl_${index}`] > 0"
-                  >
-                    {{ 'L' + index }} Quantity
-                  </td>
-                  <td
-                    style="width: 60%"
-                    v-if="picking[`quantity_lvl_${index}`] > 0"
-                  >
-                    <input
-                      class="form-control"
-                      readonly
-                      v-model="picking[`quantity_lvl_${index}`]"
-                    />
-                  </td>
-                </tr>
-
-                <tr style="height: 50px">
-                  <td style="width: 40%" colspan="2">
-                    <br />
-                    <br />
-                    <strong> Requested Batch Item</strong>
-                    <CDataTable
-                      :items="pickingBatch"
-                      :fields="fieldPickingBatch"
-                      hover
-                      sorter
-                      striped
-                      tableFilter
                     />
                   </td>
                 </tr>
@@ -220,50 +193,24 @@
                   :fields="fieldItem"
                   class="text-left"
                   style="font-size: 12px"
-                >
-                  <template #action="{ item, index }">
-                    <td>
-                      <Button
-                        v-c-tooltip="'View'"
-                        v-if="item.packaging_level > 1"
-                        :type="'read'"
-                        @click="rowClicked(item, index)"
-                      />
-                    </td>
-                  </template>
-                </CDataTable>
+                />
               </div>
             </div>
           </div>
         </CCardBody>
         <CCardFooter>
           <div class="float-left">
-            <button
-              v-if="action === 'EDIT' && picking.status == 99"
-              class="btn btn-sm btn-success"
-              type="button"
-              @click="inputDo()"
-            >
-              <CIcon name="cil-pencil" /> Input DO
-            </button>
-
             <ButtonBack />
           </div>
           <div class="float-right">
             <ButtonPermission
-              v-if="picking.status == 1 && picking.generate_bpom_report == 0"
-              exportType="bpom-report"
-              :permission="'print'"
-              @click="handleClickExportBPOM()"
-            />
-            <ButtonPermission
-              v-if="picking.items.length > 0"
+              v-if="picking.id"
               exportType="excel"
               :permission="'print'"
               @click="handleClickExport('xls')"
             />
             <ButtonPermission
-              v-if="picking.items.length > 0"
+              v-if="picking.id"
               exportType="pdf"
               :permission="'print'"
               @click="handleClickExport('pdf')"
@@ -272,271 +219,70 @@
         </CCardFooter>
       </CCard>
     </div>
-    <!-- START DO MODAL -->
-    <CModal
-      size="lg"
-      centered="centered"
-      :show.sync="modalDO"
-      title="Add DO Number"
-      color="primary"
-    >
-      <CRow>
-        <CCol sm="12" md="12" lg="12">
-          <CRow>
-            <CCol sm="2" md="2" lg="2">
-              <label for="reason"
-                >DO Number <span style="color: red">*</span></label
-              >
-            </CCol>
-            <CCol sm="8" md="8" lg="8">
-              <CInput
-                placeholder="Enter DO number"
-                type="text"
-                v-model="doNumber"
-                :add-input-classes="{
-                  'is-invalid': !initial_load && !this.doNumber,
-                }"
-                invalid-feedback="DO number is required"
-              />
-            </CCol>
-          </CRow>
-        </CCol>
-      </CRow>
-      <template #footer>
-        <CButton color="primary" class="text-white" @click="saveDO()">
-          Submit
-        </CButton>
-        <CButton @click="modalDO = false" color="danger">Cancel</CButton>
-      </template>
-    </CModal>
-    <!-- Modal View Barang -->
-    <CModal
-      size="xl"
-      centered="centered"
-      :show.sync="viewModal"
-      title="Detail"
-      color="warning"
-    >
-      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
-      <template #footer>
-        <CButton size="sm" color="danger" type="button" @click="closeModal()">
-          <CIcon name="cil-x-circle" /> Close
-        </CButton>
-      </template>
-    </CModal>
   </div>
 </template>
 
 <script>
-import { CDataTable } from '@coreui/vue';
-import $axios from '../../../api';
 import { exportDataV3, handleBack } from '../../../utils';
-import { getPicking, isBpomGenerated } from '../../../resource/TrxPicking';
+import { getPicking } from '../../../resource/TrxPicking';
+
+const STATUS_PICKING = {
+  '-1': 'Canceled',
+  0: 'Waiting',
+  1: 'Done',
+  2: 'In Courier',
+  3: 'Returned',
+};
+
 export default {
   name: 'DetailPicking',
   data() {
     return {
       initial_load: true,
       action: '',
-      status: '',
-      datas: [],
-      detail_item: {},
-      viewModal: false,
-      view: {
-        productId: '',
-        productName: '',
-        batch: '',
-        serial: [],
-        gtin: '',
-        nie: '',
-        expiredDate: '',
-      },
-      modalDO: false,
-      doNumber: '',
-      serial: '',
+      items: [],
       picking: {
         status: '',
-        createdDate: '',
-        soDate: '',
-        warehouse: {
-          id: '',
-          name: '',
-        },
-        customer: {
-          id: '',
-          name: '',
-        },
-        file_1_name: '',
-        file_2_name: '',
-        items: [],
-        picking_batch: [],
+        created_date: '',
+        customer_name: '',
+        customer_phone: '',
+        warehouse_name: '',
+        receiver_name: '',
+        receiver_phone: '',
+        receiver_address: '',
+        courier_name: '',
+        courier_code: '',
+        courier_number: '',
+        courier_price: '',
+        modified_full_name: '',
+        modified_date: '',
       },
-      item: [],
-      items: [],
       fieldItem: [
-        {
-          key: 'nomor',
-          label: 'No',
-        },
-        {
-          key: 'no',
-          label: 'Item No ERP',
-        },
-        {
-          key: 'name',
-          label: 'Product Name',
-        },
-        {
-          key: 'batch_no',
-          label: 'Batch No',
-        },
-        {
-          key: 'expired_date',
-          label: 'Exp Date',
-        },
-        {
-          key: 'nie',
-          label: 'NIE',
-        },
-        {
-          key: 'epc_key',
-          label: 'EPC Key',
-        },
-        {
-          key: 'serial',
-          label: 'SN',
-        },
-        {
-          key: 'packaging_level',
-          label: 'Pkg Level',
-        },
-        {
-          key: 'packaging_name',
-          label: 'Pkg Name',
-        },
-        {
-          key: 'quantity',
-          label: 'L1 Qty',
-        },
-        {
-          key: 'action',
-          label: 'Action',
-          sorter: false,
-          filter: false,
-        },
-      ],
-      fieldPickingBatch: [
-        {
-          key: 'nomor',
-          label: 'No',
-        },
-        {
-          key: 'product_no',
-          label: 'Item No ERP',
-        },
-        {
-          key: 'product_name',
-          label: 'Product',
-        },
-        {
-          key: 'batch_no',
-          label: 'Batch No',
-        },
-        {
-          key: 'quantity',
-          label: 'L1 Qty',
-        },
+        { key: 'nomor', label: 'No' },
+        { key: 'item_stock_id', label: 'Item ID' },
+        { key: 'product_name', label: 'Product' },
+        { key: 'barcode', label: 'Barcode' },
+        { key: 'batch_no', label: 'Batch No' },
+        { key: 'quantity', label: 'Qty' },
+        { key: 'foreign_price', label: 'Foreign Price' },
+        { key: 'local_price', label: 'Local Price' },
+        { key: 'foreign_profit', label: 'Foreign Profit' },
+        { key: 'local_profit', label: 'Local Profit' },
       ],
     };
   },
   async mounted() {
     this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
     let getData = await getPicking({ id: this.$route.params.id });
-    if (getData && !getData?.error) {
+    if (getData && !getData?.error && getData.data && getData.data[0]) {
       let data = getData.data[0];
       this.picking = data;
-      this.items = data.items;
+      this.items = data.items || [];
     }
   },
   methods: {
     back() {
       handleBack(this.$router, this.$route);
-    },
-    rowClicked(item) {
-      this.datas = [];
-      if (item.packaging_level == 1) {
-        this.$toast.open({
-          message: `No detail SN data to be viewed, SN [${item.serial_id}] is Packaging L1`,
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-        return false;
-      }
-      this.detail_item = item;
-      this.viewModal = true;
-      return;
-    },
-    closeModal() {
-      this.datas = [];
-      this.viewModal = false;
-    },
-    async inputDo() {
-      let getData = await isBpomGenerated({ id: this.$route.params.id });
-      if (getData.error) {
-        if (confirm(`${getData.message} Would you like to continue?`)) {
-          this.modalDO = true;
-        }
-      } else {
-        this.modalDO = true;
-      }
-    },
-    saveDO() {
-      this.initial_load = false;
-      if (!this.doNumber) {
-        return;
-      }
-      let message =
-        'You are about to finalize this transaction. This operation cannot be undone. Would you like to continue?';
-      if (confirm(message)) {
-        let param = {
-          id: this.$route.params.id,
-          approved: true,
-          do_number: this.doNumber,
-          reason: '[INPUT DO]',
-        };
-        var _url = `/v4.2/transaction/picking/finish`;
-        $axios
-          .post(_url, param)
-          .then((result) => {
-            let res = result.data;
-            this.$isLoading(false);
-            this.$toast.open({
-              message: res.error
-                ? res.message
-                : 'Data has been saved successfully ',
-              type: res.error ? 'error' : 'success',
-              dissmissible: true,
-              position: 'top-right',
-              duration: 5000,
-            });
-            if (!res.error) {
-              handleBack(this.$router, this.$route);
-            }
-          })
-          .catch((err) => {
-            this.$toast.open({
-              message: `Error : ${err}`,
-              type: 'error',
-              dissmissible: true,
-              position: 'top-right',
-              duration: 5000,
-            });
-          });
-        this.modalDO = false;
-        return;
-      }
     },
     handleClickExport(type) {
       exportDataV3({
@@ -545,37 +291,43 @@ export default {
           id: this.$route.params.id,
         },
         exportType: type,
-        url: '/v4.2/transaction/picking',
+        url: '/v1/jastip/picking',
       });
     },
-    handleClickExportBPOM(type) {
-      exportDataV3({
-        alert: true,
-        param: {
-          id: this.$route.params.id,
-        },
-        exportType: type,
-        url: '/v4.2/transaction/picking/bpom-report',
-      });
+    formatCurrency(val) {
+      if (val === null || val === undefined || val === '') return '-';
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+      }).format(val);
     },
   },
   computed: {
-    pickingBatch() {
-      return this.picking.picking_batch.map((item, index) => {
-        return {
-          ...item,
-          nomor: index + 1,
-        };
-      });
+    statusText() {
+      const s = String(this.picking.status);
+      return STATUS_PICKING[s] || this.picking.status_name || '-';
     },
-
+    courierText() {
+      const name = this.picking.courier_name || '';
+      const code = this.picking.courier_code || '';
+      if (!name && !code) return '-';
+      return code ? `${name} (${code})`.trim() : name;
+    },
     renderDetailItem() {
-      return this.items.map((item, index) => {
+      return (this.items || []).map((item, index) => {
         return {
           ...item,
           nomor: index + 1,
-          nie: item.nie || '-',
-          gtin: item.gtin || '-',
+          item_stock_id: item.item_stock_id || '-',
+          product_name: item.product_name || '-',
+          barcode: item.barcode || '-',
+          batch_no: item.batch_no || '-',
+          quantity: item.quantity || 0,
+          foreign_price: this.formatCurrency(item.foreign_price),
+          local_price: this.formatCurrency(item.local_price),
+          foreign_profit: this.formatCurrency(item.foreign_profit),
+          local_profit: this.formatCurrency(item.local_profit),
         };
       });
     },

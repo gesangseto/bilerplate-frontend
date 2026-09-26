@@ -1,8 +1,8 @@
 import $axios from '../api';
 
-let url = `/v1/master/product-category`;
+let url = `/v1/master/country`;
 
-export const getMstProductCategory = async (param = Object) => {
+export const getMstCountry = async (param = Object) => {
   var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
@@ -21,7 +21,7 @@ export const getMstProductCategory = async (param = Object) => {
   });
 };
 
-export const insertMstProductCategory = async (param = Object) => {
+export const insertMstCountry = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -39,7 +39,7 @@ export const insertMstProductCategory = async (param = Object) => {
   });
 };
 
-export const updateMstProductCategory = async (param = Object) => {
+export const updateMstCountry = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -57,7 +57,7 @@ export const updateMstProductCategory = async (param = Object) => {
   });
 };
 
-export const deleteMstProductCategory = async (param = Object) => {
+export const deleteMstCountry = async (param = Object) => {
   if (!param.id) return false;
   param = { data: { ...param } };
   return new Promise((resolve) => {

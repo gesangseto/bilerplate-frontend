@@ -80,7 +80,6 @@
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import 'vue-search-select/dist/VueSearchSelect.css';
 import { ModelSelect } from 'vue-search-select';
-import { getMstProductCategory } from '../../resource/MstProductCategory';
 import { getStatusDesc } from '../../resource/StatusDesc';
 import { setFilterTable, getFilterTable } from '../../utils/storage';
 
@@ -157,10 +156,6 @@ export default {
           value: 'All',
           label: 'All',
         },
-        {
-          value: 'mst_product_category_id',
-          label: 'Product Category',
-        },
       ],
     };
   },
@@ -199,11 +194,6 @@ export default {
           this.extendFilter = false;
           this.result.SearchVal1 = '';
           this.result.SearchVal1Text = 'All';
-        } else if (
-          this.result.SearchType.toLowerCase() == 'mst_product_category_id'
-        ) {
-          this.extendFilter = true;
-          this.getProductCategory();
         } else if (this.costume_filter) {
           for (const it of this.costume_filter) {
             if (
@@ -252,19 +242,6 @@ export default {
           tmp.text = it.status_desc;
           this.listFilterStatusCode.push(tmp);
         }
-      }
-    },
-    async getProductCategory() {
-      this.listExtendFilter = [];
-      let _res = await getMstProductCategory({ include_delete: 1 });
-      let data = _res.data || [];
-      for (const it of data) {
-        let ext = it.delete_flag == 1 ? '(X)' : '';
-        let tmp = it;
-        tmp.value = it.id;
-        tmp.label = `${ext} ${it.name}`;
-        tmp.text = `${ext} ${it.name}`;
-        this.listExtendFilter.push(tmp);
       }
     },
     getCostumeFilter(item) {

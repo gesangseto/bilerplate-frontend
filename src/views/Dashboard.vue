@@ -186,6 +186,78 @@
           </div>
         </div>
       </div>
+
+      <!-- Ringkasan Pembayaran (dari payment_summary) -->
+      <div class="card-box">
+        <div class="card-header-row">
+          <span class="card-title">Ringkasan Pembayaran</span>
+          <span class="card-total"
+            >{{ paymentSummary.payment_count || 0 }} transaksi</span
+          >
+        </div>
+        <div class="pay-grid">
+          <div class="pay-box">
+            <div class="pay-label">Total Tagihan</div>
+            <div class="pay-value">Rp {{ fmt(paymentSummary.total_selling) }}</div>
+          </div>
+          <div class="pay-box">
+            <div class="pay-label">Total Dibayar</div>
+            <div class="pay-value" style="color: #10b981">
+              Rp {{ fmt(paymentSummary.total_paid) }}
+            </div>
+          </div>
+          <div class="pay-box">
+            <div class="pay-label">Belum Dibayar</div>
+            <div class="pay-value" style="color: #f97316">
+              Rp {{ fmt(paymentSummary.total_unpaid) }}
+            </div>
+          </div>
+          <div class="pay-box">
+            <div class="pay-label">Pending</div>
+            <div class="pay-value" style="color: #f59e0b">
+              Rp {{ fmt(paymentSummary.total_pending) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Picking & Inbound -->
+      <div class="card-box">
+        <div class="card-header-row">
+          <span class="card-title">Picking & Inbound</span>
+          <span class="card-total"
+            >{{ totalPicking }} picking · {{ totalInbound }} inbound</span
+          >
+        </div>
+        <div class="two-col">
+          <div class="col-box">
+            <div class="col-label">Picking per Status</div>
+            <div v-if="pickingByStatus.length" class="status-chip-row">
+              <span
+                v-for="p in pickingByStatus"
+                :key="p.status"
+                class="status-chip"
+              >
+                {{ statusLabelPicking(p.status) }} · {{ p.total }}
+              </span>
+            </div>
+            <div v-else class="empty-text">Belum ada data picking</div>
+          </div>
+          <div class="col-box">
+            <div class="col-label">Inbound per Status</div>
+            <div v-if="inboundByStatus.length" class="status-chip-row">
+              <span
+                v-for="p in inboundByStatus"
+                :key="p.status"
+                class="status-chip"
+              >
+                {{ statusLabelInbound(p.status) }} · {{ p.total }}
+              </span>
+            </div>
+            <div v-else class="empty-text">Belum ada data inbound</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -274,13 +346,36 @@ export default {
       return this.sumBy(this.dashboard.batch_by_status || [], 'total');
     },
     totalCustomer() {
-      return this.dashboard.total_customer || 0;
+      // Saat session terpilih, pakai total_customer per session dari
+      // /session-stats; fallback ke total_customer global dari /dashboard.
+      const perSession =
+        this.sessionData && this.sessionData.total_customer !== undefined
+          ? Number(this.sessionData.total_customer || 0)
+          : null;
+      return perSession !== null
+        ? perSession
+        : this.dashboard.total_customer || 0;
     },
     sold() {
       return this.dashboard.total_sales || {};
     },
     soldProfit() {
       return Number(this.sold.total_profit || 0);
+    },
+    paymentSummary() {
+      return this.dashboard.payment_summary || {};
+    },
+    pickingByStatus() {
+      return this.dashboard.picking_by_status || [];
+    },
+    inboundByStatus() {
+      return this.dashboard.inbound_by_status || [];
+    },
+    totalPicking() {
+      return this.sumBy(this.pickingByStatus, 'total');
+    },
+    totalInbound() {
+      return this.sumBy(this.inboundByStatus, 'total');
     },
     selectedSession() {
       return this.filters.session_id
@@ -355,6 +450,27 @@ export default {
         (it) => Number(it.status) === code
       );
       return row ? Number(row.total || 0) : 0;
+    },
+    statusLabelPicking(status) {
+      // trx_picking.status: -1 Canceled, 0 Waiting, 1 Done, 2 In Courier, 3 Returned
+      return (
+        {
+          '-1': 'Canceled',
+          0: 'Waiting',
+          1: 'Done',
+          2: 'In Courier',
+          3: 'Returned',
+        }[Number(status)] || `Status ${status}`
+      );
+    },
+    statusLabelInbound(status) {
+      // trx_inbound.status: 0 Waiting, 1 Done
+      return (
+        {
+          0: 'Waiting',
+          1: 'Done',
+        }[Number(status)] || `Status ${status}`
+      );
     },
     async loadSessions() {
       try {
@@ -623,5 +739,63 @@ export default {
   color: #999;
   text-align: center;
   padding: 8px 0;
+}
+
+/* Ringkasan Pembayaran */
+.pay-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+.pay-box {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 12px;
+}
+.pay-label {
+  font-size: 11px;
+  color: #888;
+}
+.pay-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: #333;
+  margin-top: 4px;
+}
+
+/* Picking & Inbound */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.col-box {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 12px;
+}
+.col-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  margin-bottom: 8px;
+}
+.status-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.status-chip {
+  background-color: #eef0f4;
+  color: #444;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

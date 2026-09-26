@@ -18,14 +18,6 @@ const STATUS_DESC = {
     { status_code: 'Active', status_desc: 'Active' },
     { status_code: 'Inactive', status_desc: 'Inactive' },
   ],
-  mst_product_category: [
-    { status_code: 'Active', status_desc: 'Active' },
-    { status_code: 'Inactive', status_desc: 'Inactive' },
-  ],
-  mst_packaging: [
-    { status_code: 'Active', status_desc: 'Active' },
-    { status_code: 'Inactive', status_desc: 'Inactive' },
-  ],
   mst_department: [
     { status_code: 'Active', status_desc: 'Active' },
     { status_code: 'Inactive', status_desc: 'Inactive' },
@@ -93,10 +85,6 @@ const STATUS_DESC = {
   trx_decomissioning_activate: [
     { status_code: '0', status_desc: 'Decommission' },
     { status_code: '1', status_desc: 'Commission' },
-  ],
-  trx_layout: [
-    { status_code: '0', status_desc: 'Inactive' },
-    { status_code: '1', status_desc: 'Active' },
   ],
   pre_inbound: [
     { status_code: '0', status_desc: 'Booked' },

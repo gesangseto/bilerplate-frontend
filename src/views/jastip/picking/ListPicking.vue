@@ -153,7 +153,6 @@ export default {
         { key: 'courier_name', label: 'Courier' },
         { key: 'courier_number', label: 'Resi No' },
         { key: 'courier_price', label: 'Courier Price' },
-        { key: 'selling_price', label: 'Selling' },
         { key: 'status_name', label: 'Status' },
         { key: 'created_full_name', label: 'Created By' },
         { key: 'action', label: 'Action', sorter: false, filter: false },
@@ -276,9 +275,6 @@ export default {
           courier_number: item.courier_number || '-',
           courier_price: item.courier_price
             ? this.formatCurrency(item.courier_price)
-            : '-',
-          selling_price: item.selling_price
-            ? this.formatCurrency(item.selling_price)
             : '-',
           status_name: STATUS_PICKING[item.status] || item.status_name || '-',
           created_full_name: item.created_full_name || '-',

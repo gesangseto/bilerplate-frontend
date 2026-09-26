@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { getMenu, getRole } from '../utils/storage';
+import { getMenu } from '../utils/storage';
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer');
@@ -31,11 +31,6 @@ const ListCustomer = () => import('@/views/master/customer/ListCustomer');
 // ListWarehouse
 const ListWarehouse = () => import('@/views/master/warehouse/ListWarehouse');
 const FormWarehouse = () => import('@/views/master/warehouse/FormWarehouse');
-//Product Categories
-const ListProductCategory = () =>
-  import('@/views/master/product_category/ListProductCategory');
-const FormProductCategory = () =>
-  import('@/views/master/product_category/FormProductCategory');
 // Product Article
 const ListProduct = () => import('@/views/master/product/ListProduct');
 const FormProduct = () =>
@@ -43,12 +38,15 @@ const FormProduct = () =>
   // ? import("@/views/master/product/FormProduct_v2")
   //   : import("@/views/master/product/FormProduct");
   import('@/views/master/product/FormProduct');
-// Packaging
-const ListPackaging = () => import('@/views/master/packaging/ListPackaging');
-const FormPackaging = () => import('@/views/master/packaging/FormPackaging');
 // Courier
 const ListCourier = () => import('@/views/master/courier/ListCourier');
 const FormCourier = () => import('@/views/master/courier/FormCourier');
+// Price Code
+const ListPriceCode = () => import('@/views/master/price_code/ListPriceCode');
+const FormPriceCode = () => import('@/views/master/price_code/FormPriceCode');
+// Country
+const ListCountry = () => import('@/views/master/country/ListCountry');
+const FormCountry = () => import('@/views/master/country/FormCountry');
 // Finance & Revenue
 const FinanceList = () => import('@/views/finance/FinanceList');
 // ========================MASTER========================
@@ -214,9 +212,6 @@ const FormMetadata = () =>
 // Conf Date
 const ListDate = () => import('@/views/configuration/date/ListDate');
 const FormDate = () => import('@/views/configuration/date/FormDate');
-// Conf Layout
-const ListLayout = () => import('@/views/configuration/layout/ListLayout');
-const FormLayout = () => import('@/views/configuration/layout/FormLayout');
 // Conf Connector
 const ListConnector = () =>
   import('@/views/configuration/connector/ListConnector');
@@ -252,9 +247,6 @@ const JastipFormInbound = () => import('@/views/jastip/inbound/FormInbound');
 // PICKING SESSION
 const JastipListPicking = () => import('@/views/jastip/picking/ListPicking');
 const JastipFormPicking = () => import('@/views/jastip/picking/FormPicking');
-const JastipDetailPicking = () =>
-  import('@/views/jastip/picking/DetailPicking');
-
 const JastipListItemStock = () =>
   import('@/views/jastip/item-stock/ListItemStock');
 const JastipFormItemStock = () =>
@@ -365,25 +357,6 @@ function configRoutes() {
           component: ListProduct,
           meta: { login: true },
         },
-        // PRODUCT CATEGORY
-        {
-          path: 'product_category/:type/:id',
-          name: 'Product Category (Details) ',
-          component: FormProductCategory,
-          meta: { login: true },
-        },
-        {
-          path: 'product_category/:type',
-          name: 'Product Category (Details)',
-          component: FormProductCategory,
-          meta: { login: true },
-        },
-        {
-          path: 'product_category',
-          name: 'Product Category (Home)',
-          component: ListProductCategory,
-          meta: { login: true },
-        },
         // SUPPLIER
         {
           path: 'supplier/:type/:id',
@@ -445,25 +418,6 @@ function configRoutes() {
           component: ListWarehouse,
           meta: { login: true },
         },
-        // PACKAGING
-        {
-          path: 'packaging/:type/:id',
-          name: 'Packaging (Details) ',
-          component: FormPackaging,
-          meta: { login: true },
-        },
-        {
-          path: 'packaging/:type',
-          name: 'Packaging (Details)',
-          component: FormPackaging,
-          meta: { login: true },
-        },
-        {
-          path: 'packaging',
-          name: 'Packaging (Home)',
-          component: ListPackaging,
-          meta: { login: true },
-        },
         // COURIER
         {
           path: 'courier/:type/:id',
@@ -481,6 +435,44 @@ function configRoutes() {
           path: 'courier',
           name: 'Courier (Home)',
           component: ListCourier,
+          meta: { login: true },
+        },
+        // PRICE CODE
+        {
+          path: 'price-code/:type/:id',
+          name: 'Price Code (Details) ',
+          component: FormPriceCode,
+          meta: { login: true },
+        },
+        {
+          path: 'price-code/:type',
+          name: 'Price Code (Details)',
+          component: FormPriceCode,
+          meta: { login: true },
+        },
+        {
+          path: 'price-code',
+          name: 'Price Code (Home)',
+          component: ListPriceCode,
+          meta: { login: true },
+        },
+        // COUNTRY
+        {
+          path: 'country/:type/:id',
+          name: 'Country (Details) ',
+          component: FormCountry,
+          meta: { login: true },
+        },
+        {
+          path: 'country/:type',
+          name: 'Country (Details)',
+          component: FormCountry,
+          meta: { login: true },
+        },
+        {
+          path: 'country',
+          name: 'Country (Home)',
+          component: ListCountry,
           meta: { login: true },
         },
       ],
@@ -1066,25 +1058,6 @@ function configRoutes() {
           meta: { login: true },
           component: ListCron,
         },
-        // CONF LAYOUT
-        {
-          path: 'layout/:type/:id',
-          name: 'Manage Layout',
-          component: FormLayout,
-          meta: { login: true },
-        },
-        {
-          path: 'layout/:type',
-          name: 'Add Layout',
-          component: FormLayout,
-          meta: { login: true },
-        },
-        {
-          path: 'layout',
-          name: 'List Layout',
-          component: ListLayout,
-          meta: { login: true },
-        },
         // CONF CONNECTOR
         {
           path: 'connector/:type/:id',
@@ -1289,14 +1262,8 @@ function configRoutes() {
         },
       },
       children: [
-        {
-          path: 'dashboard',
-          name: 'Jastip Dashboard',
-          meta: { login: true },
-          component: Dashboard,
-        },
-        {
-          path: 'item-registry/:type/:id',
+              {
+                path: 'item-registry/:type/:id',
           name: 'Item Registry (Details)',
           meta: { login: true },
           component: JastipFormItemRegistry,

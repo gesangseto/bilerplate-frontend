@@ -1,8 +1,8 @@
 import $axios from '../api';
 
-let url = `/v1/master/packaging`;
+let url = `/v1/master/price-code`;
 
-export const getMstPackaging = async (param = Object) => {
+export const getMstPriceCode = async (param = Object) => {
   var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
@@ -21,7 +21,7 @@ export const getMstPackaging = async (param = Object) => {
   });
 };
 
-export const insertMstPackaging = async (param = Object) => {
+export const insertMstPriceCode = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -39,7 +39,7 @@ export const insertMstPackaging = async (param = Object) => {
   });
 };
 
-export const updateMstPackaging = async (param = Object) => {
+export const updateMstPriceCode = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -57,7 +57,7 @@ export const updateMstPackaging = async (param = Object) => {
   });
 };
 
-export const deleteMstPackaging = async (param = Object) => {
+export const deleteMstPriceCode = async (param = Object) => {
   if (!param.id) return false;
   param = { data: { ...param } };
   return new Promise((resolve) => {

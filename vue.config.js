@@ -33,5 +33,13 @@ module.exports = {
     },
   },
   transpileDependencies: ['@coreui/utils'],
-  outputDir: path.resolve(__dirname, '../public'),
-};
+    outputDir: path.resolve(__dirname, '../public'),
+    devServer: {
+      allowedHosts: [
+        'workflow-maiden-justice-notices.trycloudflare.com',
+        'generated-coupons-shows-this.trycloudflare.com',
+        '.trycloudflare.com',
+        '.localhost',
+      ],
+    },
+  };

@@ -14,7 +14,7 @@
             :status_code="'mst_product'"
             :filterAction="customActionFilter"
             :action="['copy', 'read', 'update', 'delete']"
-            :filterBy="['All', 'mst_product_category_id']"
+            :filterBy="['All']"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleReload="loadData($event)"

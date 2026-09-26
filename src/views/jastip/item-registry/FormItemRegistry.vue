@@ -181,8 +181,8 @@ export default {
             product_id: item.product_id,
             warehouse_id: item.warehouse_id,
             quantity: item.quantity,
-            cost_price: item.cost_price,
-            selling_price: item.selling_price,
+            cost_price: item.foreign_cost,
+            selling_price: item.local_price,
             cost_code: item.cost_code,
             selling_code: item.selling_code,
           };

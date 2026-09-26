@@ -486,21 +486,6 @@ export default {
       this.page = 1;
       this.loadData();
     },
-    rowUpdate(item) {
-      this.$router.push({
-        path: `layout/update/${item.id}`,
-      });
-    },
-    rowRead(item) {
-      this.$router.push({
-        path: `layout/read/${item.id}`,
-      });
-    },
-    addNew() {
-      this.$router.push({
-        path: `layout/create`,
-      });
-    },
     validation() {
       let message = 'Please input all the required data.';
       let error = false;

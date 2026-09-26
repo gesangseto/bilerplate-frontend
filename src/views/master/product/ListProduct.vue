@@ -16,9 +16,8 @@
             :fields="fields"
             :items="reformatDatas"
             :status_code="'mst_product'"
-            :filterAction="customActionFilter"
             :action="['copy', 'read', 'update', 'delete']"
-            :filterBy="['All', 'mst_product_category_id']"
+            :filterBy="['All']"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
             v-on:handleCopy="addNew($event)"
@@ -46,7 +45,7 @@
 
 <script>
 import { deleteMstProduct, getMstProduct } from '../../../resource/MstProduct';
-import { exportDataV3, getUserId } from '../../../utils';
+import { exportDataV3 } from '../../../utils';
 
 export default {
   name: 'ListProduct',
@@ -63,7 +62,6 @@ export default {
   },
   data() {
     return {
-      user_id: getUserId(),
       totalData: 0,
       items: [],
       fields: [
@@ -73,47 +71,16 @@ export default {
           _classes: 'font-weight-bold',
         },
         {
-          key: 'itemNo',
-          label: 'Item No ERP',
-        },
-        {
           key: 'name',
           label: 'Product Name',
         },
         {
-          key: 'gtin',
-          label: 'L1 GTIN',
-        },
-        {
-          key: 'nie',
-          label: 'NIE',
-        },
-        {
-          key: 'product_category_name',
-          label: 'Category',
-        },
-        {
-          key: 'packagingl2_name',
-          label: 'L2 Pkg',
-        },
-        {
-          key: 'qty_packagingl2',
-          label: 'L2 Qty Cnt',
-        },
-        {
-          key: 'product_type',
-          label: 'Product Type',
-          sorter: false,
-          filter: false,
+          key: 'description',
+          label: 'Description',
         },
         {
           key: 'status',
           label: 'Status',
-          _classes: 'font-weight-bold',
-        },
-        {
-          key: 'show_status',
-          label: 'Show',
           _classes: 'font-weight-bold',
         },
         {
@@ -127,13 +94,6 @@ export default {
     };
   },
   methods: {
-    customActionFilter(item) {
-      let action = ['create', 'read', 'update', 'copy', 'delete'];
-      // if (this.user_id == 0) {
-      //   action.push('copy');
-      // }
-      return action;
-    },
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let res = await getMstProduct(filter);
@@ -189,14 +149,7 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
-          packagingl2_name: item.packagingl2_name || '-',
-          qty_packagingl2: item.qty_packagingl2 || '-',
-          show_status: item.show_status ? 'Yes' : 'No',
-          itemNo: item.no,
-          product_type: item.product_type == 0 ? 'Serial' : 'Non-Serial',
-          categoryName: item.category ? item.category.name : '',
-          packagingL1Name: item.packagingL1 ? item.packagingL1.name : '',
-          gtin: item.gtin ? item.gtin : '',
+          description: item.description || '-',
         };
       });
     },

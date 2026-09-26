@@ -150,8 +150,8 @@ export default {
         { key: 'customer_name', label: 'Customer' },
         { key: 'product_name', label: 'Product' },
         { key: 'quantity', label: 'Qty' },
-        { key: 'cost_price', label: 'Cost' },
-        { key: 'selling_price', label: 'Selling' },
+        { key: 'foreign_cost', label: 'Cost (F)' },
+        { key: 'local_price', label: 'Selling (L)' },
         { key: 'action', label: 'Action', sorter: false },
       ],
       draftFields: [
@@ -160,8 +160,8 @@ export default {
         { key: 'customer_name', label: 'Customer' },
         { key: 'product_name', label: 'Product' },
         { key: 'quantity', label: 'Qty' },
-        { key: 'cost_price', label: 'Cost' },
-        { key: 'selling_price', label: 'Selling' },
+        { key: 'foreign_cost', label: 'Cost (F)' },
+        { key: 'local_price', label: 'Selling (L)' },
       ],
     };
   },
@@ -295,11 +295,11 @@ export default {
           ...item,
           customer_name: item.customer_name || '-',
           product_name: item.product_name || '-',
-          cost_price: item.cost_price
-            ? this.formatCurrency(item.cost_price)
+          foreign_cost: item.foreign_cost
+            ? this.formatCurrency(item.foreign_cost)
             : '-',
-          selling_price: item.selling_price
-            ? this.formatCurrency(item.selling_price)
+          local_price: item.local_price
+            ? this.formatCurrency(item.local_price)
             : '-',
         };
       });

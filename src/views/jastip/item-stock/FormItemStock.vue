@@ -40,18 +40,33 @@
                 disabled
               />
               <InputDefault
-                title="Cost Price"
-                :value="formData.cost_price"
+                title="Cost Price (Foreign)"
+                :value="formData.foreign_cost"
                 disabled
               />
               <InputDefault
-                title="Selling Price"
-                :value="formData.selling_price"
+                title="Selling Price (Local)"
+                :value="formData.local_price"
                 disabled
               />
               <InputDefault
-                title="Shipment Price"
-                :value="formData.shipment_price"
+                title="Local Cost"
+                :value="formData.local_cost"
+                disabled
+              />
+              <InputDefault
+                title="Foreign Price"
+                :value="formData.foreign_price"
+                disabled
+              />
+              <InputDefault
+                title="Shipment (Local)"
+                :value="formData.local_shipping"
+                disabled
+              />
+              <InputDefault
+                title="Profit (Local)"
+                :value="formData.local_profit"
                 disabled
               />
               <InputDefault
@@ -120,9 +135,12 @@ export default {
         product_name: null,
         warehouse_name: null,
         quantity: null,
-        cost_price: null,
-        selling_price: null,
-        shipment_price: null,
+        foreign_cost: null,
+        local_price: null,
+        local_cost: null,
+        foreign_price: null,
+        local_shipping: null,
+        local_profit: null,
         cost_code: null,
         selling_code: null,
         status_name: null,
@@ -158,14 +176,23 @@ export default {
             product_name: item.product_name || '-',
             warehouse_name: item.warehouse_name || '-',
             quantity: item.quantity,
-            cost_price: item.cost_price
-              ? this.formatCurrency(item.cost_price)
+            foreign_cost: item.foreign_cost
+              ? this.formatCurrency(item.foreign_cost)
               : '-',
-            selling_price: item.selling_price
-              ? this.formatCurrency(item.selling_price)
+            local_price: item.local_price
+              ? this.formatCurrency(item.local_price)
               : '-',
-            shipment_price: item.shipment_price
-              ? this.formatCurrency(item.shipment_price)
+            local_cost: item.local_cost
+              ? this.formatCurrency(item.local_cost)
+              : '-',
+            foreign_price: item.foreign_price
+              ? this.formatCurrency(item.foreign_price)
+              : '-',
+            local_shipping: item.local_shipping
+              ? this.formatCurrency(item.local_shipping)
+              : '-',
+            local_profit: item.local_profit
+              ? this.formatCurrency(item.local_profit)
               : '-',
             cost_code: item.cost_code || '-',
             selling_code: item.selling_code || '-',

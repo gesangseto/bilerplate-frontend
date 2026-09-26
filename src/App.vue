@@ -19,7 +19,6 @@ import {
   Button,
   ButtonBack,
   ButtonPermission,
-  MasterPid,
   HeaderShowStatus,
   CancelModal,
   ShowLockedStatus,
@@ -65,7 +64,6 @@ Vue.component('TableDefault', TableDefault);
 Vue.component('ButtonPopover', ButtonPopover);
 Vue.component('VirtualKeyboard', VirtualKeyboard);
 Vue.component('v-icon', Icon);
-Vue.component('MasterPid', MasterPid);
 Vue.component('Button', Button);
 Vue.component('ButtonBack', ButtonBack);
 Vue.component('ButtonPermission', ButtonPermission);

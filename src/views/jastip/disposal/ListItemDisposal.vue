@@ -63,8 +63,8 @@ export default {
         { key: 'customer_phone', label: 'Phone' },
         { key: 'product_name', label: 'Product' },
         { key: 'quantity', label: 'Qty' },
-        { key: 'cost_price', label: 'Cost' },
-        { key: 'selling_price', label: 'Selling' },
+        { key: 'foreign_cost', label: 'Cost (F)' },
+        { key: 'local_price', label: 'Selling (L)' },
         { key: 'status_name', label: 'Status' },
         { key: 'created_full_name', label: 'Created By' },
         { key: 'action', label: 'Action', sorter: false, filter: false },
@@ -108,11 +108,11 @@ export default {
           customer_name: item.customer_name || '-',
           customer_phone: item.customer_phone || '-',
           product_name: item.product_name || '-',
-          cost_price: item.cost_price
-            ? this.formatCurrency(item.cost_price)
+          foreign_cost: item.foreign_cost
+            ? this.formatCurrency(item.foreign_cost)
             : '-',
-          selling_price: item.selling_price
-            ? this.formatCurrency(item.selling_price)
+          local_price: item.local_price
+            ? this.formatCurrency(item.local_price)
             : '-',
           created_full_name: item.created_full_name || '-',
         };

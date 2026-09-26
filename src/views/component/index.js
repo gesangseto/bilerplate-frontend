@@ -1,7 +1,6 @@
 import ButtonPermission from './ButtonPermission';
 import Button from './Button';
 import HeaderShowStatus from './HeaderShowStatus';
-import MasterPid from './MasterPid';
 import CancelModal from './CancelModal';
 import ShowLockedStatus from './ShowLockedStatus';
 import DetailBarcodeGenerator from './DetailBarcodeGenerator';
@@ -42,7 +41,6 @@ export {
   ButtonDownloadFilePath,
   Button,
   ButtonBack,
-  MasterPid,
   HeaderShowStatus,
   CancelModal,
   ShowLockedStatus,
