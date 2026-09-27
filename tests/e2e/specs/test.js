@@ -10,7 +10,7 @@ module.exports = {
     // ('Closing down... browser', typeof browser)
   },
 
-  "CoreUI Vue e2e tests": function (browser) {
+  'CoreUI Vue e2e tests': function (browser) {
     // automatically uses dev Server port from /config.index.js
     // default: http://localhost:8080
     // see nightwatch.conf.js
@@ -18,15 +18,15 @@ module.exports = {
     // const devServer = browser.globals.devServerURL
     const devServer = process.env.VUE_DEV_SERVER_URL;
 
-    browser.url(devServer).pause(500).expect.element("body").to.be.present;
+    browser.url(devServer).pause(500).expect.element('body').to.be.present;
 
     browser
-      .waitForElementVisible(".c-app", 2000)
-      .assert.elementPresent(".c-header")
-      .assert.elementPresent(".c-sidebar")
-      .assert.elementPresent(".c-footer")
-      .assert.elementPresent(".c-sidebar")
-      .assert.elementPresent(".c-body");
+      .waitForElementVisible('.c-app', 2000)
+      .assert.elementPresent('.c-header')
+      .assert.elementPresent('.c-sidebar')
+      .assert.elementPresent('.c-footer')
+      .assert.elementPresent('.c-sidebar')
+      .assert.elementPresent('.c-body');
 
     // browser.resizeWindow(700, 800)
     // browser.expect.element('.c-sidebar').to.have.css('margin-left').which.equals('-256px')

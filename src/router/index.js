@@ -204,6 +204,11 @@ const FormCurrency = () =>
 // Cron Schedule
 const ListCron = () => import('@/views/configuration/cron_schedule/List');
 const FormCron = () => import('@/views/configuration/cron_schedule/Form');
+// Message Template
+const ListMessageTemplate = () =>
+  import('@/views/configuration/message-template/List');
+const FormMessageTemplate = () =>
+  import('@/views/configuration/message-template/Form');
 // Metadata
 const ListMetadata = () =>
   import('@/views/configuration/metadata/ListMetadata');
@@ -1057,6 +1062,25 @@ function configRoutes() {
           name: 'Cron',
           meta: { login: true },
           component: ListCron,
+        },
+        // MESSAGE TEMPLATE
+        {
+          path: 'message-template/:type/:id',
+          name: 'Message Template Details',
+          component: FormMessageTemplate,
+          meta: { login: true },
+        },
+        {
+          path: 'message-template/:type',
+          name: 'Message Template Add',
+          component: FormMessageTemplate,
+          meta: { login: true },
+        },
+        {
+          path: 'message-template',
+          name: 'Message Template',
+          meta: { login: true },
+          component: ListMessageTemplate,
         },
         // CONF CONNECTOR
         {
