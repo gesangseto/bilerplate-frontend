@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/configuration/station`;
+let url = `/v1/configuration/station`;
 
 export const getConfStation = async (param = Object) => {
   var query_string = '';

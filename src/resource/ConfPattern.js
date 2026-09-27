@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/configuration/pattern`;
+let url = `/v1/configuration/pattern`;
 
 export const getConfPattern = async (param = Object) => {
   var query_string = '';

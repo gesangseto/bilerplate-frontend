@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/system/database-content`;
+let url = `/v1/system/database-content`;
 
 export const getSysDatabaseContent = async (param = Object) => {
   var query_string = '';

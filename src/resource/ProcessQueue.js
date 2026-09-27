@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/system-process/process-queue`;
+let url = `/v1/system-process/process-queue`;
 
 export const getProcessQueue = async (param = Object) => {
   var query_string = '';

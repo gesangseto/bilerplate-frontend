@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/system/script-injection`;
+let url = `/v1/system/script-injection`;
 
 export const getSysScriptInj = async (param = Object) => {
   var query_string = '';

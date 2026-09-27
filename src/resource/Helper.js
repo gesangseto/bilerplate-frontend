@@ -24,7 +24,7 @@ export const getInOutDashboard = async (param = Object) => {
   if (param) {
     query_string = new URLSearchParams(param).toString();
   }
-  let url = `/v4/dashboard/in-out`;
+  let url = `/v1/dashboard/in-out`;
   return new Promise((resolve) => {
     $axios
       .get(`${url}?${query_string}`)

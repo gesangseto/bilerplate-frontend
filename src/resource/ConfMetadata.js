@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/configuration/metadata`;
+let url = `/v1/configuration/metadata`;
 
 export const getConfMetadata = async (param = Object) => {
   var query_string = '';

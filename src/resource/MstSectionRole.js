@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/master/role-access`;
+let url = `/v1/master/role-access`;
 
 export const getMstSectionRole = async (param = Object) => {
   var query_string = '';

@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/helper/whatsapp`;
+let url = `/v1/helper/whatsapp`;
 
 export const getWhatsappQr = async () => {
   return new Promise((resolve) => {

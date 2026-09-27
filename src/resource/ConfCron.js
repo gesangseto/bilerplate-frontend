@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/configuration/cron-schedule`;
+let url = `/v1/configuration/cron-schedule`;
 
 export const getConfCron = async (param = Object) => {
   var query_string = '';

@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/maintenance`;
+let url = `/v1/maintenance`;
 
 export const getDatabaseLog = async (filter = {}) => {
   let param = `${new URLSearchParams(filter).toString()}`;

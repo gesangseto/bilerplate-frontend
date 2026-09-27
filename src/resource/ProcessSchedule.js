@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v4/system-process/process-schedule`;
+let url = `/v1/system-process/process-schedule`;
 
 export const getProcessSchedule = async (param = Object) => {
   var query_string = '';
