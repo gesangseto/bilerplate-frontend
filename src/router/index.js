@@ -252,10 +252,6 @@ const JastipFormInbound = () => import('@/views/jastip/inbound/FormInbound');
 // PICKING SESSION
 const JastipListPicking = () => import('@/views/jastip/picking/ListPicking');
 const JastipFormPicking = () => import('@/views/jastip/picking/FormPicking');
-const JastipListItemStock = () =>
-  import('@/views/jastip/item-stock/ListItemStock');
-const JastipFormItemStock = () =>
-  import('@/views/jastip/item-stock/FormItemStock');
 const JastipListItemDisposal = () =>
   import('@/views/jastip/disposal/ListItemDisposal');
 const JastipFormItemDisposal = () =>
@@ -906,7 +902,7 @@ function configRoutes() {
           meta: { login: true },
           component: ReportStock,
         },
-        // Item Stock
+        // Item Stock (under Report)
         {
           path: 'item-stock',
           name: 'Item Stock',
@@ -1286,8 +1282,8 @@ function configRoutes() {
         },
       },
       children: [
-              {
-                path: 'item-registry/:type/:id',
+        {
+          path: 'item-registry/:type/:id',
           name: 'Item Registry (Details)',
           meta: { login: true },
           component: JastipFormItemRegistry,
@@ -1358,24 +1354,6 @@ function configRoutes() {
           name: 'Picking (Home)',
           meta: { login: true },
           component: JastipListPicking,
-        },
-        {
-          path: 'item-stock/:type/:id',
-          name: 'Item Stock (Details)',
-          meta: { login: true },
-          component: JastipFormItemStock,
-        },
-        {
-          path: 'item-stock/:type',
-          name: 'Item Stock (Details)',
-          meta: { login: true },
-          component: JastipFormItemStock,
-        },
-        {
-          path: 'item-stock',
-          name: 'Item Stock (Home)',
-          meta: { login: true },
-          component: JastipListItemStock,
         },
         {
           path: 'item-disposal/:type/:id',

@@ -346,10 +346,10 @@ export default {
     formatDate(val) {
       return val ? moment(val).format('DD-MMM-YYYY HH:mm') : '-';
     },
-    formatCurrency(val) {
+    formatCurrency(val, currency = 'IDR') {
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
-        currency: 'IDR',
+        currency: currency,
         minimumFractionDigits: 0,
       }).format(Number(val || 0));
     },
@@ -361,10 +361,10 @@ export default {
         ...c,
         customer_name: c.customer_name || '-',
         customer_phone: c.customer_phone || '-',
-        grand_total: this.formatCurrency(c.grand_total),
-        total_paid: this.formatCurrency(c.total_paid),
-        total_pending: this.formatCurrency(c.total_pending),
-        remaining_amount: this.formatCurrency(c.remaining_amount),
+        grand_total: this.formatCurrency(c.grand_total, c.local_currency),
+        total_paid: this.formatCurrency(c.total_paid, c.local_currency),
+        total_pending: this.formatCurrency(c.total_pending, c.local_currency),
+        remaining_amount: this.formatCurrency(c.remaining_amount, c.local_currency),
         payment_status: c.payment_status || '-',
       }));
     },

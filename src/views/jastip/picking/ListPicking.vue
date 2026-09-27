@@ -246,10 +246,10 @@ export default {
         url: '/v1/jastip/picking',
       });
     },
-    formatCurrency(val) {
+    formatCurrency(val, currency = 'IDR') {
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
-        currency: 'IDR',
+        currency: currency,
         minimumFractionDigits: 0,
       }).format(val);
     },
@@ -274,7 +274,7 @@ export default {
             : '-',
           courier_number: item.courier_number || '-',
           courier_price: item.courier_price
-            ? this.formatCurrency(item.courier_price)
+            ? this.formatCurrency(item.courier_price, item.courier_currency)
             : '-',
           status_name: STATUS_PICKING[item.status] || item.status_name || '-',
           created_full_name: item.created_full_name || '-',

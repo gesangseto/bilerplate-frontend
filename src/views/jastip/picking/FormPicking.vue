@@ -150,7 +150,10 @@
             <ButtonBack />
           </div>
           <div class="float-right">
-            <ExportButtons v-if="action !== 'ADD'" @export="handleClickExport" />
+            <ExportButtons
+              v-if="action !== 'ADD'"
+              @export="handleClickExport"
+            />
           </div>
         </CCardFooter>
       </CCard>
@@ -221,6 +224,7 @@ import {
   handleBack,
   generateIdempotencyKey,
   capitalizeFirstLetter,
+  formatNumber,
 } from '../../../utils';
 
 export default {
@@ -265,15 +269,18 @@ export default {
         tooltip: 'Kirim',
       },
       fields: [
+        { key: 'barcode', label: 'Barcode' },
         { key: 'product_name', label: 'Product' },
         { key: 'quantity', label: 'Qty' },
-        { key: 'foreign_cost', label: 'Cost (F)' },
-        { key: 'foreign_price', label: 'Price (F)' },
-        { key: 'local_cost', label: 'Cost (L)' },
-        { key: 'local_price', label: 'Selling (L)' },
-        { key: 'local_shipping', label: 'Shipping (L)' },
-        { key: 'local_profit', label: 'Profit (L)' },
-        { key: 'action', label: 'Action', sorter: false },
+        { key: 'foreign_currency', label: 'Foreign Curr.' },
+        { key: 'foreign_cost', label: '(F) Cost' },
+        { key: 'foreign_price', label: '(F) Price' },
+        { key: 'local_currency', label: 'Local Curr.' },
+        { key: 'local_cost', label: '(L) Cost' },
+        { key: 'local_price', label: '(L) Price' },
+        { key: 'local_shipping', label: '(L) Shipping' },
+        { key: 'local_profit', label: '(L) Profit' },
+        { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
       grnFields: [
         { key: 'selected', label: 'Check', sorter: false },
@@ -528,10 +535,10 @@ export default {
         }
       }
     },
-    formatCurrency(val) {
+    formatCurrency(val, currency = 'IDR') {
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
-        currency: 'IDR',
+        currency: currency,
         minimumFractionDigits: 0,
       }).format(val);
     },
@@ -571,12 +578,20 @@ export default {
         };
       });
     },
+
     renderItems() {
       return this.items.map((item) => {
         return {
           ...item,
-          customer_name: item.customer_name || '-',
+          barcode: item.barcode || '-',
           product_name: item.product_name || '-',
+          warehouse_name: item.warehouse_name || '-',
+          foreign_cost: formatNumber(item.foreign_cost) || '-',
+          foreign_price: formatNumber(item.foreign_price) || '-',
+          local_cost: formatNumber(item.local_cost) || '-',
+          local_price: formatNumber(item.local_price) || '-',
+          local_shipping: formatNumber(item.local_shipping) || '-',
+          local_profit: formatNumber(item.local_profit) || '-',
         };
       });
     },

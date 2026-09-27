@@ -81,10 +81,10 @@ export default {
         url: '/v1/jastip/outbound-manifest',
       });
     },
-    formatCurrency(val) {
+    formatCurrency(val, currency = 'IDR') {
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
-        currency: 'IDR',
+        currency: currency,
         minimumFractionDigits: 0,
       }).format(val);
     },
@@ -98,7 +98,7 @@ export default {
           supplier_name: item.supplier_name || '-',
           shipment_number: item.shipment_number || '-',
           shipment_price: item.shipment_price
-            ? this.formatCurrency(item.shipment_price)
+            ? this.formatCurrency(item.shipment_price, item.shipment_currency)
             : '-',
           created_full_name: item.created_full_name || '-',
         };

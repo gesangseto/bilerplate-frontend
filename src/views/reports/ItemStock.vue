@@ -6,217 +6,185 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
-          <TableTransaction
-            :totalData="totalData"
-            :fields="fields"
-            :items="reformatItems"
-            :status_code="'product_stock_serial'"
-            status_code_default="1"
-            :filterBy="['All', 'product_id', 'warehouse_id']"
-            v-on:handleReload="loadData($event)"
-          >
-            <template #extra-action="{ item, index }">
-              <Button
-                v-c-tooltip="'View'"
-                v-if="item.packaging_level > 1"
-                :type="'read'"
-                @click="rowClicked(item, index)"
-                class="float-right"
+          <CRow>
+            <CCol sm="12" md="12" lg="12">
+              <TableTransaction
+                :totalData="totalData"
+                :fields="fields"
+                :items="reformatItems"
+                :status_code="'item_stock'"
+                :action="['read']"
+                :filterBy="[
+                  'All',
+                  'id',
+                  'customer_id',
+                  'customer_name',
+                  'status',
+                  'session_id',
+                ]"
+                :orderFilter="[
+                  'All',
+                  'id',
+                  'customer_id',
+                  'customer_name',
+                  'status',
+                  'session_id',
+                ]"
+                :costumeFilter="costumeFilter"
+                v-on:handleReload="loadData($event)"
               />
-              <Button
-                :type="'read'"
-                v-if="item.lock_trx_id"
-                v-c-tooltip="btn_2_prop.tooltip"
-                :buttonProperty="btn_2_prop"
-                v-on:click="showLockedStatus(item, index)"
-                class="float-left"
-              />
-            </template>
-          </TableTransaction>
+            </CCol>
+          </CRow>
         </CCardBody>
         <CCardFooter>
           <div class="float-right">
-            <ButtonPermission
-              exportType="excel"
-              :permission="'print'"
-              @click="handleClickExport('xls')"
-            />
-            <ButtonPermission
-              exportType="pdf"
-              :permission="'print'"
-              @click="handleClickExport('pdf')"
-            />
+            <ExportButtons @export="handleClickExport" />
           </div>
         </CCardFooter>
       </CCard>
     </CCol>
-    <CModal
-      size="xl"
-      centered="centered"
-      :show.sync="viewModal"
-      title="Detail"
-      color="warning"
-    >
-      <DetailTransactionV3 v-if="viewModal == true" :item="detail_item" />
-      <template #footer>
-        <CButton size="sm" color="danger" type="button" @click="closeModal()">
-          <CIcon name="cil-x-circle" /> Close
-        </CButton>
-      </template>
-    </CModal>
-
-    <ShowLockedStatus
-      :property="property_lock_status"
-      v-on:handleSubmit="handleCancel()"
-    />
   </CRow>
 </template>
 
 <script>
 import $axios from '../../api';
-import { exportDataV3 } from '../../utils';
+import { exportDataV3, formatNumber } from '../../utils';
+
+const STATUS_ITEM = {
+  200: 'Draft',
+  201: 'Manifesting',
+  202: 'In Transit',
+  203: 'GRN',
+  204: 'Dispatch',
+  205: 'Sold',
+};
 
 export default {
-  name: 'ReportStock',
-  mounted() {},
+  name: 'ItemStock',
   data() {
     return {
-      load_count: 0,
-      property_lock_status: {
-        modal: false,
-        item: {},
-      },
-      btn_2_prop: {
-        size: 'sm',
-        class: 'float-right',
-        color: 'danger',
-        icon: 'exclamation-circle',
-        text: '',
-        tooltip: 'Show Locking Trx',
-      },
       totalData: 0,
-      filter: null,
       items: [],
-      datas: [],
-      detail_item: {},
-      viewModal: false,
+      sessionOptions: [],
+      customerOptions: [],
+      costumeFilter: [
+        {
+          value: 'session_id',
+          label: 'Session',
+          data: [],
+        },
+        {
+          value: 'customer_id',
+          label: 'Customer',
+          data: [],
+        },
+      ],
       fields: [
-        {
-          key: 'product_no',
-          label: 'Item No',
-        },
-        {
-          key: 'product_name',
-          label: 'Product Name',
-        },
-        {
-          key: 'batch_no',
-          label: 'Batch No',
-        },
-        {
-          key: 'expired_date',
-          label: 'Exp Date',
-        },
-        {
-          key: 'epc_key',
-          label: 'EPC Key',
-        },
-        {
-          key: 'serial',
-          label: 'Serial',
-        },
-        {
-          key: 'packaging_level',
-          label: 'Pkg Level',
-        },
-        {
-          key: 'packaging_name',
-          label: 'Pkg Name',
-        },
-        {
-          key: 'quantity',
-          label: 'L1 Qty',
-        },
-        {
-          key: 'warehouse_name',
-          label: 'Warehouse',
-        },
-        {
-          key: 'status_name',
-          label: 'Status',
-        },
-        {
-          key: 'action',
-          label: 'Action',
-          _style: 'width:10%',
-          sorter: false,
-          filter: false,
-        },
+        { key: 'barcode', label: 'Barcode' },
+        { key: 'customer_name', label: 'Customer' },
+        { key: 'product_name', label: 'Product' },
+        { key: 'quantity', label: 'Qty' },
+        { key: 'foreign_currency', label: 'Foreign Curr.' },
+        { key: 'foreign_cost', label: '(F) Cost' },
+        { key: 'foreign_price', label: '(F) Price' },
+        { key: 'local_currency', label: 'Local Curr.' },
+        { key: 'local_cost', label: '(L) Cost' },
+        { key: 'local_price', label: '(L) Price' },
+        { key: 'local_shipping', label: '(L) Shipping' },
+        { key: 'local_profit', label: '(L) Profit' },
+        { key: 'status_name', label: 'Status' },
+        { key: 'payment_status', label: 'Payment' },
+        { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
     };
   },
+  mounted() {
+    this.loadSessions();
+    this.loadCustomers();
+  },
   methods: {
-    async loadData(filter) {
-      if (!filter) filter = this.$route.query;
-      if (filter) this.filter = filter;
-      this.load_count += 1;
-      this.items = [];
-      let param = `${new URLSearchParams(filter).toString()}`;
-      let url = `/v4/report/item-stock?raw=true&${param}`;
-      $axios.get(url).then((res) => {
-        res = res.data;
-        this.totalData = res.grand_total || 0;
-        this.items = res.data || 0;
-      });
-    },
-
-    closeModal() {
-      this.detail_item = {};
-      this.datas = [];
-      this.viewModal = false;
-    },
-    showLockedStatus(item) {
-      this.property_lock_status.modal = true;
-      this.property_lock_status.item = item;
-    },
-    rowClicked(item) {
-      this.datas = [];
-      if (item.packaging_level == 1) {
-        this.$toast.open({
-          message: `No detail SN data to be viewed, SN [${item.serial_id}] is Packaging L1`,
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
+    async loadSessions() {
+      try {
+        const res = await $axios.get('/v1/jastip/session', {
+          params: { limit: 100 },
         });
-        return false;
+        const list = res.data.data || [];
+        this.sessionOptions = list.map((s) => ({
+          value: s.id,
+          label: `${s.session_no} (${s.country || '-'} - ${s.status})`,
+          text: `${s.session_no} (${s.country || '-'} - ${s.status})`,
+        }));
+        // Isi data session ke costumeFilter (sudah terdaftar static di data())
+        if (this.costumeFilter.length > 0) {
+          this.costumeFilter[0].data = this.sessionOptions;
+        }
+      } catch (e) {
+        console.error(e);
       }
-      this.detail_item = item;
-      this.viewModal = true;
-      return;
+    },
+    async loadCustomers() {
+      try {
+        const res = await $axios.get('/v1/master/customer', {
+          params: { limit: 100 },
+        });
+        const list = res.data.data || [];
+        this.customerOptions = list.map((c) => ({
+          value: c.id,
+          label: c.name,
+          text: c.name,
+        }));
+        // Isi data customer ke costumeFilter index 1 (Customer)
+        if (this.costumeFilter.length > 1) {
+          this.costumeFilter[1].data = this.customerOptions;
+        }
+      } catch (e) {
+        console.error(e);
+      }
     },
     handleClickExport(type) {
       exportDataV3({
-        alert: true,
         param: this.$route.query,
         exportType: type,
-        url: '/v4/report/item-stock',
+        url: '/v1/jastip/item-stock',
       });
     },
-    getNumber(num) {
-      num = (this.$route.query.page - 1) * this.$route.query.limit + num;
-      return num;
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
+      let param = `${new URLSearchParams(filter).toString()}`;
+      $axios.get(`/v1/jastip/item-stock?${param}`).then((res) => {
+        res = res.data;
+        this.totalData = res.grand_total || 0;
+        this.items = res.data || [];
+      });
+    },
+    formatCurrency(val, currency = 'IDR') {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 0,
+      }).format(val);
     },
   },
   computed: {
     reformatItems() {
-      return this.items.map((item, index) => {
+      return this.items.map((item) => {
+        let payment = '-';
+        if (item.payment_status === 0) payment = 'Waiting';
+        else if (item.payment_status === 1) payment = 'Paid';
         return {
           ...item,
-          nie: item.nie || '-',
-          gtin: item.gtin || '-',
-          warehouse_name: item.warehouse_name ? item.warehouse_name : '-',
-          no: this.getNumber(index + 1),
+          barcode: item.barcode || '-',
+          customer_name: item.customer_name || '-',
+          product_name: item.product_name || '-',
+          warehouse_name: item.warehouse_name || '-',
+          foreign_cost: formatNumber(item.foreign_cost) || '-',
+          foreign_price: formatNumber(item.foreign_price) || '-',
+          local_cost: formatNumber(item.local_cost) || '-',
+          local_price: formatNumber(item.local_price) || '-',
+          local_shipping: formatNumber(item.local_shipping) || '-',
+          local_profit: formatNumber(item.local_profit) || '-',
+          status_name: STATUS_ITEM[item.status] || item.status_name || '-',
+          payment_status: payment,
         };
       });
     },

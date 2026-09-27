@@ -133,7 +133,11 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3, handleBack, generateIdempotencyKey } from '../../../utils';
+import {
+  exportDataV3,
+  handleBack,
+  generateIdempotencyKey,
+} from '../../../utils';
 
 export default {
   name: 'FormInbound',
@@ -160,8 +164,16 @@ export default {
         { key: 'customer_name', label: 'Customer' },
         { key: 'product_name', label: 'Product' },
         { key: 'quantity', label: 'Qty' },
-        { key: 'foreign_cost', label: 'Cost (F)' },
-        { key: 'local_price', label: 'Selling (L)' },
+        { key: 'foreign_currency', label: 'Foreign Curr.' },
+        { key: 'foreign_cost', label: '(F) Cost' },
+        { key: 'foreign_price', label: '(F) Price' },
+        { key: 'local_currency', label: 'Local Curr.' },
+        { key: 'local_cost', label: '(L) Cost' },
+        { key: 'local_price', label: '(L) Price' },
+        { key: 'local_shipping', label: '(L) Shipping' },
+        { key: 'local_profit', label: '(L) Profit' },
+        { key: 'status_name', label: 'Status' },
+        { key: 'payment_status', label: 'Payment' },
       ],
     };
   },
@@ -260,13 +272,13 @@ export default {
       });
     },
     formatCurrency(val) {
-      return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0,
-      }).format(val);
+      if (val == null || val === '') return '-';
+      const n = Math.round(Number(val));
+      if (isNaN(n)) return '-';
+      return n.toLocaleString('id-ID');
     },
   },
+
   computed: {
     renderItems() {
       return this.items.map((item) => {
@@ -277,9 +289,28 @@ export default {
           foreign_cost: item.foreign_cost
             ? this.formatCurrency(item.foreign_cost)
             : '-',
+          foreign_price: item.foreign_price
+            ? this.formatCurrency(item.foreign_price)
+            : '-',
+          local_cost: item.local_cost
+            ? this.formatCurrency(item.local_cost)
+            : '-',
           local_price: item.local_price
             ? this.formatCurrency(item.local_price)
             : '-',
+          local_shipping: item.local_shipping
+            ? this.formatCurrency(item.local_shipping)
+            : '-',
+          local_profit: item.local_profit
+            ? this.formatCurrency(item.local_profit)
+            : '-',
+          status_name: item.status_name || '-',
+          payment_status:
+            item.payment_status === 1
+              ? 'Paid'
+              : item.payment_status === 0
+              ? 'Waiting'
+              : '-',
         };
       });
     },

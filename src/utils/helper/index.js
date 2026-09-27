@@ -4,13 +4,9 @@ import { getConfig } from '../storage';
 import cronstrue from 'cronstrue';
 const CryptoJs = require('crypto-js');
 
-export function costFormating(item) {
-  return `${item.cost_currency} ${item.cost_price}`;
-  console.log(item);
-
-  return item;
+export function formatNumber(val) {
+  return val.toLocaleString('id-ID');
 }
-
 export function calculatePagination({ filter = Object, item = Object }) {
   if (item.hasOwnProperty('status') && item.hasOwnProperty('headers')) {
     item = item.data;

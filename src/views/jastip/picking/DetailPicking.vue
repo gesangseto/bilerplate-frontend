@@ -294,11 +294,11 @@ export default {
         url: '/v1/jastip/picking',
       });
     },
-    formatCurrency(val) {
+    formatCurrency(val, currency = 'IDR') {
       if (val === null || val === undefined || val === '') return '-';
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
-        currency: 'IDR',
+        currency: currency,
         minimumFractionDigits: 0,
       }).format(val);
     },
@@ -324,10 +324,10 @@ export default {
           barcode: item.barcode || '-',
           batch_no: item.batch_no || '-',
           quantity: item.quantity || 0,
-          foreign_price: this.formatCurrency(item.foreign_price),
-          local_price: this.formatCurrency(item.local_price),
-          foreign_profit: this.formatCurrency(item.foreign_profit),
-          local_profit: this.formatCurrency(item.local_profit),
+          foreign_price: this.formatCurrency(item.foreign_price, item.foreign_currency),
+          local_price: this.formatCurrency(item.local_price, item.local_currency),
+          foreign_profit: this.formatCurrency(item.foreign_profit, item.foreign_currency),
+          local_profit: this.formatCurrency(item.local_profit, item.local_currency),
         };
       });
     },

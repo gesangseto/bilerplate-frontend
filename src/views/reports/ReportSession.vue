@@ -100,10 +100,10 @@ export default {
         url: '/v1/jastip/report/session',
       });
     },
-    formatCurrency(val) {
+    formatCurrency(val, currency = 'IDR') {
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
-        currency: 'IDR',
+        currency: currency,
         minimumFractionDigits: 0,
       }).format(val);
     },
