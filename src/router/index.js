@@ -825,13 +825,6 @@ function configRoutes() {
           meta: { login: true },
           component: ListStockOpname,
         },
-        // BPOM
-        {
-          path: 'bpom_reporting',
-          name: 'BPOM Reporting (Home)',
-          meta: { login: true },
-          component: ListBpom,
-        },
         // Queue BPOM
         {
           path: 'queue-bpom',

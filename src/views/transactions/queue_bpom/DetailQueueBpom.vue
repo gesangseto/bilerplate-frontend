@@ -63,7 +63,7 @@
               </CRow>
 
               <CButton
-                v-if="formData.can_proccess"
+                v-if="formData.can_process"
                 color="success"
                 @click="sendToBpom(formData)"
                 class="m-1 float-right"
@@ -71,7 +71,7 @@
                 <v-icon name="paper-plane" />
               </CButton>
               <CButton
-                v-if="formData.can_proccess"
+                v-if="formData.can_process"
                 color="info"
                 @click="viewModal = true"
                 class="m-1 float-right"

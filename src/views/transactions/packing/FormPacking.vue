@@ -132,7 +132,7 @@
           <CButton
             type="submit"
             size="sm"
-            @click="proccess_all()"
+            @click="process_all()"
             class="mr-2"
             color="primary"
             ><CIcon name="cil-check-circle" /> Submit</CButton
@@ -176,7 +176,7 @@ export default {
         }
         if (item.batch_no) {
           let idx = this.batchNumberOptions.findIndex(
-            (o) => o.value == item.batch_no
+            (o) => o.value == item.batch_no,
           );
           let batch = this.batchNumberOptions[idx];
           this.formData.batch_detail = batch;
@@ -214,7 +214,7 @@ export default {
         batch: null,
       },
       can_generate: true,
-      can_proccess: false,
+      can_process: false,
       can_delete: false,
       can_print: false,
       chekcedBatch: [],
@@ -386,10 +386,10 @@ export default {
       this.checkedSerials.splice(index, 1);
       this.chekcedBatch.splice(index, 1);
       if (this.items.length == 0) {
-        this.can_proccess = false;
+        this.can_process = false;
       }
     },
-    async proccess_all() {
+    async process_all() {
       if (!this.checkValidation()) {
         return;
       }
@@ -437,7 +437,7 @@ export default {
         temp_item.product_no = this.formData.batch_detail['product_no'];
         temp_item.product_name = this.formData.batch_detail['product_name'];
         temp_item.type = 'Full';
-        this.can_proccess = true;
+        this.can_process = true;
         this.items.push(temp_item);
         temp_item = {};
       }
@@ -456,12 +456,12 @@ export default {
         temp_item.product_name = this.formData.batch_detail['product_name'];
         temp_item.type = 'Partial';
         this.items.push(temp_item);
-        this.can_proccess = true;
+        this.can_process = true;
         temp_item = {};
       }
       if (this.items.length > 0) {
         this.can_delete = true;
-        this.can_proccess = true;
+        this.can_process = true;
       }
     },
     checkValidation() {

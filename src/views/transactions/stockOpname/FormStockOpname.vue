@@ -154,7 +154,7 @@ export default {
       },
       initialLoad: true,
       detail_item: {},
-      product_on_proccess: 0,
+      product_on_process: 0,
       datas: [],
       viewModal: false,
       view: {
@@ -282,7 +282,7 @@ export default {
       //   this.$toast.open({
       //     message: `This item SN [${item.epc_key}] ${
       //       item.serial
-      //     } is currently on pending proccess in ${convertTableName(
+      //     } is currently on pending process in ${convertTableName(
       //       item.locked_trx
       //     )} transaction (ID: ${item.locked_trx_id})`,
       //     type: "error",

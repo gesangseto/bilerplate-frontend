@@ -129,7 +129,7 @@ export default {
   methods: {
     customActionFilter(item) {
       let action = ['read'];
-      if (item.can_proccess) {
+      if (item.can_process) {
         action.push('update');
       }
       return action;
