@@ -82,7 +82,7 @@ export default {
       fields: [
         { key: 'barcode', label: 'Barcode' },
         { key: 'customer_name', label: 'Customer' },
-        { key: 'product_name', label: 'Product' },
+        { key: 'item_name', label: 'Item' },
         { key: 'quantity', label: 'Qty' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
@@ -175,7 +175,7 @@ export default {
           ...item,
           barcode: item.barcode || '-',
           customer_name: item.customer_name || '-',
-          product_name: item.product_name || '-',
+          item_name: item.item_name || '-',
           warehouse_name: item.warehouse_name || '-',
           foreign_cost: formatNumber(item.foreign_cost) || '-',
           foreign_price: formatNumber(item.foreign_price) || '-',
