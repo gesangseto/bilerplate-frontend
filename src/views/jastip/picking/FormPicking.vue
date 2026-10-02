@@ -3,138 +3,155 @@
     <CCol col="12" xl="12" sm="12">
       <CCard>
         <CCardHeader>
-          <h5>{{ $activeMenu.name }} [{{ action }}]</h5>
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ $activeMenu.name }} [{{ actionLabel }}]</h5>
+            <CBadge v-if="pickingStatus !== null" :color="statusColor">
+              {{ statusLabel }}
+            </CBadge>
+          </div>
         </CCardHeader>
         <CCardBody class="mb-5 mt-2">
           <CForm novalidate>
-            <CRow>
-              <CCol sm="12" md="6">
-                <SelectOption
-                  :disabled="!isEditable"
-                  title="Customer"
-                  placeholder="--Select--"
-                  required
-                  :options="listCustomer"
-                  :value="formData.customer_id"
-                  v-on:onchange="onCustomerChange($event)"
-                  :is-valid="
-                    initialLoad ? null : !formData.customer_id ? false : true
-                  "
-                />
-                <InputDefault
-                  :disabled="!isEditable"
-                  title="Receiver Name"
-                  placeholder="Nama penerima"
-                  v-model="formData.receiver_name"
-                />
-                <InputDefault
-                  :disabled="!isEditable"
-                  title="Receiver Phone"
-                  placeholder="No. telpon penerima"
-                  v-model="formData.receiver_phone"
-                />
-                <TextareaDefault
-                  :disabled="!isEditable"
-                  title="Receiver Address"
-                  placeholder="Address"
-                  v-model="formData.receiver_address"
-                />
-              </CCol>
-              <CCol sm="12" md="6">
-                <SelectOption
-                  :disabled="!isEditable"
-                  title="Courier"
-                  placeholder="--Select Active Courier--"
-                  required
-                  :options="listCourier"
-                  :value="formData.courier_id"
-                  v-on:onchange="formData.courier_id = $event"
-                  :is-valid="
-                    initialLoad ? null : !formData.courier_id ? false : true
-                  "
-                />
-                <InputDefault
-                  :disabled="!isEditable"
-                  title="Weight"
-                  placeholder="0"
-                  validasi="float"
-                  v-model="formData.weight"
-                />
-                <template
-                  v-if="
-                    action === 'Update' ||
-                    (action === 'Approve' && pickingStatus !== 2)
-                  "
-                >
-                  <InputDefault
-                    :disabled="!isEditable"
-                    title="Courier Number (Resi No)"
-                    placeholder="Nomor resi"
-                    v-model="formData.courier_number"
-                  />
-                  <InputDefault
-                    :disabled="!isEditable"
-                    title="Courier Price"
-                    placeholder="0"
-                    validasi="float"
-                    v-model="formData.courier_price"
-                  />
-                  <InputDefault
-                    :disabled="!isEditable"
-                    title="Courier Currency"
-                    placeholder="IDR"
-                    v-model="formData.courier_currency"
-                  />
-                </template>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol col="12" xl="12">
+            <!-- Card 1: Customer & Receiver -->
+            <CCard class="mb-3" color="light">
+              <CCardHeader class="py-2">
+                <strong>Customer & Receiver Information</strong>
+              </CCardHeader>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="12" md="6">
+                    <SelectOption
+                      :disabled="!isEditable"
+                      title="Customer"
+                      placeholder="--Select Customer--"
+                      required
+                      :options="listCustomer"
+                      :value="formData.customer_id"
+                      v-on:onchange="onCustomerChange($event)"
+                      :is-valid="initialLoad ? null : !formData.customer_id ? false : true"
+                    />
+                    <InputDefault
+                      :disabled="!isEditable"
+                      title="Receiver Name"
+                      placeholder="Nama penerima"
+                      required
+                      v-model="formData.receiver_name"
+                      :is-valid="initialLoad ? null : !formData.receiver_name ? false : true"
+                    />
+                    <InputDefault
+                      :disabled="!isEditable"
+                      title="Receiver Phone"
+                      placeholder="No. telpon penerima"
+                      required
+                      v-model="formData.receiver_phone"
+                      :is-valid="initialLoad ? null : !formData.receiver_phone ? false : true"
+                    />
+                    <TextareaDefault
+                      :disabled="!isEditable"
+                      title="Receiver Address"
+                      placeholder="Alamat penerima"
+                      required
+                      v-model="formData.receiver_address"
+                      :is-valid="initialLoad ? null : !formData.receiver_address ? false : true"
+                    />
+                  </CCol>
+                  <CCol sm="12" md="6">
+                    <SelectOption
+                      :disabled="!isEditable"
+                      title="Courier"
+                      placeholder="--Select Active Courier--"
+                      required
+                      :options="listCourier"
+                      :value="formData.courier_id"
+                      v-on:onchange="formData.courier_id = $event"
+                      :is-valid="initialLoad ? null : !formData.courier_id ? false : true"
+                    />
+                    <InputDefault
+                      :disabled="!isEditable"
+                      title="Weight (kg)"
+                      placeholder="0"
+                      validasi="float"
+                      v-model="formData.weight"
+                    />
+                    <template v-if="showCourierFields">
+                      <InputDefault
+                        :disabled="!isEditable"
+                        title="Courier Number (Resi No)"
+                        placeholder="Nomor resi"
+                        required
+                        v-model="formData.courier_number"
+                        :is-valid="initialLoad ? null : !formData.courier_number ? false : true"
+                      />
+                      <InputDefault
+                        :disabled="!isEditable"
+                        title="Courier Price"
+                        placeholder="0"
+                        validasi="float"
+                        required
+                        v-model="formData.courier_price"
+                        :is-valid="initialLoad ? null : !formData.courier_price ? false : true"
+                      />
+                      <InputDefault
+                        :disabled="!isEditable"
+                        title="Courier Currency"
+                        placeholder="IDR"
+                        required
+                        v-model="formData.courier_currency"
+                        :is-valid="initialLoad ? null : !formData.courier_currency ? false : true"
+                      />
+                    </template>
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
+
+            <!-- Card 2: Items -->
+            <CCard class="mb-3" color="light">
+              <CCardHeader class="py-2 d-flex justify-content-between align-items-center">
+                <strong>Items ({{ items.length }})</strong>
                 <CButton
                   v-if="isEditable"
                   size="sm"
-                  class="float-right m-1"
-                  color="success"
+                  color="primary"
                   @click="openModalAdd()"
                 >
                   <CIcon name="cil-plus" /> Add Item
                 </CButton>
-              </CCol>
-            </CRow>
+              </CCardHeader>
+              <CCardBody>
+                <CRow>
+                  <CCol sm="12" md="12" lg="12">
+                    <CDataTable
+                      tableFilter
+                      class="text-left"
+                      hover
+                      striped
+                      border
+                      :items="renderItems"
+                      :fields="fields"
+                      style="font-size: 12px"
+                    >
+                      <template #action="{ item, index }">
+                        <td>
+                          <Button
+                            v-if="isEditable"
+                            v-c-tooltip="'Delete'"
+                            :type="'delete'"
+                            @click="deleteRow(item, index)"
+                          />
+                        </td>
+                      </template>
+                    </CDataTable>
+                  </CCol>
+                </CRow>
+              </CCardBody>
+            </CCard>
           </CForm>
-          <CRow>
-            <CCol sm="12" md="12" lg="12">
-              <CDataTable
-                tableFilter
-                class="text-left"
-                hover
-                striped
-                border
-                :items="renderItems"
-                :fields="fields"
-                style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td>
-                    <Button
-                      v-if="isEditable"
-                      v-c-tooltip="'Delete'"
-                      :type="'delete'"
-                      @click="deleteRow(item, index)"
-                    />
-                  </td>
-                </template>
-              </CDataTable>
-            </CCol>
-          </CRow>
         </CCardBody>
         <CCardFooter>
           <div class="float-left">
             <ButtonPermission
-              v-if="
-                action === 'Create' ||
-                (action === 'Update' && pickingStatus === 0)
-              "
+              v-if="action === 'Create' || (action === 'Update' && pickingStatus === 0)"
               :permission="action === 'Create' ? 'create' : 'update'"
               :buttonProperty="btnSubmit"
               :useHref="false"
@@ -143,7 +160,7 @@
             <ButtonPermission
               v-if="action === 'Approve' && pickingStatus === 0"
               :permission="'approve'"
-              :buttonProperty="btnKirim"
+              :buttonProperty="btnDispatch"
               :useHref="false"
               @click="save()"
             />
@@ -217,7 +234,6 @@ import {
   dispatchPicking,
   insertPicking,
   updatePicking,
-  finishPicking,
 } from '../../../resource/TrxPicking';
 import {
   exportDataV3,
@@ -237,9 +253,9 @@ export default {
       formData: {
         customer_id: null,
         courier_id: null,
-        customer_address: null,
         receiver_name: null,
         receiver_phone: null,
+        receiver_address: null,
         weight: null,
         courier_number: null,
         courier_price: null,
@@ -260,13 +276,13 @@ export default {
         text: ' Submit',
         tooltip: 'Submit',
       },
-      btnKirim: {
+      btnDispatch: {
         size: 'sm',
         class: 'float-right',
         color: 'success',
         icon: 'paper-plane',
-        text: ' Kirim',
-        tooltip: 'Kirim',
+        text: ' Dispatch',
+        tooltip: 'Dispatch to Customer',
       },
       fields: [
         { key: 'barcode', label: 'Barcode' },
@@ -349,9 +365,9 @@ export default {
           this.formData = {
             customer_id: item.customer_id,
             courier_id: item.courier_id,
-            customer_address: item.receiver_address || '',
             receiver_name: item.receiver_name,
             receiver_phone: item.receiver_phone,
+            receiver_address: item.receiver_address,
             weight: item.weight,
             courier_number: item.courier_number,
             courier_price: item.courier_price,
@@ -421,7 +437,7 @@ export default {
     deleteRow(item) {
       this.items = this.items.filter((x) => x.id !== item.id);
     },
-    async save() {
+    validateForm() {
       if (!this.formData.customer_id) {
         this.$toast.open({
           message: 'Please select customer.',
@@ -430,7 +446,37 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        return;
+        return false;
+      }
+      if (!this.formData.receiver_name) {
+        this.$toast.open({
+          message: 'Please input receiver name.',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return false;
+      }
+      if (!this.formData.receiver_phone) {
+        this.$toast.open({
+          message: 'Please input receiver phone.',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return false;
+      }
+      if (!this.formData.receiver_address) {
+        this.$toast.open({
+          message: 'Please input receiver address.',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return false;
       }
       if (this.items.length <= 0) {
         this.$toast.open({
@@ -440,9 +486,19 @@ export default {
           position: 'top-right',
           duration: 5000,
         });
-        return;
+        return false;
       }
-      if (this.action === 'Approve' && this.pickingStatus !== 2) {
+      if (this.action === 'Approve' && this.pickingStatus === 0) {
+        if (!this.formData.courier_id) {
+          this.$toast.open({
+            message: 'Please select courier.',
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+          return false;
+        }
         if (!this.formData.courier_number) {
           this.$toast.open({
             message: 'Please input courier number (resi no).',
@@ -451,7 +507,7 @@ export default {
             position: 'top-right',
             duration: 5000,
           });
-          return;
+          return false;
         }
         if (
           this.formData.courier_price === null ||
@@ -465,7 +521,7 @@ export default {
             position: 'top-right',
             duration: 5000,
           });
-          return;
+          return false;
         }
         if (!this.formData.courier_currency) {
           this.$toast.open({
@@ -475,15 +531,20 @@ export default {
             position: 'top-right',
             duration: 5000,
           });
-          return;
+          return false;
         }
       }
+      return true;
+    },
+    async save() {
+      if (!this.validateForm()) return;
+
       let param = {
         customer_id: this.formData.customer_id,
         courier_id: this.formData.courier_id,
-        receiver_address: this.formData.receiver_address,
         receiver_name: this.formData.receiver_name,
         receiver_phone: this.formData.receiver_phone,
+        receiver_address: this.formData.receiver_address,
         weight: this.formData.weight,
         items: this.items.map((it) => ({ id: it.id })),
         idempotency_key: generateIdempotencyKey(),
@@ -491,23 +552,23 @@ export default {
       if (this.$route.params.id) {
         param.id = this.$route.params.id;
       }
-      if (this.action === 'Approve' && this.pickingStatus !== 2) {
+      if (this.action === 'Approve' && this.pickingStatus === 0) {
         param.courier_number = this.formData.courier_number;
         param.courier_price = Number(this.formData.courier_price);
         param.courier_currency = this.formData.courier_currency;
       }
+
       let message =
-        'You are about to finalize this transaction. This operation cannot be undone. Would you like to continue?';
+        this.action === 'Approve'
+          ? 'You are about to dispatch this picking to customer. This operation cannot be undone. Would you like to continue?'
+          : 'You are about to finalize this transaction. This operation cannot be undone. Would you like to continue?';
+
       if (confirm(message)) {
         this.$isLoading(true);
         let res = null;
         try {
           if (this.action === 'Approve') {
-            if (this.pickingStatus === 2) {
-              res = await finishPicking(param);
-            } else {
-              res = await dispatchPicking(param);
-            }
+            res = await dispatchPicking(param);
           } else if (this.action === 'Create') {
             res = await insertPicking(param);
           } else if (this.action === 'Update') {
@@ -554,8 +615,35 @@ export default {
     },
   },
   computed: {
+    actionLabel() {
+      if (this.action === 'Approve') return 'Dispatch';
+      return this.action;
+    },
     isEditable() {
       return this.action === 'Create' || this.action === 'Update';
+    },
+    showCourierFields() {
+      return this.action === 'Approve' && this.pickingStatus === 0;
+    },
+    statusLabel() {
+      const labels = {
+        '-1': 'Canceled',
+        0: 'In Progress',
+        1: 'Done',
+        2: 'In Courier',
+        3: 'Returned',
+      };
+      return labels[this.pickingStatus] || 'Unknown';
+    },
+    statusColor() {
+      const colors = {
+        '-1': 'danger',
+        0: 'warning',
+        1: 'success',
+        2: 'info',
+        3: 'secondary',
+      };
+      return colors[this.pickingStatus] || 'light';
     },
     allSelected() {
       return (
