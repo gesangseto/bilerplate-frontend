@@ -83,7 +83,7 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3, generateIdempotencyKey } from '../../../utils';
+import { exportDataV3, generateIdempotencyKey,formatNumber } from '../../../utils';
 import {
   finishPicking,
   returnPicking,
@@ -273,9 +273,7 @@ export default {
               }`
             : '-',
           courier_number: item.courier_number || '-',
-          courier_price: item.courier_price
-            ? this.formatCurrency(item.courier_price, item.courier_currency)
-            : '-',
+          courier_price: formatNumber(item.courier_price),       
           status_name: STATUS_PICKING[item.status] || item.status_name || '-',
           created_full_name: item.created_full_name || '-',
         };

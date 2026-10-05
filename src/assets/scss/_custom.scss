@@ -28,3 +28,24 @@
 .btn-danger:disabled {
   color: #fff;
 }
+
+// Tombol success: background hijau pekat + teks/icon putih.
+// $success (#88d13f) juga terlalu terang untuk color-yiq() -> teks dipilih gelap
+// (abu-abu) di atas hijau terang, hasilnya tidak kontras dan tidak enak dipandang.
+// Berlaku untuk semua tombol color="success" (+ Add, Submit, dsb) termasuk hover/focus.
+.btn-success,
+.btn-success.disabled,
+.btn-success:disabled,
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: #fff;
+}
+.btn-success:not(:disabled):not(.disabled):hover,
+.btn-success:not(:disabled):not(.disabled):focus {
+  background-color: #218838;
+  border-color: #1e7e34;
+  color: #fff;
+}

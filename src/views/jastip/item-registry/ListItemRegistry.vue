@@ -38,7 +38,7 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3 } from '../../../utils';
+import { exportDataV3, formatNumber } from '../../../utils';
 
 const STATUS_ITEM = {
   200: 'Draft',
@@ -57,11 +57,9 @@ export default {
       items: [],
       fields: [
         { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
-        { key: 'barcode', label: 'Barcode' },
         { key: 'customer_name', label: 'Customer' },
         { key: 'customer_phone', label: 'Phone' },
         { key: 'product_name', label: 'Product' },
-        { key: 'quantity', label: 'Qty' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
@@ -71,8 +69,6 @@ export default {
         { key: 'local_shipping', label: '(L) Shipping' },
         { key: 'local_profit', label: '(L) Profit' },
         { key: 'status_name', label: 'Status' },
-        { key: 'payment_status', label: 'Payment' },
-        { key: 'warehouse_name', label: 'Warehouse' },
         { key: 'created_full_name', label: 'Created By' },
         { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
@@ -117,24 +113,12 @@ export default {
           warehouse_name: item.warehouse_name || '-',
           foreign_currency: item.foreign_currency || '-',
           local_currency: item.local_currency || '-',
-          foreign_cost: item.foreign_cost
-            ? this.formatCurrency(item.foreign_cost)
-            : '-',
-          foreign_price: item.foreign_price
-            ? this.formatCurrency(item.foreign_price)
-            : '-',
-          local_cost: item.local_cost
-            ? this.formatCurrency(item.local_cost)
-            : '-',
-          local_price: item.local_price
-            ? this.formatCurrency(item.local_price)
-            : '-',
-          local_shipping: item.local_shipping
-            ? this.formatCurrency(item.local_shipping)
-            : '-',
-          local_profit: item.local_profit
-            ? this.formatCurrency(item.local_profit)
-            : '-',
+          foreign_cost: formatNumber(item.foreign_cost) || '-',
+          foreign_price: formatNumber(item.foreign_price) || '-',
+          local_cost: formatNumber(item.local_cost) || '-',
+          local_price: formatNumber(item.local_price) || '-',
+          local_shipping: formatNumber(item.local_shipping) || '-',
+          local_profit: formatNumber(item.local_profit) || '-',
           created_full_name: item.created_full_name || '-',
           payment_status:
             item.payment_status === 1

@@ -127,7 +127,7 @@
                 <CCardBody>
                   <div class="text-muted small">Total Cost (IDR)</div>
                   <div class="font-weight-bold">
-                    {{ formatCurrency(session.total_cost_price) }}
+                    {{ formatNumber(session.total_cost_price) }}
                   </div>
                 </CCardBody>
               </CCard>
@@ -137,7 +137,7 @@
                 <CCardBody>
                   <div class="text-muted small">Total Selling (IDR)</div>
                   <div class="font-weight-bold">
-                    {{ formatCurrency(session.total_selling_price) }}
+                    {{ formatNumber(session.total_selling_price) }}
                   </div>
                 </CCardBody>
               </CCard>
@@ -271,7 +271,7 @@
 
 <script>
 import $axios from '../../api';
-import { exportDataV3 } from '../../utils';
+import { exportDataV3, formatNumber } from '../../utils';
 import moment from 'moment';
 
 export default {
@@ -361,7 +361,7 @@ export default {
         ...c,
         customer_name: c.customer_name || '-',
         customer_phone: c.customer_phone || '-',
-        grand_total: this.formatCurrency(c.grand_total, c.local_currency),
+        grand_total: formatNumber(c.grand_total) || '-',
         total_paid: this.formatCurrency(c.total_paid, c.local_currency),
         total_pending: this.formatCurrency(c.total_pending, c.local_currency),
         remaining_amount: this.formatCurrency(c.remaining_amount, c.local_currency),

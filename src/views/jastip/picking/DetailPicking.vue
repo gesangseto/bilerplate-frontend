@@ -223,7 +223,7 @@
 </template>
 
 <script>
-import { exportDataV3, handleBack } from '../../../utils';
+import { exportDataV3, handleBack, formatNumber } from '../../../utils';
 import { getPicking } from '../../../resource/TrxPicking';
 
 const STATUS_PICKING = {
@@ -324,10 +324,10 @@ export default {
           barcode: item.barcode || '-',
           batch_no: item.batch_no || '-',
           quantity: item.quantity || 0,
-          foreign_price: this.formatCurrency(item.foreign_price, item.foreign_currency),
-          local_price: this.formatCurrency(item.local_price, item.local_currency),
-          foreign_profit: this.formatCurrency(item.foreign_profit, item.foreign_currency),
-          local_profit: this.formatCurrency(item.local_profit, item.local_currency),
+          foreign_price: formatNumber(item.foreign_price) || '-',
+          local_price: formatNumber(item.local_price) || '-',
+          foreign_profit: formatNumber(item.foreign_profit) || '-',
+          local_profit: formatNumber(item.local_profit) || '-',
         };
       });
     },

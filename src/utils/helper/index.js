@@ -4,8 +4,12 @@ import { getConfig } from '../storage';
 import cronstrue from 'cronstrue';
 const CryptoJs = require('crypto-js');
 
-export function formatNumber(val) {
-  return val.toLocaleString('id-ID');
+export function formatNumber(val) {  
+  // Return a fallback string if value is null or undefined
+  if (val === null || val === undefined) {
+    return '0'; // or 'N/A', or ''
+  }
+  return val.toLocaleString();
 }
 export function calculatePagination({ filter = Object, item = Object }) {
   if (item.hasOwnProperty('status') && item.hasOwnProperty('headers')) {

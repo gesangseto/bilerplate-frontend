@@ -137,6 +137,7 @@ import {
   exportDataV3,
   handleBack,
   generateIdempotencyKey,
+  formatNumber,
 } from '../../../utils';
 
 export default {
@@ -286,24 +287,12 @@ export default {
           ...item,
           customer_name: item.customer_name || '-',
           product_name: item.product_name || '-',
-          foreign_cost: item.foreign_cost
-            ? this.formatCurrency(item.foreign_cost)
-            : '-',
-          foreign_price: item.foreign_price
-            ? this.formatCurrency(item.foreign_price)
-            : '-',
-          local_cost: item.local_cost
-            ? this.formatCurrency(item.local_cost)
-            : '-',
-          local_price: item.local_price
-            ? this.formatCurrency(item.local_price)
-            : '-',
-          local_shipping: item.local_shipping
-            ? this.formatCurrency(item.local_shipping)
-            : '-',
-          local_profit: item.local_profit
-            ? this.formatCurrency(item.local_profit)
-            : '-',
+          foreign_cost: formatNumber(item.foreign_cost) || '-',
+          foreign_price: formatNumber(item.foreign_price) || '-',
+          local_cost: formatNumber(item.local_cost) || '-',
+          local_price: formatNumber(item.local_price) || '-',
+          local_shipping: formatNumber(item.local_shipping) || '-',
+          local_profit: formatNumber(item.local_profit) || '-',
           status_name: item.status_name || '-',
           payment_status:
             item.payment_status === 1

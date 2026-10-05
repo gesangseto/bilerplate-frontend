@@ -69,7 +69,7 @@
       size="xl"
     >
       <CDataTable
-        :items="draftItems"
+        :items="renderDraftItems"
         :fields="draftFields"
         hover
         striped
@@ -106,7 +106,7 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3, handleBack } from '../../../utils';
+import { exportDataV3, handleBack, formatNumber } from '../../../utils';
 
 export default {
   name: 'FormItemDisposal',
@@ -250,24 +250,12 @@ export default {
           product_name: item.product_name || '-',
           foreign_currency: item.foreign_currency || '-',
           local_currency: item.local_currency || '-',
-          foreign_cost: item.foreign_cost
-            ? this.formatCurrency(item.foreign_cost)
-            : '-',
-          foreign_price: item.foreign_price
-            ? this.formatCurrency(item.foreign_price)
-            : '-',
-          local_cost: item.local_cost
-            ? this.formatCurrency(item.local_cost)
-            : '-',
-          local_price: item.local_price
-            ? this.formatCurrency(item.local_price)
-            : '-',
-          local_shipping: item.local_shipping
-            ? this.formatCurrency(item.local_shipping)
-            : '-',
-          local_profit: item.local_profit
-            ? this.formatCurrency(item.local_profit)
-            : '-',
+          foreign_cost: formatNumber(item.foreign_cost) || '-',
+          foreign_price: formatNumber(item.foreign_price) || '-',
+          local_cost: formatNumber(item.local_cost) || '-',
+          local_price: formatNumber(item.local_price) || '-',
+          local_shipping: formatNumber(item.local_shipping) || '-',
+          local_profit: formatNumber(item.local_profit) || '-',
           status_name: item.status_name || '-',
           payment_status:
             item.payment_status === 1
@@ -277,6 +265,17 @@ export default {
               : '-',
         };
       });
+    },
+    renderDraftItems() {
+      return this.draftItems.map((item) => ({
+        ...item,
+        foreign_cost: formatNumber(item.foreign_cost) || '-',
+        foreign_price: formatNumber(item.foreign_price) || '-',
+        local_cost: formatNumber(item.local_cost) || '-',
+        local_price: formatNumber(item.local_price) || '-',
+        local_shipping: formatNumber(item.local_shipping) || '-',
+        local_profit: formatNumber(item.local_profit) || '-',
+      }));
     },
   },
 };

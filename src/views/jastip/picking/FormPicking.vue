@@ -285,9 +285,7 @@ export default {
         tooltip: 'Dispatch to Customer',
       },
       fields: [
-        { key: 'barcode', label: 'Barcode' },
         { key: 'product_name', label: 'Product' },
-        { key: 'quantity', label: 'Qty' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
@@ -301,7 +299,6 @@ export default {
       grnFields: [
         { key: 'selected', label: 'Check', sorter: false },
         { key: 'product_name', label: 'Product' },
-        { key: 'quantity', label: 'Qty' },
         { key: 'local_cost', label: 'Local Cost' },
         { key: 'local_price', label: 'Local Price' },
         { key: 'foreign_cost', label: 'Foreign Cost' },
@@ -663,6 +660,10 @@ export default {
           ...item,
           customer_name: item.customer_name || '-',
           product_name: item.product_name || '-',
+          foreign_cost: formatNumber(item.foreign_cost) || '-',
+          foreign_price: formatNumber(item.foreign_price) || '-',
+          local_cost: formatNumber(item.local_cost) || '-',
+          local_price: formatNumber(item.local_price) || '-',
         };
       });
     },

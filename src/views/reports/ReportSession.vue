@@ -46,7 +46,7 @@
 
 <script>
 import $axios from '../../api';
-import { exportDataV3 } from '../../utils';
+import { exportDataV3, formatNumber } from '../../utils';
 
 export default {
   name: 'ReportSession',
@@ -118,9 +118,7 @@ export default {
           currency: item.currency ? Number(item.currency) : '-',
           start_session_date: item.start_session_date || '-',
           finish_session_date: item.finish_session_date || '-',
-          total_selling_price: item.total_selling_price
-            ? this.formatCurrency(item.total_selling_price)
-            : '-',
+          total_selling_price: formatNumber(item.total_selling_price) || '-',
         };
       });
     },
