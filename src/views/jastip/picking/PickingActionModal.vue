@@ -1,84 +1,91 @@
 <template>
-  <div>
+  <div class="app-modal">
     <CModal
       centered="centered"
       :show.sync="property.modal"
       :title="modalTitle"
       :color="modalColor"
     >
-      <CRow>
-        <CCol sm="12" md="12" lg="12">
-          <CRow>
-            <p style="margin-left: 20px; margin-right: 20px">
-              {{ modalMessage }}
-            </p>
-          </CRow>
-          <CRow v-if="item">
-            <CCol sm="12" md="12" lg="12">
-              <table
-                class="table table-sm table-bordered"
-                style="font-size: 12px"
-              >
-                <tbody>
-                  <tr>
-                    <th style="width: 40%">ID</th>
-                    <td>{{ item.id }}</td>
-                  </tr>
-                  <tr>
-                    <th>Customer</th>
-                    <td>{{ item.customer_name || '-' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Courier</th>
-                    <td>{{ item.courier_name || '-' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Resi No</th>
-                    <td>{{ item.courier_number || '-' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Courier Price</th>
-                    <td>{{ item.courier_price || '-' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Weight</th>
-                    <td>{{ item.weight || '-' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Qty</th>
-                    <td>{{ item.quantity || '-' }}</td>
-                  </tr>
-                  <tr>
-                    <th>Status</th>
-                    <td>{{ item.status_name || '-' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </CCol>
-          </CRow>
-          <CRow v-if="needReason">
-            <CCol sm="2" md="2" lg="2">
-              <label for="reason">Reason</label>
-            </CCol>
-            <CCol sm="10" md="10" lg="10">
-              <CTextarea
-                rows="5"
-                placeholder="Enter The Reason"
-                id="reject-reason"
-                invalid-feedback="Reason is required"
-                v-model="property.reason"
-              />
-            </CCol>
-          </CRow>
-        </CCol>
-      </CRow>
+      <div
+        class="app-modal-alert"
+        :class="
+          action === 'finish'
+            ? 'app-modal-alert--success'
+            : 'app-modal-alert--danger'
+        "
+      >
+        <CIcon
+          :name="action === 'finish' ? 'cil-check-circle' : 'cil-warning'"
+        />
+        <span>{{ modalMessage }}</span>
+      </div>
+
+      <div v-if="item" class="app-modal-info">
+        <div class="app-modal-info__item">
+          <span class="app-modal-info__label">ID</span>
+          <span class="app-modal-info__value">{{ item.id }}</span>
+        </div>
+        <div class="app-modal-info__item">
+          <span class="app-modal-info__label">Status</span>
+          <span class="app-modal-info__value">{{
+            item.status_name || '-'
+          }}</span>
+        </div>
+        <div class="app-modal-info__item">
+          <span class="app-modal-info__label">Customer</span>
+          <span class="app-modal-info__value">{{
+            item.customer_name || '-'
+          }}</span>
+        </div>
+        <div class="app-modal-info__item">
+          <span class="app-modal-info__label">Qty</span>
+          <span class="app-modal-info__value">{{ item.quantity || '-' }}</span>
+        </div>
+        <div class="app-modal-info__item">
+          <span class="app-modal-info__label">Courier</span>
+          <span class="app-modal-info__value">{{
+            item.courier_name || '-'
+          }}</span>
+        </div>
+        <div class="app-modal-info__item">
+          <span class="app-modal-info__label">Weight</span>
+          <span class="app-modal-info__value">{{ item.weight || '-' }}</span>
+        </div>
+        <div class="app-modal-info__item">
+          <span class="app-modal-info__label">Resi No</span>
+          <span class="app-modal-info__value">{{
+            item.courier_number || '-'
+          }}</span>
+        </div>
+        <div class="app-modal-info__item">
+          <span class="app-modal-info__label">Courier Price</span>
+          <span class="app-modal-info__value">{{
+            item.courier_price || '-'
+          }}</span>
+        </div>
+      </div>
+
+      <div v-if="needReason">
+        <div class="app-modal-section-title">
+          Reason <span class="text-danger">*</span>
+        </div>
+        <CTextarea
+          rows="4"
+          placeholder="Enter the reason..."
+          id="reject-reason"
+          invalid-feedback="Reason is required"
+          v-model="property.reason"
+        />
+      </div>
+
       <template #footer>
-        <CButton @click="handleSubmit()" color="primary">
-          <CIcon name="cil-check-circle" /> Submit</CButton
-        >
-        <CButton @click="property.modal = false" color="danger">
-          <CIcon name="cil-ban" /> Cancel</CButton
-        >
+        <CButton color="secondary" outline @click="property.modal = false">
+          <CIcon name="cil-ban" /> Cancel
+        </CButton>
+        <CButton :color="modalColor" @click="handleSubmit()">
+          <CIcon name="cil-check-circle" />
+          {{ action === 'finish' ? 'Finish' : 'Submit' }}
+        </CButton>
       </template>
     </CModal>
   </div>
@@ -104,7 +111,7 @@ export default {
         not_delivery: 'Not Delivery',
         cancel: 'Cancel Picking',
       };
-      return `${label[this.action] || 'Confirm'} (ID: ${this.property.id})`;
+      return label[this.action] || 'Confirm';
     },
     modalColor() {
       return this.action === 'finish' ? 'success' : 'danger';

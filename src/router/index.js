@@ -19,6 +19,9 @@ const Oops = () => import('@/views/pages/Oops');
 const Page404 = () => import('@/views/pages/Page404');
 const Page500 = () => import('@/views/pages/Page500');
 const Login = () => import('@/views/pages/Login');
+// Landing (portofolio publik)
+const Landing = () => import('@/views/landing/Landing');
+const TrackingPublic = () => import('@/views/landing/TrackingPublic');
 const Register = () => import('@/views/pages/Register');
 
 // ========================MASTER========================
@@ -49,6 +52,7 @@ const ListCountry = () => import('@/views/master/country/ListCountry');
 const FormCountry = () => import('@/views/master/country/FormCountry');
 // Finance & Revenue
 const FinanceList = () => import('@/views/finance/FinanceList');
+const FinancePayments = () => import('@/views/finance/Payments');
 // ========================MASTER========================
 
 // ========================SETTING========================
@@ -1266,6 +1270,12 @@ function configRoutes() {
 
     // ========================JASTIP========================
     {
+      path: 'finance/payments',
+      name: 'Payment',
+      meta: { login: true },
+      component: FinancePayments,
+    },
+    {
       path: 'finance/:view',
       name: 'Finance & Revenue',
       meta: { login: true },
@@ -1379,7 +1389,7 @@ function configRoutes() {
   return [
     {
       path: '/',
-      redirect: '/login',
+      redirect: '/landing',
       name: 'TheContainer',
       meta: {
         login: true,
@@ -1389,7 +1399,7 @@ function configRoutes() {
     },
     {
       path: '/',
-      redirect: '/login',
+      redirect: '/landing',
       name: 'Pages',
       component: {
         render(c) {
@@ -1398,6 +1408,18 @@ function configRoutes() {
       },
       meta: { login: false },
       children: [
+        {
+          path: '/landing',
+          name: 'Landing',
+          component: Landing,
+          meta: { login: false },
+        },
+        {
+          path: '/tracking',
+          name: 'Public Tracking',
+          component: TrackingPublic,
+          meta: { login: false },
+        },
         {
           path: '/oops',
           name: 'oopsPage',

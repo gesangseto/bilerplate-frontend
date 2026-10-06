@@ -38,112 +38,124 @@
     </CCol>
 
     <!-- Modal Approve / Kirim Batch -->
-    <CModal
-      title="Kirim Batch"
-      centered="centered"
-      color="success"
-      :show.sync="modalApprove"
-      size="lg"
-    >
-      <div v-if="selectedBatch">
-        <p class="mb-3">
-          <strong>Batch No:</strong> {{ selectedBatch.batch_no }}<br />
-          <strong>Quantity:</strong> {{ selectedBatch.quantity }} item<br />
-          <strong>Status:</strong> {{ selectedBatch.status }}
-        </p>
+    <div class="app-modal">
+      <CModal
+        title="Kirim Batch"
+        centered="centered"
+        color="success"
+        :show.sync="modalApprove"
+        size="lg"
+      >
+        <div v-if="selectedBatch">
+          <div class="app-modal-info app-modal-info--triple">
+            <div class="app-modal-info__item">
+              <span class="app-modal-info__label">Batch No</span>
+              <span class="app-modal-info__value">{{
+                selectedBatch.batch_no
+              }}</span>
+            </div>
+            <div class="app-modal-info__item">
+              <span class="app-modal-info__label">Quantity</span>
+              <span class="app-modal-info__value"
+                >{{ selectedBatch.quantity }} item</span
+              >
+            </div>
+            <div class="app-modal-info__item">
+              <span class="app-modal-info__label">Status</span>
+              <span class="app-modal-info__value">{{
+                selectedBatch.status
+              }}</span>
+            </div>
+          </div>
 
-        <CRow form class="form-group">
-          <CCol sm="3">
-            <label class="font-weight-bold">Weight (kg) <span class="text-danger">*</span></label>
-          </CCol>
-          <CCol sm="9">
-            <input
-              type="number"
-              class="form-control"
-              v-model="approveForm.weight"
-              placeholder="Masukkan berat batch"
-            />
-          </CCol>
-        </CRow>
+          <div class="app-modal-section-title">Shipping Details</div>
 
-        <CRow form class="form-group">
-          <CCol sm="3">
-            <label class="font-weight-bold">Warehouse Tujuan <span class="text-danger">*</span></label>
-          </CCol>
-          <CCol sm="9">
-            <select class="form-control" v-model="approveForm.warehouse_id">
-              <option value="">-- Pilih Warehouse --</option>
-              <option v-for="wh in listWarehouse" :key="wh.value" :value="wh.value">
-                {{ wh.label }}
-              </option>
-            </select>
-          </CCol>
-        </CRow>
+          <CRow>
+            <CCol sm="6" class="form-group">
+              <label class="font-weight-bold"
+                >Weight (kg) <span class="text-danger">*</span></label
+              >
+              <input
+                type="number"
+                class="form-control"
+                v-model="approveForm.weight"
+                placeholder="Masukkan berat batch"
+              />
+            </CCol>
+            <CCol sm="6" class="form-group">
+              <label class="font-weight-bold"
+                >Shipment Number <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                v-model="approveForm.shipment_number"
+                placeholder="Masukkan nomor resi"
+              />
+            </CCol>
+            <CCol sm="6" class="form-group">
+              <label class="font-weight-bold"
+                >Shipment Price <span class="text-danger">*</span></label
+              >
+              <input
+                type="number"
+                class="form-control"
+                v-model="approveForm.shipment_price"
+                placeholder="Masukkan harga kirim"
+              />
+            </CCol>
+            <CCol sm="6" class="form-group">
+              <label class="font-weight-bold"
+                >Shipment Currency <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control text-uppercase"
+                v-model="approveForm.shipment_currency"
+                placeholder="cth: IDR / THB"
+                maxlength="3"
+              />
+            </CCol>
+            <CCol sm="12" class="form-group mb-0">
+              <label class="font-weight-bold"
+                >Warehouse Tujuan <span class="text-danger">*</span></label
+              >
+              <select class="form-control" v-model="approveForm.warehouse_id">
+                <option value="">-- Pilih Warehouse --</option>
+                <option
+                  v-for="wh in listWarehouse"
+                  :key="wh.value"
+                  :value="wh.value"
+                >
+                  {{ wh.label }}
+                </option>
+              </select>
+            </CCol>
+          </CRow>
+        </div>
 
-        <CRow form class="form-group">
-          <CCol sm="3">
-            <label class="font-weight-bold">Shipment Number <span class="text-danger">*</span></label>
-          </CCol>
-          <CCol sm="9">
-            <input
-              type="text"
-              class="form-control"
-              v-model="approveForm.shipment_number"
-              placeholder="Masukkan nomor resi"
-            />
-          </CCol>
-        </CRow>
-
-        <CRow form class="form-group">
-          <CCol sm="3">
-            <label class="font-weight-bold">Shipment Price <span class="text-danger">*</span></label>
-          </CCol>
-          <CCol sm="9">
-            <input
-              type="number"
-              class="form-control"
-              v-model="approveForm.shipment_price"
-              placeholder="Masukkan harga kirim"
-            />
-          </CCol>
-        </CRow>
-
-        <CRow form class="form-group">
-          <CCol sm="3">
-            <label class="font-weight-bold">Shipment Currency <span class="text-danger">*</span></label>
-          </CCol>
-          <CCol sm="9">
-            <input
-              type="text"
-              class="form-control text-uppercase"
-              v-model="approveForm.shipment_currency"
-              placeholder="cth: IDR / THB"
-              maxlength="3"
-            />
-          </CCol>
-        </CRow>
-      </div>
-
-      <template #footer>
-        <CButton
-          type="button"
-          size="sm"
-          color="success"
-          @click="submitApprove()"
-          :disabled="submitting"
-        >
-          <CIcon name="cil-check" /> {{ submitting ? 'Mengirim...' : 'Konfirmasi Kirim' }}
-        </CButton>
-        <CButton
-          type="button"
-          size="sm"
-          color="secondary"
-          @click="modalApprove = false"
-        >
-          <CIcon name="cil-ban" /> Batal
-        </CButton>
-      </template>
-    </CModal>
+        <template #footer>
+          <CButton
+            type="button"
+            color="secondary"
+            outline
+            @click="modalApprove = false"
+            :disabled="submitting"
+          >
+            <CIcon name="cil-ban" /> Batal
+          </CButton>
+          <CButton
+            type="button"
+            color="success"
+            @click="submitApprove()"
+            :disabled="submitting"
+          >
+            <CIcon name="cil-check" />
+            {{ submitting ? 'Mengirim...' : 'Konfirmasi Kirim' }}
+          </CButton>
+        </template>
+      </CModal>
+    </div>
   </CRow>
 </template>
 

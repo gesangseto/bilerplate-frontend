@@ -109,16 +109,21 @@
             <CCard class="mb-3" color="light">
               <CCardHeader class="py-2 d-flex justify-content-between align-items-center">
                 <strong>Items ({{ items.length }})</strong>
-                <CButton
-                  v-if="isEditable"
-                  size="sm"
-                  color="primary"
-                  @click="openModalAdd()"
-                >
-                  <CIcon name="cil-plus" /> Add Item
-                </CButton>
               </CCardHeader>
               <CCardBody>
+                <CRow>
+                  <CCol col="12" xl="12">
+                    <CButton
+                      v-if="isEditable"
+                      size="sm"
+                      class="float-right m-1"
+                      color="success"
+                      @click="openModalAdd()"
+                    >
+                      <CIcon name="cil-plus" /> Add Item
+                    </CButton>
+                  </CCol>
+                </CRow>
                 <CRow>
                   <CCol sm="12" md="12" lg="12">
                     <CDataTable
@@ -150,20 +155,9 @@
         </CCardBody>
         <CCardFooter>
           <div class="float-left">
-            <ButtonPermission
-              v-if="action === 'Create' || (action === 'Update' && pickingStatus === 0)"
-              :permission="action === 'Create' ? 'create' : 'update'"
-              :buttonProperty="btnSubmit"
-              :useHref="false"
-              @click="save()"
-            />
-            <ButtonPermission
-              v-if="action === 'Approve' && pickingStatus === 0"
-              :permission="'approve'"
-              :buttonProperty="btnDispatch"
-              :useHref="false"
-              @click="save()"
-            />
+            <CButton @click="save()" color="primary" size="sm" type="submit">
+              <CIcon name="cil-check-circle" /> Submit
+            </CButton>
             <ButtonBack />
           </div>
           <div class="float-right">
@@ -184,6 +178,17 @@
       :show.sync="modalAdd"
       size="xl"
     >
+      <div class="d-flex align-items-center mb-2">
+        <CButton size="sm" color="info" @click="selectAllGrn">
+          <CIcon name="cil-check-circle" /> Select All
+        </CButton>
+        <CButton size="sm" color="secondary" class="ml-2" @click="clearSelection">
+          <CIcon name="cil-ban" /> Clear
+        </CButton>
+        <span class="ml-3 text-muted" style="font-size: 12px">
+          {{ selectedIds.length }} / {{ grnItems.length }} item dipilih
+        </span>
+      </div>
       <CDataTable
         :items="renderGrnItems"
         :fields="grnFields"
@@ -197,14 +202,6 @@
         :pagination="true"
         @row-clicked="toggleSelect"
       >
-        <template #selected-header>
-          <input
-            ref="selectAllCheckbox"
-            type="checkbox"
-            :checked="allSelected"
-            @click.stop="toggleSelectAll"
-          />
-        </template>
         <template #selected="{ item }">
           <td>
             <input type="checkbox" :checked="isSelected(item.id)" />
@@ -411,6 +408,13 @@ export default {
       } else {
         this.selectedIds.push(item.id);
       }
+    },
+    selectAllGrn() {
+      // Semua item GRN (pagination hanya tampilan, grnItems tetap lengkap)
+      this.selectedIds = this.grnItems.map((it) => it.id);
+    },
+    clearSelection() {
+      this.selectedIds = [];
     },
     toggleSelectAll() {
       if (this.allSelected) {

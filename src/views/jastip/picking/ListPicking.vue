@@ -28,7 +28,8 @@
                 :permission="'approve'"
                 :buttonProperty="btnSend"
                 :id="item.id"
-                :useHref="true"
+                :useHref="false"
+                @click="modalSend(item)"
               />
               <ButtonPermission
                 v-if="item.status == 2"
@@ -57,16 +58,6 @@
         <CCardFooter>
           <div class="float-right">
             <ExportButtons @export="handleClickExport" />
-            <ButtonPermission
-              exportType="excel"
-              :permission="'print'"
-              @click="handleClickExport('xls')"
-            />
-            <ButtonPermission
-              exportType="pdf"
-              :permission="'print'"
-              @click="handleClickExport('pdf')"
-            />
           </div>
         </CCardFooter>
       </CCard>
@@ -78,6 +69,14 @@
       v-on:handleSubmit="handleCancel()"
     />
     <!-- END ACTION MODAL -->
+
+    <!-- SEND MODAL -->
+    <PickingSendModal
+      :property="sendProperty"
+      :item="sendItem"
+      v-on:handleSubmit="handleSend($event)"
+    />
+    <!-- END SEND MODAL -->
   </CRow>
 </template>
 
@@ -88,8 +87,10 @@ import {
   finishPicking,
   returnPicking,
   cancelPicking,
+  dispatchPicking,
 } from '../../../resource/TrxPicking';
 import PickingActionModal from './PickingActionModal';
+import PickingSendModal from './PickingSendModal';
 
 const STATUS_PICKING = {
   '-1': 'Canceled',
@@ -101,7 +102,7 @@ const STATUS_PICKING = {
 
 export default {
   name: 'ListPicking',
-  components: { PickingActionModal },
+  components: { PickingActionModal, PickingSendModal },
   data() {
     return {
       totalData: 0,
@@ -111,6 +112,15 @@ export default {
         modal: false,
         reason: '',
         action: 'cancel',
+      },
+      sendProperty: {
+        id: null,
+        modal: false,
+        courier_id: null,
+        weight: null,
+        courier_number: '',
+        courier_price: null,
+        courier_currency: 'IDR',
       },
       btnSend: {
         size: 'sm',
@@ -195,6 +205,21 @@ export default {
         action: 'finish',
       };
     },
+    modalSend(item) {
+      const raw = this.items.find((it) => it.id === item.id) || item;
+      this.sendProperty = {
+        id: item.id,
+        modal: true,
+        courier_id: raw.courier_id || null,
+        weight: raw.weight != null ? raw.weight : null,
+        courier_number: raw.courier_number || '',
+        courier_price:
+          raw.courier_price != null && raw.courier_price !== ''
+            ? raw.courier_price
+            : null,
+        courier_currency: raw.courier_currency || 'IDR',
+      };
+    },
     handleCancel() {
       let reason = (this.cancelProperty.reason || '').trim();
       let id = this.cancelProperty.id;
@@ -239,6 +264,40 @@ export default {
         }
       });
     },
+    async handleSend(prop) {
+      const param = {
+        id: prop.id,
+        courier_id: prop.courier_id,
+        weight: prop.weight,
+        courier_number: (prop.courier_number || '').trim(),
+        courier_price: Number(prop.courier_price),
+        courier_currency: prop.courier_currency,
+        idempotency_key: generateIdempotencyKey(),
+      };
+      this.$isLoading(true);
+      let res = null;
+      try {
+        res = await dispatchPicking(param);
+      } catch (error) {
+        res = { error: true, message: `${error}` };
+      }
+      this.$isLoading(false);
+      this.$toast.open({
+        message: !res
+          ? 'Failed to send picking. Please try again.'
+          : res.error
+          ? res.message
+          : 'Picking has been dispatched successfully',
+        type: !res || res.error ? 'error' : 'success',
+        dissmissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
+      if (res && !res.error) {
+        this.sendProperty.modal = false;
+        this.loadData();
+      }
+    },
     handleClickExport(type) {
       exportDataV3({
         param: this.$route.query,
@@ -259,6 +318,11 @@ export default {
       return (
         this.reformatItems.find((it) => it.id === this.cancelProperty.id) ||
         null
+      );
+    },
+    sendItem() {
+      return (
+        this.reformatItems.find((it) => it.id === this.sendProperty.id) || null
       );
     },
     reformatItems() {
