@@ -104,7 +104,9 @@ export default {
 <style lang="scss">
 // Import Main styles for this application
 @import 'assets/scss/style';
-svg {
+// Hanya paksa currentColor untuk SVG tanpa atribut fill,
+// agar fillColor dari vue-material-design-icons tetap berlaku.
+svg:not([fill]) {
   fill: currentColor !important;
 }
 </style>
