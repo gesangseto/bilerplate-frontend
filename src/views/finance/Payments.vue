@@ -144,7 +144,13 @@
 
     <!-- ============ MODAL DETAIL TAGIHAN ============ -->
     <div class="app-modal">
-      <CModal centered :show.sync="detailModal" title="Detail Tagihan" color="primary">
+      <CModal
+        centered
+        :show.sync="detailModal"
+        title="Detail Tagihan"
+        color="primary"
+        size="xl"
+      >
         <div class="app-modal-alert app-modal-alert--info">
           <CIcon name="cil-list" />
           <span>Ringkasan tagihan dan item customer pada session terpilih.</span>
@@ -246,7 +252,13 @@
 
     <!-- ============ MODAL BAYAR ============ -->
     <div class="app-modal">
-      <CModal centered :show.sync="payModal" title="Tambah Payment" color="primary">
+      <CModal
+        centered
+        :show.sync="payModal"
+        title="Tambah Payment"
+        color="primary"
+        size="lg"
+      >
         <div class="app-modal-alert app-modal-alert--success">
           <CIcon name="cil-money" />
           <span>Masukkan nominal pembayaran customer pada session terpilih.</span>

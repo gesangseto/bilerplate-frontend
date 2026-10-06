@@ -2,8 +2,9 @@
   <nav class="pn">
     <div class="pn-inner">
       <router-link class="pn-brand" to="/landing">
-        <span class="pn-dot"></span>
-        <span>Jastip</span>
+        <img v-if="brandLogo" :src="brandLogo" class="pn-logo" alt="Logo" />
+        <span v-else class="pn-dot"></span>
+        <span>{{ brandName }}</span>
       </router-link>
       <div class="pn-links">
         <router-link to="/landing" exact>Home</router-link>
@@ -15,8 +16,28 @@
 </template>
 
 <script>
+import { getIdentity } from '../../resource/Identity';
+
 export default {
   name: 'NavPublic',
+  data() {
+    return {
+      brandLogo: null,
+      brandName: 'Jastip',
+    };
+  },
+  created() {
+    this.loadIdentity();
+  },
+  methods: {
+    async loadIdentity() {
+      const id = await getIdentity();
+      if (id) {
+        if (id.identity_logo_path) this.brandLogo = id.identity_logo_path;
+        if (id.identity_name) this.brandName = id.identity_name;
+      }
+    },
+  },
 };
 </script>
 
@@ -47,6 +68,13 @@ export default {
   font-size: 18px;
   color: #0f172a;
   text-decoration: none;
+}
+.pn-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
 }
 .pn-dot {
   width: 12px;

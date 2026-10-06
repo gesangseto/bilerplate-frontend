@@ -5,6 +5,12 @@
     <!-- HERO -->
     <header class="lp-hero">
       <div class="lp-hero-inner">
+        <img
+          v-if="brandLogo"
+          :src="brandLogo"
+          class="lp-hero-logo"
+          alt="Logo"
+        />
         <span class="lp-pill">Jasa Titip Belanja</span>
         <h1>
           Titip belanja tanpa ragu,<br />
@@ -101,7 +107,7 @@
 
     <footer class="lp-footer">
       <div class="lp-wrap lp-footer-inner">
-        <span><span class="lp-dot-mini"></span> Jastip</span>
+        <span><span class="lp-dot-mini"></span> {{ brandName }}</span>
         <span class="lp-muted">© {{ year }} — Jasa Titip Belanja</span>
       </div>
     </footer>
@@ -110,13 +116,32 @@
 
 <script>
 import NavPublic from './NavPublic.vue';
+import { getIdentity } from '../../resource/Identity';
 
 export default {
   name: 'LandingPage',
   components: { NavPublic },
+  data() {
+    return {
+      brandLogo: null,
+      brandName: 'Jastip',
+    };
+  },
+  created() {
+    this.loadIdentity();
+  },
   computed: {
     year() {
       return new Date().getFullYear();
+    },
+  },
+  methods: {
+    async loadIdentity() {
+      const id = await getIdentity();
+      if (id) {
+        if (id.identity_logo_path) this.brandLogo = id.identity_logo_path;
+        if (id.identity_name) this.brandName = id.identity_name;
+      }
     },
   },
 };
@@ -141,6 +166,17 @@ export default {
   max-width: 780px;
   margin: 0 auto;
   text-align: center;
+}
+.lp-hero-logo {
+  display: block;
+  margin: 0 auto 20px;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border-radius: 18px;
+  background: #fff;
+  padding: 6px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
 }
 .lp-pill {
   display: inline-block;

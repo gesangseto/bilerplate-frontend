@@ -9,6 +9,7 @@ import Vuelidate from 'vuelidate';
 import VuelidateErrorExtractor, { templates } from 'vuelidate-error-extractor';
 import { iconsSet as icons } from './assets/icons/icons.js';
 import store from './store';
+import { applyTabIdentity } from './resource/Identity';
 import 'vue-toast-notification/dist/theme-default.css';
 // import JQuery from 'jquery'
 import './assets/css/jquery-ui.css';
@@ -66,5 +67,7 @@ const app = new Vue({
     App,
   },
 });
+
+applyTabIdentity();
 
 window.myApp = app;
