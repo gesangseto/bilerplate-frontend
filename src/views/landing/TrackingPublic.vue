@@ -154,6 +154,7 @@
 <script>
 import $axios from '../../api';
 import NavPublic from './NavPublic.vue';
+import { applyPublicSeo, releasePublicSeo } from '../../resource/PublicSeo';
 
 const STATUS_BADGE = {
   200: 'tp-badge-secondary',
@@ -175,6 +176,18 @@ export default {
       searched: false,
       result: null,
     };
+  },
+  mounted() {
+    // Meta SEO publik saja — perilaku halaman tidak diubah.
+    applyPublicSeo({
+      title: 'Lacak Paket — Lacak Kiriman dengan Resi atau Nomor HP | Jastip',
+      description:
+        'Lacak paket jasa titip belanja: masukkan nomor resi kurir atau nomor HP customer untuk melihat status barang dari manifest, masuk gudang, sampai tiba di penerima.',
+      path: '/tracking',
+    });
+  },
+  beforeDestroy() {
+    releasePublicSeo();
   },
   computed: {
     year() {

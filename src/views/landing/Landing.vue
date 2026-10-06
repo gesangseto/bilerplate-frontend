@@ -5,12 +5,20 @@
     <!-- HERO -->
     <header class="lp-hero">
       <div class="lp-hero-inner">
-        <img
-          v-if="brandLogo"
-          :src="brandLogo"
-          class="lp-hero-logo"
-          alt="Logo"
-        />
+        <div class="lp-hero-logo" :class="{ 'is-placeholder': !brandLogo }">
+          <img
+            v-if="brandLogo"
+            :src="brandLogo"
+            width="76"
+            height="76"
+            fetchpriority="high"
+            decoding="async"
+            :alt="brandName"
+          />
+          <span v-else class="lp-hero-initial" aria-hidden="true">{{
+            brandInitial
+          }}</span>
+        </div>
         <span class="lp-pill">Jasa Titip Belanja</span>
         <h1>
           Titip belanja tanpa ragu,<br />
@@ -117,6 +125,7 @@
 <script>
 import NavPublic from './NavPublic.vue';
 import { getIdentity } from '../../resource/Identity';
+import { applyPublicSeo, releasePublicSeo } from '../../resource/PublicSeo';
 
 export default {
   name: 'LandingPage',
@@ -128,11 +137,26 @@ export default {
     };
   },
   created() {
+    // Non-blocking: render langsung dengan fallback, identity menyusul saat
+    // resolve (lihat getIdentity yang di-cache di resource/Identity.js).
     this.loadIdentity();
+  },
+  mounted() {
+    applyPublicSeo({ title: this.seoTitle, path: '/landing' });
+  },
+  beforeDestroy() {
+    releasePublicSeo();
   },
   computed: {
     year() {
       return new Date().getFullYear();
+    },
+    brandInitial() {
+      const name = (this.brandName || 'J').trim();
+      return name.charAt(0).toUpperCase();
+    },
+    seoTitle() {
+      return `${this.brandName} — Jasa Titip Belanja & Lacak Paket`;
     },
   },
   methods: {
@@ -142,6 +166,9 @@ export default {
         if (id.identity_logo_path) this.brandLogo = id.identity_logo_path;
         if (id.identity_name) this.brandName = id.identity_name;
       }
+      // Judul ikut brand runtime; applyTabIdentity() tidak menimpa judul
+      // ber-flag data-seo="dynamic".
+      applyPublicSeo({ title: this.seoTitle, path: '/landing' });
     },
   },
 };
@@ -168,15 +195,32 @@ export default {
   text-align: center;
 }
 .lp-hero-logo {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 auto 20px;
   width: 76px;
   height: 76px;
-  object-fit: contain;
   border-radius: 18px;
   background: #fff;
   padding: 6px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+}
+/* Kotak logo selalu ada (sebelum identity resolve) supaya tidak ada layout shift */
+.lp-hero-logo.is-placeholder {
+  background: rgba(255, 255, 255, 0.9);
+}
+.lp-hero-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+}
+.lp-hero-initial {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  color: #4f46e5;
 }
 .lp-pill {
   display: inline-block;

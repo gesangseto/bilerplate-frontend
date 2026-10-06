@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Peta situs halaman publik Jastip.
+
+  PENTING: standar sitemap mensyaratkan URL absolut, tetapi domain produksi
+  belum diketahui saat file ini dibuat dan URL tidak boleh ditebak.
+  Sebelum submit ke Google Search Console / Bing, ganti tiap <loc> menjadi
+  URL absolut, contoh: https://<domain-produksi>/landing
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>/landing</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>/tracking</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>/login</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>/register</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>

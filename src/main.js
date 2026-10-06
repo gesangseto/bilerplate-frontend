@@ -57,6 +57,31 @@ Vue.config.errorHandler = (err, vm, info) => {
   console.error(vm._name, info, err);
   console.error('==========================^^^==========================');
 };
+// Warm-up koneksi ke host API: halaman publik (landing/tracking) menarik
+// /v1/jastip/identity tanpa token, dan origin-nya cross-origin (lihat .env
+// VUE_APP_URL_API) sehingga tanpa preconnect kena DNS+TCP lagi di tiap request.
+try {
+  const apiOrigin = new URL(`${process.env.VUE_APP_URL_API}/api`).origin;
+  if (
+    apiOrigin &&
+    apiOrigin !== window.location.origin &&
+    !document.querySelector(`link[rel="preconnect"][href="${apiOrigin}"]`)
+  ) {
+    const preconnect = document.createElement('link');
+    preconnect.rel = 'preconnect';
+    preconnect.href = apiOrigin;
+    preconnect.crossOrigin = 'anonymous';
+    document.head.appendChild(preconnect);
+
+    const dns = document.createElement('link');
+    dns.rel = 'dns-prefetch';
+    dns.href = apiOrigin;
+    document.head.appendChild(dns);
+  }
+} catch (e) {
+  /* VUE_APP_URL_API tidak valid? abaikan, hanya hint performa */
+}
+
 const app = new Vue({
   el: '#app',
   router,

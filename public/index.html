@@ -5,49 +5,91 @@
 * @link https://coreui.io/vue/
 * Copyright (c) 2020 creativeLabs Łukasz Holeczek
 -->
-<html>
+<html lang="id">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Gastrack®</title>
-    <!-- favicons for all devices -->
-    <link rel="apple-touch-icon" sizes="57x57" href="/gastrack-icon-32.png" />
-    <link rel="apple-touch-icon" sizes="60x60" href="/gastrack-icon-32.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="/gastrack-icon-32.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="/gastrack-icon-32.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="/gastrack-icon-32.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="/gastrack-icon-32.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="/gastrack-icon-32.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/gastrack-icon-32.png" />
+
+    <!--
+      SEO fallback (static). Halaman publik (Landing/TrackingPublic) meng-update
+      <title>, meta description, canonical, og:url/og:image saat mounted lewat
+      src/resource/PublicSeo.js. Atribut data-seo="dynamic" pada <title> dipakai
+      applyTabIdentity() (Identity.js) supaya tidak menimpa judul halaman.
+    -->
+    <title>Jastip — Jasa Titip Belanja &amp; Lacak Paket</title>
+    <meta
+      name="description"
+      content="Jastip adalah layanan jasa titip belanja yang mencatat barang, tagihan, dan pengiriman dalam satu sistem. Lacak posisi paket kapan saja lewat nomor resi atau nomor HP."
+    />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large"
+    />
+    <meta name="author" content="Jastip" />
+
+    <!-- Open Graph (og:url & og:image diisi runtime: butuh origin absolut) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Jastip" />
+    <meta property="og:locale" content="id_ID" />
+    <meta
+      property="og:title"
+      content="Jastip — Jasa Titip Belanja &amp; Lacak Paket"
+    />
+    <meta
+      property="og:description"
+      content="Barang, tagihan, dan pengiriman tercatat dalam satu sistem. Lacak paket lewat nomor resi atau nomor HP."
+    />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="Jastip — Jasa Titip Belanja &amp; Lacak Paket"
+    />
+    <meta
+      name="twitter:description"
+      content="Barang, tagihan, dan pengiriman tercatat dalam satu sistem. Lacak paket lewat nomor resi atau nomor HP."
+    />
+
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <!-- Structured data: hanya data yang benar-benar diketahui (url/logo diisi runtime) -->
+    <script type="application/ld+json" id="ld-public">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "#website",
+            "name": "Jastip",
+            "alternateName": "Gastrack",
+            "inLanguage": "id-ID",
+            "description": "Sistem jasa titip belanja: pencatatan barang, tagihan, dan pelacakan paket."
+          },
+          {
+            "@type": "Organization",
+            "name": "Jastip",
+            "alternateName": "Gastrack",
+            "inLanguage": "id-ID",
+            "description": "Layanan jasa titip belanja dengan pelacakan paket berbasis resi dan nomor HP."
+          }
+        ]
+      }
+    </script>
+
+    <!-- favicons: pakai file berukuran asli (32px/192px), bukan PNG 1024px 210KB -->
     <link rel="apple-touch-icon" sizes="180x180" href="/gastrack-icon-180.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link
       rel="icon"
       type="image/png"
       sizes="192x192"
-      href="/gastrack-icon-32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="/gastrack-icon-32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="96x96"
-      href="/gastrack-icon-32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="/gastrack-icon-32.png"
+      href="/gastrack-icon-192.png"
     />
     <link rel="manifest" href="/manifest.json" />
     <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="msapplication-TileImage" content="/gastrack-icon-32.png" />
+    <meta name="msapplication-TileImage" content="/gastrack-icon-192.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -55,9 +97,23 @@
     <meta name="theme-color" content="#553b9c" />
     <!-- geotagging -->
 
-    <script type="text/javascript" src="/BrowserPrint-3.1.250.min.js"></script>
+    <!-- Resource hints: buka koneksi lebih awal ke host font (CSS-nya render-blocking) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
+    <!-- defer: library print Zebra hanya dipakai saat user membuka modal label
+         (ModalPrintLabelToZebra mengecek typeof BrowserPrint), jadi tidak perlu
+         memblokir parsing/first paint halaman landing. -->
+    <script
+      type="text/javascript"
+      src="/BrowserPrint-3.1.250.min.js"
+      defer
+    ></script>
     <script
       async
+      fetchpriority="low"
       src="https://www.googletagmanager.com/gtag/js?id=UA-118965717-3"
     ></script>
     <link
@@ -89,6 +145,17 @@
         >We're sorry but this app doesn't work properly without JavaScript
         enabled. Please enable it to continue.</strong
       >
+      <h1>Jasa Titip Belanja &amp; Lacak Paket</h1>
+      <p>
+        Jastip mencatat setiap barang, tagihan, dan pengiriman dalam satu
+        sistem. Lacak posisi paket menggunakan nomor resi kurir atau nomor HP
+        customer.
+      </p>
+      <p>
+        <a href="/landing">Beranda</a> &middot;
+        <a href="/tracking">Lacak paket</a> &middot;
+        <a href="/login">Masuk ke akun</a>
+      </p>
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->

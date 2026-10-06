@@ -1,0 +1,22 @@
+# Jastip / Gastrack - robots exclusion protocol
+# https://developers.google.com/search/docs/crawling-indexing/robots/robots_txt
+
+User-agent: *
+Allow: /
+# Halaman utilitas aplikasi (bukan konten publik)
+Disallow: /login
+Disallow: /register
+Disallow: /change-password
+
+# Asset yang tidak perlu di-crawl
+Disallow: /js/
+Disallow: /css/
+Disallow: /img/
+
+# Sitemap.
+# Catatan: direktif Sitemap mensyaratkan URL ABSOLUT, sedangkan domain produksi
+# belum diketahui saat file ini dibuat (dilarang menebak URL). Setelah domain
+# pasti, hapus tanda '#' di baris di bawah dan isi domainnya, mis.:
+# Sitemap: https://domain-anda/sitemap.xml
+# Sementara itu peta situs tetap bisa ditemukan lewat <link rel="sitemap">
+# di public/index.html dan lewat /sitemap.xml.

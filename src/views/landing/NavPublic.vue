@@ -2,8 +2,18 @@
   <nav class="pn">
     <div class="pn-inner">
       <router-link class="pn-brand" to="/landing">
-        <img v-if="brandLogo" :src="brandLogo" class="pn-logo" alt="Logo" />
-        <span v-else class="pn-dot"></span>
+        <span class="pn-logo-box">
+          <img
+            v-if="brandLogo"
+            :src="brandLogo"
+            class="pn-logo"
+            width="30"
+            height="30"
+            decoding="async"
+            :alt="brandName"
+          />
+          <span v-else class="pn-dot"></span>
+        </span>
         <span>{{ brandName }}</span>
       </router-link>
       <div class="pn-links">
@@ -68,6 +78,15 @@ export default {
   font-size: 18px;
   color: #0f172a;
   text-decoration: none;
+}
+/* Kotak logo 30x30 selalu ada → nav tidak bergeser saat identity resolve */
+.pn-logo-box {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .pn-logo {
   width: 30px;
