@@ -17,71 +17,165 @@
                 :totalData="totalData"
                 :fields="fields"
                 :items="reformatItems"
-                :status_code="'item_stock'"
-                :action="['read', 'update', 'delete']"
-                :filterBy="['All', 'id', 'customer_name', 'status']"
-                :orderFilter="['All', 'id', 'customer_name', 'status']"
+                :status_code="'trx_disposal'"
+                :action="['read', 'approve', 'delete']"
+                :actionProperty="actionProperty"
+                :filterAction="filterAction"
+                :filterBy="['All', 'id', 'status']"
+                :orderFilter="['All', 'id', 'status']"
                 v-on:handleReload="loadData($event)"
+                v-on:handleApprove="handleApprove"
+                v-on:handleDelete="handleDelete"
               />
             </CCol>
           </CRow>
         </CCardBody>
-        <CCardFooter>
-          <div class="float-right">
-            <ExportButtons @export="handleClickExport" />
-          </div>
-        </CCardFooter>
       </CCard>
     </CCol>
+
+    <!-- Modal Approve -->
+    <div class="app-modal">
+      <CModal
+        title="Approve Disposal"
+        centered="centered"
+        color="success"
+        :show.sync="modalApprove"
+        size="md"
+      >
+        <div v-if="selectedDisposal" class="app-modal-info">
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">ID</span>
+            <span class="app-modal-info__value">{{ selectedDisposal.id }}</span>
+          </div>
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">Quantity</span>
+            <span class="app-modal-info__value">{{
+              selectedDisposal.quantity
+            }}</span>
+          </div>
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">Status</span>
+            <span class="app-modal-info__value">{{
+              selectedDisposal.status_name
+            }}</span>
+          </div>
+        </div>
+        <p class="text-warning" style="margin-top: 10px">
+          Item pada disposal ini akan menjadi status 3 (Destroyed) dan tidak
+          dapat dipulihkan.
+        </p>
+        <template #footer>
+          <CButton color="secondary" @click="modalApprove = false">Cancel</CButton>
+          <CButton color="success" :disabled="submitting" @click="submitApprove()">
+            Approve
+          </CButton>
+        </template>
+      </CModal>
+    </div>
+
+    <!-- Modal Delete -->
+    <div class="app-modal">
+      <CModal
+        title="Delete Disposal"
+        centered="centered"
+        color="danger"
+        :show.sync="modalDelete"
+        size="md"
+      >
+        <div v-if="selectedDisposal" class="app-modal-info">
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">ID</span>
+            <span class="app-modal-info__value">{{ selectedDisposal.id }}</span>
+          </div>
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">Quantity</span>
+            <span class="app-modal-info__value">{{
+              selectedDisposal.quantity
+            }}</span>
+          </div>
+        </div>
+        <p class="text-warning" style="margin-top: 10px">
+          Ref pada item stock akan dikosongkan dan item kembali bebas; status
+          disposal menjadi Canceled (-1).
+        </p>
+        <template #footer>
+          <CButton color="secondary" @click="modalDelete = false">Cancel</CButton>
+          <CButton color="danger" :disabled="submitting" @click="submitDelete()">
+            Delete
+          </CButton>
+        </template>
+      </CModal>
+    </div>
   </CRow>
 </template>
 
 <script>
+import Vue from 'vue';
+import TableTransaction from '../../component/TableTransaction.vue';
+import ButtonPermission from '../../component/ButtonPermission.vue';
 import $axios from '../../../api';
-import { exportDataV3, formatNumber } from '../../../utils';
 
-const STATUS_ITEM = {
-  200: 'Draft',
-  201: 'Manifesting',
-  202: 'In Transit',
-  203: 'GRN',
-  204: 'Dispatch',
-  205: 'Sold',
-  206: 'Disposed',
-};
+Vue.component('TableTransaction', TableTransaction);
+Vue.component('ButtonPermission', ButtonPermission);
 
 export default {
   name: 'ListItemDisposal',
   data() {
     return {
-      totalData: 0,
-      items: [],
       fields: [
-        { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
-        { key: 'barcode', label: 'Barcode' },
-        { key: 'customer_name', label: 'Customer' },
-        { key: 'customer_phone', label: 'Phone' },
-        { key: 'product_name', label: 'Product' },
-        { key: 'quantity', label: 'Qty' },
-        { key: 'foreign_currency', label: 'Foreign Curr.' },
-        { key: 'foreign_cost', label: '(F) Cost' },
-        { key: 'foreign_price', label: '(F) Price' },
-        { key: 'local_currency', label: 'Local Curr.' },
-        { key: 'local_cost', label: '(L) Cost' },
-        { key: 'local_price', label: '(L) Price' },
-        { key: 'local_shipping', label: '(L) Shipping' },
-        { key: 'local_profit', label: '(L) Profit' },
-        { key: 'status_name', label: 'Status' },
-        { key: 'payment_status', label: 'Payment' },
-        { key: 'warehouse_name', label: 'Warehouse' },
+        { key: 'id', label: 'ID', _style: 'width:70px' },
+        { key: 'quantity', label: 'Quantity' },
+        { key: 'status', label: 'Status' },
         { key: 'created_full_name', label: 'Created By' },
-        { key: 'action', label: 'Action', sorter: false, filter: false },
+        { key: 'created_date', label: 'Created Date' },
       ],
+      actionProperty: {
+        approve: {
+          size: 'sm',
+          class: 'float-right',
+          color: 'success',
+          icon: 'clipboard-check',
+          text: '',
+          tooltip: 'Approve',
+          useHref: false,
+        },
+        delete: {
+          size: 'sm',
+          class: 'float-right',
+          color: 'danger',
+          icon: 'trash',
+          text: '',
+          tooltip: 'Delete',
+          useHref: false,
+        },
+      },
+      items: [],
+      totalData: 0,
+      selectedDisposal: null,
+      modalApprove: false,
+      modalDelete: false,
+      submitting: false,
     };
   },
+  mounted() {
+    this.loadData();
+  },
+  computed: {
+    reformatItems() {
+      return this.items;
+    },
+  },
   methods: {
+    filterAction(item) {
+      // Hanya disposal berstatus Waiting (0) yang bisa approve / delete.
+      if (Number(item.status) === 0) {
+        return ['read', 'approve', 'delete'];
+      }
+      return ['read'];
+    },
     async loadData(filter) {
-      if (!filter) filter = this.$route.query;
+      if (!filter) filter = { ...this.$route.query };
+      else filter = { ...filter };
       let param = `${new URLSearchParams(filter).toString()}`;
       $axios.get(`/v1/jastip/disposal?${param}`).then((res) => {
         res = res.data;
@@ -92,47 +186,71 @@ export default {
     handleAdd() {
       this.$router.push({ path: '/jastip/item-disposal/create' });
     },
-    handleClickExport(type) {
-      exportDataV3({
-        param: this.$route.query,
-        exportType: type,
-        url: '/v1/jastip/disposal',
-      });
+    handleApprove(item) {
+      this.selectedDisposal = item;
+      this.modalApprove = true;
     },
-    formatCurrency(val) {
-      if (val == null || val === '') return '-';
-      const n = Math.round(Number(val));
-      if (isNaN(n)) return '-';
-      return n.toLocaleString('id-ID');
+    handleDelete(item) {
+      this.selectedDisposal = item;
+      this.modalDelete = true;
     },
-  },
-  computed: {
-    reformatItems() {
-      return this.items.map((item) => {
-        return {
-          ...item,
-          status_name: STATUS_ITEM[item.status] || item.status_name || '-',
-          customer_name: item.customer_name || '-',
-          customer_phone: item.customer_phone || '-',
-          product_name: item.product_name || '-',
-          warehouse_name: item.warehouse_name || '-',
-          foreign_currency: item.foreign_currency || '-',
-          local_currency: item.local_currency || '-',
-          foreign_cost: formatNumber(item.foreign_cost) || '-',
-          foreign_price: formatNumber(item.foreign_price) || '-',
-          local_cost: formatNumber(item.local_cost) || '-',
-          local_price: formatNumber(item.local_price) || '-',
-          local_shipping: formatNumber(item.local_shipping) || '-',
-          local_profit: formatNumber(item.local_profit) || '-',
-          created_full_name: item.created_full_name || '-',
-          payment_status:
-            item.payment_status === 1
-              ? 'Paid'
-              : item.payment_status === 0
-              ? 'Waiting'
-              : '-',
-        };
-      });
+    async submitApprove() {
+      if (!this.selectedDisposal) return;
+      this.submitting = true;
+      try {
+        await $axios.post(`/v1/jastip/disposal/approve`, {
+          id: this.selectedDisposal.id,
+        });
+        this.$toast.open({
+          message: 'Disposal approved.',
+          type: 'success',
+          position: 'top-right',
+          duration: 3000,
+        });
+        this.modalApprove = false;
+        this.selectedDisposal = null;
+        this.loadData();
+      } catch (e) {
+        this.$toast.open({
+          message:
+            (e.response && e.response.data && e.response.data.message) ||
+            'Approve failed.',
+          type: 'error',
+          position: 'top-right',
+          duration: 5000,
+        });
+      } finally {
+        this.submitting = false;
+      }
+    },
+    async submitDelete() {
+      if (!this.selectedDisposal) return;
+      this.submitting = true;
+      try {
+        await $axios.delete(`/v1/jastip/disposal`, {
+          data: { id: this.selectedDisposal.id },
+        });
+        this.$toast.open({
+          message: 'Disposal canceled.',
+          type: 'success',
+          position: 'top-right',
+          duration: 3000,
+        });
+        this.modalDelete = false;
+        this.selectedDisposal = null;
+        this.loadData();
+      } catch (e) {
+        this.$toast.open({
+          message:
+            (e.response && e.response.data && e.response.data.message) ||
+            'Delete failed.',
+          type: 'error',
+          position: 'top-right',
+          duration: 5000,
+        });
+      } finally {
+        this.submitting = false;
+      }
     },
   },
 };

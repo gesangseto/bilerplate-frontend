@@ -32,11 +32,17 @@ const STATUS_DESC = {
     { status_code: '204', status_desc: 'Dispatch' },
     { status_code: '205', status_desc: 'Sold' },
     { status_code: '206', status_desc: 'Disposed' },
+    { status_code: '3', status_desc: 'Destroyed' },
   ],
   item_batch: [
     { status_code: 'Draft', status_desc: 'Draft' },
     { status_code: 'Shipping', status_desc: 'Shipping' },
     { status_code: 'Done', status_desc: 'Done' },
+  ],
+  trx_disposal: [
+    { status_code: '-1', status_desc: 'Canceled' },
+    { status_code: '0', status_desc: 'Waiting' },
+    { status_code: '1', status_desc: 'Done' },
   ],
   trx_inbound: [{ status_code: '1', status_desc: 'Done' }],
   trx_picking: [
@@ -68,11 +74,6 @@ const STATUS_DESC = {
     { status_code: '2', status_desc: 'Rejected' },
   ],
   trx_return: [
-    { status_code: '0', status_desc: 'Pending' },
-    { status_code: '1', status_desc: 'Approved' },
-    { status_code: '2', status_desc: 'Rejected' },
-  ],
-  trx_disposal: [
     { status_code: '0', status_desc: 'Pending' },
     { status_code: '1', status_desc: 'Approved' },
     { status_code: '2', status_desc: 'Rejected' },

@@ -1,281 +1,422 @@
 <template>
-  <CRow>
-    <CCol col="12" xl="12" sm="12">
-      <CCard>
-        <CCardHeader>
-          <h5>{{ $activeMenu.name }} [{{ action }}]</h5>
-        </CCardHeader>
-        <CCardBody class="mb-5 mt-2">
-          <CRow>
-            <CCol sm="12" md="12" lg="12">
-              <CButton
-                size="sm"
-                class="float-right m-1"
-                color="success"
-                @click="openModalAdd()"
-              >
-                <CIcon name="cil-plus" /> Add Item
-              </CButton>
-            </CCol>
-          </CRow>
-          <CRow>
-            <CCol sm="12" md="12" lg="12">
-              <CDataTable
-                tableFilter
-                class="text-left"
-                hover
-                striped
-                border
-                :items="renderItems"
-                :fields="fields"
-                style="font-size: 12px"
-              >
-                <template #action="{ item, index }">
-                  <td>
-                    <Button
-                      v-c-tooltip="'Delete'"
-                      :type="'delete'"
-                      @click="deleteRow(item, index)"
-                    />
-                  </td>
-                </template>
-              </CDataTable>
-            </CCol>
-          </CRow>
-        </CCardBody>
-        <CCardFooter>
-          <div class="float-left">
-            <CButton @click="save()" color="primary" size="sm" type="submit">
-              <CIcon name="cil-check-circle" /> Submit
+  <div>
+    <CCard>
+      <CCardBody>
+        <h3>{{ isCreate ? 'Create Item Disposal' : 'Detail Item Disposal' }}</h3>
+      </CCardBody>
+    </CCard>
+    <CCard>
+      <CCardHeader>
+        <CRow>
+          <CCol sm="6" lg="6" md="6" class="text-left">
+            <CButton color="secondary" size="sm" @click="handleBack()">Back</CButton>
+            <CButton
+              v-if="isCreate"
+              color="primary"
+              size="sm"
+              class="ml-2"
+              @click="openPick()"
+            >
+              Pilih Item
             </CButton>
-            <ButtonBack />
-          </div>
-          <div class="float-right">
-            <ExportButtons
-              v-if="action !== 'ADD'"
-              @export="handleClickExport"
-            />
-          </div>
-        </CCardFooter>
-      </CCard>
-    </CCol>
+          </CCol>
+          <CCol class="text-right" v-if="isCreate">
+            <CButton color="secondary" size="sm" @click="loadDraftItems()">
+              Refresh Items
+            </CButton>
+          </CCol>
+        </CRow>
+      </CCardHeader>
+      <CCardBody>
+        <!-- Informasi disposal (mode view / detail) -->
+        <div v-if="!isCreate && header" class="mb-3">
+          <CRow form class="form-group">
+            <CCol sm="1"><label class="col-form-label">ID</label></CCol>
+            <CCol sm="2"><CInput class="mb-0" :value="header.id" disabled /></CCol>
+            <CCol sm="2"><label class="col-form-label">Status</label></CCol>
+            <CCol sm="2">
+              <CInput class="mb-0" :value="header.status_name" disabled />
+            </CCol>
+            <CCol sm="2"><label class="col-form-label">Quantity</label></CCol>
+            <CCol sm="3">
+              <CInput class="mb-0" :value="header.quantity" disabled />
+            </CCol>
+          </CRow>
+          <CRow form class="form-group">
+            <CCol sm="1"><label class="col-form-label">Created At</label></CCol>
+            <CCol sm="4">
+              <CInput class="mb-0" :value="header.created_date" disabled />
+            </CCol>
+            <CCol sm="2"><label class="col-form-label">Created By</label></CCol>
+            <CCol sm="4">
+              <CInput class="mb-0" :value="header.created_full_name || '-'" disabled />
+            </CCol>
+          </CRow>
+        </div>
 
-    <!-- Modal Pilih Item Draft -->
-    <CModal
-      title="Select Draft Items to Dispose"
-      centered="centered"
-      color="info"
-      :show.sync="modalAdd"
-      size="xl"
-    >
-      <CDataTable
-        :items="renderDraftItems"
-        :fields="draftFields"
-        hover
-        striped
-        border
-        style="font-size: 12px"
-        :items-per-page="10"
-        :column-filter="true"
-        :items-per-page-select="true"
-        :pagination="true"
-        @row-clicked="toggleSelect"
-      >
-        <template #selected="{ item }">
-          <td>
-            <input type="checkbox" :checked="isSelected(item.id)" />
-          </td>
-        </template>
-      </CDataTable>
-      <template #footer>
-        <CButton type="button" size="sm" color="primary" @click="setData()">
-          <CIcon name="cil-plus" /> Set Data
-        </CButton>
+        <p v-if="isCreate" class="text-muted mb-2">
+          Item yang sudah final (Sold, Disposed, Destroyed) atau sudah terikat
+          disposal lain tidak dapat dipilih.
+        </p>
+
+        <CTable striped responsive hover :items="form.items" :fields="fields">
+          <template #status="{ item }">
+            <td>
+              <CBadge :color="getBadge(item.status)">
+                {{ itemStatus(item.status) }}
+              </CBadge>
+            </td>
+          </template>
+          <template #action="{ item }" v-if="isCreate">
+            <td>
+              <CButton color="danger" size="sm" @click="deleteItem(item)">
+                Hapus
+              </CButton>
+            </td>
+          </template>
+        </CTable>
+      </CCardBody>
+      <CCardFooter v-if="isCreate">
         <CButton
-          type="button"
+          type="submit"
+          color="primary"
           size="sm"
-          color="danger"
-          @click="modalAdd = false"
+          :disabled="loading"
+          @click="submitForm()"
         >
-          <CIcon name="cil-ban" /> Cancel
+          Submit
         </CButton>
-      </template>
-    </CModal>
-  </CRow>
+        <CButton type="reset" color="danger" size="sm" @click="handleBack()">
+          Cancel
+        </CButton>
+      </CCardFooter>
+    </CCard>
+
+    <!-- Modal: pilih item stock -->
+    <div class="app-modal">
+      <CModal
+        title="Pilih Item Stock"
+        centered="centered"
+        color="primary"
+        :show.sync="modalPick"
+        size="xl"
+      >
+        <CInput
+          size="sm"
+          placeholder="Type here to filter..."
+          v-model="pickFilter"
+        />
+        <CDataTable
+          :items="filteredPickItems"
+          :fields="pickFields"
+          :items-per-page="10"
+          :sorter="true"
+          hover
+          striped
+          pagination
+          @row-clicked="togglePick"
+        >
+          <template #status="{ item }">
+            <td>
+              <CBadge :color="getBadge(item.status)">
+                {{ itemStatus(item.status) }}
+              </CBadge>
+            </td>
+          </template>
+          <template #pilih="{ item }">
+            <td>
+              <CButton
+                :color="isPicked(item) ? 'success' : 'secondary'"
+                size="sm"
+                @click="togglePick(item)"
+              >
+                {{ isPicked(item) ? 'Dipilih' : 'Pilih' }}
+              </CButton>
+            </td>
+          </template>
+        </CDataTable>
+        <template #footer>
+          <span class="mr-auto text-muted">
+            {{ pickRows.length }} item dipilih
+          </span>
+          <CButton color="secondary" @click="modalPick = false">Batal</CButton>
+          <CButton color="primary" :disabled="pickRows.length === 0" @click="addPicked()">
+            Tambahkan
+          </CButton>
+        </template>
+      </CModal>
+    </div>
+  </div>
 </template>
 
 <script>
+import Vue from 'vue';
 import $axios from '../../../api';
-import { exportDataV3, handleBack, formatNumber } from '../../../utils';
+import { getUserId } from '../../../utils/storage';
 
 export default {
   name: 'FormItemDisposal',
   data() {
     return {
-      initialLoad: true,
-      action: 'ADD',
-      items: [],
-      draftItems: [],
-      selectedIds: [],
-      modalAdd: false,
-      fields: [
+      action: 'create',
+      header: null,
+      loading: false,
+      // Kamus status item stock (khusus item, bukan status disposal).
+      ITEM_STATUS: {
+        200: 'Draft',
+        201: 'Manifesting',
+        202: 'In Transit',
+        203: 'GRN',
+        204: 'Dispatch',
+        205: 'Sold',
+        206: 'Disposed',
+        3: 'Destroyed',
+      },
+      // Kamus status record trx_disposal (header view).
+      HEADER_STATUS: {
+        '-1': 'Canceled',
+        0: 'Waiting',
+        1: 'Done',
+      },
+      form: {
+        id: null,
+        items: [],
+      },
+      fields: [],
+      createFields: [
         { key: 'barcode', label: 'Barcode' },
-        { key: 'customer_name', label: 'Customer' },
-        { key: 'product_name', label: 'Product' },
-        { key: 'quantity', label: 'Qty' },
-        { key: 'foreign_currency', label: 'Foreign Curr.' },
-        { key: 'foreign_cost', label: '(F) Cost' },
-        { key: 'foreign_price', label: '(F) Price' },
-        { key: 'local_currency', label: 'Local Curr.' },
-        { key: 'local_cost', label: '(L) Cost' },
-        { key: 'local_price', label: '(L) Price' },
-        { key: 'local_shipping', label: '(L) Shipping' },
-        { key: 'local_profit', label: '(L) Profit' },
-        { key: 'status_name', label: 'Status' },
-        { key: 'payment_status', label: 'Payment' },
-        { key: 'action', label: 'Action', sorter: false },
+        { key: 'status', label: 'Status' },
+        { key: 'name', label: 'Product' },
+        { key: 'batch_no', label: 'Batch' },
+        { key: 'quantity', label: 'Quantity' },
+        { key: 'action', label: 'Action' },
       ],
-      draftFields: [
-        { key: 'selected', label: '' },
+      viewFields: [
         { key: 'barcode', label: 'Barcode' },
-        { key: 'customer_name', label: 'Customer' },
-        { key: 'product_name', label: 'Product' },
-        { key: 'quantity', label: 'Qty' },
-        { key: 'foreign_currency', label: 'Foreign Curr.' },
-        { key: 'foreign_cost', label: '(F) Cost' },
-        { key: 'foreign_price', label: '(F) Price' },
-        { key: 'local_currency', label: 'Local Curr.' },
-        { key: 'local_cost', label: '(L) Cost' },
-        { key: 'local_price', label: '(L) Price' },
-        { key: 'local_shipping', label: '(L) Shipping' },
-        { key: 'local_profit', label: '(L) Profit' },
-        { key: 'status_name', label: 'Status' },
-        { key: 'payment_status', label: 'Payment' },
-        { key: 'warehouse_name', label: 'Warehouse' },
+        { key: 'status', label: 'Status' },
+        { key: 'name', label: 'Product' },
+        { key: 'batch_no', label: 'Batch' },
+        { key: 'quantity', label: 'Quantity' },
+      ],
+      modalPick: false,
+      pickFilter: '',
+      pickRows: [],
+      pickItems: [],
+      pickFields: [
+        { key: 'pilih', label: '', _style: 'width:90px' },
+        { key: 'id', label: 'ID', _style: 'width:60px' },
+        { key: 'barcode', label: 'Barcode' },
+        { key: 'name', label: 'Product' },
+        { key: 'status', label: 'Status' },
+        { key: 'batch_no', label: 'Batch' },
+        { key: 'quantity', label: 'Quantity' },
       ],
     };
   },
+  computed: {
+    isCreate() {
+      const t = String(this.action || '').toLowerCase();
+      return t === 'create' || t === 'add' || t === '';
+    },
+    filteredPickItems() {
+      const rows = this.pickItems.map((r) => ({
+        ...r,
+        name: r.name || r.product_name,
+      }));
+      const q = (this.pickFilter || '').toLowerCase();
+      if (!q) return rows;
+      return rows.filter(
+        (r) =>
+          String(r.barcode || '').toLowerCase().includes(q) ||
+          String(r.name || '').toLowerCase().includes(q) ||
+          String(r.batch_no || '').toLowerCase().includes(q),
+      );
+    },
+  },
   mounted() {
-    this.action = this.$route.params.id === undefined ? 'ADD' : 'EDIT';
+    this.action = this.$route.params.type || 'create';
+    this.fields = this.isCreate ? this.createFields : this.viewFields;
+    if (this.isCreate) {
+      this.loadDraftItems();
+    } else if (this.$route.params.id) {
+      this.loadDisposal();
+    } else {
+      this.loadDraftItems();
+    }
   },
   methods: {
-    handleClickExport(type) {
-      exportDataV3({
-        param: { id: this.$route.params.id },
-        exportType: type,
-        url: '/v1/jastip/disposal',
-      });
+    itemStatus(status) {
+      return this.ITEM_STATUS[status] || status || '-';
     },
-    openModalAdd() {
-      this.loadDraftItems();
-      this.modalAdd = true;
+    getBadge(status) {
+      const map = {
+        200: 'secondary',
+        201: 'info',
+        202: 'info',
+        203: 'primary',
+        204: 'primary',
+        205: 'success',
+        206: 'warning',
+        3: 'dark',
+      };
+      return map[status] || 'secondary';
     },
-    loadDraftItems() {
-      let param = new URLSearchParams({ status: 200 }).toString();
-      $axios.get(`/v1/jastip/item-registry?${param}`).then((res) => {
-        this.draftItems = res.data.data || [];
-      });
+    handleBack() {
+      this.$router.push({ path: '/jastip/item-disposal' });
     },
-    isSelected(id) {
-      return this.selectedIds.includes(id);
-    },
-    toggleSelect(item) {
-      let idx = this.selectedIds.indexOf(item.id);
-      if (idx >= 0) {
-        this.selectedIds.splice(idx, 1);
-      } else {
-        this.selectedIds.push(item.id);
-      }
-    },
-    setData() {
-      let selected = this.draftItems.filter((it) =>
-        this.selectedIds.includes(it.id),
-      );
-      for (const it of selected) {
-        if (!this.items.find((o) => o.id === it.id)) {
-          this.items.push(it);
+    // Muat record trx_disposal + items (trx_detail_item) untuk mode view.
+    async loadDisposal() {
+      try {
+        const param = new URLSearchParams({
+          id: this.$route.params.id,
+          limit: 1,
+        }).toString();
+        const result = await $axios.get(`/v1/jastip/disposal?${param}`);
+        const res = result.data;
+        const rows = res.data || [];
+        if (res.error || rows.length === 0) {
+          this.$toast.open({
+            message: 'Data tidak ditemukan',
+            type: 'error',
+            position: 'top-right',
+            duration: 3000,
+          });
+          return;
         }
-      }
-      this.selectedIds = [];
-      this.modalAdd = false;
-    },
-    deleteRow(item) {
-      this.items = this.items.filter((x) => x.id !== item.id);
-    },
-    save() {
-      if (this.items.length <= 0) {
+        this.header = rows[0];
+        this.form.id = this.header.id;
+        this.form.items = (this.header.items || []).map((it) => ({
+          ...it,
+          name: it.product_name,
+        }));
+      } catch (e) {
         this.$toast.open({
-          message: 'Please add at least 1 item to continue',
+          message: 'Gagal memuat data disposal',
           type: 'error',
-          dissmissible: true,
           position: 'top-right',
-          duration: 5000,
+          duration: 3000,
+        });
+      }
+    },
+    // Muat kandidat item stock: status 200-204 (belum final).
+    async loadDraftItems() {
+      this.loading = true;
+      const url = `/v1/jastip/item-registry?${new URLSearchParams({
+        status: '200,201,202,203,204',
+        limit: 500,
+      }).toString()}`;
+      await $axios
+        .get(url)
+        .then((result) => {
+          const res = result.data;
+          this.pickItems = (res.data || []).map((r) => ({
+            ...r,
+            name: r.name || r.product_name,
+          }));
+          if (this.pickItems.length === 0) {
+            this.$toast.open({
+              message: 'Tidak ada item draft',
+              type: 'info',
+              position: 'top-right',
+              duration: 3000,
+            });
+          }
+        })
+        .catch(() => {
+          this.$toast.open({
+            message: 'Gagal memuat data item',
+            type: 'error',
+            position: 'top-right',
+            duration: 3000,
+          });
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    openPick() {
+      this.pickRows = [];
+      this.pickFilter = '';
+      this.modalPick = true;
+      if (this.pickItems.length === 0) this.loadDraftItems();
+    },
+    isPicked(item) {
+      return this.pickRows.some((r) => Number(r.id) === Number(item.id));
+    },
+    togglePick(item) {
+      if (this.isPicked(item)) {
+        this.pickRows = this.pickRows.filter(
+          (r) => Number(r.id) !== Number(item.id),
+        );
+      } else {
+        this.pickRows.push(item);
+      }
+    },
+    addPicked() {
+      const ids = new Set(this.form.items.map((i) => Number(i.id)));
+      this.pickRows.forEach((r) => {
+        if (!ids.has(Number(r.id))) {
+          this.form.items.push({ ...r });
+        }
+      });
+      this.form.items.sort((a, b) => a.id - b.id);
+      this.pickRows = [];
+      this.modalPick = false;
+    },
+    deleteItem(row) {
+      this.form.items = this.form.items.filter(
+        (item) => Number(item.id) !== Number(row.id),
+      );
+    },
+    async submitForm() {
+      if (this.form.items.length === 0) {
+        this.$toast.open({
+          message: 'Pilih minimal satu item',
+          type: 'error',
+          position: 'top-right',
+          duration: 3000,
         });
         return;
       }
-      let param = {
-        items: this.items.map((it) => ({ id: it.id })),
+      this.loading = true;
+      const payload = {
+        items: this.form.items.map((it) => ({ id: it.id })),
+        created_by: getUserId(),
       };
-      this.$isLoading(true);
-      $axios.put('/v1/jastip/disposal', param).then((result) => {
-        this.$isLoading(false);
-        let res = result.data;
-        this.$toast.open({
-          message: res.error
-            ? res.message
-            : 'Items have been disposed successfully ',
-          type: res.error ? 'error' : 'success',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
+      await $axios
+        .put('/v1/jastip/disposal', payload)
+        .then((result) => {
+          const res = result.data;
+          if (res.error) {
+            this.$toast.open({
+              message: res.message,
+              type: 'error',
+              position: 'top-right',
+              duration: 5000,
+            });
+            return;
+          }
+          this.$toast.open({
+            message: 'Disposal created.',
+            type: 'success',
+            position: 'top-right',
+            duration: 3000,
+          });
+          this.handleBack();
+        })
+        .catch((e) => {
+          this.$toast.open({
+            message:
+              (e.response && e.response.data && e.response.data.message) ||
+              'Gagal membuat disposal',
+            type: 'error',
+            position: 'top-right',
+            duration: 5000,
+          });
+        })
+        .finally(() => {
+          this.loading = false;
         });
-        if (!res.error) {
-          handleBack(this.$router, this.$route);
-        }
-      });
-    },
-    formatCurrency(val) {
-      if (val == null || val === '') return '-';
-      const n = Math.round(Number(val));
-      if (isNaN(n)) return '-';
-      return n.toLocaleString('id-ID');
-    },
-  },
-  computed: {
-    renderItems() {
-      return this.items.map((item) => {
-        return {
-          ...item,
-          customer_name: item.customer_name || '-',
-          product_name: item.product_name || '-',
-          foreign_currency: item.foreign_currency || '-',
-          local_currency: item.local_currency || '-',
-          foreign_cost: formatNumber(item.foreign_cost) || '-',
-          foreign_price: formatNumber(item.foreign_price) || '-',
-          local_cost: formatNumber(item.local_cost) || '-',
-          local_price: formatNumber(item.local_price) || '-',
-          local_shipping: formatNumber(item.local_shipping) || '-',
-          local_profit: formatNumber(item.local_profit) || '-',
-          status_name: item.status_name || '-',
-          payment_status:
-            item.payment_status === 1
-              ? 'Paid'
-              : item.payment_status === 0
-              ? 'Waiting'
-              : '-',
-        };
-      });
-    },
-    renderDraftItems() {
-      return this.draftItems.map((item) => ({
-        ...item,
-        foreign_cost: formatNumber(item.foreign_cost) || '-',
-        foreign_price: formatNumber(item.foreign_price) || '-',
-        local_cost: formatNumber(item.local_cost) || '-',
-        local_price: formatNumber(item.local_price) || '-',
-        local_shipping: formatNumber(item.local_shipping) || '-',
-        local_profit: formatNumber(item.local_profit) || '-',
-      }));
     },
   },
 };
