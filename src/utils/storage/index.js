@@ -6,6 +6,86 @@ export function clearStorage() {
   localStorage.removeItem('menu');
   localStorage.removeItem('role');
   localStorage.removeItem('time_out');
+  // Info tenant dibersihkan saat logout (anti-kebocoran antar pengguna).
+  // Kode tenant TETAP disimpan agar layar login masih tahu tenant mana.
+  localStorage.removeItem('tenant_info');
+}
+
+// ===== Tenant (multi-tenant SaaS) =====
+// Kode tenant dideteksi dari subdomain host (mis. demo.app.com -> 'demo').
+// Info tenant (dari endpoint publik /system/tenant/subdomain/:kode) disimpan
+// di localStorage untuk branding (nama, logo, warna) & preferensi.
+const TENANT_INFO_KEY = 'tenant_info';
+const TENANT_CODE_KEY = 'tenant_code';
+
+/**
+ * Ambil kode tenant dari subdomain host. Mengembalikan '' bila host tidak
+ * punya subdomain tenant (mis. localhost, IP, atau domain tanpa subdomain).
+ * Aturan: subdomain = label pertama host, KECUALI 'www' & alamat non-domain.
+ */
+export function detectTenantFromHost(hostname = window.location.hostname) {
+  const host = String(hostname || '').toLowerCase();
+  if (!host) return '';
+  // IP address / localhost -> tidak ada tenant
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) return '';
+  if (host === 'localhost') return '';
+  const parts = host.split('.');
+  // Butuh minimal 3 label (sub.domain.tld) agar bagian pertama = subdomain.
+  if (parts.length < 3) return '';
+  const first = parts[0];
+  if (['www', 'app', 'api'].includes(first)) return '';
+  return first.replace(/[^a-z0-9-]/g, '');
+}
+
+export function setTenantCode(code) {
+  const clean = String(code || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '');
+  if (!clean) {
+    localStorage.removeItem(TENANT_CODE_KEY);
+    return '';
+  }
+  localStorage.setItem(TENANT_CODE_KEY, clean);
+  return clean;
+}
+
+export function getTenantCode() {
+  try {
+    return localStorage.getItem(TENANT_CODE_KEY) || '';
+  } catch (error) {
+    return '';
+  }
+}
+
+export function setTenantInfo(data = {}) {
+  if (!data || !data.subdomain) return null;
+  // Buang field sensitif bila sewaktu-waktu ikut terkirim.
+  const {
+    password,
+    username,
+    db_host,
+    db_port,
+    db_name,
+    db_user,
+    db_password_enc,
+    ...safe
+  } = data;
+  localStorage.setItem(TENANT_INFO_KEY, encryptData(JSON.stringify(safe)));
+  localStorage.setItem(TENANT_CODE_KEY, safe.subdomain);
+  return safe;
+}
+
+export function getTenantInfo() {
+  try {
+    return JSON.parse(decryptData(localStorage.getItem(TENANT_INFO_KEY)));
+  } catch (error) {
+    return null;
+  }
+}
+
+export function removeTenantInfo() {
+  localStorage.removeItem(TENANT_INFO_KEY);
 }
 
 export function getFilterTable(url) {

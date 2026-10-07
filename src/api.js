@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { clearStorage, devToken, getProfile, setLoginTimeout } from './utils';
+import {
+  clearStorage,
+  devToken,
+  getProfile,
+  setLoginTimeout,
+  getTenantCode,
+} from './utils';
 import { getBrowserType, getOsType } from './utils/helper';
 
 // Counter request aktif
@@ -50,6 +56,10 @@ $axios.interceptors.request.use(
       'Access-Control-Allow-Origin': '*',
       'User-Type': deviceProfile,
     };
+    // Identitas tenant (multi-tenant SaaS). Backend mengecek Host lebih dulu,
+    // X-Tenant dipakai saat web diakses tanpa subdomain (mis. localhost saat dev).
+    const tenantCode = getTenantCode();
+    if (tenantCode) config.headers['X-Tenant'] = tenantCode;
     return config;
   },
   function (error) {

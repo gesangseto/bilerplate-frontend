@@ -27,10 +27,10 @@
             <CCard class="login-card border-0 shadow-sm">
               <CCardBody class="p-5">
                 <div class="form-header mb-4 text-center">
-                  <img :src="loginLogo" alt="Logo" class="login-logo" />
-                  <h3 class="mb-2">Sign in</h3>
+                  <img :src="tenantLogo || loginLogo" alt="Logo" class="login-logo" />
+                  <h3 class="mb-2">{{ tenantName || 'Sign in' }}</h3>
                   <p class="text-muted mb-0">
-                    Login with your username and password.
+                    {{ tenantName ? 'Login dengan akun tenant Anda.' : 'Login with your username and password.' }}
                   </p>
                 </div>
 
@@ -107,10 +107,12 @@ import {
   getLoginLogo,
   getLastUrl,
   getConfig,
+  getTenantInfo,
 } from '../../utils';
 import { logoGastrack } from '../../constants';
 import { getSysConfig } from '../../resource/SysConfig';
 import { authLogin } from '../../resource/SysAuth';
+import { fetchTenantInfoWeb } from '../../resource/SysTenant';
 
 export default {
   name: 'Login',
@@ -127,14 +129,35 @@ export default {
       useKeyboard: false,
       layout: 'normal',
       input: null,
+      // Info tenant (multi-tenant SaaS) — branding sebelum login.
+      tenantInfo: null,
       options: {
         useKbEvents: false,
         preventClickEvent: false,
       },
     };
   },
+  computed: {
+    tenantName() {
+      return this.tenantInfo?.identity_name || this.tenantInfo?.name || '';
+    },
+    tenantLogo() {
+      const p = this.tenantInfo?.logo_path;
+      if (!p) return null;
+      // Path absolut / data-url dipakai langsung; path relatif -> host API.
+      if (/^(https?:|data:)/i.test(p)) return p;
+      return `${process.env.VUE_APP_URL_API}${p.startsWith('/') ? '' : '/'}${p}`;
+    },
+  },
   mounted() {
     this.loginLogo = getLoginLogo();
+    this.tenantInfo = getTenantInfo();
+    // Tarik info tenant (branding) bila belum ada di cache.
+    if (!this.tenantInfo) {
+      fetchTenantInfoWeb().then((info) => {
+        if (info) this.tenantInfo = info;
+      });
+    }
     this.loadConfig();
     this.message = null;
     if (!this.message && localStorage.getItem('message')) {

@@ -10,6 +10,8 @@ import VuelidateErrorExtractor, { templates } from 'vuelidate-error-extractor';
 import { iconsSet as icons } from './assets/icons/icons.js';
 import store from './store';
 import { applyTabIdentity } from './resource/Identity';
+import { detectTenantFromHost, setTenantCode } from './utils/storage';
+import { fetchTenantInfoWeb } from './resource/SysTenant';
 import 'vue-toast-notification/dist/theme-default.css';
 // import JQuery from 'jquery'
 import './assets/css/jquery-ui.css';
@@ -94,5 +96,21 @@ const app = new Vue({
 });
 
 applyTabIdentity();
+
+// Multi-tenant SaaS: deteksi kode tenant dari subdomain host, lalu tarik info
+// tenant (branding + preferensi) dari endpoint publik & simpan ke localStorage.
+// Tidak memblokir render; kegagalan cukup diabaikan (mis. super admin / dev).
+try {
+  const fromHost = detectTenantFromHost(window.location.hostname);
+  if (fromHost) {
+    setTenantCode(fromHost);
+    fetchTenantInfoWeb(fromHost);
+  } else if (window.location.hostname.match(/^[a-z0-9-]+\.[a-z0-9-]+/)) {
+    // Domain tanpa subdomain tenant: coba kode tenant yang tersimpan.
+    fetchTenantInfoWeb();
+  }
+} catch (e) {
+  /* diabaikan — tenant opsional (super admin) */
+}
 
 window.myApp = app;

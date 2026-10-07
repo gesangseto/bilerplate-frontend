@@ -1,4 +1,9 @@
 import $axios from '../api';
+import {
+  detectTenantFromHost,
+  getTenantCode,
+  setTenantInfo,
+} from '../utils/storage';
 
 let url = `/v1/system/tenant`;
 
@@ -88,6 +93,25 @@ export const getSysTenantBySubdomain = async (subdomain) => {
         return resolve(false);
       });
   });
+};
+
+/**
+ * Ambil info tenant dari endpoint PUBLIK lalu simpan ke localStorage
+ * ('tenant_info'). Dipakai saat boot & sebelum login untuk branding
+ * (nama, logo, warna) tanpa memerlukan token.
+ * @param {string} [subdomain] kode tenant; default dari kode tersimpan/host.
+ * @returns {Promise<object|null>}
+ */
+export const fetchTenantInfoWeb = async (subdomain) => {
+  const code =
+    subdomain ||
+    getTenantCode() ||
+    detectTenantFromHost(window.location.hostname);
+  if (!code) return null;
+  const res = await getSysTenantBySubdomain(code);
+  const row = res && res.data && res.data[0];
+  if (!row) return null;
+  return setTenantInfo(row) || row;
 };
 
 export const getSysTenantLimits = async (param = Object) => {
