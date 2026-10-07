@@ -186,6 +186,10 @@ const ListSystemScriptInj = () =>
   import('@/views/system/script_injection/List');
 const FormSystemScriptInj = () =>
   import('@/views/system/script_injection/Form');
+const ListSystemTenant = () =>
+  import('@/views/system/tenant/List');
+const FormSystemTenant = () =>
+  import('@/views/system/tenant/Form');
 // ========================SYSTEM PROCESS========================
 const ListProcessSchedule = () =>
   import('@/views/system-process/process-schedule/List');
@@ -1196,6 +1200,25 @@ function configRoutes() {
           path: 'script-injection',
           name: 'Script Injection (Home)',
           component: ListSystemScriptInj,
+          meta: { login: true },
+        },
+        // SYSTEM TENANT
+        {
+          path: 'tenant/:type/:id',
+          name: 'Tenant (Details)',
+          component: FormSystemTenant,
+          meta: { login: true },
+        },
+        {
+          path: 'tenant/:type',
+          name: 'Tenant (Create)',
+          component: FormSystemTenant,
+          meta: { login: true },
+        },
+        {
+          path: 'tenant',
+          name: 'Tenant (Home)',
+          component: ListSystemTenant,
           meta: { login: true },
         },
       ],
