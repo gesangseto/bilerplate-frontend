@@ -26,6 +26,9 @@
     <CDropdownItem @click="toSetting">
       <CIcon name="cil-settings" /> Settings
     </CDropdownItem>
+    <CDropdownItem @click="toApplicationSetting">
+      <CIcon name="cil-applications-settings" /> Pengaturan Aplikasi
+    </CDropdownItem>
     <CDropdownDivider />
     <CDropdownItem @click="logOut">
       <CIcon name="cil-lock-locked" /> Logout
@@ -90,6 +93,9 @@ export default {
       // } else {
       this.$router.push({ path: '/setting/user-setting' });
       // }
+    },
+    toApplicationSetting() {
+      this.$router.push({ path: '/setting/application' });
     },
   },
 };

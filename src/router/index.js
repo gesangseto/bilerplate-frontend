@@ -79,6 +79,8 @@ const FormDepartment = () =>
 // Section
 const ListSection = () => import('@/views/settings/section/ListSection');
 const FormSection = () => import('@/views/settings/section/FormSection ');
+const FormTenantApplication = () =>
+  import('@/views/settings/application/FormApplication');
 // ========================SETTING========================
 
 // ========================PRODUCTION========================
@@ -1289,6 +1291,12 @@ function configRoutes() {
       path: 'setting/user-setting',
       name: 'Setting User',
       component: UserSetting,
+    },
+    {
+      path: 'setting/application',
+      name: 'Pengaturan Aplikasi',
+      meta: { login: true },
+      component: FormTenantApplication,
     },
 
     // ========================JASTIP========================

@@ -301,7 +301,12 @@ export default {
           }
         }
       }
-      let allow_access = ['/setting/user-setting', '/home', '/change-password'];
+      let allow_access = [
+        '/setting/user-setting',
+        '/setting/application',
+        '/home',
+        '/change-password',
+      ];
       if (allow_access.includes(route.path)) {
         can_access = true;
       }
