@@ -73,12 +73,9 @@ export default {
   },
   methods: {
     customActionFilter(item) {
-      let action = ['create', 'read'];
-      if (!item.is_sys) {
-        action.push('update');
-        action.push('delete');
-      }
-      return action;
+      // Tidak ada lagi konsep "user sistem" pada mst_user,
+      // jadi semua user boleh update/delete.
+      return ['create', 'read', 'update', 'delete'];
     },
     async loadData(filter) {
       if (!filter) filter = this.$route.query;

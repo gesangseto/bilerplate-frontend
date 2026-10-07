@@ -19,7 +19,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
+                  :disabled="action == 'Read'"
                   required
                   :col="[3, 9]"
                   title="Global ID"
@@ -32,7 +32,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   required
                   title="Username"
@@ -45,7 +45,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   required
                   title="Full Name"
@@ -58,7 +58,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   required
                   title="Phone Number"
@@ -73,7 +73,7 @@
                     <div style="width: 350px; margin-bottom: -50px">
                       <SelectOption
                         :disabled="
-                          action == 'Read' || formData.is_sys ? true : false
+                          action == 'Read'
                         "
                         required
                         :options="CountryCode"
@@ -93,7 +93,7 @@
               </CCol>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   required
                   validasi="email"
@@ -109,7 +109,7 @@
               <!-- 
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   :required="action == 'Create' ? true : false"
                   :type="showPassword == false ? 'password' : 'text'"
@@ -141,7 +141,7 @@
               </CCol>
               <CCol sm="12" v-if="action != 'Read'">
                 <InputDefault
-                  :disabled="action == 'Read' || formData.is_sys"
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   :type="showPassword == false ? 'password' : 'text'"
                   title="Confirm Password"
@@ -164,14 +164,12 @@
                -->
               <CCol sm="12">
                 <SelectOption
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   title="Department"
                   required
                   :options="
-                    departmentOptions.filter((it) =>
-                      formData.is_sys ? it.is_sys : !it.is_sys,
-                    )
+                    departmentOptions
                   "
                   v-on:onchange="formData.mst_department_id = $event"
                   :value="formData.mst_department_id"
@@ -186,14 +184,12 @@
               </CCol>
               <CCol sm="12">
                 <SelectOption
-                  :disabled="action == 'Read' || formData.is_sys ? true : false"
+                  :disabled="action == 'Read'"
                   :col="[3, 9]"
                   title="Section"
                   required
                   :options="
-                    optionSections.filter((it) =>
-                      formData.is_sys ? it.is_sys : !it.is_sys,
-                    )
+                    optionSections
                   "
                   v-on:onchange="formData.mst_section_id = $event"
                   :value="formData.mst_section_id"
@@ -223,7 +219,7 @@
                   <CCol sm="9">
                     <CRow
                       class="form-group"
-                      v-if="action == 'Read' || formData.is_sys"
+                      v-if="action == 'Read'"
                     >
                       <CCol sm="12">
                         <CRow class="justify-content-left">
@@ -413,7 +409,7 @@
           <CCardFooter>
             <div class="float-left">
               <CButton
-                v-if="action == 'Read' || formData.is_sys ? false : true"
+                v-if="action != 'Read'"
                 type="submit"
                 size="sm"
                 color="primary"
@@ -545,7 +541,6 @@ export default {
         error: null,
         mst_department_id: null,
         mst_section_id: null,
-        is_sys: null,
       },
       statusOptions: [
         { value: 'Active', label: 'Active' },
@@ -603,7 +598,6 @@ export default {
       let _res = await getMstDepartment(param);
       for (const it of _res.data) {
         this.departmentOptions.push({
-          is_sys: it.is_sys,
           label: it.name,
           value: `${it.id}`,
         });
@@ -639,7 +633,6 @@ export default {
         if (this.$route.params.id !== undefined) {
           delete this.formData.pwd;
         }
-        // if (getUserId() == 0) this.formData.is_sys = 0;
         let tlp = '';
         if (data.tlp) {
           tlp = data.tlp.split('-');
@@ -662,7 +655,6 @@ export default {
       this.optionSections = [];
       for (const it of _res.data) {
         this.optionSections.push({
-          is_sys: it.is_sys,
           label: it.name,
           value: `${it.id}`,
         });
