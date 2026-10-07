@@ -797,6 +797,12 @@ export default {
       }
       let _form_data = JSON.parse(JSON.stringify(this.formData));
 
+      // Penanda struktural (admin tenant vs staf) TIDAK boleh diubah dari
+      // layar Master User — jangan ikut dikirim agar backend tak perlu
+      // mengabaikannya. Lihat controller Master/user.js (update/insert).
+      delete _form_data.is_tenant;
+      delete _form_data.tenant_id;
+
       let dataPost = _form_data;
       if (_form_data.tlp && _form_data.tlp_code) {
         dataPost.tlp = `${_form_data.tlp_code}-${_form_data.tlp}`;

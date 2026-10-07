@@ -120,14 +120,22 @@ export default {
   },
   computed: {
     reformatDatas() {
-      return this.items.map((item) => {
-        return {
-          ...item,
-          department_name: item.department_name || '-',
-          section_name: item.section_name || '-',
-          employee_id: item.employee_id || '',
-        };
-      });
+      return (
+        this.items
+          // Sabuk pengaman FE: baris ADMIN/OWNER tenant (is_tenant=true) tidak
+          // dikelola lewat layar Master User. Backend sudah menyembunyikannya
+          // (lihat getV4), filter ini menjaga bila server mengirim include
+          // tenant admin (mis. audit super admin).
+          .filter((item) => !item.is_tenant)
+          .map((item) => {
+            return {
+              ...item,
+              department_name: item.department_name || '-',
+              section_name: item.section_name || '-',
+              employee_id: item.employee_id || '',
+            };
+          })
+      );
     },
   },
 };
