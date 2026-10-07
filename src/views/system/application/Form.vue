@@ -806,7 +806,7 @@ import 'vue2-datepicker/index.css';
 import $axios from '../../../api';
 import moment from 'moment';
 import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
-import { getSysConfig } from '../../../resource/SysConfig';
+import { getSysConfig, updateSysConfig } from '../../../resource/SysConfig';
 import {
   getWhatsappQr,
   sendWhatsappMessage,
@@ -1058,7 +1058,7 @@ export default {
       return val ? val.length >= 4 : false;
     },
     formValidation() {
-      let required = ['identity_name', 'entity_address'];
+      let required = ['identity_name', 'identity_address'];
       // Check Pattern
       if (this.data.password_pattern) {
         let patt = this.data.password_pattern;
@@ -1104,8 +1104,7 @@ export default {
       param.list_device = param.list_device.slice(0, param.total_device);
       param.password_pattern = JSON.stringify(param.password_pattern);
       param.return_ext_aggregation = param.return_ext_aggregation ? 1 : 0;
-      $axios.post(`v1/configuration/application`, param).then((result) => {
-        let res = result.data;
+      updateSysConfig(param).then((res) => {
         this.$toast.open({
           message: res.error
             ? `${res.message}`
