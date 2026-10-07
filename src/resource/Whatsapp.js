@@ -17,6 +17,21 @@ export const getWhatsappQr = async () => {
   });
 };
 
+export const getWhatsappStatus = async () => {
+  return new Promise((resolve) => {
+    $axios
+      .get(`${url}/status`)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
 export const sendWhatsappMessage = async (param = Object) => {
   if (!param) {
     return false;

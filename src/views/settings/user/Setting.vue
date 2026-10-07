@@ -148,12 +148,72 @@
         </CCard>
       </CCol>
     </CRow>
+    <CRow class="mt-3">
+      <CCol col="12" xl="12">
+        <CCard>
+          <CCardHeader>
+            <strong>WhatsApp</strong>
+          </CCardHeader>
+          <CCardBody>
+            <CRow class="mt-3">
+              <CCol md="3"> Status </CCol>
+              <CCol md="9">
+                <CBadge :color="wa_status_color">{{ wa_status_label }}</CBadge>
+                <span v-if="wa_phone" class="ml-2">({{ wa_phone }})</span>
+              </CCol>
+            </CRow>
+            <CRow class="mt-3">
+              <CCol md="3"> Koneksi WhatsApp </CCol>
+              <CCol md="9">
+                <CButton
+                  v-if="!wa_connected"
+                  size="sm"
+                  color="success"
+                  :disabled="wa_loading"
+                  @click="loadWhatsappQr"
+                >
+                  {{ wa_loading ? 'Memuat...' : 'Scan QR' }}
+                </CButton>
+                <CButton
+                  v-else
+                  size="sm"
+                  color="danger"
+                  :disabled="wa_loading"
+                  @click="disconnectWhatsapp"
+                >
+                  Putuskan
+                </CButton>
+              </CCol>
+            </CRow>
+            <CRow v-if="wa_qr" class="mt-3">
+              <CCol md="3"> QR Code </CCol>
+              <CCol md="9" class="text-center">
+                <img
+                  :src="wa_qr"
+                  alt="QR WhatsApp"
+                  style="width: 240px; height: 240px; border: 1px solid #ddd"
+                />
+                <div class="text-muted mt-2">
+                  Buka WhatsApp → Perangkat Tertaut → Tautkan perangkat, lalu
+                  pindai QR di atas.
+                </div>
+              </CCol>
+            </CRow>
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
   </div>
 </template>
 
 <script>
 import { updateMstUser } from '../../../resource/MstUser';
 import { authChangePwd } from '../../../resource/SysAuth';
+import {
+  getWhatsappQr,
+  getWhatsappStatus,
+  deleteWhatsappSession,
+} from '../../../resource/Whatsapp';
 import {
   getConfUserApp,
   getProfile,
@@ -198,6 +258,11 @@ export default {
       showPassword: false,
       conf_user_app: {},
       profile: {},
+      wa_loading: false,
+      wa_connected: false,
+      wa_qr: '',
+      wa_phone: null,
+      wa_status: 'disconnected',
       required: {
         oldPassword: { error: false, message: 'Old password is required' },
         newPassword: { error: false, message: 'New password is required' },
@@ -211,8 +276,60 @@ export default {
   mounted() {
     this.profile = getProfile();
     this.conf_user_app = getConfUserApp();
+    this.refreshWhatsappStatus();
+  },
+  computed: {
+    wa_status_label() {
+      if (this.wa_connected) return 'Terhubung';
+      return this.wa_status === 'connecting' ? 'Menghubungkan...' : 'Belum terhubung';
+    },
+    wa_status_color() {
+      if (this.wa_connected) return 'success';
+      return this.wa_status === 'connecting' ? 'warning' : 'secondary';
+    },
   },
   methods: {
+    async refreshWhatsappStatus() {
+      let res = await getWhatsappStatus();
+      if (res && !res.error && res.data && res.data[0]) {
+        let d = res.data[0];
+        this.wa_connected = !!d.connected;
+        this.wa_phone = d.phone_number || null;
+        this.wa_status = this.wa_connected ? 'connected' : 'disconnected';
+      }
+    },
+    async loadWhatsappQr() {
+      this.wa_loading = true;
+      this.wa_qr = '';
+      let res = await getWhatsappQr();
+      this.wa_loading = false;
+      if (res && !res.error && res.data && res.data[0] && res.data[0].qr_base64) {
+        this.wa_qr = res.data[0].qr_base64;
+        this.wa_status = 'connecting';
+      } else {
+        this.$toast.open({
+          message: (res && res.message) || 'Gagal memuat QR WhatsApp',
+          type: 'error',
+          position: 'top-right',
+          duration: 5000,
+        });
+      }
+    },
+    async disconnectWhatsapp() {
+      this.wa_loading = true;
+      await deleteWhatsappSession();
+      this.wa_loading = false;
+      this.wa_qr = '';
+      this.wa_connected = false;
+      this.wa_phone = null;
+      this.wa_status = 'disconnected';
+      this.$toast.open({
+        message: 'Sesi WhatsApp diputuskan',
+        type: 'success',
+        position: 'top-right',
+        duration: 5000,
+      });
+    },
     checkValidation() {
       let have_error = false;
       for (const rq in this.required) {
