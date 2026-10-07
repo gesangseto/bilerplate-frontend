@@ -5,7 +5,21 @@
         <CCardHeader>
           <CRow>
             <CCol sm="12" md="6" class="mb-2 mb-md-0">
-              <h5 class="mb-0">Payment</h5>
+              <div class="d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">Payment</h5>
+                <!-- Blast Tagihan: sengaja CButton biasa (bukan ButtonPermission) -->
+                <span class="d-inline-block" v-c-tooltip="blastTooltip">
+                  <CButton
+                    color="warning"
+                    size="sm"
+                    :class="{ 'blast-no-pe': blastDisabled || blasting }"
+                    :disabled="blastDisabled || blasting"
+                    @click="openBlast()"
+                  >
+                    <CIcon name="cib-whatsapp" /> Blast Tagihan
+                  </CButton>
+                </span>
+              </div>
             </CCol>
             <CCol sm="12" md="6">
               <SelectOption
@@ -330,6 +344,92 @@
         </template>
       </CModal>
     </div>
+
+    <!-- ============ MODAL BLAST TAGIHAN ============ -->
+    <div class="app-modal">
+      <CModal
+        centered
+        :show.sync="blastModal"
+        title="Blast Tagihan"
+        color="warning"
+        size="lg"
+      >
+        <div class="app-modal-alert app-modal-alert--info">
+          <CIcon name="cib-whatsapp" />
+          <span>
+            Tagihan dikirim via WhatsApp ke semua customer pada session ini yang
+            masih memiliki sisa tagihan. Pastikan nomor WhatsApp customer sudah
+            benar.
+          </span>
+        </div>
+
+        <div class="app-modal-info">
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">Session</span>
+            <span class="app-modal-info__value">
+              {{ selectedSession ? selectedSession.session_no : '-' }}
+            </span>
+          </div>
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">Status Session</span>
+            <span class="app-modal-info__value">
+              {{ selectedSession ? selectedSession.status : '-' }}
+            </span>
+          </div>
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">Customer Belum Lunas</span>
+            <span class="app-modal-info__value">{{ pendingBills.length }} customer</span>
+          </div>
+          <div class="app-modal-info__item">
+            <span class="app-modal-info__label">Total Sisa Tagihan</span>
+            <span class="app-modal-info__value text-danger">
+              <b>{{ money(blastTotal) }}</b>
+            </span>
+          </div>
+        </div>
+
+        <div class="app-modal-section-title">Daftar Customer Belum Lunas</div>
+        <div style="max-height: 260px; overflow: auto">
+          <table class="table table-sm table-striped table-bordered mb-0">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 40px">#</th>
+                <th>Customer</th>
+                <th>No. WhatsApp</th>
+                <th class="text-right">Sisa Tagihan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(bill, idx) in pendingBills" :key="bill.customer_id">
+                <td class="text-center">{{ idx + 1 }}</td>
+                <td>{{ bill.customer_name }}</td>
+                <td>{{ bill.customer_phone || '-' }}</td>
+                <td class="text-right"><b>{{ money(bill.remaining_amount) }}</b></td>
+              </tr>
+              <tr v-if="!pendingBills.length">
+                <td colspan="4" class="text-center text-muted">
+                  Tidak ada tagihan belum lunas.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <template #footer>
+          <CButton color="secondary" outline @click="blastModal = false">
+            <CIcon name="cil-ban" /> Cancel
+          </CButton>
+          <CButton
+            color="warning"
+            :disabled="blastDisabled || blasting"
+            @click="sendBlast()"
+          >
+            <CIcon name="cib-whatsapp" />
+            {{ blasting ? 'Mengirim...' : 'Kirim ke ' + pendingBills.length + ' customer' }}
+          </CButton>
+        </template>
+      </CModal>
+    </div>
   </CRow>
 </template>
 
@@ -372,6 +472,8 @@ export default {
       payValid: null,
       saving: false,
       sendingInvoice: false,
+      blastModal: false,
+      blasting: false,
       payForm: {
         amount: '',
         payment_method: 'CASH',
@@ -428,6 +530,23 @@ export default {
     },
     detailData() {
       return this.detailSummary || this.detailBill || {};
+    },
+    selectedSession() {
+      return this.sessions.find((s) => s.id === this.sessionId) || null;
+    },
+    blastDisabled() {
+      return !this.sessionId || this.pendingBills.length === 0;
+    },
+    blastTooltip() {
+      if (!this.sessionId) return 'Pilih session dulu.';
+      if (!this.pendingBills.length) return 'Tidak ada tagihan belum lunas.';
+      return 'Kirim tagihan via WhatsApp ke semua customer yang masih punya sisa tagihan.';
+    },
+    blastTotal() {
+      return this.pendingBills.reduce(
+        (sum, b) => sum + Number(b.remaining_amount || 0),
+        0,
+      );
     },
     methodOptions() {
       return [
@@ -637,6 +756,69 @@ export default {
       }
     },
 
+    openBlast() {
+      if (!this.sessionId) {
+        this.toast('error', 'Pilih session dulu.');
+        return;
+      }
+      if (!this.pendingBills.length) {
+        this.toast('error', 'Tidak ada tagihan belum lunas.');
+        return;
+      }
+      this.blastModal = true;
+    },
+    async sendBlast() {
+      if (!this.sessionId) {
+        this.toast('error', 'Pilih session dulu.');
+        return;
+      }
+      if (!this.pendingBills.length) {
+        this.toast('error', 'Tidak ada tagihan belum lunas.');
+        return;
+      }
+      this.blasting = true;
+      this.$isLoading(true);
+      try {
+        const result = await $axios.post('/v1/jastip/payment/send-invoice-blast', {
+          session_id: this.sessionId,
+        });
+        if (result.data?.error) {
+          throw new Error(result.data.message || 'Blast tagihan gagal dikirim.');
+        }
+        // response.js mengirim rows di field `data` (bukan `rows`); fallback `rows`
+        // untuk kompatibilitas kalau bentuk wire berubah.
+        const wire = result.data?.data ?? result.data?.rows;
+        const rows = Array.isArray(wire) ? wire : [];
+        const counts = { sent: 0, failed: 0, skipped: 0 };
+        rows.forEach((row) => {
+          if (row && counts[row.status] !== undefined) counts[row.status] += 1;
+        });
+        // response.js (baris 22) memotong pesan di titik dua pertama, jadi hitungan
+        // dari backend sudah termasuk di `message` — pakai hitungan lokal dari rows
+        // (lebih reliable), dan pakai pesan backend hanya saat rows kosong.
+        let message = rows.length
+          ? 'Blast selesai'
+          : result.data?.message || 'Blast tagihan berhasil dikirim.';
+        message += ` (${counts.sent} terkirim, ${counts.failed} gagal, ${counts.skipped} dilewati)`;
+        const failed = rows
+          .filter((row) => row && row.status === 'failed' && row.customer_name)
+          .map((row) => row.customer_name);
+        if (failed.length) {
+          message += ` — gagal: ${failed
+            .slice(0, 5)
+            .join(', ')}${failed.length > 5 ? ', ...' : ''}`;
+        }
+        this.toast('success', message);
+        this.blastModal = false;
+        await this.loadAll();
+      } catch (error) {
+        this.toast('error', error.response?.data?.message || error.message);
+      } finally {
+        this.blasting = false;
+        this.$isLoading(false);
+      }
+    },
+
     async sendInvoice() {
       if (!this.detailBill || !this.sessionId) return;
       const ok = confirm(
@@ -662,3 +844,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Tombol disabled tidak meneruskan pointer event (beberapa browser), jadi
+   hover jatuh ke pembungkus <span> yang memegang v-c-tooltip. */
+.blast-no-pe {
+  pointer-events: none;
+}
+</style>
