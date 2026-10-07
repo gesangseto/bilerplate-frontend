@@ -55,22 +55,6 @@
                     title="Entity Address"
                     v-model="data.entity_address"
                   />
-                  <!-- GS1 INFORMATION -->
-                  <p style="font-weight: bold">GS1 Information</p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="GS1 Company Prefix"
-                    v-model="data.identity_number"
-                    :validasi="'integer'"
-                    :max="12"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="GLN"
-                    v-model="data.gln"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
                 </CCardBody>
               </CCard>
 
@@ -103,28 +87,6 @@
                     :validasi="'integer'"
                     :max="100"
                   />
-                  <p style="font-weight: bold">
-                    Gastrack Warehouse Mobile (MWM) Devices
-                  </p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum MWM Devices"
-                    :validasi="'integer'"
-                    v-model="data.total_device"
-                    :max="100"
-                  />
-                  <div
-                    v-for="(item, index) in parseInt(data.total_device)"
-                    :key="item"
-                  >
-                    <InputDefault
-                      :col="[3, 7]"
-                      :title="'MWM Device ID #' + (index + 1)"
-                      :validasi="'alphanumeric'"
-                      v-model="data.list_device[index]"
-                      :max="100"
-                    />
-                  </div>
                 </CCardBody>
               </CCard>
 
@@ -443,43 +405,6 @@
                   </div>
                 </CCardBody>
               </CCard>
-              <!-- Production Module Settings -->
-              <CCard>
-                <CCardHeader style="font-weight: bold; font-size: large">
-                  Production Module Settings
-                </CCardHeader>
-                <CCardBody>
-                  <p style="font-weight: bold">Process Order</p>
-                  <SelectOption
-                    title="Expiry Date Calculation Rule"
-                    :options="listExpiryType"
-                    v-on:onchange="data.expiry_type = $event"
-                    :value="data.expiry_type"
-                    :col="[3, 7]"
-                    :description="expiryDescription()"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Minimum Generated SN"
-                    v-model="data.min_count_generated_serial"
-                    :validasi="'integer'"
-                    :max="10000"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Additional SNs for Ref. Sample"
-                    v-model="data.additional_serial_for_sample"
-                    :validasi="'integer'"
-                    :max="10000"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="SN Pattern"
-                    v-model="data.serial_pattern"
-                  />
-                </CCardBody>
-              </CCard>
-
               <!-- Warehouse Module Settings -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
@@ -602,113 +527,6 @@
                         :col="[3, 7]"
                         description="If left blank, the default status Active will be applied."
                       />
-                    </CCol>
-                  </CRow>
-                </CCardBody>
-              </CCard>
-              <!-- Warehouse Module Settings -->
-              <CCard>
-                <CCardHeader style="font-weight: bold; font-size: large">
-                  BPOM TTAC Settings
-                </CCardHeader>
-                <CCardBody>
-                  <p style="font-weight: bold">
-                    BPOM TTAC Registration Information
-                  </p>
-
-                  <InputDefault
-                    :required="true"
-                    :col="[3, 7]"
-                    title="ID Sarana"
-                    v-model="data.id_location"
-                    :validasi="'integer'"
-                    :max="100"
-                    :isValid="
-                      initialLoad ? null : !data.id_location ? false : true
-                    "
-                    description="'ID Sarana' as registered in the BPOM TTAC system, used for reporting Track & Trace data."
-                  />
-                  <InputDefault
-                    :required="true"
-                    :col="[3, 7]"
-                    title="Latitude"
-                    v-model="data.latitude"
-                    :validasi="'float'"
-                    :isValid="
-                      initialLoad ? null : !data.latitude ? false : true
-                    "
-                  />
-                  <InputDefault
-                    :required="true"
-                    :col="[3, 7]"
-                    title="Longitude"
-                    v-model="data.longitude"
-                    :validasi="'float'"
-                    :isValid="
-                      initialLoad ? null : !data.longitude ? false : true
-                    "
-                  />
-                  <p style="font-weight: bold">BPOM TTAC Reporting Settings</p>
-
-                  <CRow form class="form-group">
-                    <CCol sm="12">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="3" class="col-form-label">
-                          Advance BPOM Reporting
-                        </CCol>
-                        <CCol sm="9">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.advance_bpom_report"
-                          />
-                          <p
-                            style="
-                              font-size: smaller;
-                              color: rgb(143, 143, 143);
-                            "
-                          >
-                            Determines how the system generates reports to the
-                            BPOM TTAC system. When enabled, all reportable
-                            transactions include aggregated packaging data, and
-                            any changes to aggregation or serial operations will
-                            trigger TTAC reports. When disabled, production
-                            reports after Transfer include only level 1
-                            serialization (primary barcode). In distribution
-                            reports, the system registers relevant aggregation
-                            from the Picking List and reports the corresponding
-                            aggregated barcodes sent to the customer. Important:
-                            Before changing this setting, all pending reports in
-                            the BPOM Queue must be completed.
-                          </p>
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                    <CCol sm="12">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="3" class="col-form-label">
-                          Return External Validation
-                        </CCol>
-                        <CCol sm="9">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.bpom_return_validation"
-                          />
-                          <p
-                            style="
-                              font-size: smaller;
-                              color: rgb(143, 143, 143);
-                            "
-                          >
-                            When enabled, the system will validate barcodes of
-                            returned items against the BPOM TTAC system during
-                            the first approval of an External Return
-                            transaction. When disabled, validation will rely
-                            solely on the internal system database.
-                          </p>
-                        </CCol>
-                      </CRow>
                     </CCol>
                   </CRow>
                 </CCardBody>
@@ -877,41 +695,11 @@ export default {
         password_pattern: this.initial_password_pattern(),
       },
       info: {},
-      devicesLooping: 0,
       periodicBackupOptions: [
         { value: 1, label: '1 Day' },
         { value: 7, label: '7 Day' },
         { value: 14, label: '14 Day' },
         { value: 30, label: '30 Day' },
-      ],
-      listExpiryType: [
-        {
-          value: 'one_day_before',
-          label: 'One Day Before the day of Mfg Date',
-          description:
-            'Expiry date falls on one day before the day of Mfg Date',
-        },
-        {
-          value: 'same_day',
-          label: 'Same Day as the Day of Mfg Date',
-          description: 'Expiry date retains the original day value.',
-        },
-        {
-          value: 'start_of_month',
-          label: 'Start Of Month',
-          description: 'Expiry date falls on the first day of the month',
-        },
-        {
-          value: 'end_of_month',
-          label: 'End Of Month',
-          description: 'Expiry date falls on the last day of the month',
-        },
-        {
-          value: 'adjusted_eom',
-          label: 'Mid-Month Adjustment (15th Day to EoM)',
-          description:
-            'If the manufacturing date is before the 15th, subtract 1 month and set expiry to the end of that month',
-        },
       ],
       listCron: [],
       message: {
@@ -969,19 +757,8 @@ export default {
             : this.initial_password_pattern(),
         };
         this.info = this.data?.info;
-        this.devicesLooping = data.total_device;
       }
       return;
-    },
-    expiryDescription() {
-      let thisExpiry = this.listExpiryType.find(
-        (it) => it.value == this.data.expiry_type,
-      );
-      if (thisExpiry) {
-        return thisExpiry.description;
-      } else {
-        return 'Expiry date retains the original day value.';
-      }
     },
     async loadEpcStatus() {
       let epcStatus = await getMstEpcStatus({ is_final_status: true });
@@ -1088,20 +865,7 @@ export default {
         return;
       }
       this.message.errorlevel_indicator_box_gtin = '';
-      for (var i = 0; i < this.data.total_device; i++) {
-        if (!this.data.list_device[i]) {
-          this.$toast.open({
-            message: `Please input Android ID  ${i + 1}`,
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-          return;
-        }
-      }
       let param = JSON.parse(JSON.stringify(this.data));
-      param.list_device = param.list_device.slice(0, param.total_device);
       param.password_pattern = JSON.stringify(param.password_pattern);
       param.return_ext_aggregation = param.return_ext_aggregation ? 1 : 0;
       updateSysConfig(param).then((res) => {
