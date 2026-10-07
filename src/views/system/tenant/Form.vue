@@ -79,18 +79,18 @@
                   <InputDefault
                     :disabled="action == 'Read' ? true : false"
                     :col="[3, 9]"
-                    title="Company Name"
-                    placeholder="Enter company name"
-                    v-model="formData.company_name"
+                    title="Identity Name"
+                    placeholder="Enter identity name"
+                    v-model="formData.identity_name"
                   />
                 </CCol>
                 <CCol sm="12">
                   <TextareaDefault
                     :disabled="action == 'Read' ? true : false"
                     :col="[3, 9]"
-                    title="Company Address"
-                    placeholder="Enter company address"
-                    v-model="formData.company_address"
+                    title="Identity Address"
+                    placeholder="Enter identity address"
+                    v-model="formData.identity_address"
                   />
                 </CCol>
                 <CCol sm="12">
@@ -257,18 +257,6 @@
                 </CCol>
                 <CCol sm="12">
                   <CRow form class="form-group">
-                    <CCol sm="3"> System Tenant </CCol>
-                    <SwitchStatusMaster
-                      :disabled="action == 'Read' || userInfo.id !== 0"
-                      :show_label="true"
-                      :default_value="formData.is_system"
-                      v-on:onChange="formData.is_system = $event"
-                    />
-                    <small class="text-muted">Only super admin can set this flag</small>
-                  </CRow>
-                </CCol>
-                <CCol sm="12">
-                  <CRow form class="form-group">
                     <CCol sm="3"> Trial Ends At </CCol>
                     <CCol sm="9">
                       <CFormInput
@@ -349,7 +337,6 @@ export default {
         primary_color: '#1976D2',
         secondary_color: '#424242',
         features_enabled: [],
-        is_system: false,
         delete_flag: false,
       },
       listStatus: [

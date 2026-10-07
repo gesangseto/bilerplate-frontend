@@ -79,10 +79,6 @@ export default {
           label: 'Contact Email',
         },
         {
-          key: 'is_system',
-          label: 'System',
-        },
-        {
           key: 'action',
           label: 'Action',
           _style: 'width:20%',
@@ -95,10 +91,6 @@ export default {
   methods: {
     customActionFilter(item) {
       let action = ['create', 'read', 'copy', 'update', 'delete'];
-      // Prevent delete/copy for system tenant
-      if (item.is_system) {
-        action = action.filter(a => a !== 'delete' && a !== 'copy');
-      }
       return action;
     },
     async loadData(filter) {
@@ -173,7 +165,6 @@ export default {
         return {
           ...item,
           status: item.status ? `<span class="badge ${statusClass}">${item.status}</span>` : '-',
-          is_system: item.is_system ? '<span class="badge badge-primary">Yes</span>' : '<span class="badge badge-light">No</span>',
           plan_code: item.plan_code || '-',
           contact_email: item.contact_email || '-',
         };
