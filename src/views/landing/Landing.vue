@@ -35,6 +35,9 @@
           <router-link class="lp-btn lp-btn-ghost" to="/login">
             Masuk ke Akun
           </router-link>
+          <router-link class="lp-btn lp-btn-ghost" to="/register-tenant">
+            Daftarkan Toko
+          </router-link>
         </div>
       </div>
     </header>

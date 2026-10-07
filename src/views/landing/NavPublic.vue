@@ -19,6 +19,7 @@
       <div class="pn-links">
         <router-link to="/landing" exact>Home</router-link>
         <router-link to="/tracking" exact>Tracking</router-link>
+        <router-link to="/register-tenant" exact>Daftar</router-link>
         <router-link class="pn-btn" to="/login">Login</router-link>
       </div>
     </div>

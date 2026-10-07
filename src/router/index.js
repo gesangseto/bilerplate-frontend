@@ -22,6 +22,7 @@ const Login = () => import('@/views/pages/Login');
 // Landing (portofolio publik)
 const Landing = () => import('@/views/landing/Landing');
 const TrackingPublic = () => import('@/views/landing/TrackingPublic');
+const RegisterTenant = () => import('@/views/landing/RegisterTenant');
 const Register = () => import('@/views/pages/Register');
 
 // ========================MASTER========================
@@ -1449,6 +1450,12 @@ function configRoutes() {
           path: '/tracking',
           name: 'Public Tracking',
           component: TrackingPublic,
+          meta: { login: false },
+        },
+        {
+          path: '/register-tenant',
+          name: 'RegisterTenant',
+          component: RegisterTenant,
           meta: { login: false },
         },
         {
