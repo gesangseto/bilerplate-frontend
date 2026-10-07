@@ -266,8 +266,36 @@ export function getHomeLogo() {
   return data;
 }
 
+/**
+ * Konfigurasi aplikasi yang dipakai UI.
+ *
+ * Dua sumber:
+ *  1. Platform (`configuration`, dari /system/sys-configuration) — HANYA super
+ *     admin yang bisa membacanya; menyimpan kebijakan global (password policy,
+ *     backup, cron) + branding default platform.
+ *  2. Tenant (`tenant_info`, dari /system/tenant/subdomain/:kode) — branding &
+ *     preferensi milik tenant aktif (nama, logo, warna, locale, mata uang).
+ *
+ * getConfig() menggabungkan keduanya: nilai TENANT menang atas platform, agar
+ * setiap pemakaian lama (getConfig().xxx) otomatis mengikuti tenant tanpa perlu
+ * diubah satu per satu. Bila tidak ada tenant (mis. super admin di domain
+ * utama), hasilnya = konfigurasi platform seperti sebelumnya.
+ */
 export function getConfig() {
-  return JSON.parse(decryptData(localStorage.getItem('configuration')));
+  let base = {};
+  try {
+    base = JSON.parse(decryptData(localStorage.getItem('configuration'))) || {};
+  } catch (error) {
+    base = {};
+  }
+  const tenant = getTenantInfo() || {};
+  // Hanya bidang non-null dari tenant yang menimpa platform.
+  const overlay = {};
+  Object.keys(tenant).forEach((k) => {
+    const v = tenant[k];
+    if (v !== null && v !== undefined && v !== '') overlay[k] = v;
+  });
+  return { ...base, ...overlay };
 }
 
 export function setLimitation(data = {}) {

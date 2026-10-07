@@ -264,7 +264,12 @@ export default {
       return;
     },
     async getLimitationConfig() {
+      // /system/sys-configuration = PLATFORM (super admin). Untuk tenant,
+      // endpoint ini 403 -> jangan timpa konfigurasi/branding tenant.
       let data = await getSysConfig({ without_logo: true });
+      if (!data || !Array.isArray(data.data) || !data.data[0]) {
+        return;
+      }
       data = data.data[0];
       setConfig(data);
       setLimitation(data);

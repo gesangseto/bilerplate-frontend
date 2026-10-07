@@ -196,8 +196,9 @@ export default {
       }
     },
     async loadConfig() {
+      // Config platform hanya untuk super admin; tenant memakai tenant_info.
       let _res = await getSysConfig();
-      if (_res) {
+      if (_res && Array.isArray(_res.data) && _res.data[0]) {
         setConfig(_res.data[0]);
         this.loginLogo = getLoginLogo();
       }
