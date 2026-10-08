@@ -11,6 +11,18 @@ export function clearStorage() {
   localStorage.removeItem('tenant_info');
 }
 
+/**
+ * Pembersihan TOTAL sesi, termasuk kode tenant.
+ * Dipakai saat "force logout"/self-heal ketika cache tenant nyangkut atau
+ * rusak (mis. TENANT_SUBDOMAIN_MISSING) — pada kasus ini tenant_code justru
+ * sumber masalah sehingga HARUS dibuang agar user tidak stuck.
+ */
+export function clearSession() {
+  clearStorage();
+  localStorage.removeItem('tenant_code');
+  localStorage.removeItem('tenant_info');
+}
+
 // ===== Tenant (multi-tenant SaaS) =====
 // Kode tenant dideteksi dari subdomain host (mis. demo.app.com -> 'demo').
 // Info tenant (dari endpoint publik /system/tenant/subdomain/:kode) disimpan
