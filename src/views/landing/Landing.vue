@@ -85,65 +85,115 @@
     </section>
 
     <!-- FITUR UNGGULAN -->
-    <section class="lp-section lp-section-alt">
-      <div class="lp-wrap">
-        <p class="lp-kicker">Kenapa Jastip</p>
-        <h2>Yang membuat operasional jastip rapi</h2>
-        <div class="lp-grid">
-          <div class="lp-card">
-            <div class="lp-card-icon lp-i-1" aria-hidden="true">&#128230;</div>
-            <h3>Alur Gudang Lengkap</h3>
-            <p>
-              Barang masuk gudang, disisir per pesanan, disiapkan manifest
-              kirim, sampai penanganan barang bermasalah   tercatat berurutan,
-              tanpa langkah yang terlewat.
-            </p>
+        <section class="lp-section lp-section-alt">
+          <div class="lp-wrap">
+            <p class="lp-kicker">Kenapa Jastip</p>
+            <h2>Yang membuat operasional jastip rapi</h2>
+            <div class="lp-grid">
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-1" aria-hidden="true">&#128230;</div>
+                <h3>Alur Gudang Lengkap</h3>
+                <p>
+                  Barang masuk gudang, disisir per pesanan, disiapkan manifest
+                  kirim, sampai penanganan barang bermasalah   tercatat berurutan,
+                  tanpa langkah yang terlewat.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-2" aria-hidden="true">&#128270;</div>
+                <h3>Pelacakan Tanpa Login</h3>
+                <p>
+                  Customer cukup memasukkan nomor resi atau nomor HP   melihat
+                  status barangnya kapan saja tanpa perlu punya akun.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-3" aria-hidden="true">&#129534;</div>
+                <h3>Invoice & Tagihan ke WhatsApp</h3>
+                <p>
+                  Tagihan per customer dihitung otomatis dari barang yang dibeli,
+                  lalu dikirim sebagai invoice ke WhatsApp   satu per satu atau
+                  sekaligus.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-4" aria-hidden="true">&#128177;</div>
+                <h3>Multi Mata Uang</h3>
+                <p>
+                  Harga modal dan harga jual dicatat dalam mata uang asal dan
+                  Rupiah sekaligus   untung per barang tetap terlihat meski kurs
+                  berubah.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-5" aria-hidden="true">&#127978;</div>
+                <h3>Multi Toko & Cabang</h3>
+                <p>
+                  Jalankan beberapa toko atau cabang dalam satu sistem. Data setiap
+                  toko terpisah   tidak tercampur, tidak terlihat toko lain.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-6" aria-hidden="true">&#127991;</div>
+                <h3>Barcode & Foto Barang</h3>
+                <p>
+                  Setiap barang punya barcode dan fotonya sendiri. Jadi barang yang
+                  mirip tetap bisa dibedakan dengan pasti.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-7" aria-hidden="true">&#128197;</div>
+                <h3>Akses Pengguna Dinamis (RBAC)</h3>
+                <p>
+                  Atur peran per pengguna: Admin, Gudang, Kasir, Driver, dll. Tiap
+                  peran hanya akses menu yang relevan — aman, rapi, tanpa tumpang
+                  tindih tugas.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-8" aria-hidden="true">&#128241;</div>
+                <h3>Branding Per Toko (White-label)</h3>
+                <p>
+                  Logo, nama identitas, warna tema, favicon — diatur per tenant.
+                  Customer melihat brand toko Anda, bukan brand platform.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-9" aria-hidden="true">&#128206;</div>
+                <h3>Manajemen Stok Real-time</h3>
+                <p>
+                  Stok otomatis berkurang saat barang dikirim, bertambah saat
+                  return/masuk gudang. Alert stok minim, riwayat mutasi lengkap.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-10" aria-hidden="true">&#128221;</div>
+                <h3>Laporan & Dashboard Lengkap</h3>
+                <p>
+                  Penjualan, keuntungan, hutang/piutong, performa kurir, aging
+                  tagihan — semuanya dalam satu dashboard tanpa ekspor manual.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-11" aria-hidden="true">&#128274;</div>
+                <h3>Integrasi Kurir & Otomatis Resi</h3>
+                <p>
+                  Generate nomor resi & cetak label otomatis. Cek tarif &
+                  booking pickup multi-kurir (JNE, J&T, Sicepat, dll) dari dalam
+                  sistem.
+                </p>
+              </div>
+              <div class="lp-card">
+                <div class="lp-card-icon lp-i-12" aria-hidden="true">&#128228;</div>
+                <h3>Notifikasi Otomatis</h3>
+                <p>
+                  WhatsApp & Email: konfirmasi order, barang masuk gudang,
+                  dikirim, sampai, tagihan jatuh tempo — tanpa ketik manual.
+                </p>
+              </div>
+            </div>
           </div>
-          <div class="lp-card">
-            <div class="lp-card-icon lp-i-2" aria-hidden="true">&#128270;</div>
-            <h3>Pelacakan Tanpa Login</h3>
-            <p>
-              Customer cukup memasukkan nomor resi atau nomor HP   melihat
-              status barangnya kapan saja tanpa perlu punya akun.
-            </p>
-          </div>
-          <div class="lp-card">
-            <div class="lp-card-icon lp-i-3" aria-hidden="true">&#129534;</div>
-            <h3>Invoice &amp; Tagihan ke WhatsApp</h3>
-            <p>
-              Tagihan per customer dihitung otomatis dari barang yang dibeli,
-              lalu dikirim sebagai invoice ke WhatsApp   satu per satu atau
-              sekaligus.
-            </p>
-          </div>
-          <div class="lp-card">
-            <div class="lp-card-icon lp-i-4" aria-hidden="true">&#128177;</div>
-            <h3>Multi Mata Uang</h3>
-            <p>
-              Harga modal dan harga jual dicatat dalam mata uang asal dan
-              Rupiah sekaligus   untung per barang tetap terlihat meski kurs
-              berubah.
-            </p>
-          </div>
-          <div class="lp-card">
-            <div class="lp-card-icon lp-i-5" aria-hidden="true">&#127978;</div>
-            <h3>Multi Toko &amp; Cabang</h3>
-            <p>
-              Jalankan beberapa toko atau cabang dalam satu sistem. Data setiap
-              toko terpisah   tidak tercampur, tidak terlihat toko lain.
-            </p>
-          </div>
-          <div class="lp-card">
-            <div class="lp-card-icon lp-i-6" aria-hidden="true">&#127991;</div>
-            <h3>Barcode &amp; Foto Barang</h3>
-            <p>
-              Setiap barang punya barcode dan fotonya sendiri. Jadi barang yang
-              mirip tetap bisa dibedakan dengan pasti.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
     <!-- CARA KERJA -->
     <section class="lp-section">
@@ -210,6 +260,59 @@
           <div class="lp-badge-item">
             <span class="lp-badge-num">03</span>
             <span class="lp-badge-lbl">Akses per pengguna</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- USE CASE / TESTIMONI -->
+    <section class="lp-section lp-section-alt">
+      <div class="lp-wrap">
+        <p class="lp-kicker">Kasus nyata</p>
+        <h2>Bagaimana toko lain menghemat waktu dengan Jastip</h2>
+        <div class="lp-grid lp-grid-3">
+          <div class="lp-card lp-card-case">
+            <div class="lp-case-tag">Toko Fashion Online</div>
+            <h3>"Dulu 3 jam hitung tagihan manual, sekarang 5 menit"</h3>
+            <p>
+              Order 200+/hari. Sebelumnya tagihan dihitung di Excel, kirim WA
+              satu-satu. Sekarang invoice tergenerate otomatis dari barang yang
+              dibeli, kirim massal ke WA pelanggan. Tim kasir hanya cek & tekan
+              kirim.
+            </p>
+            <div class="lp-case-meta">
+              <span>&#128197; 3 orang</span>
+              <span>&#127978; 1 toko</span>
+              <span>&#9889; 85% lebih cepat</span>
+            </div>
+          </div>
+          <div class="lp-card lp-card-case">
+            <div class="lp-case-tag">Jastiper Multi-Cabang</div>
+            <h3>"Stok & order 3 cabang terpisah rapi, tidak bercampur"</h3>
+            <p>
+              Setiap cabang punya user gudang, kasir, driver sendiri. Data
+              order, customer, stok isolasi total. Owner cek dashboard gabungan
+              real-time tanpa minta laporan ke masing-masing cabang.
+            </p>
+            <div class="lp-case-meta">
+              <span>&#128197; 12 orang</span>
+              <span>&#127978; 3 cabang</span>
+              <span>&#9889; 0 kerusakan data</span>
+            </div>
+          </div>
+          <div class="lp-card lp-card-case">
+            <div class="lp-case-tag">Importir Aksesoris</div>
+            <h3>"Multi-mata uang otomatis, untung per barang jelas"</h3>
+            <p>
+              Beli dalam USD/CNY, jual dalam IDR. Kurs harian diambil otomatis.
+              Modal & untung per item terlihat real-time — tidak perlu ekspor
+              ke spreadsheet untuk hitung ulang saat kurs berubah.
+            </p>
+            <div class="lp-case-meta">
+              <span>&#128197; 5 orang</span>
+              <span>&#127978; 1 toko</span>
+              <span>&#9889; 3 mata uang</span>
+            </div>
           </div>
         </div>
       </div>
@@ -612,6 +715,12 @@ export default {
 .lp-i-4 { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
 .lp-i-5 { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
 .lp-i-6 { background: linear-gradient(135deg, #ef4444, #f87171); }
+.lp-i-7 { background: linear-gradient(135deg, #ec4899, #f472b6); }
+.lp-i-8 { background: linear-gradient(135deg, #14b8a6, #2dd4bf); }
+.lp-i-9 { background: linear-gradient(135deg, #f97316, #fb923c); }
+.lp-i-10 { background: linear-gradient(135deg, #6366f1, #818cf8); }
+.lp-i-11 { background: linear-gradient(135deg, #84cc16, #a3e635); }
+.lp-i-12 { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
 .lp-card h3 {
   font-size: 16.5px;
   font-weight: 700;
@@ -779,6 +888,50 @@ export default {
 }
 .lp-muted a:hover {
   color: #fff;
+}
+
+/* Use Case / Case Study Cards */
+.lp-card-case {
+  border-top: 3px solid #0ea5e9;
+  background: #f8fafc;
+}
+.lp-case-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0ea5e9;
+  background: rgba(14, 165, 233, 0.1);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.lp-card-case h3 {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+.lp-card-case p {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #475569;
+  margin: 0 0 14px;
+}
+.lp-case-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #64748b;
+}
+.lp-case-meta span {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 3px 10px;
+  border-radius: 6px;
 }
 
 @media (max-width: 720px) {

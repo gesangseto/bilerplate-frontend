@@ -70,6 +70,63 @@ export function getTenantCode() {
   }
 }
 
+// ===== Handoff sesi antar-subdomain (login TANPA subdomain) =====
+// Saat user login di host TANPA subdomain (mis. jastipcenter.local), BE
+// me-resolve tenant dari username lalu FE mengarahkan user ke subdomain
+// tenant (mis. demo.jastipcenter.local). Karena localStorage TERPISAH per
+// origin, token sesi "dititipkan" lewat query hash URL dan disimpan sementara
+// di sessionStorage origin BARU untuk dipakai endpoint rehidrasi sesi.
+const HANDOFF_TOKEN_KEY = 'handoff_token';
+
+export function setHandoffToken(token) {
+  try {
+    if (token) sessionStorage.setItem(HANDOFF_TOKEN_KEY, String(token));
+  } catch (error) {
+    /* abaikan */
+  }
+}
+
+export function getHandoffToken() {
+  try {
+    return sessionStorage.getItem(HANDOFF_TOKEN_KEY) || '';
+  } catch (error) {
+    return '';
+  }
+}
+
+export function removeHandoffToken() {
+  try {
+    sessionStorage.removeItem(HANDOFF_TOKEN_KEY);
+  } catch (error) {
+    /* abaikan */
+  }
+}
+
+/**
+ * Bangun URL ke subdomain tenant, mempertahankan protokol & port saat ini.
+ * Basis domain dihitung dari hostname SEKARANG (bukan konstanta) supaya benar
+ * di dev (jastipcenter.local) maupun produksi: bila host punya >2 label,
+ * label pertama dianggap subdomain tenant dan dibuang.
+ * @param {string} subdomain kode tenant (mis. 'demo')
+ * @param {string} [path='/'] path tujuan (default root SPA)
+ * @returns {string} URL absolut
+ */
+export function buildTenantUrl(subdomain, path = '/') {
+  const { protocol, hostname, port } = window.location;
+  // Host IP / localhost tidak punya label subdomain -> pakai BASE_DOMAIN.
+  const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname);
+  let base;
+  if (isIp || hostname === 'localhost') {
+    base = process.env.VUE_APP_BASE_DOMAIN || hostname;
+  } else {
+    const parts = String(hostname || '').split('.');
+    base = parts.length > 2 ? parts.slice(1).join('.') : hostname;
+  }
+  const host = subdomain ? `${subdomain}.${base}` : base;
+  const portPart = port ? `:${port}` : '';
+  return `${protocol}//${host}${portPart}${path}`;
+}
+
 export function setTenantInfo(data = {}) {
   if (!data || !data.subdomain) return null;
   // Buang field sensitif bila sewaktu-waktu ikut terkirim.

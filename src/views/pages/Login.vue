@@ -108,10 +108,14 @@ import {
   getLastUrl,
   getConfig,
   getTenantInfo,
+  detectTenantFromHost,
+  buildTenantUrl,
+  setHandoffToken,
+  removeHandoffToken,
 } from '../../utils';
 import { logoGastrack } from '../../constants';
 import { getSysConfig } from '../../resource/SysConfig';
-import { authLogin } from '../../resource/SysAuth';
+import { authLogin, authSession } from '../../resource/SysAuth';
 import { fetchTenantInfoWeb } from '../../resource/SysTenant';
 
 export default {
@@ -178,6 +182,12 @@ export default {
   },
 
   beforeMount() {
+    // Handoff sesi (login tanpa subdomain): bila ada token di query `?t=`,
+    // rehidrasi sesi lebih dulu (menang atas profil lama / kondisi belum login).
+    if (this.$route && this.$route.query && this.$route.query.t) {
+      this.rehydrateSession();
+      return;
+    }
     if (getProfile()) {
       this.redirectReload();
     }
@@ -257,21 +267,76 @@ export default {
           _data = setAsSuperAdmin(_data);
         }
 
-        let menu = [
-          {
-            _name: 'CSidebarNav',
-            _children: convertMenuV3(_data.role_menu),
-          },
-        ];
-        let role = reformatRole(flatten(_data.role_menu, 'items'));
-        setMenu(menu);
-        setRole(role);
+        // Login TANPA subdomain: bila host saat ini TIDAK punya subdomain tenant
+        // tetapi BE mengembalikan tenant_subdomain, arahkan user ke subdomain
+        // tenant-nya dengan "menitipkan" token lewat hash URL (handoff sesi).
+        // Token di hash TIDAK terkirim ke server; origin baru merehidrasi sesi.
+        const hostSub = detectTenantFromHost(window.location.hostname);
+        if (!res.error && !hostSub && _data.tenant_subdomain) {
+          setHandoffToken(_data.token);
+          const url = buildTenantUrl(
+            _data.tenant_subdomain,
+            `/#/login?t=${encodeURIComponent(_data.token)}`,
+          );
+          window.location.href = url;
+          return;
+        }
 
-        setProfile(_data);
-        setLoginTimeout(_data.idletimeout ?? 0);
-        this.redirectReload();
+        this.applySession(_data);
         return;
       }
+    },
+
+    /**
+     * Simpan profil sesi (menu/role/profile) lalu arahkan ke halaman awal.
+     * Dipakai jalur login biasa maupun rehidrasi sesi handoff.
+     */
+    applySession(_data) {
+      let menu = [
+        {
+          _name: 'CSidebarNav',
+          _children: convertMenuV3(_data.role_menu),
+        },
+      ];
+      let role = reformatRole(flatten(_data.role_menu, 'items'));
+      setMenu(menu);
+      setRole(role);
+
+      setProfile(_data);
+      setLoginTimeout(_data.idletimeout ?? 0);
+      this.redirectReload();
+    },
+
+    /**
+     * Rehidrasi sesi di subdomain tenant setelah handoff dari host tanpa
+     * subdomain. Token diambil dari query `?t=` (di dalam hash) dan dipakai
+     * memanggil endpoint /authentication/session untuk membangun ulang profil.
+     */
+    async rehydrateSession() {
+      const token = this.$route?.query?.t;
+      if (!token) return false;
+      setHandoffToken(token);
+      this.$isLoading(true);
+      const res = await authSession({});
+      this.$isLoading(false);
+      if (res && !res.error && res.data && res.data[0]) {
+        removeHandoffToken();
+        let _data = res.data[0];
+        if (_data.id == 0) _data = setAsSuperAdmin(_data);
+        // Bersihkan token dari URL agar tidak tertinggal di address bar/history.
+        try {
+          const clean = window.location.href.split('?')[0];
+          window.history.replaceState(null, '', clean);
+        } catch (e) {
+          /* abaikan */
+        }
+        this.applySession(_data);
+        return true;
+      }
+      // Gagal rehidrasi (token kedaluwarsa/ditolak): bersihkan & minta login.
+      removeHandoffToken();
+      this.message = 'Sesi tidak valid, silakan login ulang';
+      return false;
     },
   },
 };

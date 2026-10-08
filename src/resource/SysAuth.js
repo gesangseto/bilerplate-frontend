@@ -38,6 +38,21 @@ export const authLogout = async (param = Object) => {
   });
 };
 
+export const authSession = async (param = {}) => {
+  let url = `/v1/authentication/session`;
+  return new Promise((resolve) => {
+    $axios
+      .post(url, param)
+      .then((result) => {
+        return resolve(result.data);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
 export const authChangePwd = async (param = Object) => {
   if (!param) {
     return false;

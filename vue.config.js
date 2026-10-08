@@ -40,11 +40,6 @@ module.exports = {
         aggregateTimeout: 300,
         ignored: /node_modules/,
       },
-      allowedHosts: [
-        'workflow-maiden-justice-notices.trycloudflare.com',
-        'generated-coupons-shows-this.trycloudflare.com',
-        '.trycloudflare.com',
-        '.localhost',
-      ],
+      disableHostCheck: true,
     },
   };

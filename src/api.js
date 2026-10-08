@@ -6,6 +6,7 @@ import {
   getProfile,
   setLoginTimeout,
   getTenantCode,
+  getHandoffToken,
 } from './utils';
 import { getBrowserType, getOsType } from './utils/helper';
 
@@ -91,6 +92,11 @@ $axios.interceptors.request.use(
     if (profile) {
       token = profile.token;
       time_out = profile.idletimeout;
+    } else {
+      // Handoff antar-subdomain: token sesi dititipkan lewat URL lalu disimpan
+      // sementara di sessionStorage origin baru sampai sesi ter-rehidrasi.
+      const handoff = getHandoffToken();
+      if (handoff) token = handoff;
     }
     setLoginTimeout(time_out);
     config.baseURL = process.env.VUE_APP_URL_API + '/api';
