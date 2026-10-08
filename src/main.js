@@ -9,7 +9,7 @@ import Vuelidate from 'vuelidate';
 import VuelidateErrorExtractor, { templates } from 'vuelidate-error-extractor';
 import { iconsSet as icons } from './assets/icons/icons.js';
 import store from './store';
-import { applyTabIdentity } from './resource/Identity';
+import { applyBrand } from './resource/Identity';
 import { detectTenantFromHost, setTenantCode, removeTenantInfo } from './utils/storage';
 import { fetchTenantInfoWeb } from './resource/SysTenant';
 import 'vue-toast-notification/dist/theme-default.css';
@@ -106,6 +106,12 @@ try {
   /* diabaikan — tenant opsional (super admin) */
 }
 
+// Terapkan identitas + tema brand SETELAH konteks tenant ditentukan (agar
+// request /v1/jastip/identity membawa X-Tenant yang benar: tenant vs platform)
+// dan SEBELUM mount, supaya warna/favicon tidak sempat "berkedip" memakai
+// branding platform lalu berubah. Async (tidak memblokir mount).
+applyBrand();
+
 const app = new Vue({
   el: '#app',
   router,
@@ -116,9 +122,5 @@ const app = new Vue({
     App,
   },
 });
-
-// Terapkan identitas SETELAH konteks tenant ditentukan, agar request
-// /v1/jastip/identity membawa X-Tenant yang benar (branding tenant vs platform).
-applyTabIdentity();
 
 window.myApp = app;

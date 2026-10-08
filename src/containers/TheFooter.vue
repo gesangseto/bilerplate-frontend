@@ -9,7 +9,7 @@
   >
     <div>
       <span class="mr-1">Copyright &copy; {{ new Date().getFullYear() }}</span>
-      <a href="http://merindo.co.id/" target="_blank"> Gesang Aji Seto</a>
+      <a :href="brandUrl" target="_blank"> Gesang Aji Seto</a>
     </div>
     <div
       class="ml-auto"
@@ -40,7 +40,7 @@
       size="lg"
     >
       <template #header>
-        <h5><strong>About Gastrack&reg; </strong></h5>
+        <h5><strong>About {{ brandName }}&reg; </strong></h5>
       </template>
       <CCardBody>
         <div class="container-area">
@@ -49,7 +49,7 @@
       </CCardBody>
       <template #footer>
         <div style="display: block; margin-left: auto; margin-right: auto">
-          <img v-bind:src="gastrack_image" style="width: auto; height: 40px" />
+          <img v-bind:src="brandLogo" style="width: auto; height: 40px" />
         </div>
         <div style="display: block; margin-left: auto; margin-right: auto">
           <span class="mr-1">Copyright</span>
@@ -101,6 +101,7 @@
 import { logoGastrack } from '../constants';
 import { getVersion } from '../resource/Version';
 import { getConfig } from '../utils';
+import { getIdentity } from '../resource/Identity';
 import { APP_CONFIG } from '@/config';
 
 export default {
@@ -112,7 +113,10 @@ export default {
         mobile: '4.2.0',
         bpom: '3.0.1',
       },
-      gastrack_image: logoGastrack,
+      // Logo brand aktif: identitas (tenant/platform) bila ada, jika tidak
+      // jatuh ke logo default platform.
+      brandLogo: logoGastrack,
+      brandName: 'Gastrack',
       appModal: false,
       data: {
         about: null,
@@ -124,11 +128,26 @@ export default {
     };
   },
   name: 'TheFooter',
-  mounted() {
+  async mounted() {
     this.loadVersion();
     this.data = getConfig();
-    this.data.about = `
-    This copy of <strong>Gastrack® </strong> is licensed to: <br/>
+    // Branding dinamis: TANPA subdomain -> identitas platform, DENGAN
+    // subdomain -> identitas tenant (sudah context-aware di /v1/jastip/identity).
+    const id = (await getIdentity()) || {};
+    this.brandName = id.identity_name || this.brandName;
+    this.brandLogo = id.identity_logo_path || this.brandLogo;
+    this.buildAbout();
+  },
+  methods: {
+    async loadVersion() {
+      this.version.be = await getVersion();
+    },
+    buildAbout() {
+      // Teks legal/hukum tetap milik PLATFORM (pemegang hak cipta perangkat
+      // lunak). Hanya nama PRODUK yang mengikuti branding (tenant/platform).
+      const product = this.brandName;
+      this.data.about = `
+    This copy of <strong>${product}® </strong> is licensed to: <br/>
     <br/>
     
     <strong>Warning</strong>
@@ -154,13 +173,13 @@ Licensed customer can purchase support and service package or on demand support 
     <br/>
 Copyright © ${new Date().getFullYear()} Gesang Aji Seto. All rights reserved.
 `;
-  },
-  methods: {
-    async loadVersion() {
-      this.version.be = await getVersion();
     },
   },
   computed: {
+    // Tautan pemegang hak cipta (teks legal tetap milik platform).
+    brandUrl() {
+      return 'http://merindo.co.id/';
+    },
     show() {
       return this.$store.state.sidebarShow;
     },

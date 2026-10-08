@@ -8,7 +8,7 @@
         <div class="login-grid">
           <aside class="info-panel">
             <div class="info-card">
-              <span class="info-badge">Gastrack</span>
+              <span class="info-badge">{{ tenantName || 'Gastrack' }}</span>
               <h2>Inventory visibility made simple.</h2>
               <p>
                 A clean dashboard for your warehouse, stock, and process flow.
