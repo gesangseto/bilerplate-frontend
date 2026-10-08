@@ -10,7 +10,7 @@ import VuelidateErrorExtractor, { templates } from 'vuelidate-error-extractor';
 import { iconsSet as icons } from './assets/icons/icons.js';
 import store from './store';
 import { applyTabIdentity } from './resource/Identity';
-import { detectTenantFromHost, setTenantCode } from './utils/storage';
+import { detectTenantFromHost, setTenantCode, removeTenantInfo } from './utils/storage';
 import { fetchTenantInfoWeb } from './resource/SysTenant';
 import 'vue-toast-notification/dist/theme-default.css';
 // import JQuery from 'jquery'
@@ -84,6 +84,28 @@ try {
   /* VUE_APP_URL_API tidak valid? abaikan, hanya hint performa */
 }
 
+// Multi-tenant SaaS: tentukan konteks branding SEBELUM app di-mount.
+//  - Host DENGAN subdomain tenant (demo.jastipcenter.local) -> branding TENANT.
+//  - Host TANPA subdomain (jastipcenter.local / IP / localhost) -> branding
+//    PLATFORM. Kode tenant yang tersimpan dari kunjungan sebelumnya HARUS
+//    dibuang, kalau tidak branding tenant lama bocor ke halaman platform.
+// WAJIB dijalankan sebelum `new Vue({el:'#app'})`: mount bersifat SINKRON dan
+// komponen (Landing/NavPublic) langsung memanggil getIdentity(); bila X-Tenant
+// belum di-set, request identitas pertama akan ter-cache dengan branding salah.
+try {
+  const fromHost = detectTenantFromHost(window.location.hostname);
+  if (fromHost) {
+    setTenantCode(fromHost);
+    fetchTenantInfoWeb(fromHost);
+  } else {
+    // Tidak ada subdomain tenant: pastikan konteks branding = PLATFORM.
+    removeTenantInfo();
+    setTenantCode('');
+  }
+} catch (e) {
+  /* diabaikan — tenant opsional (super admin) */
+}
+
 const app = new Vue({
   el: '#app',
   router,
@@ -95,22 +117,8 @@ const app = new Vue({
   },
 });
 
+// Terapkan identitas SETELAH konteks tenant ditentukan, agar request
+// /v1/jastip/identity membawa X-Tenant yang benar (branding tenant vs platform).
 applyTabIdentity();
-
-// Multi-tenant SaaS: deteksi kode tenant dari subdomain host, lalu tarik info
-// tenant (branding + preferensi) dari endpoint publik & simpan ke localStorage.
-// Tidak memblokir render; kegagalan cukup diabaikan (mis. super admin / dev).
-try {
-  const fromHost = detectTenantFromHost(window.location.hostname);
-  if (fromHost) {
-    setTenantCode(fromHost);
-    fetchTenantInfoWeb(fromHost);
-  } else if (window.location.hostname.match(/^[a-z0-9-]+\.[a-z0-9-]+/)) {
-    // Domain tanpa subdomain tenant: coba kode tenant yang tersimpan.
-    fetchTenantInfoWeb();
-  }
-} catch (e) {
-  /* diabaikan — tenant opsional (super admin) */
-}
 
 window.myApp = app;

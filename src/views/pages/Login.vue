@@ -117,6 +117,7 @@ import { logoGastrack } from '../../constants';
 import { getSysConfig } from '../../resource/SysConfig';
 import { authLogin, authSession } from '../../resource/SysAuth';
 import { fetchTenantInfoWeb } from '../../resource/SysTenant';
+import { getIdentity } from '../../resource/Identity';
 
 export default {
   name: 'Login',
@@ -135,6 +136,9 @@ export default {
       input: null,
       // Info tenant (multi-tenant SaaS) — branding sebelum login.
       tenantInfo: null,
+      // Identitas PLATFORM (sys_configuration_mst) — dipakai saat host TANPA
+      // subdomain (halaman login platform).
+      platformIdentity: null,
       options: {
         useKbEvents: false,
         preventClickEvent: false,
@@ -143,10 +147,17 @@ export default {
   },
   computed: {
     tenantName() {
-      return this.tenantInfo?.identity_name || this.tenantInfo?.name || '';
+      // DENGAN subdomain -> identitas tenant; TANPA subdomain -> platform.
+      return (
+        this.tenantInfo?.identity_name ||
+        this.tenantInfo?.name ||
+        this.platformIdentity?.identity_name ||
+        ''
+      );
     },
     tenantLogo() {
-      const p = this.tenantInfo?.logo_path;
+      const p =
+        this.tenantInfo?.logo_path || this.platformIdentity?.identity_logo_path;
       if (!p) return null;
       // Path absolut / data-url dipakai langsung; path relatif -> host API.
       if (/^(https?:|data:)/i.test(p)) return p;
@@ -155,11 +166,21 @@ export default {
   },
   mounted() {
     this.loginLogo = getLoginLogo();
-    this.tenantInfo = getTenantInfo();
-    // Tarik info tenant (branding) bila belum ada di cache.
-    if (!this.tenantInfo) {
-      fetchTenantInfoWeb().then((info) => {
-        if (info) this.tenantInfo = info;
+    // Konteks branding: DENGAN subdomain -> identitas tenant (sys_tenant);
+    // TANPA subdomain -> identitas platform (sys_configuration_mst).
+    const hostSub = detectTenantFromHost(window.location.hostname);
+    if (hostSub) {
+      this.tenantInfo = getTenantInfo();
+      if (!this.tenantInfo) {
+        fetchTenantInfoWeb(hostSub).then((info) => {
+          if (info) this.tenantInfo = info;
+        });
+      }
+    } else {
+      // Halaman login platform: pakai branding dari sys_configuration.
+      this.tenantInfo = null;
+      getIdentity().then((id) => {
+        if (id) this.platformIdentity = id;
       });
     }
     this.loadConfig();
