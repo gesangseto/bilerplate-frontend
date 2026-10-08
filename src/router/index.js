@@ -269,16 +269,11 @@ const JastipFormItemDisposal = () =>
   import('@/views/jastip/disposal/FormItemDisposal');
 // ========================CONFIGURATION========================
 Vue.use(Router);
-// MODE URL TERGANTUNG ENVIRONMENT:
-//   - PRODUCTION (npm run build) : 'history' -> URL bersih TANPA "#".
-//     Server WAJIB punya SPA fallback: setiap path non-API/non-file
-//     dikembalikan index.html (lihat server.js).
-//   - DEVELOPMENT (npm run serve): 'hash' -> pakai "#".
-//     Praktis untuk dev karena tak butuh konfigurasi server/SPA fallback.
-// Bisa dioverride lewat VUE_APP_ROUTER_MODE (mis. "history" atau "hash").
-const ROUTER_MODE =
-  process.env.VUE_APP_ROUTER_MODE ||
-  (process.env.NODE_ENV === 'production' ? 'history' : 'hash');
+// Mode 'hash' untuk SEMUA environment (development & production).
+// URL selalu pakai "#" -> selamat dari kasus /login#/landing yang
+// rusak kalau mode 'history' (hash-nya diabaikan router).
+// Override eksepsional lewat VUE_APP_ROUTER_MODE (mis. "history").
+const ROUTER_MODE = process.env.VUE_APP_ROUTER_MODE || 'hash';
 let router = new Router({
   mode: ROUTER_MODE,
   linkActiveClass: 'active',
