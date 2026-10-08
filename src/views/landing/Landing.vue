@@ -349,6 +349,47 @@
       </div>
     </section>
 
+    <!-- PAKET LANGGANAN (PRICING) -->
+    <section class="lp-section lp-section-alt" id="pricing">
+      <div class="lp-wrap">
+        <p class="lp-kicker">Paket &amp; harga</p>
+        <h2>Pilih paket sesuai skala usaha Anda</h2>
+        <p class="lp-lead">
+          Mulai gratis, upgrade kapan saja saat operasional makin ramai. Semua
+          paket sudah termasuk pelacakan paket dan manajemen order.
+        </p>
+        <div v-if="plansLoading" class="lp-plans-loading">Memuat paket…</div>
+        <div v-else-if="plans.length" class="lp-grid lp-grid-3 lp-plans">
+          <div
+            class="lp-card lp-card-plain lp-plan"
+            :class="{ 'lp-plan-popular': plan.is_popular }"
+            v-for="plan in plans"
+            :key="plan.code"
+          >
+            <span v-if="plan.is_popular" class="lp-plan-badge">Paling Populer</span>
+            <h3>{{ plan.name }}</h3>
+            <p class="lp-plan-price">
+              {{ formatPrice(plan) }}
+              <small v-if="plan.billing_cycle">/{{ plan.billing_cycle === 'yearly' ? 'tahun' : 'bulan' }}</small>
+            </p>
+            <p class="lp-plan-desc" v-if="plan.description">{{ plan.description }}</p>
+            <ul class="lp-plan-features">
+              <li v-if="plan.max_users">Hingga {{ plan.max_users }} pengguna</li>
+              <li v-if="plan.max_customers">Hingga {{ plan.max_customers }} customer</li>
+              <li v-if="plan.max_warehouses">Hingga {{ plan.max_warehouses }} gudang</li>
+              <li v-if="plan.max_products">Hingga {{ plan.max_products }} produk</li>
+              <li v-for="(feat, idx) in plan.features_enabled" :key="idx">
+                {{ featureLabel(feat) }}
+              </li>
+            </ul>
+            <router-link class="lp-btn lp-btn-primary lp-plan-cta" to="/register-tenant">
+              Mulai Sekarang
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- CTA AKHIR -->
     <section class="lp-cta-final">
       <div class="lp-wrap">
@@ -384,6 +425,7 @@
 <script>
 import NavPublic from './NavPublic.vue';
 import { getIdentity } from '../../resource/Identity';
+import { getPublicSubscriptionPlan } from '../../resource/MstSubscriptionPlan';
 import { applyPublicSeo, releasePublicSeo } from '../../resource/PublicSeo';
 
 export default {
@@ -395,12 +437,15 @@ export default {
       brandName: 'Jastip',
       brandAddress: null,
       brandEmail: null,
+      plans: [],
+      plansLoading: true,
     };
   },
   created() {
     // Non-blocking: render langsung dengan fallback, identity menyusul saat
     // resolve (lihat getIdentity yang di-cache di resource/Identity.js).
     this.loadIdentity();
+    this.loadPlans();
   },
   mounted() {
     applyPublicSeo({ title: this.seoTitle, path: '/landing' });
@@ -432,6 +477,39 @@ export default {
       // Judul ikut brand runtime; applyTabIdentity() tidak menimpa judul
       // ber-flag data-seo="dynamic".
       applyPublicSeo({ title: this.seoTitle, path: '/landing' });
+    },
+    async loadPlans() {
+      this.plansLoading = true;
+      const result = await getPublicSubscriptionPlan();
+      this.plansLoading = false;
+      if (result && !result.error && Array.isArray(result.data)) {
+        this.plans = result.data;
+      }
+    },
+    formatPrice(plan) {
+      const price = Number(plan.price || 0);
+      if (!price) return 'Gratis';
+      try {
+        return new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: plan.currency || 'IDR',
+          maximumFractionDigits: 0,
+        }).format(price);
+      } catch (e) {
+        return `${plan.currency || 'IDR'} ${price.toLocaleString('id-ID')}`;
+      }
+    },
+    featureLabel(feat) {
+      const labels = {
+        courier: 'Integrasi kurir',
+        tracking: 'Pelacakan paket',
+        whatsapp: 'Notifikasi WhatsApp',
+        report: 'Laporan lengkap',
+        api: 'Akses API',
+        reports: 'Laporan lanjutan',
+        all: 'Semua fitur',
+      };
+      return labels[feat] || feat;
     },
   },
 };
@@ -734,6 +812,89 @@ export default {
 }
 .lp-card-plain {
   border-top: 3px solid #4f46e5;
+}
+
+/* Pricing / Paket Langganan */
+.lp-lead {
+  max-width: 640px;
+  margin: 10px auto 0;
+  text-align: center;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.lp-plans-loading {
+  text-align: center;
+  color: #94a3b8;
+  padding: 24px 0;
+}
+.lp-plans {
+  margin-top: 28px;
+}
+.lp-plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 22px;
+}
+.lp-plan-popular {
+  border-top-color: #f59e0b;
+  box-shadow: 0 18px 40px rgba(79, 70, 229, 0.16);
+  transform: translateY(-4px);
+}
+.lp-plan-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.lp-plan-price {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 12px 0 6px;
+}
+.lp-plan-price small {
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
+}
+.lp-plan-desc {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0 0 14px;
+}
+.lp-plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  flex-grow: 1;
+}
+.lp-plan-features li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 13.5px;
+  color: #475569;
+  line-height: 1.9;
+}
+.lp-plan-features li::before {
+  content: '\2713';
+  position: absolute;
+  left: 0;
+  color: #4f46e5;
+  font-weight: 700;
+}
+.lp-plan-cta {
+  text-align: center;
+  display: block;
 }
 
 /* Steps */

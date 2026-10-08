@@ -310,6 +310,7 @@ import {
   updateSysTenant,
   insertSysTenant,
 } from '../../../resource/SysTenant';
+import { getMstSubscriptionPlan } from '../../../resource/MstSubscriptionPlan';
 import moment from 'moment';
 
 export default {
@@ -368,11 +369,21 @@ export default {
     this.route_action =
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : this.action == 'Copy' ? 'COPY' : 'EDIT';
     this.isNewRecord = this.action === 'Create' || this.action === 'Copy';
+    this.loadPlans();
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
   },
   methods: {
+    async loadPlans() {
+      const result = await getMstSubscriptionPlan({ status: 'Active', raw: true });
+      if (result && !result.error && Array.isArray(result.data)) {
+        this.listPlan = result.data.map((plan) => ({
+          value: plan.code,
+          label: `${plan.name}${plan.price ? ` (${plan.currency || 'IDR'} ${plan.price})` : ''}`,
+        }));
+      }
+    },
     async loadData() {
       let _res = await getSysTenant({ id: this.$route.params.id });
       if (_res) {

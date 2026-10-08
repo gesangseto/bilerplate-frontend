@@ -193,6 +193,11 @@ const ListSystemTenant = () =>
   import('@/views/system/tenant/List');
 const FormSystemTenant = () =>
   import('@/views/system/tenant/Form');
+// SUBSCRIPTION PLAN
+const ListSubscriptionPlan = () =>
+  import('@/views/system/subscription_plan/ListSubscriptionPlan');
+const FormSubscriptionPlan = () =>
+  import('@/views/system/subscription_plan/FormSubscriptionPlan');
 // ========================SYSTEM PROCESS========================
 const ListProcessSchedule = () =>
   import('@/views/system-process/process-schedule/List');
@@ -1227,6 +1232,25 @@ function configRoutes() {
           path: 'tenant',
           name: 'Tenant (Home)',
           component: ListSystemTenant,
+          meta: { login: true },
+        },
+        // SUBSCRIPTION PLAN
+        {
+          path: 'subscription-plan/:type/:id',
+          name: 'Subscription Plan (Details)',
+          component: FormSubscriptionPlan,
+          meta: { login: true },
+        },
+        {
+          path: 'subscription-plan/:type',
+          name: 'Subscription Plan (Create)',
+          component: FormSubscriptionPlan,
+          meta: { login: true },
+        },
+        {
+          path: 'subscription-plan',
+          name: 'Subscription Plan (Home)',
+          component: ListSubscriptionPlan,
           meta: { login: true },
         },
       ],
