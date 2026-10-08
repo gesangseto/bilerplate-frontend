@@ -328,6 +328,72 @@
                     </div>
                   </div>
 
+                  <p style="font-weight: bold">Brand Colors & Favicon</p>
+                  <!-- Primary Color -->
+                  <CCol sm="10" lg="10">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Primary Color</label>
+                      <div class="col-sm-9 d-flex align-items-center">
+                        <input
+                          type="color"
+                          v-model="data.primary_color"
+                          style="width: 48px; height: 34px; padding: 0; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer;"
+                        />
+                        <CInput
+                          class="ml-2"
+                          v-model="data.primary_color"
+                          placeholder="#553b9c"
+                          style="max-width: 140px;"
+                        />
+                        <small class="form-text text-muted ml-2 mb-0">Warna tema utama platform (HEX).</small>
+                      </div>
+                    </div>
+                  </CCol>
+                  <!-- Secondary Color -->
+                  <CCol sm="10" lg="10">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Secondary Color</label>
+                      <div class="col-sm-9 d-flex align-items-center">
+                        <input
+                          type="color"
+                          v-model="data.secondary_color"
+                          style="width: 48px; height: 34px; padding: 0; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer;"
+                        />
+                        <CInput
+                          class="ml-2"
+                          v-model="data.secondary_color"
+                          placeholder="#ff9b55"
+                          style="max-width: 140px;"
+                        />
+                        <small class="form-text text-muted ml-2 mb-0">Warna aksen platform (HEX).</small>
+                      </div>
+                    </div>
+                  </CCol>
+                  <!-- Favicon -->
+                  <CCol sm="10" lg="10">
+                    <CInputFile
+                      :placeholder="labelLogo.favicon"
+                      horizontal
+                      custom
+                      class="input-form-upload"
+                      @change="uploadLogo($event, 'favicon')"
+                    >
+                      <template #label>
+                        <p class="col-form-label col-sm-3">Favicon</p>
+                      </template>
+                    </CInputFile>
+                  </CCol>
+                  <div class="form-group row mb-5">
+                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                      <label for="favicon"> </label>
+                    </div>
+                    <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
+                      <div class="custom-file mb-3">
+                        <CImg width="32" v-bind:src="data.favicon_path" />
+                      </div>
+                    </div>
+                  </div>
+
                   <p style="font-weight: bold">Long Process Settings</p>
                   <SelectOption
                     title="Retry Interval"
@@ -513,6 +579,7 @@ export default {
         identity: 'Choose file...',
         login: 'Choose file...',
         home: 'Choose file...',
+        favicon: 'Choose file...',
       },
       password_pattern: {
         min: null,
@@ -539,6 +606,9 @@ export default {
         identity_logo_path: '',
         login_logo: '',
         home_logo: '',
+        primary_color: '',
+        secondary_color: '',
+        favicon_path: '',
         TotalWh: 0,
         total_device: 0,
         imei: '',
@@ -684,6 +754,7 @@ export default {
         if (type == 'identity') this.data.identity_logo_path = e.target.result;
         else if (type == 'login') this.data.login_logo = e.target.result;
         else if (type == 'home') this.data.home_logo = e.target.result;
+        else if (type == 'favicon') this.data.favicon_path = e.target.result;
       };
       reader.readAsDataURL(file);
     },

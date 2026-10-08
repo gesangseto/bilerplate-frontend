@@ -28,6 +28,59 @@
                 </CCol>
               </CRow>
               <CRow class="mt-2">
+                <CCol md="3"> Warna Utama (Primary) </CCol>
+                <CCol md="6">
+                  <div class="d-flex align-items-center">
+                    <input
+                      type="color"
+                      v-model="form.primary_color"
+                      style="width: 48px; height: 34px; padding: 0; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer;"
+                    />
+                    <CInput
+                      class="ml-2"
+                      v-model="form.primary_color"
+                      placeholder="#553b9c"
+                      style="max-width: 140px;"
+                    />
+                  </div>
+                  <small class="form-text text-muted">Warna tema utama (HEX). Kosongkan untuk warna default platform.</small>
+                </CCol>
+              </CRow>
+              <CRow class="mt-2">
+                <CCol md="3"> Warna Sekunder (Secondary) </CCol>
+                <CCol md="6">
+                  <div class="d-flex align-items-center">
+                    <input
+                      type="color"
+                      v-model="form.secondary_color"
+                      style="width: 48px; height: 34px; padding: 0; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer;"
+                    />
+                    <CInput
+                      class="ml-2"
+                      v-model="form.secondary_color"
+                      placeholder="#ff9b55"
+                      style="max-width: 140px;"
+                    />
+                  </div>
+                  <small class="form-text text-muted">Warna aksen (HEX). Kosongkan untuk warna default platform.</small>
+                </CCol>
+              </CRow>
+              <CRow class="mt-2">
+                <CCol md="3"> Favicon </CCol>
+                <CCol md="6">
+                  <div class="d-flex align-items-center">
+                    <div class="mr-3" style="width: 48px; height: 48px; border: 1px solid #dee2e6; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                      <img v-if="form.favicon_path" :src="form.favicon_path" alt="Favicon" style="max-width: 100%; max-height: 100%;" />
+                      <span v-else class="text-muted small">—</span>
+                    </div>
+                    <div>
+                      <CInput type="file" @change="onFaviconChange" accept="image/*,.ico" />
+                      <small class="form-text text-muted d-block mt-1">PNG/ICO, max 500KB. Muncul di tab browser.</small>
+                    </div>
+                  </div>
+                </CCol>
+              </CRow>
+              <CRow class="mt-2">
                 <CCol md="3"> Nama Identitas </CCol>
                 <CCol md="6">
                   <CInput v-model="form.identity_name" />
@@ -111,6 +164,7 @@ import {
   getTenantSelfConfig,
   updateTenantSelfConfig,
   uploadTenantLogo,
+  uploadTenantFavicon,
 } from '../../../resource/TenantSelfConfig';
 import { getTenantInfo } from '../../../utils';
 
@@ -122,6 +176,7 @@ export default {
       saving: false,
       subdomain: '',
       logoFile: null,
+      faviconFile: null,
       form: {
         identity_name: '',
         identity_number: '',
@@ -133,6 +188,9 @@ export default {
         price_unit_code: '',
         notification_whatsapp: false,
         logo_path: '',
+        primary_color: '',
+        secondary_color: '',
+        favicon_path: '',
       },
     };
   },
@@ -168,6 +226,9 @@ export default {
           price_unit_code: row.price_unit_code || '',
           notification_whatsapp: !!row.notification_whatsapp,
           logo_path: row.logo_path || '',
+          primary_color: row.primary_color || '',
+          secondary_color: row.secondary_color || '',
+          favicon_path: row.favicon_path || '',
         };
       }
     },
@@ -189,6 +250,18 @@ export default {
       reader.onload = (ev) => { this.form.logo_path = ev.target.result; };
       reader.readAsDataURL(file);
     },
+    onFaviconChange(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 500 * 1024) {
+        this.$toast.open({ message: 'File terlalu besar (max 500KB)', type: 'error', position: 'top-right', duration: 3000 });
+        return;
+      }
+      this.faviconFile = file;
+      const reader = new FileReader();
+      reader.onload = (ev) => { this.form.favicon_path = ev.target.result; };
+      reader.readAsDataURL(file);
+    },
     async save() {
       this.saving = true;
       // Upload logo dulu kalau ada file baru
@@ -201,11 +274,24 @@ export default {
         }
         // Response BE should include updated logo_path; kalau tidak, preview sudah di form
       }
+      // Upload favicon kalau ada file baru
+      if (this.faviconFile) {
+        const up = await uploadTenantFavicon(this.faviconFile);
+        if (up && up.error) {
+          this.saving = false;
+          this.$toast.open({ message: up.message || 'Gagal upload favicon', type: 'error', position: 'top-right', duration: 5000 });
+          return;
+        }
+      }
       let res = await updateTenantSelfConfig({ ...this.form });
       this.saving = false;
       if (res && !res.error && res.data && res.data[0]) {
-        // Update logo_path dari response kalau dikembalikan
-        this.form.logo_path = res.data[0].logo_path || this.form.logo_path;
+        // Sinkronkan hasil simpan (logo/favicon/warna) dari response.
+        const row = res.data[0];
+        this.form.logo_path = row.logo_path || this.form.logo_path;
+        this.form.favicon_path = row.favicon_path || this.form.favicon_path;
+        this.form.primary_color = row.primary_color || '';
+        this.form.secondary_color = row.secondary_color || '';
       }
       this.$toast.open({
         message:
@@ -217,6 +303,7 @@ export default {
         duration: 5000,
       });
       this.logoFile = null;
+      this.faviconFile = null;
     },
   },
 };

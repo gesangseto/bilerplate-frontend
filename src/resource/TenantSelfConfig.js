@@ -56,3 +56,23 @@ export const uploadTenantLogo = async (file) => {
       });
   });
 };
+
+export const uploadTenantFavicon = async (file) => {
+  if (!file) return Promise.resolve(false);
+  const formData = new FormData();
+  formData.append('favicon', file);
+  return new Promise((resolve) => {
+    $axios
+      .post(`${url}/favicon`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR upload favicon => ', e);
+        return resolve(false);
+      });
+  });
+};
