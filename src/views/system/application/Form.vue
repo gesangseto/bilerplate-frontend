@@ -37,26 +37,7 @@
                   </InputDefault>
                 </CCardBody>
               </CCard>
-              <!-- Licensed Entity Information -->
-              <CCard>
-                <CCardHeader style="font-weight: bold; font-size: large">
-                  Licensed Entity Information
-                </CCardHeader>
-                <CCardBody>
-                  <!-- COMPANY INFORMATION -->
-                  <p style="font-weight: bold">Company Information</p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Entity Name"
-                    v-model="data.identity_name"
-                  />
-                  <TextareaDefault
-                    :col="[3, 7]"
-                    title="Entity Address"
-                    v-model="data.entity_address"
-                  />
-                </CCardBody>
-              </CCard>
+              <!-- Identity fields dipindahkan ke General System Settings -->
 
               <!-- Licensed Features & Limits -->
               <CCard>
@@ -247,6 +228,28 @@
                   General System Settings
                 </CCardHeader>
                 <CCardBody>
+                  <!-- Identitas publik: dipakai halaman landing (brand, alamat,
+                       email kontak, logo) -->
+                  <p style="font-weight: bold">Identity Information</p>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Identity Name"
+                    v-model="data.identity_name"
+                    description="Shown as the brand name on the public landing page."
+                  />
+                  <TextareaDefault
+                    :col="[3, 7]"
+                    title="Identity Address"
+                    v-model="data.identity_address"
+                    description="Shown in the landing page footer / contact section."
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Identity Email"
+                    v-model="data.identity_email"
+                    description="Contact email shown on the public landing page."
+                  />
+
                   <p style="font-weight: bold">Pictures</p>
                   <!-- Identity Logo -->
                   <CCol sm="10" lg="10">
@@ -405,149 +408,14 @@
                   </div>
                 </CCardBody>
               </CCard>
-              <!-- Warehouse Module Settings -->
-              <CCard>
-                <CCardHeader style="font-weight: bold; font-size: large">
-                  Warehouse Module Settings
-                </CCardHeader>
-                <CCardBody>
-                  <p style="font-weight: bold">Transaction Settings</p>
-                  <CRow form class="form-group">
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Allow Inbound Multiple Batch
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.allow_multiple_batch_inbound"
-                          />
-                        </CCol>
-                      </CRow>
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Allow Transfer Multiple Batch
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.allow_multiple_batch_transfer"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Create Inbound on Transfer Completion
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.transfer_record_to_inbound"
-                          />
-                        </CCol>
-                      </CRow>
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Create Outbound on Transfer Completion
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.transfer_record_to_putbound"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                    <CCol sm="4">
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Create Inbound on Return Completion
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.transfer_record_to_inbound"
-                          />
-                        </CCol>
-                      </CRow>
-                      <CRow form class="form-group">
-                        <CCol tag="label" sm="8" class="col-form-label">
-                          Create Outbound on Return Completion
-                        </CCol>
-                        <CCol sm="4">
-                          <CSwitch
-                            class="mr-1"
-                            color="success"
-                            :checked.sync="data.transfer_record_to_outbound"
-                          />
-                        </CCol>
-                      </CRow>
-                    </CCol>
-                  </CRow>
+              <!-- Warehouse Module Settings dihapus dari System Setting - Application -->
 
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Minimum Remaining Shelf Life for Picking"
-                    v-model="data.delivery_day_limit"
-                    :validasi="'integer'"
-                    :max="10000"
-                    description="Products must have at least the specified number of days before expiry to be eligible for picking."
-                  />
-                  <CCol sm="12"> </CCol>
-                  <CRow form class="form-group">
-                    <CCol tag="label" sm="3" class="col-form-label">
-                      Allow Aggregated Packaging L2 on Return External
-                    </CCol>
-                    <CCol sm="9">
-                      <CSwitch
-                        class="mr-1"
-                        color="success"
-                        :checked.sync="data.return_ext_aggregation"
-                      />
-                      <p style="font-size: smaller; color: rgb(143, 143, 143)">
-                        When enabled, the system accepts external return items
-                        in aggregated packaging (level 2). When disabled, only
-                        unit-level packaging (level 1) is allowed.
-                      </p>
-                    </CCol>
-                    <CCol sm="12">
-                      <SelectOption
-                        title="EPC Status After Return External"
-                        :options="epcStatusOptions"
-                        v-on:onchange="data.return_ext_status = $event"
-                        :value="data.return_ext_status"
-                        :col="[3, 7]"
-                        description="If left blank, the default status Active will be applied."
-                      />
-                    </CCol>
-                  </CRow>
-                </CCardBody>
-              </CCard>
               <!-- Data Center -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
                   Database Management Settings
                 </CCardHeader>
                 <CCardBody>
-                  <p style="font-weight: bold">Archive</p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Pre Inbound"
-                    v-model="data.folder_preinbound"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Picking List"
-                    v-model="data.folder_pickinglist"
-                  />
                   <p style="font-weight: bold; margin-bottom: 15px">Backup</p>
                   <SelectOption
                     title="Scheduler"
@@ -623,7 +491,6 @@ const reader = new FileReader();
 import 'vue2-datepicker/index.css';
 import $axios from '../../../api';
 import moment from 'moment';
-import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
 import { getSysConfig, updateSysConfig } from '../../../resource/SysConfig';
 import {
   getWhatsappQr,
@@ -647,7 +514,6 @@ export default {
         login: 'Choose file...',
         home: 'Choose file...',
       },
-      epcStatusOptions: [],
       password_pattern: {
         min: null,
         max: null,
@@ -728,7 +594,6 @@ export default {
   },
   mounted() {
     this.loadConfig();
-    this.loadEpcStatus();
     this.loadCron();
     this.loadWhatsapp();
   },
@@ -757,15 +622,6 @@ export default {
             : this.initial_password_pattern(),
         };
         this.info = this.data?.info;
-      }
-      return;
-    },
-    async loadEpcStatus() {
-      let epcStatus = await getMstEpcStatus({ is_final_status: true });
-      if (epcStatus) {
-        this.epcStatusOptions = epcStatus.data.map((it) => {
-          return { value: parseInt(it.id), label: it.name };
-        });
       }
       return;
     },

@@ -268,6 +268,10 @@
     <footer class="lp-footer">
       <div class="lp-wrap lp-footer-inner">
         <span><span class="lp-dot-mini"></span> {{ brandName }}</span>
+        <span class="lp-muted" v-if="brandAddress">{{ brandAddress }}</span>
+        <span class="lp-muted" v-if="brandEmail">
+          <a :href="'mailto:' + brandEmail">{{ brandEmail }}</a>
+        </span>
         <span class="lp-muted">&copy; {{ year }}   Jasa Titip Belanja</span>
       </div>
     </footer>
@@ -286,6 +290,8 @@ export default {
     return {
       brandLogo: null,
       brandName: 'Jastip',
+      brandAddress: null,
+      brandEmail: null,
     };
   },
   created() {
@@ -317,6 +323,8 @@ export default {
       if (id) {
         if (id.identity_logo_path) this.brandLogo = id.identity_logo_path;
         if (id.identity_name) this.brandName = id.identity_name;
+        if (id.identity_address) this.brandAddress = id.identity_address;
+        if (id.identity_email) this.brandEmail = id.identity_email;
       }
       // Judul ikut brand runtime; applyTabIdentity() tidak menimpa judul
       // ber-flag data-seo="dynamic".
@@ -763,6 +771,14 @@ export default {
 }
 .lp-muted {
   color: #94a3b8;
+}
+.lp-muted a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lp-muted a:hover {
+  color: #fff;
 }
 
 @media (max-width: 720px) {
