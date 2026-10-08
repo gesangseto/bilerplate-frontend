@@ -269,8 +269,10 @@ const JastipFormItemDisposal = () =>
   import('@/views/jastip/disposal/FormItemDisposal');
 // ========================CONFIGURATION========================
 Vue.use(Router);
+// History mode (tanpa "#" di URL). Server WAJIB punya SPA fallback:
+// setiap path non-API/non-file dikembalikan index.html (lihat server.js).
 let router = new Router({
-  mode: 'hash', // https://router.vuejs.org/api/#mode
+  mode: 'history',
   linkActiveClass: 'active',
   scrollBehavior: () => ({ y: 0 }),
   routes: configRoutes(),
