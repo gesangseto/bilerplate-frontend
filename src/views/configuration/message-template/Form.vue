@@ -105,7 +105,7 @@
                   :disabled="action == 'Read'"
                   :col="[3, 9]"
                   title="Content Template"
-                  placeholder="Enter template with {{variables}}"
+                  placeholder="Enter template with {&#123;variables&#125;}"
                   v-model="formData.content_template"
                   :rows="6"
                   :is-valid="
