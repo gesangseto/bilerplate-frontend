@@ -44,7 +44,11 @@ function forceLogout(reason) {
     /* abaikan */
   }
   // Redirect keras -> menjamin user keluar dari halaman ber-sesi.
-  window.location.href = '/login';
+  // Router pakai mode hash: '/login' tanpa '#' bikin app boot ke root dan
+  // jatuh ke LANDING, bukan form login. Arahkan eksplisit ke '#/login'
+  // supaya pesan force_logout_reason tampil di form login.
+  window.location.href =
+    (window.location.pathname || '') + (window.location.search || '') + '#/login';
 }
 
 
@@ -113,10 +117,12 @@ $axios.interceptors.response.use(
     stopLoading();
     document.body.classList.remove('loading-indicator');
     let res = response.data;
-    // Sesi kadaluarsa (bentuk lama).
-    if (res && res.StatusCode && res.StatusCode == '401') {
+    // Sesi kadaluarsa / auth gagal: BE mengirim status_code 401 DI BODY
+    // (HTTP tetap 200, response() selalu res.json). Bentuk lama `StatusCode`
+    // dipertahankan untuk kompatibilitas.
+    if (res && (res.StatusCode == '401' || res.status_code === 401)) {
       clearStorage();
-      forceLogout('StatusCode 401');
+      forceLogout('HTTP 401');
       return Promise.resolve(response);
     }
     // Backend mengirim error pada BODY (HTTP bisa 400/403/500) dengan field

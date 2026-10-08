@@ -164,6 +164,17 @@ export default {
       this.message = localStorage.getItem('message');
       localStorage.removeItem('message');
     }
+    // Alasan force logout (dari api.js): tampilkan sekali di form login.
+    const forced = sessionStorage.getItem('force_logout_reason');
+    if (forced) {
+      sessionStorage.removeItem('force_logout_reason');
+      if (!this.message) {
+        this.message =
+          forced === 'TENANT_SUBDOMAIN_MISSING'
+            ? 'Sesi tenant tidak valid, silakan login ulang'
+            : `Sesi berakhir (${forced}), silakan login ulang`;
+      }
+    }
   },
 
   beforeMount() {
