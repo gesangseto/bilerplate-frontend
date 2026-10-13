@@ -78,6 +78,21 @@
         />
       </div>
 
+      <!-- Nama penerima barang — WAJIB untuk finish (backend: "Received is
+           required"). Sebelumnya field ini tidak ada sehingga tombol Finish
+           selalu gagal. -->
+      <div v-if="action === 'finish'">
+        <div class="app-modal-section-title">
+          Received By <span class="text-danger">*</span>
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Nama penerima barang"
+          v-model="property.received_by"
+        />
+      </div>
+
       <template #footer>
         <CButton color="secondary" outline @click="property.modal = false">
           <CIcon name="cil-ban" /> Cancel

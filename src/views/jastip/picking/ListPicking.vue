@@ -202,6 +202,8 @@ export default {
         id: item.id,
         modal: true,
         reason: '',
+        // received_by wajib untuk finish (backend menolak "Received is required").
+        received_by: item.receiver_name || '',
         action: 'finish',
       };
     },
@@ -228,6 +230,11 @@ export default {
         id,
         idempotency_key: generateIdempotencyKey(),
       };
+      if (action === 'finish') {
+        // Backend mewajibkan received_by saat finish.
+        param.received_by =
+          (this.cancelProperty.received_by || '').trim() || 'Admin';
+      }
       if (action === 'not_delivery') {
         param.reason = `[RETURN] ${reason}`;
       } else if (action === 'cancel') {
