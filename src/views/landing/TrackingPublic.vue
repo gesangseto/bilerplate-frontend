@@ -144,7 +144,7 @@
 
     <footer class="tp-footer">
       <div class="tp-wrap tp-footer-inner">
-        <span class="tp-muted">© {{ year }} Jastip — Jasa Titip Belanja</span>
+        <span class="tp-muted">© {{ year }} {{ brandName }} — Jasa Titip Belanja</span>
         <router-link class="tp-footer-link" to="/landing">Kembali ke Home</router-link>
       </div>
     </footer>
@@ -154,6 +154,7 @@
 <script>
 import $axios from '../../api';
 import NavPublic from './NavPublic.vue';
+import { getIdentity } from '../../resource/Identity';
 import { applyPublicSeo, releasePublicSeo } from '../../resource/PublicSeo';
 
 const STATUS_BADGE = {
@@ -175,7 +176,11 @@ export default {
       loading: false,
       searched: false,
       result: null,
+      brandName: 'Jastip',
     };
+  },
+  created() {
+    this.loadIdentity();
   },
   mounted() {
     // Meta SEO publik saja — perilaku halaman tidak diubah.
@@ -195,6 +200,10 @@ export default {
     },
   },
   methods: {
+    async loadIdentity() {
+      const id = await getIdentity();
+      if (id && id.identity_name) this.brandName = id.identity_name;
+    },
     badge(status) {
       return STATUS_BADGE[status] || 'tp-badge-secondary';
     },
