@@ -138,6 +138,7 @@ import {
   handleBack,
   generateIdempotencyKey,
   formatNumber,
+  capitalizeFirstLetter,
 } from '../../../utils';
 
 export default {
@@ -161,10 +162,8 @@ export default {
       listBatch: [],
       items: [],
       fields: [
-        { key: 'barcode', label: 'Barcode' },
         { key: 'customer_name', label: 'Customer' },
         { key: 'product_name', label: 'Product' },
-        { key: 'quantity', label: 'Qty' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
@@ -173,13 +172,16 @@ export default {
         { key: 'local_price', label: '(L) Price' },
         { key: 'local_shipping', label: '(L) Shipping' },
         { key: 'local_profit', label: '(L) Profit' },
-        { key: 'status_name', label: 'Status' },
         { key: 'payment_status', label: 'Payment' },
       ],
     };
   },
   mounted() {
-    this.action = this.$route.params.id === undefined ? 'ADD' : 'READ';
+    // Mengecek ada parameter yg dikiri di URL atau tidak
+    this.action = capitalizeFirstLetter(this.$route.params.type);
+    this.route_action =
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+
     if (this.action === 'ADD') {
       this.loadListBatch();
     } else {

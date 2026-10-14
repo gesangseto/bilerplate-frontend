@@ -16,9 +16,7 @@
                   title="Code"
                   placeholder="Enter template code (e.g. REQUEST_PAYMENT)"
                   v-model="formData.code"
-                  :is-valid="
-                    initialLoad ? null : !formData.code ? false : true
-                  "
+                  :is-valid="initialLoad ? null : !formData.code ? false : true"
                 />
               </CCol>
               <CCol sm="12">
@@ -29,9 +27,7 @@
                   title="Name"
                   placeholder="Enter template name"
                   v-model="formData.name"
-                  :is-valid="
-                    initialLoad ? null : !formData.name ? false : true
-                  "
+                  :is-valid="initialLoad ? null : !formData.name ? false : true"
                 />
               </CCol>
               <CCol sm="12">
@@ -105,7 +101,7 @@
                   :disabled="action == 'Read'"
                   :col="[3, 9]"
                   title="Content Template"
-                  placeholder="Enter template with {{variables}}"
+                  placeholder="Enter template with "
                   v-model="formData.content_template"
                   :rows="6"
                   :is-valid="
@@ -117,7 +113,8 @@
                   "
                 />
                 <small class="text-muted d-block mt-1">
-                  Gunakan {{variable}} untuk placeholder. Contoh: {{customer_name}}, {{order_number}}, {{amount}}
+                  Gunakan {{ variable }} untuk placeholder. Contoh:
+                  {{ customer_name }}, {{ order_number }}, {{ amount }}
                 </small>
               </CCol>
 

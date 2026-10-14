@@ -9,17 +9,20 @@
           <CForm novalidate>
             <CCol sm="12">
               <InputDefault
+                :disabled="action !== 'Create'"
                 title="Batch No"
                 placeholder="Auto generate if empty"
                 v-model="formData.batch_no"
               />
               <InputDefault
+                :disabled="action !== 'Create'"
                 title="Weight"
                 placeholder="0"
                 validasi="float"
                 v-model="formData.weight"
               />
               <SelectOption
+                :disabled="action !== 'Create'"
                 title="Supplier"
                 placeholder="--Select--"
                 :options="listSupplier"
@@ -29,6 +32,7 @@
             <CRow>
               <CCol col="12" xl="12">
                 <CButton
+                  v-if="action === 'ADD'"
                   size="sm"
                   class="float-right m-1"
                   color="success"
@@ -54,6 +58,7 @@
                 <template #action="{ item, index }">
                   <td>
                     <Button
+                      v-if="action === 'ADD'"
                       v-c-tooltip="'Delete'"
                       :type="'delete'"
                       @click="deleteRow(item, index)"
@@ -66,14 +71,20 @@
         </CCardBody>
         <CCardFooter>
           <div class="float-left">
-            <CButton @click="save()" color="primary" size="sm" type="submit">
+            <CButton
+              @click="save()"
+              color="primary"
+              size="sm"
+              type="submit"
+              v-if="action === 'Create'"
+            >
               <CIcon name="cil-check-circle" /> Submit
             </CButton>
             <ButtonBack />
           </div>
           <div class="float-right">
             <ExportButtons
-              v-if="action !== 'ADD'"
+              v-if="action !== 'Create'"
               @export="handleClickExport"
             />
           </div>
@@ -93,7 +104,12 @@
         <CButton size="sm" color="info" @click="selectAllDraft">
           <CIcon name="cil-check-circle" /> Select All
         </CButton>
-        <CButton size="sm" color="secondary" class="ml-2" @click="clearSelection">
+        <CButton
+          size="sm"
+          color="secondary"
+          class="ml-2"
+          @click="clearSelection"
+        >
           <CIcon name="cil-ban" /> Clear
         </CButton>
         <span class="ml-3 text-muted" style="font-size: 12px">
@@ -138,7 +154,12 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3, handleBack, formatNumber } from '../../../utils';
+import {
+  exportDataV3,
+  handleBack,
+  formatNumber,
+  capitalizeFirstLetter,
+} from '../../../utils';
 
 export default {
   name: 'FormOutboundManifest',
@@ -185,7 +206,11 @@ export default {
     };
   },
   mounted() {
-    this.action = this.$route.params.id === undefined ? 'ADD' : 'EDIT';
+    // Mengecek ada parameter yg dikiri di URL atau tidak
+    this.action = capitalizeFirstLetter(this.$route.params.type);
+    this.route_action =
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+
     this.loadListSupplier();
     if (this.action === 'EDIT') {
       this.loadData();

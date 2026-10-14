@@ -7,39 +7,27 @@
             <CCol sm="12" md="6">
               <h5 class="mb-0">Payment</h5>
             </CCol>
-            <CCol sm="12" md="6" class="mt-2 mt-md-0 text-md-right">
-              <!-- Blast Tagihan: hanya relevan untuk tab Pending -->
-              <span class="d-inline-block" v-c-tooltip="blastTooltip">
-                <CButton
-                  color="warning"
-                  size="sm"
-                  :class="{ 'blast-no-pe': blastDisabled || blasting }"
-                  :disabled="blastDisabled || blasting"
-                  @click="openBlast()"
-                >
-                  <CIcon name="cib-whatsapp" /> Blast Tagihan
-                </CButton>
-              </span>
-            </CCol>
           </CRow>
         </CCardHeader>
         <CCardBody>
           <!-- Baris filter: Session + Search -->
-          <CRow class="mb-3 align-items-end">
-            <CCol sm="12" md="5" class="mb-2 mb-md-0">
+          <CRow class="mb-5 align-items-end">
+            <CCol sm="12" md="12" class="mb-2 mb-md-0">
               <SelectOption
                 title="Session"
                 placeholder="-- Pilih Session --"
                 required
                 :options="sessionOptions"
                 :value="sessionId"
-                :col="['12', '12']"
+                :col="['6', '6']"
                 :is-valid="showValidation ? sessionId !== null : null"
                 invalid-feedback="Session wajib dipilih."
                 v-on:onchange="changeSession($event)"
               />
             </CCol>
-            <CCol sm="12" md="7">
+          </CRow>
+          <CRow>
+            <CCol sm="12" md="6">
               <CInput
                 v-if="tab !== 'history'"
                 size="sm"
@@ -53,21 +41,43 @@
                 v-model="historySearch"
               />
             </CCol>
+            <CCol sm="12" md="6" class="mt-2 mt-md-0 text-md-right">
+              <CButton
+                color="warning"
+                size="sm"
+                :class="{ 'blast-no-pe': blastDisabled || blasting }"
+                :disabled="blastDisabled || blasting"
+                @click="openBlast()"
+              >
+                <CIcon name="cib-whatsapp" /> Blast Tagihan
+              </CButton>
+            </CCol>
           </CRow>
-
           <CNav variant="tabs">
             <CNavItem>
-              <CNavLink href="#" :active="tab === 'pending'" @click.prevent="tab = 'pending'">
+              <CNavLink
+                href="#"
+                :active="tab === 'pending'"
+                @click.prevent="tab = 'pending'"
+              >
                 Pending ({{ pendingBills.length }})
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink href="#" :active="tab === 'paid'" @click.prevent="tab = 'paid'">
+              <CNavLink
+                href="#"
+                :active="tab === 'paid'"
+                @click.prevent="tab = 'paid'"
+              >
                 Paid ({{ paidBills.length }})
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink href="#" :active="tab === 'history'" @click.prevent="tab = 'history'">
+              <CNavLink
+                href="#"
+                :active="tab === 'history'"
+                @click.prevent="tab = 'history'"
+              >
                 Riwayat ({{ history.length }})
               </CNavLink>
             </CNavItem>
@@ -88,7 +98,9 @@
             <template #customer_name="{ item }">
               <td>
                 <div>{{ item.customer_name }}</div>
-                <div class="text-muted small">{{ item.customer_phone || '-' }}</div>
+                <div class="text-muted small">
+                  {{ item.customer_phone || '-' }}
+                </div>
               </td>
             </template>
             <template #tagihan="{ item }">
@@ -98,19 +110,30 @@
               <td class="text-right">{{ money(item.total_paid) }}</td>
             </template>
             <template #sisa="{ item }">
-              <td class="text-right"><b>{{ money(item.remaining_amount) }}</b></td>
+              <td class="text-right">
+                <b>{{ money(item.remaining_amount) }}</b>
+              </td>
             </template>
             <template #qty="{ item }">
-              <td class="text-center">{{ item.total_items }} item / {{ item.total_quantity }} pcs</td>
+              <td class="text-center">
+                {{ item.total_items }} item / {{ item.total_quantity }} pcs
+              </td>
             </template>
             <template #payment_status="{ item }">
               <td>
-                <CBadge :color="billBadge(item.payment_status)">{{ item.payment_status }}</CBadge>
+                <CBadge :color="billBadge(item.payment_status)">{{
+                  item.payment_status
+                }}</CBadge>
               </td>
             </template>
             <template #action="{ item }">
               <td class="text-nowrap">
-                <CButton size="sm" color="info" variant="outline" @click="openDetail(item)">
+                <CButton
+                  size="sm"
+                  color="info"
+                  variant="outline"
+                  @click="openDetail(item)"
+                >
                   <CIcon name="cil-list" /> Detail
                 </CButton>
                 <CButton
@@ -141,7 +164,9 @@
             <template #customer_name="{ item }">
               <td>
                 <div>{{ item.customer_name }}</div>
-                <div class="text-muted small">{{ item.customer_phone || '-' }}</div>
+                <div class="text-muted small">
+                  {{ item.customer_phone || '-' }}
+                </div>
               </td>
             </template>
             <template #payment_date="{ item }">
@@ -154,11 +179,15 @@
               <td>{{ item.reference_number || '-' }}</td>
             </template>
             <template #amount="{ item }">
-              <td class="text-right"><b>{{ money(item.amount) }}</b></td>
+              <td class="text-right">
+                <b>{{ money(item.amount) }}</b>
+              </td>
             </template>
             <template #status="{ item }">
               <td>
-                <CBadge :color="recordBadge(item.status)">{{ recordLabel(item.status) }}</CBadge>
+                <CBadge :color="recordBadge(item.status)">{{
+                  recordLabel(item.status)
+                }}</CBadge>
               </td>
             </template>
           </CDataTable>
@@ -177,43 +206,62 @@
       >
         <div class="app-modal-alert app-modal-alert--info">
           <CIcon name="cil-list" />
-          <span>Ringkasan tagihan dan item customer pada session terpilih.</span>
+          <span
+            >Ringkasan tagihan dan item customer pada session terpilih.</span
+          >
         </div>
 
         <div v-if="detailBill" class="app-modal-info">
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Customer</span>
-            <span class="app-modal-info__value">{{ detailData.customer_name || '-' }}</span>
+            <span class="app-modal-info__value">{{
+              detailData.customer_name || '-'
+            }}</span>
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Telepon</span>
-            <span class="app-modal-info__value">{{ detailData.customer_phone || '-' }}</span>
+            <span class="app-modal-info__value">{{
+              detailData.customer_phone || '-'
+            }}</span>
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Status</span>
             <span class="app-modal-info__value">
-              <CBadge :color="billBadge(detailData.payment_status)">{{ detailData.payment_status || '-' }}</CBadge>
+              <CBadge :color="billBadge(detailData.payment_status)">{{
+                detailData.payment_status || '-'
+              }}</CBadge>
             </span>
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Pembayaran</span>
-            <span class="app-modal-info__value">{{ detailData.payment_count || 0 }}x</span>
+            <span class="app-modal-info__value"
+              >{{ detailData.payment_count || 0 }}x</span
+            >
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Total Tagihan</span>
-            <span class="app-modal-info__value">{{ money(detailData.grand_total) }}</span>
+            <span class="app-modal-info__value">{{
+              money(detailData.grand_total)
+            }}</span>
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Sudah Dibayar</span>
-            <span class="app-modal-info__value">{{ money(detailData.total_paid) }}</span>
+            <span class="app-modal-info__value">{{
+              money(detailData.total_paid)
+            }}</span>
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Sisa Tagihan</span>
-            <span class="app-modal-info__value text-danger"><b>{{ money(detailData.remaining_amount) }}</b></span>
+            <span class="app-modal-info__value text-danger"
+              ><b>{{ money(detailData.remaining_amount) }}</b></span
+            >
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Item</span>
-            <span class="app-modal-info__value">{{ detailData.total_items || 0 }} item / {{ detailData.total_quantity || 0 }} pcs</span>
+            <span class="app-modal-info__value"
+              >{{ detailData.total_items || 0 }} item /
+              {{ detailData.total_quantity || 0 }} pcs</span
+            >
           </div>
         </div>
 
@@ -238,14 +286,20 @@
                 <td class="text-center">{{ it.quantity }}</td>
                 <td class="text-right">{{ num(it.local_price) }}</td>
                 <td class="text-center">
-                  <CBadge :color="itemBadge(it.status)">{{ it.status_name || it.status }}</CBadge>
+                  <CBadge :color="itemBadge(it.status)">{{
+                    it.status_name || it.status
+                  }}</CBadge>
                 </td>
               </tr>
               <tr v-if="detailLoading">
-                <td colspan="5" class="text-center text-muted">Memuat item...</td>
+                <td colspan="5" class="text-center text-muted">
+                  Memuat item...
+                </td>
               </tr>
               <tr v-else-if="!detailItems.length">
-                <td colspan="5" class="text-center text-muted">Tidak ada item.</td>
+                <td colspan="5" class="text-center text-muted">
+                  Tidak ada item.
+                </td>
               </tr>
             </tbody>
           </table>
@@ -261,7 +315,8 @@
             :disabled="sendingInvoice"
             @click="sendInvoice()"
           >
-            <CIcon name="cib-whatsapp" /> {{ sendingInvoice ? 'Mengirim...' : 'Kirim Tagihan' }}
+            <CIcon name="cib-whatsapp" />
+            {{ sendingInvoice ? 'Mengirim...' : 'Kirim Tagihan' }}
           </CButton>
           <CButton
             v-if="Number(detailData.remaining_amount) > 0"
@@ -285,25 +340,35 @@
       >
         <div class="app-modal-alert app-modal-alert--success">
           <CIcon name="cil-money" />
-          <span>Masukkan nominal pembayaran customer pada session terpilih.</span>
+          <span
+            >Masukkan nominal pembayaran customer pada session terpilih.</span
+          >
         </div>
 
         <div v-if="detailBill" class="app-modal-info">
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Customer</span>
-            <span class="app-modal-info__value">{{ detailData.customer_name || '-' }}</span>
+            <span class="app-modal-info__value">{{
+              detailData.customer_name || '-'
+            }}</span>
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Telepon</span>
-            <span class="app-modal-info__value">{{ detailData.customer_phone || '-' }}</span>
+            <span class="app-modal-info__value">{{
+              detailData.customer_phone || '-'
+            }}</span>
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Sisa Tagihan</span>
-            <span class="app-modal-info__value text-danger"><b>{{ money(detailData.remaining_amount) }}</b></span>
+            <span class="app-modal-info__value text-danger"
+              ><b>{{ money(detailData.remaining_amount) }}</b></span
+            >
           </div>
         </div>
 
-        <div class="app-modal-section-title">Rincian Pembayaran <span class="text-danger">*</span></div>
+        <div class="app-modal-section-title">
+          Rincian Pembayaran <span class="text-danger">*</span>
+        </div>
         <CRow>
           <CCol sm="12" md="6">
             <InputDefault
@@ -335,14 +400,13 @@
               placeholder="Opsional"
               v-model="payForm.reference_number"
             />
+            <InputDefault
+              title="Catatan"
+              placeholder="Catatan pembayaran (opsional)"
+              v-model="payForm.notes"
+            />
           </CCol>
         </CRow>
-        <InputDefault
-          title="Catatan"
-          placeholder="Catatan pembayaran (opsional)"
-          v-model="payForm.notes"
-        />
-
         <template #footer>
           <CButton color="secondary" outline @click="payModal = false">
             <CIcon name="cil-ban" /> Tutup
@@ -388,7 +452,9 @@
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Customer Belum Lunas</span>
-            <span class="app-modal-info__value">{{ pendingBills.length }} customer</span>
+            <span class="app-modal-info__value"
+              >{{ pendingBills.length }} customer</span
+            >
           </div>
           <div class="app-modal-info__item">
             <span class="app-modal-info__label">Total Sisa Tagihan</span>
@@ -414,7 +480,9 @@
                 <td class="text-center">{{ idx + 1 }}</td>
                 <td>{{ bill.customer_name }}</td>
                 <td>{{ bill.customer_phone || '-' }}</td>
-                <td class="text-right"><b>{{ money(bill.remaining_amount) }}</b></td>
+                <td class="text-right">
+                  <b>{{ money(bill.remaining_amount) }}</b>
+                </td>
               </tr>
               <tr v-if="!pendingBills.length">
                 <td colspan="4" class="text-center text-muted">
@@ -435,7 +503,11 @@
             @click="sendBlast()"
           >
             <CIcon name="cib-whatsapp" />
-            {{ blasting ? 'Mengirim...' : 'Kirim ke ' + pendingBills.length + ' customer' }}
+            {{
+              blasting
+                ? 'Mengirim...'
+                : 'Kirim ke ' + pendingBills.length + ' customer'
+            }}
           </CButton>
         </template>
       </CModal>
@@ -699,8 +771,7 @@ export default {
             },
           }),
         ]);
-        this.detailSummary =
-          (summary.data?.data || [])[0] || this.detailBill;
+        this.detailSummary = (summary.data?.data || [])[0] || this.detailBill;
         this.detailItems = items.data?.data || [];
       } catch (error) {
         this.toast('error', error.response?.data?.message || error.message);
@@ -769,7 +840,10 @@ export default {
           created_by: getUserId(),
         });
         if (result.data?.error) throw new Error(result.data.message);
-        this.toast('success', result.data?.message || 'Payment berhasil disimpan.');
+        this.toast(
+          'success',
+          result.data?.message || 'Payment berhasil disimpan.',
+        );
         this.payModal = false;
         await this.loadAll();
         if (this.detailModal) await this.loadDetail();
@@ -804,11 +878,16 @@ export default {
       this.blasting = true;
       this.$isLoading(true);
       try {
-        const result = await $axios.post('/v1/jastip/payment/send-invoice-blast', {
-          session_id: this.sessionId,
-        });
+        const result = await $axios.post(
+          '/v1/jastip/payment/send-invoice-blast',
+          {
+            session_id: this.sessionId,
+          },
+        );
         if (result.data?.error) {
-          throw new Error(result.data.message || 'Blast tagihan gagal dikirim.');
+          throw new Error(
+            result.data.message || 'Blast tagihan gagal dikirim.',
+          );
         }
         // response.js mengirim rows di field `data` (bukan `rows`); fallback `rows`
         // untuk kompatibilitas kalau bentuk wire berubah.
@@ -829,9 +908,9 @@ export default {
           .filter((row) => row && row.status === 'failed' && row.customer_name)
           .map((row) => row.customer_name);
         if (failed.length) {
-          message += ` — gagal: ${failed
-            .slice(0, 5)
-            .join(', ')}${failed.length > 5 ? ', ...' : ''}`;
+          message += ` — gagal: ${failed.slice(0, 5).join(', ')}${
+            failed.length > 5 ? ', ...' : ''
+          }`;
         }
         this.toast('success', message);
         this.blastModal = false;
@@ -858,7 +937,10 @@ export default {
           session_id: this.sessionId,
         });
         if (result.data?.error) throw new Error(result.data.message);
-        this.toast('success', result.data?.message || 'Tagihan terkirim ke WhatsApp.');
+        this.toast(
+          'success',
+          result.data?.message || 'Tagihan terkirim ke WhatsApp.',
+        );
       } catch (error) {
         this.toast('error', error.response?.data?.message || error.message);
       } finally {

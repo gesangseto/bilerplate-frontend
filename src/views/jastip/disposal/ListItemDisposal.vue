@@ -65,8 +65,14 @@
           dapat dipulihkan.
         </p>
         <template #footer>
-          <CButton color="secondary" @click="modalApprove = false">Cancel</CButton>
-          <CButton color="success" :disabled="submitting" @click="submitApprove()">
+          <CButton color="secondary" @click="modalApprove = false"
+            >Cancel</CButton
+          >
+          <CButton
+            color="success"
+            :disabled="submitting"
+            @click="submitApprove()"
+          >
             Approve
           </CButton>
         </template>
@@ -99,8 +105,14 @@
           disposal menjadi Canceled (-1).
         </p>
         <template #footer>
-          <CButton color="secondary" @click="modalDelete = false">Cancel</CButton>
-          <CButton color="danger" :disabled="submitting" @click="submitDelete()">
+          <CButton color="secondary" @click="modalDelete = false"
+            >Cancel</CButton
+          >
+          <CButton
+            color="danger"
+            :disabled="submitting"
+            @click="submitDelete()"
+          >
             Delete
           </CButton>
         </template>
@@ -124,10 +136,10 @@ export default {
     return {
       fields: [
         { key: 'id', label: 'ID', _style: 'width:70px' },
-        { key: 'quantity', label: 'Quantity' },
-        { key: 'status', label: 'Status' },
+        { key: 'created_date', label: 'Create Date' },
         { key: 'created_full_name', label: 'Created By' },
-        { key: 'created_date', label: 'Created Date' },
+        { key: 'quantity', label: 'Quantity' },
+        { key: 'status_name', label: 'Status' },
       ],
       actionProperty: {
         approve: {

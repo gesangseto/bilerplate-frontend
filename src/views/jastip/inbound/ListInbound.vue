@@ -48,6 +48,7 @@ export default {
       items: [],
       fields: [
         { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
+        { key: 'created_date', label: 'Create Date' },
         { key: 'batch_no', label: 'Batch No' },
         { key: 'warehouse_name', label: 'Warehouse' },
         { key: 'supplier_name', label: 'Supplier' },

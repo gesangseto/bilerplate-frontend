@@ -275,8 +275,8 @@ export default {
     if (this.filterBy.length > 0) {
       let new_list = [];
       for (const it of this.listFilter) {
-        let code = it.code.toLowerCase();
-        let idx = this.filterBy.findIndex((o) => o.toLowerCase() == code);
+        let code = it.code && it.code.toLowerCase();
+        let idx = this.filterBy.findIndex((o) => o && o.toLowerCase() == code);
         if (idx >= 0) new_list.push(it);
       }
       this.listFilter = new_list;
@@ -301,8 +301,10 @@ export default {
       let temp_arr = this.listFilter;
       this.listFilter = [];
       for (let ord of this.orderFilter) {
-        ord = ord.toLowerCase();
-        let idx = temp_arr.findIndex((it) => it.code.toLowerCase() == ord);
+        ord = ord && ord.toLowerCase();
+        let idx = temp_arr.findIndex(
+          (it) => it.code && it.code.toLowerCase() == ord,
+        );
         if (idx >= 0) this.listFilter.push(temp_arr[idx]);
       }
     }
@@ -485,6 +487,11 @@ export default {
           value: 'created_by',
           code: 'requested_by',
           label: 'Requested By',
+        },
+        {
+          value: 'session_id',
+          code: 'session_id',
+          label: 'Session',
         },
         {
           value: 'approval_id',
@@ -770,6 +777,9 @@ export default {
         } else if (this.filter.SearchType.toLowerCase() == 'created_by') {
           this.getUser();
           this.extendFilter = true;
+        } else if (this.filter.SearchType.toLowerCase() == 'session_id') {
+          this.getSession();
+          this.extendFilter = true;
         } else if (this.filter.SearchType.toLowerCase() == 'approval_id') {
           this.getUser();
           this.extendFilter = true;
@@ -785,7 +795,8 @@ export default {
           if (this.costumeFilter) {
             for (const it of this.costumeFilter) {
               if (
-                this.filter.SearchType.toLowerCase() == it.value.toLowerCase()
+                this.filter.SearchType.toLowerCase() ==
+                (it.value && it.value.toLowerCase())
               ) {
                 this.getCostumeFilter(it);
                 this.extendFilter = true;
@@ -917,6 +928,20 @@ export default {
           tmp.value = it.id;
           tmp.label = `${ext} ${it.full_name} (${it['department_name']} - ${it['section_name']})`;
           tmp.text = `${ext} ${it.full_name} (${it['department_name']} - ${it['section_name']})`;
+          this.listExtendFilter.push(tmp);
+        }
+      });
+    },
+    getSession() {
+      let url = `/v1/jastip/session`;
+      $axios.get(url).then((result) => {
+        let data = result.data.data;
+        for (const it of data) {
+          let ext = it.delete_flag == 1 ? '(X)' : '';
+          let tmp = it;
+          tmp.value = it.id;
+          tmp.label = `${ext} ${it.session_no} (${it['country']} - ${it['status']})`;
+          tmp.text = `${ext} ${it.session_no} (${it['country']} - ${it['status']})`;
           this.listExtendFilter.push(tmp);
         }
       });

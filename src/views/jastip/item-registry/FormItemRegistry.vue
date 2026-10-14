@@ -10,6 +10,7 @@
             <CCol sm="12">
               <!-- Item Name -->
               <InputDefault
+                :disabled="action === 'Read'"
                 title="Item Name"
                 placeholder="Nama barang"
                 v-model="formData.item_name"
@@ -17,6 +18,7 @@
 
               <!-- Quantity -->
               <InputDefault
+                :disabled="action === 'Read'"
                 title="Quantity"
                 placeholder="1"
                 required
@@ -40,11 +42,13 @@
                       }}</span>
                     </div>
                     <input
+                      :disabled="action === 'Read'"
                       type="text"
                       class="form-control"
                       :class="{
                         'is-invalid':
-                          !initialLoad && !isValidPhone(formData.customer_phone),
+                          !initialLoad &&
+                          !isValidPhone(formData.customer_phone),
                       }"
                       v-model="formData.customer_phone"
                       @input="handlePhoneInput"
@@ -53,6 +57,7 @@
                     />
                     <div class="input-group-append" v-if="selectedCustomer">
                       <button
+                        :disabled="action === 'Read'"
                         class="btn btn-outline-secondary"
                         type="button"
                         @click="clearCustomer"
@@ -70,8 +75,13 @@
                   >
                     <div>
                       <strong>{{ selectedCustomer.name }}</strong>
-                      <span class="text-muted ml-2">({{ selectedCustomer.phone }})</span>
-                      <div v-if="selectedCustomer.address" class="small text-muted">
+                      <span class="text-muted ml-2"
+                        >({{ selectedCustomer.phone }})</span
+                      >
+                      <div
+                        v-if="selectedCustomer.address"
+                        class="small text-muted"
+                      >
                         {{ selectedCustomer.address }}
                       </div>
                     </div>
@@ -81,9 +91,12 @@
                   <div
                     v-if="showSuggestions"
                     class="list-group position-absolute w-100 shadow-sm"
-                    style="z-index: 1000; max-height: 220px; overflow-y: auto;"
+                    style="z-index: 1000; max-height: 220px; overflow-y: auto"
                   >
-                    <div v-if="customerSearching" class="list-group-item text-muted">
+                    <div
+                      v-if="customerSearching"
+                      class="list-group-item text-muted"
+                    >
                       Mencari customer...
                     </div>
                     <a
@@ -110,10 +123,13 @@
                       Customer tidak ditemukan
                     </h6>
                     <p class="small text-muted mb-2">
-                      Nomor belum terdaftar. Masukkan nama customer untuk disimpan ke database:
+                      Nomor belum terdaftar. Masukkan nama customer untuk
+                      disimpan ke database:
                     </p>
                     <div class="form-group mb-2">
-                      <label class="small font-weight-bold">Nama Customer</label>
+                      <label class="small font-weight-bold"
+                        >Nama Customer</label
+                      >
                       <input
                         type="text"
                         class="form-control form-control-sm"
@@ -136,7 +152,11 @@
                       :disabled="savingCustomer"
                       @click="saveNewCustomer"
                     >
-                      {{ savingCustomer ? 'Menyimpan...' : 'Simpan Customer Sekarang' }}
+                      {{
+                        savingCustomer
+                          ? 'Menyimpan...'
+                          : 'Simpan Customer Sekarang'
+                      }}
                     </button>
                   </div>
                 </CCol>
@@ -153,6 +173,7 @@
                       <span class="input-group-text">{{ costSymbol }}</span>
                     </div>
                     <input
+                      :disabled="action === 'Read'"
                       type="text"
                       class="form-control text-uppercase"
                       :class="{
@@ -163,14 +184,17 @@
                     />
                     <div class="input-group-append">
                       <select
+                        :disabled="action === 'Read'"
                         class="custom-select"
                         v-model="formData.cost_unit"
-                        style="max-width: 140px;"
+                        style="max-width: 140px"
                       >
                         <option value="none">Satuan</option>
                         <option value="thousands">Ribu (k)</option>
                         <option value="ten_thousands">Puluh Ribu (10k)</option>
-                        <option value="hundred_thousands">Ratus Ribu (100k)</option>
+                        <option value="hundred_thousands">
+                          Ratus Ribu (100k)
+                        </option>
                         <option value="millions">Juta (M)</option>
                       </select>
                     </div>
@@ -189,6 +213,7 @@
                       <span class="input-group-text">{{ sellingSymbol }}</span>
                     </div>
                     <input
+                      :disabled="action === 'Read'"
                       type="text"
                       class="form-control text-uppercase"
                       :class="{
@@ -199,14 +224,17 @@
                     />
                     <div class="input-group-append">
                       <select
+                        :disabled="action === 'Read'"
                         class="custom-select"
                         v-model="formData.selling_unit"
-                        style="max-width: 140px;"
+                        style="max-width: 140px"
                       >
                         <option value="none">Satuan</option>
                         <option value="thousands">Ribu (k)</option>
                         <option value="ten_thousands">Puluh Ribu (10k)</option>
-                        <option value="hundred_thousands">Ratus Ribu (100k)</option>
+                        <option value="hundred_thousands">
+                          Ratus Ribu (100k)
+                        </option>
                         <option value="millions">Juta (M)</option>
                       </select>
                     </div>
@@ -219,6 +247,7 @@
                 <CCol sm="3"> Foto Barang </CCol>
                 <CCol sm="9">
                   <input
+                    :disabled="action === 'Read'"
                     type="file"
                     class="form-control"
                     accept="image/*"
@@ -229,7 +258,7 @@
                       :src="photoPreview"
                       alt="Preview"
                       class="img-thumbnail"
-                      style="max-height: 150px;"
+                      style="max-height: 150px"
                     />
                   </div>
                 </CCol>
@@ -238,7 +267,9 @@
               <!-- Direct Payment (Optional - Create Only) -->
               <div v-if="action === 'ADD'" class="card mt-4 border-info">
                 <div class="card-header bg-info text-white py-2">
-                  <h6 class="mb-0 font-weight-bold">Pembayaran Langsung (Opsional)</h6>
+                  <h6 class="mb-0 font-weight-bold">
+                    Pembayaran Langsung (Opsional)
+                  </h6>
                 </div>
                 <div class="card-body">
                   <CRow form class="form-group">
@@ -246,7 +277,9 @@
                     <CCol sm="9">
                       <div class="input-group">
                         <div class="input-group-prepend">
-                          <span class="input-group-text">{{ sellingSymbol }}</span>
+                          <span class="input-group-text">{{
+                            sellingSymbol
+                          }}</span>
                         </div>
                         <input
                           type="number"
@@ -301,14 +334,20 @@
         </CCardBody>
         <CCardFooter>
           <div class="float-left">
-            <CButton @click="save()" color="primary" size="sm" type="submit">
+            <CButton
+              v-if="action !== 'Read'"
+              @click="save()"
+              color="primary"
+              size="sm"
+              type="submit"
+            >
               <CIcon name="cil-check-circle" /> Submit
             </CButton>
             <ButtonBack />
           </div>
           <div class="float-right">
             <ExportButtons
-              v-if="action !== 'ADD'"
+              v-if="action === 'Read'"
               @export="handleClickExport"
             />
           </div>
@@ -320,7 +359,11 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3, handleBack } from '../../../utils';
+import {
+  capitalizeFirstLetter,
+  exportDataV3,
+  handleBack,
+} from '../../../utils';
 
 export default {
   name: 'FormItemRegistry',
@@ -362,7 +405,11 @@ export default {
     };
   },
   mounted() {
-    this.action = this.$route.params.id === undefined ? 'ADD' : 'EDIT';
+    // Mengecek ada parameter yg dikiri di URL atau tidak
+    this.action = capitalizeFirstLetter(this.$route.params.type);
+    this.route_action =
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+
     this.loadActiveSessionAndConfig();
     if (this.action === 'EDIT') {
       this.loadData();
@@ -394,22 +441,31 @@ export default {
       return digits.length >= 9 && digits.length <= 15;
     },
     loadActiveSessionAndConfig() {
-      $axios.get('/v1/system/configuration').then((res) => {
-        let cfg = res.data?.data?.[0] || res.data?.data;
-        if (cfg) {
-          if (cfg.country_code) this.phonePrefix = cfg.country_code;
-          if (cfg.currency) this.sellingSymbol = cfg.currency;
-          if (cfg.price_unit_code) this.formData.selling_unit = cfg.price_unit_code;
-        }
-      }).catch(() => {});
+      $axios
+        .get('/v1/system/configuration')
+        .then((res) => {
+          let cfg = res.data?.data?.[0] || res.data?.data;
+          if (cfg) {
+            if (cfg.country_code) this.phonePrefix = cfg.country_code;
+            if (cfg.currency) this.sellingSymbol = cfg.currency;
+            if (cfg.price_unit_code)
+              this.formData.selling_unit = cfg.price_unit_code;
+          }
+        })
+        .catch(() => {});
 
-      $axios.get('/v1/jastip/dashboard').then((res) => {
-        let active = res.data?.data?.active_session;
-        if (active) {
-          this.costSymbol = active.symbol_currency || active.currency_code || 'IDR';
-          if (active.price_code_unit) this.formData.cost_unit = active.price_code_unit;
-        }
-      }).catch(() => {});
+      $axios
+        .get('/v1/jastip/dashboard')
+        .then((res) => {
+          let active = res.data?.data?.active_session;
+          if (active) {
+            this.costSymbol =
+              active.symbol_currency || active.currency_code || 'IDR';
+            if (active.price_code_unit)
+              this.formData.cost_unit = active.price_code_unit;
+          }
+        })
+        .catch(() => {});
     },
     handlePhoneInput(e) {
       const digits = String(e.target.value || '').replace(/\D/g, '');
@@ -479,7 +535,9 @@ export default {
       }
 
       const fullPhone = this.normalizePhone(this.formData.customer_phone);
-      const nameToSave = this.newCustomerName.trim() || `Customer ${this.formData.customer_phone}`;
+      const nameToSave =
+        this.newCustomerName.trim() ||
+        `Customer ${this.formData.customer_phone}`;
       this.savingCustomer = true;
       try {
         const res = await $axios.put('/v1/master/customer', {
@@ -505,7 +563,9 @@ export default {
       } catch (e) {
         this.savingCustomer = false;
         this.$toast.open({
-          message: e?.response?.data?.message || 'Gagal menyimpan customer ke database',
+          message:
+            e?.response?.data?.message ||
+            'Gagal menyimpan customer ke database',
           type: 'error',
           position: 'top-right',
           duration: 4000,
@@ -601,7 +661,8 @@ export default {
       }
 
       let formData = new FormData();
-      if (this.formData.item_name) formData.append('item_name', this.formData.item_name);
+      if (this.formData.item_name)
+        formData.append('item_name', this.formData.item_name);
       formData.append('quantity', this.formData.quantity);
       formData.append('cost_code', this.formData.cost_code.toUpperCase());
       formData.append('selling_code', this.formData.selling_code.toUpperCase());
@@ -617,8 +678,10 @@ export default {
       if (this.action === 'ADD' && Number(this.paymentAmount) > 0) {
         formData.append('payment_amount', this.paymentAmount);
         formData.append('payment_method', this.paymentMethod);
-        if (this.paymentRef.trim()) formData.append('reference_number', this.paymentRef.trim());
-        if (this.paymentNotes.trim()) formData.append('payment_notes', this.paymentNotes.trim());
+        if (this.paymentRef.trim())
+          formData.append('reference_number', this.paymentRef.trim());
+        if (this.paymentNotes.trim())
+          formData.append('payment_notes', this.paymentNotes.trim());
       }
 
       let url = '/v1/jastip/item-registry';
@@ -630,29 +693,32 @@ export default {
       this.$isLoading(true);
       $axios[method](url, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
-      }).then((result) => {
-        this.$isLoading(false);
-        let res = result.data;
-        this.$toast.open({
-          message: res.error
-            ? res.message
-            : 'Data has been saved successfully',
-          type: res.error ? 'error' : 'success',
-          position: 'top-right',
-          duration: 5000,
+      })
+        .then((result) => {
+          this.$isLoading(false);
+          let res = result.data;
+          this.$toast.open({
+            message: res.error
+              ? res.message
+              : 'Data has been saved successfully',
+            type: res.error ? 'error' : 'success',
+            position: 'top-right',
+            duration: 5000,
+          });
+          if (!res.error) {
+            handleBack(this.$router, this.$route);
+          }
+        })
+        .catch((e) => {
+          this.$isLoading(false);
+          this.$toast.open({
+            message:
+              e?.response?.data?.message || e.message || 'Gagal menyimpan item',
+            type: 'error',
+            position: 'top-right',
+            duration: 5000,
+          });
         });
-        if (!res.error) {
-          handleBack(this.$router, this.$route);
-        }
-      }).catch((e) => {
-        this.$isLoading(false);
-        this.$toast.open({
-          message: e?.response?.data?.message || e.message || 'Gagal menyimpan item',
-          type: 'error',
-          position: 'top-right',
-          duration: 5000,
-        });
-      });
     },
   },
 };

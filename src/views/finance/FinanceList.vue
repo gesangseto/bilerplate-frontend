@@ -38,7 +38,13 @@ const CONFIG = {
   payments: {
     title: 'Payments',
     endpoint: '/v1/finance/payments',
-    fields: ['id', 'invoice_number', 'customer_id', 'selling_price', 'modified_date'],
+    fields: [
+      'id',
+      'invoice_number',
+      'customer_id',
+      'selling_price',
+      'modified_date',
+    ],
   },
 };
 

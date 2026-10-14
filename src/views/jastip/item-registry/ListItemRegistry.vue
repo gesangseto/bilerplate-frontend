@@ -69,7 +69,6 @@ export default {
         { key: 'local_shipping', label: '(L) Shipping' },
         { key: 'local_profit', label: '(L) Profit' },
         { key: 'status_name', label: 'Status' },
-        { key: 'created_full_name', label: 'Created By' },
         { key: 'action', label: 'Action', sorter: false, filter: false },
       ],
     };

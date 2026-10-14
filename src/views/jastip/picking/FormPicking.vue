@@ -28,7 +28,13 @@
                       :options="listCustomer"
                       :value="formData.customer_id"
                       v-on:onchange="onCustomerChange($event)"
-                      :is-valid="initialLoad ? null : !formData.customer_id ? false : true"
+                      :is-valid="
+                        initialLoad
+                          ? null
+                          : !formData.customer_id
+                          ? false
+                          : true
+                      "
                     />
                     <InputDefault
                       :disabled="!isEditable"
@@ -36,7 +42,13 @@
                       placeholder="Nama penerima"
                       required
                       v-model="formData.receiver_name"
-                      :is-valid="initialLoad ? null : !formData.receiver_name ? false : true"
+                      :is-valid="
+                        initialLoad
+                          ? null
+                          : !formData.receiver_name
+                          ? false
+                          : true
+                      "
                     />
                     <InputDefault
                       :disabled="!isEditable"
@@ -44,7 +56,13 @@
                       placeholder="No. telpon penerima"
                       required
                       v-model="formData.receiver_phone"
-                      :is-valid="initialLoad ? null : !formData.receiver_phone ? false : true"
+                      :is-valid="
+                        initialLoad
+                          ? null
+                          : !formData.receiver_phone
+                          ? false
+                          : true
+                      "
                     />
                     <TextareaDefault
                       :disabled="!isEditable"
@@ -52,7 +70,13 @@
                       placeholder="Alamat penerima"
                       required
                       v-model="formData.receiver_address"
-                      :is-valid="initialLoad ? null : !formData.receiver_address ? false : true"
+                      :is-valid="
+                        initialLoad
+                          ? null
+                          : !formData.receiver_address
+                          ? false
+                          : true
+                      "
                     />
                   </CCol>
                   <CCol sm="12" md="6">
@@ -64,7 +88,9 @@
                       :options="listCourier"
                       :value="formData.courier_id"
                       v-on:onchange="formData.courier_id = $event"
-                      :is-valid="initialLoad ? null : !formData.courier_id ? false : true"
+                      :is-valid="
+                        initialLoad ? null : !formData.courier_id ? false : true
+                      "
                     />
                     <InputDefault
                       :disabled="!isEditable"
@@ -80,7 +106,13 @@
                         placeholder="Nomor resi"
                         required
                         v-model="formData.courier_number"
-                        :is-valid="initialLoad ? null : !formData.courier_number ? false : true"
+                        :is-valid="
+                          initialLoad
+                            ? null
+                            : !formData.courier_number
+                            ? false
+                            : true
+                        "
                       />
                       <InputDefault
                         :disabled="!isEditable"
@@ -89,7 +121,13 @@
                         validasi="float"
                         required
                         v-model="formData.courier_price"
-                        :is-valid="initialLoad ? null : !formData.courier_price ? false : true"
+                        :is-valid="
+                          initialLoad
+                            ? null
+                            : !formData.courier_price
+                            ? false
+                            : true
+                        "
                       />
                       <InputDefault
                         :disabled="!isEditable"
@@ -97,7 +135,13 @@
                         placeholder="IDR"
                         required
                         v-model="formData.courier_currency"
-                        :is-valid="initialLoad ? null : !formData.courier_currency ? false : true"
+                        :is-valid="
+                          initialLoad
+                            ? null
+                            : !formData.courier_currency
+                            ? false
+                            : true
+                        "
                       />
                     </template>
                   </CCol>
@@ -107,7 +151,9 @@
 
             <!-- Card 2: Items -->
             <CCard class="mb-3" color="light">
-              <CCardHeader class="py-2 d-flex justify-content-between align-items-center">
+              <CCardHeader
+                class="py-2 d-flex justify-content-between align-items-center"
+              >
                 <strong>Items ({{ items.length }})</strong>
               </CCardHeader>
               <CCardBody>
@@ -155,7 +201,13 @@
         </CCardBody>
         <CCardFooter>
           <div class="float-left">
-            <CButton @click="save()" color="primary" size="sm" type="submit">
+            <CButton
+              v-if="action !== 'Read'"
+              @click="save()"
+              color="primary"
+              size="sm"
+              type="submit"
+            >
               <CIcon name="cil-check-circle" /> Submit
             </CButton>
             <ButtonBack />
@@ -182,7 +234,12 @@
         <CButton size="sm" color="info" @click="selectAllGrn">
           <CIcon name="cil-check-circle" /> Select All
         </CButton>
-        <CButton size="sm" color="secondary" class="ml-2" @click="clearSelection">
+        <CButton
+          size="sm"
+          color="secondary"
+          class="ml-2"
+          @click="clearSelection"
+        >
           <CIcon name="cil-ban" /> Clear
         </CButton>
         <span class="ml-3 text-muted" style="font-size: 12px">
@@ -304,7 +361,11 @@ export default {
     };
   },
   mounted() {
+    // Mengecek ada parameter yg dikiri di URL atau tidak
     this.action = capitalizeFirstLetter(this.$route.params.type);
+    this.route_action =
+      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+
     this.loadListCustomer();
     this.loadListCourier();
 

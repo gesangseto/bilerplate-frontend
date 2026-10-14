@@ -2,14 +2,18 @@
   <div>
     <CCard>
       <CCardBody>
-        <h3>{{ isCreate ? 'Create Item Disposal' : 'Detail Item Disposal' }}</h3>
+        <h3>
+          {{ isCreate ? 'Create Item Disposal' : 'Detail Item Disposal' }}
+        </h3>
       </CCardBody>
     </CCard>
     <CCard>
       <CCardHeader>
         <CRow>
           <CCol sm="6" lg="6" md="6" class="text-left">
-            <CButton color="secondary" size="sm" @click="handleBack()">Back</CButton>
+            <CButton color="secondary" size="sm" @click="handleBack()"
+              >Back</CButton
+            >
             <CButton
               v-if="isCreate"
               color="primary"
@@ -32,7 +36,9 @@
         <div v-if="!isCreate && header" class="mb-3">
           <CRow form class="form-group">
             <CCol sm="1"><label class="col-form-label">ID</label></CCol>
-            <CCol sm="2"><CInput class="mb-0" :value="header.id" disabled /></CCol>
+            <CCol sm="2"
+              ><CInput class="mb-0" :value="header.id" disabled
+            /></CCol>
             <CCol sm="2"><label class="col-form-label">Status</label></CCol>
             <CCol sm="2">
               <CInput class="mb-0" :value="header.status_name" disabled />
@@ -49,7 +55,11 @@
             </CCol>
             <CCol sm="2"><label class="col-form-label">Created By</label></CCol>
             <CCol sm="4">
-              <CInput class="mb-0" :value="header.created_full_name || '-'" disabled />
+              <CInput
+                class="mb-0"
+                :value="header.created_full_name || '-'"
+                disabled
+              />
             </CCol>
           </CRow>
         </div>
@@ -140,7 +150,11 @@
             {{ pickRows.length }} item dipilih
           </span>
           <CButton color="secondary" @click="modalPick = false">Batal</CButton>
-          <CButton color="primary" :disabled="pickRows.length === 0" @click="addPicked()">
+          <CButton
+            color="primary"
+            :disabled="pickRows.length === 0"
+            @click="addPicked()"
+          >
             Tambahkan
           </CButton>
         </template>
@@ -227,9 +241,15 @@ export default {
       if (!q) return rows;
       return rows.filter(
         (r) =>
-          String(r.barcode || '').toLowerCase().includes(q) ||
-          String(r.name || '').toLowerCase().includes(q) ||
-          String(r.batch_no || '').toLowerCase().includes(q),
+          String(r.barcode || '')
+            .toLowerCase()
+            .includes(q) ||
+          String(r.name || '')
+            .toLowerCase()
+            .includes(q) ||
+          String(r.batch_no || '')
+            .toLowerCase()
+            .includes(q),
       );
     },
   },

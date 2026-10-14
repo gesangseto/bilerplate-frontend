@@ -82,7 +82,11 @@
 
 <script>
 import $axios from '../../../api';
-import { exportDataV3, generateIdempotencyKey,formatNumber } from '../../../utils';
+import {
+  exportDataV3,
+  generateIdempotencyKey,
+  formatNumber,
+} from '../../../utils';
 import {
   finishPicking,
   returnPicking,
@@ -156,6 +160,7 @@ export default {
       },
       fields: [
         { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
+        { key: 'created_date', label: 'Create Date' },
         { key: 'customer_name', label: 'Customer' },
         { key: 'customer_phone', label: 'Phone' },
         { key: 'quantity', label: 'Qty' },
@@ -344,7 +349,7 @@ export default {
               }`
             : '-',
           courier_number: item.courier_number || '-',
-          courier_price: formatNumber(item.courier_price),       
+          courier_price: formatNumber(item.courier_price),
           status_name: STATUS_PICKING[item.status] || item.status_name || '-',
           created_full_name: item.created_full_name || '-',
         };

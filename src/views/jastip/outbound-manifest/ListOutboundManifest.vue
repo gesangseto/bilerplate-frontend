@@ -171,6 +171,7 @@ export default {
       items: [],
       fields: [
         { key: 'id', label: 'ID', _classes: 'font-weight-bold' },
+        { key: 'created_date', label: 'Create Date' },
         { key: 'batch_no', label: 'Batch No' },
         { key: 'warehouse_name', label: 'Warehouse' },
         { key: 'supplier_name', label: 'Supplier' },
@@ -213,10 +214,12 @@ export default {
   },
   methods: {
     filterAction(item) {
-      
       // Status Draft dapat diedit (update) dan dikirim (approve)
       // Status Shipping dan lainnya hanya bisa dibaca (read)
-      if (item.status === 'Draft' ||  String(item.status).toLowerCase() === 'draft') {
+      if (
+        item.status === 'Draft' ||
+        String(item.status).toLowerCase() === 'draft'
+      ) {
         return ['read', 'update', 'approve'];
       }
       return ['read'];
@@ -260,12 +263,15 @@ export default {
       });
     },
     loadActiveSessionCurrency() {
-      $axios.get('/v1/jastip/dashboard').then((res) => {
-        let active = res.data?.data?.active_session;
-        if (active && active.currency_code) {
-          this.approveForm.shipment_currency = active.currency_code;
-        }
-      }).catch(() => {});
+      $axios
+        .get('/v1/jastip/dashboard')
+        .then((res) => {
+          let active = res.data?.data?.active_session;
+          if (active && active.currency_code) {
+            this.approveForm.shipment_currency = active.currency_code;
+          }
+        })
+        .catch(() => {});
     },
     handleAdd() {
       this.$router.push({ path: '/jastip/outbound-manifest/create' });
@@ -279,7 +285,12 @@ export default {
       this.modalApprove = true;
     },
     async submitApprove() {
-      if (!this.approveForm.weight || !this.approveForm.warehouse_id || !this.approveForm.shipment_number || !this.approveForm.shipment_price) {
+      if (
+        !this.approveForm.weight ||
+        !this.approveForm.warehouse_id ||
+        !this.approveForm.shipment_number ||
+        !this.approveForm.shipment_price
+      ) {
         this.$toast.open({
           message: 'Semua field wajib diisi',
           type: 'error',
@@ -300,7 +311,10 @@ export default {
           shipment_currency: this.approveForm.shipment_currency,
         };
 
-        const res = await $axios.post('/v1/jastip/outbound-manifest/shipping', payload);
+        const res = await $axios.post(
+          '/v1/jastip/outbound-manifest/shipping',
+          payload,
+        );
         this.$toast.open({
           message: res.data.error ? res.data.message : 'Batch berhasil dikirim',
           type: res.data.error ? 'error' : 'success',

@@ -24,11 +24,11 @@
                 ]"
                 :orderFilter="[
                   'All',
-                  'session_id',
+                  'id',
                   'customer_id',
                   'customer_name',
                   'status',
-                  'id',
+                  'session_id',
                 ]"
                 :costumeFilter="costumeFilter"
                 v-on:handleReload="loadData($event)"
@@ -70,20 +70,20 @@ export default {
       costumeFilter: [
         {
           value: 'session_id',
+          code: 'session_id',
           label: 'Session',
           data: [],
         },
         {
           value: 'customer_id',
+          code: 'customer_id',
           label: 'Customer',
           data: [],
         },
       ],
       fields: [
-        { key: 'barcode', label: 'Barcode' },
         { key: 'customer_name', label: 'Customer' },
-        { key: 'item_name', label: 'Item' },
-        { key: 'quantity', label: 'Qty' },
+        { key: 'item_name', label: 'Product' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
@@ -119,7 +119,9 @@ export default {
         ];
         // Isi data session ke costumeFilter (sudah terdaftar static di data())
         if (this.costumeFilter.length > 0) {
-          this.costumeFilter[0].data = this.sessionOptions.filter((o) => o.value !== null);
+          this.costumeFilter[0].data = this.sessionOptions.filter(
+            (o) => o.value !== null,
+          );
         }
       } catch (e) {
         console.error(e);
