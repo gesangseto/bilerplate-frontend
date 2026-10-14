@@ -79,11 +79,10 @@ export default {
       },
     },
   },
-  mounted() {
-    this.loadData(this.$route.query);
-  },
+  mounted() {},
   methods: {
-    async loadData(filter = {}) {
+    async loadData(filter) {
+      if (!filter) filter = this.$route.query;
       const result = await getMstCountry(filter);
       if (result && !result.error) {
         this.totalData = result.grand_total;

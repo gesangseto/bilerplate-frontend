@@ -10,7 +10,7 @@
             <CForm>
               <InputDefault :disabled="true" :col="[3, 9]" title="ID" v-model="formData.id" />
               <InputDefault
-                :disabled="action == 'Read'"
+                :disabled="true"
                 :col="[3, 9]"
                 required
                 title="Name"
@@ -20,7 +20,7 @@
                 :is-valid="initial_load ? null : !!formData.name"
               />
               <InputDefault
-                :disabled="action == 'Read'"
+                :disabled="true"
                 :col="[3, 9]"
                 required
                 title="Code"
@@ -31,7 +31,7 @@
                 :is-valid="initial_load ? null : !!formData.code"
               />
               <InputDefault
-                :disabled="action == 'Read'"
+                :disabled="true"
                 :col="[3, 9]"
                 title="Country Code"
                 placeholder="Example: IDN"
@@ -40,7 +40,7 @@
                 :options="{ uppercase: true, nospace: true }"
               />
               <InputDefault
-                :disabled="action == 'Read'"
+                :disabled="true"
                 :col="[3, 9]"
                 title="Currency Code"
                 placeholder="Example: IDR"
@@ -49,7 +49,7 @@
                 :options="{ uppercase: true, nospace: true }"
               />
               <InputDefault
-                :disabled="action == 'Read'"
+                :disabled="true"
                 :col="[3, 9]"
                 title="Currency Symbol"
                 placeholder="Example: Rp"
