@@ -79,20 +79,12 @@ export default {
           label: 'Name',
         },
         {
-          key: 'category_name',
-          label: 'Warehouse Category',
-        },
-        {
           key: 'address',
         },
         {
-          key: 'province_name',
-          label: 'Province',
+          key: 'temperature_desc',
+          label: 'Temperature',
         },
-        // {
-        //   key: 'entity_name',
-        //   label: 'Entity',
-        // },
         {
           key: 'status',
           _classes: 'font-weight-bold',

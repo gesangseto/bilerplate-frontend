@@ -52,62 +52,6 @@
 
               <CSelect
                 :disabled="action == 'Read' ? true : false"
-                label="Province *"
-                :options="listProvince"
-                horizontal
-                placeholder="--Select--"
-                :value.sync="formData.mst_province_id"
-                :is-valid="
-                  initial_load ? null : formData.mst_province_id ? true : false
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Province
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
-
-              <!-- <CSelect
-                :disabled="action == 'Read' ? true : false"
-                label="Entity *"
-                :options="listEntity"
-                horizontal
-                placeholder="--Select--"
-                :value.sync="formData.mst_warehouse_entity_id"
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">Entity</p>
-                </template>
-              </CSelect> -->
-
-              <CSelect
-                :disabled="action == 'Read' ? true : false"
-                label="Warehouse Category *"
-                :options="listWhCategory"
-                horizontal
-                placeholder="--Select--"
-                v-model="formData.category_id"
-                :value.sync="formData.category_id"
-                :is-valid="
-                  initial_load ? null : formData.category_id ? true : false
-                "
-              >
-                <template #label>
-                  <p class="col-form-label col-sm-3">
-                    Warehouse Category
-                    <span class="text-danger">
-                      <strong>*</strong>
-                    </span>
-                  </p>
-                </template>
-              </CSelect>
-
-              <CSelect
-                :disabled="action == 'Read' ? true : false"
                 label="Warehouse Temperature Type *"
                 :options="temperaturOptions"
                 horizontal
@@ -174,12 +118,9 @@
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import {
   getMstWarehouse,
-  getMstWarehouseCategory,
-  getMstWarehouseEntity,
   insertMstWarehouse,
   updateMstWarehouse,
 } from '../../../resource/MstWarehouse';
-import { getMstProvince } from '../../../resource/MstProvince';
 
 export default {
   name: 'FormWarehouse',
@@ -192,9 +133,6 @@ export default {
         status: 'Active',
         name: '',
         address: '',
-        category_id: null,
-        mst_warehouse_entity_id: null,
-        mst_province_id: null,
         temperature: null,
       },
       temperaturOptions: [
@@ -208,9 +146,6 @@ export default {
         },
       ],
       statusOptions: ['Active', 'Inactive'],
-      listProvince: [],
-      listEntity: [],
-      listWhCategory: [],
     };
   },
   mounted() {
@@ -220,51 +155,16 @@ export default {
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
-    this.loadWhCategory();
-    this.loadProvince();
-    this.loadEntity();
   },
   methods: {
     async loadData() {
       let _res = await getMstWarehouse({ id: this.$route.params.id });
       this.formData = _res.data[0];
-      this.formData['category_id'] = this.formData['category_id'].toString();
-    },
-    async loadEntity() {
-      let _res = await getMstWarehouseEntity({ status: 'Active' });
-      for (const it of _res.data) {
-        this.listEntity.push({
-          label: it.name,
-          value: `${it.id}`,
-        });
-      }
-    },
-    async loadWhCategory() {
-      let _res = await getMstWarehouseCategory({ status: 'Active' });
-      for (const it of _res.data) {
-        this.listWhCategory.push({
-          label: it.name,
-          value: `${it.id}`,
-        });
-      }
-    },
-    async loadProvince() {
-      let _res = await getMstProvince({ status: 'Active' });
-      for (const it of _res.data) {
-        this.listProvince.push({
-          label: it.name,
-          value: `${it.id}`,
-        });
-      }
     },
     valid() {
       if (!this.formData.name) {
         return false;
       } else if (!this.formData.address) {
-        return false;
-      } else if (!this.formData.mst_province_id) {
-        return false;
-      } else if (!this.formData.category_id) {
         return false;
       } else if (
         this.formData.temperature != 0 &&
