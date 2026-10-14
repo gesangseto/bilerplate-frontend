@@ -3,40 +3,58 @@
     <CCol col="12" xl="12">
       <CCard>
         <CCardHeader>
-          <CRow>
-            <CCol sm="12" md="6" class="mb-2 mb-md-0">
-              <div class="d-flex align-items-center justify-content-between">
-                <h5 class="mb-0">Payment</h5>
-                <!-- Blast Tagihan: sengaja CButton biasa (bukan ButtonPermission) -->
-                <span class="d-inline-block" v-c-tooltip="blastTooltip">
-                  <CButton
-                    color="warning"
-                    size="sm"
-                    :class="{ 'blast-no-pe': blastDisabled || blasting }"
-                    :disabled="blastDisabled || blasting"
-                    @click="openBlast()"
-                  >
-                    <CIcon name="cib-whatsapp" /> Blast Tagihan
-                  </CButton>
-                </span>
-              </div>
-            </CCol>
+          <CRow class="align-items-center">
             <CCol sm="12" md="6">
+              <h5 class="mb-0">Payment</h5>
+            </CCol>
+            <CCol sm="12" md="6" class="mt-2 mt-md-0 text-md-right">
+              <!-- Blast Tagihan: hanya relevan untuk tab Pending -->
+              <span class="d-inline-block" v-c-tooltip="blastTooltip">
+                <CButton
+                  color="warning"
+                  size="sm"
+                  :class="{ 'blast-no-pe': blastDisabled || blasting }"
+                  :disabled="blastDisabled || blasting"
+                  @click="openBlast()"
+                >
+                  <CIcon name="cib-whatsapp" /> Blast Tagihan
+                </CButton>
+              </span>
+            </CCol>
+          </CRow>
+        </CCardHeader>
+        <CCardBody>
+          <!-- Baris filter: Session + Search -->
+          <CRow class="mb-3 align-items-end">
+            <CCol sm="12" md="5" class="mb-2 mb-md-0">
               <SelectOption
                 title="Session"
                 placeholder="-- Pilih Session --"
                 required
                 :options="sessionOptions"
                 :value="sessionId"
-                :col="['4', '8']"
+                :col="['12', '12']"
                 :is-valid="showValidation ? sessionId !== null : null"
                 invalid-feedback="Session wajib dipilih."
                 v-on:onchange="changeSession($event)"
               />
             </CCol>
+            <CCol sm="12" md="7">
+              <CInput
+                v-if="tab !== 'history'"
+                size="sm"
+                placeholder="Cari nama / no HP customer..."
+                v-model="search"
+              />
+              <CInput
+                v-else
+                size="sm"
+                placeholder="Cari nama / no HP / referensi..."
+                v-model="historySearch"
+              />
+            </CCol>
           </CRow>
-        </CCardHeader>
-        <CCardBody>
+
           <CNav variant="tabs">
             <CNavItem>
               <CNavLink href="#" :active="tab === 'pending'" @click.prevent="tab = 'pending'">
@@ -54,23 +72,6 @@
               </CNavLink>
             </CNavItem>
           </CNav>
-
-          <div v-if="tab !== 'history'" class="mt-3">
-            <CInput
-              size="sm"
-              placeholder="Cari nama / no HP customer..."
-              v-model="search"
-            />
-          </div>
-
-          <!-- Riwayat search -->
-          <div v-else class="mt-3">
-            <CInput
-              size="sm"
-              placeholder="Cari nama / no HP / referensi..."
-              v-model="historySearch"
-            />
-          </div>
 
           <!-- Pending / Paid -->
           <CDataTable
