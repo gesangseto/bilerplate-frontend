@@ -6,6 +6,20 @@
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody>
+          <!-- Filter By Session (selalu terlihat) -->
+          <CRow class="mb-3">
+            <CCol sm="12" md="6" lg="4">
+              <SelectOption
+                title="Filter By Session"
+                placeholder="-- Semua Session --"
+                :options="sessionOptions"
+                :value="selectedSessionId"
+                :col="['12', '12']"
+                v-on:onchange="changeSessionFilter($event)"
+              />
+            </CCol>
+          </CRow>
+
           <CRow>
             <CCol sm="12" md="12" lg="12">
               <TableTransaction
@@ -67,6 +81,7 @@ export default {
       items: [],
       sessionOptions: [],
       customerOptions: [],
+      selectedSessionId: null,
       costumeFilter: [
         {
           value: 'session_id',
@@ -101,6 +116,11 @@ export default {
   mounted() {
     this.loadSessions();
     this.loadCustomers();
+    // Sinkronkan selectedSessionId dengan query URL saat init.
+    const sessionId = this.$route.query.session_id;
+    if (sessionId) {
+      this.selectedSessionId = Number(sessionId) || null;
+    }
   },
   methods: {
     async loadSessions() {
@@ -109,14 +129,17 @@ export default {
           params: { limit: 100 },
         });
         const list = res.data.data || [];
-        this.sessionOptions = list.map((s) => ({
-          value: s.id,
-          label: `${s.session_no} (${s.country || '-'} - ${s.status})`,
-          text: `${s.session_no} (${s.country || '-'} - ${s.status})`,
-        }));
+        this.sessionOptions = [
+          { value: null, label: '-- Semua Session --' },
+          ...list.map((s) => ({
+            value: s.id,
+            label: `${s.session_no} (${s.country || '-'} - ${s.status})`,
+            text: `${s.session_no} (${s.country || '-'} - ${s.status})`,
+          })),
+        ];
         // Isi data session ke costumeFilter (sudah terdaftar static di data())
         if (this.costumeFilter.length > 0) {
-          this.costumeFilter[0].data = this.sessionOptions;
+          this.costumeFilter[0].data = this.sessionOptions.filter((o) => o.value !== null);
         }
       } catch (e) {
         console.error(e);
@@ -147,6 +170,18 @@ export default {
         exportType: type,
         url: '/v1/jastip/item-stock',
       });
+    },
+    changeSessionFilter(value) {
+      this.selectedSessionId = value;
+      const query = { ...this.$route.query };
+      if (value) {
+        query.session_id = value;
+      } else {
+        delete query.session_id;
+      }
+      // Update URL tanpa reload halaman, lalu muat ulang data.
+      this.$router.replace({ query }).catch(() => {});
+      this.loadData(query);
     },
     async loadData(filter) {
       if (!filter) filter = this.$route.query;

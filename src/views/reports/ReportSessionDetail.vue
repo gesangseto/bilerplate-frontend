@@ -6,18 +6,21 @@
           <h5 class="d-inline ml-2">{{ $activeMenu.name }}</h5>
         </CCardHeader>
         <CCardBody v-if="session">
-          <!-- Info Session -->
-          <CRow>
-            <CCol sm="12" md="6" xl="3">
-              <CCard class="text-center">
+          <!-- Informasi Session -->
+          <h6 class="mb-3 text-muted text-uppercase font-weight-bold">
+            Informasi Session
+          </h6>
+          <CRow class="mb-4">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Session No</div>
                   <div class="font-weight-bold">{{ session.session_no }}</div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="12" md="6" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Country</div>
                   <div class="font-weight-bold">
@@ -29,18 +32,18 @@
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="12" md="6" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Currency / Rate</div>
                   <div class="font-weight-bold">
-                    {{ session.currency_code || '-' }} / {{ session.currency }}
+                    {{ session.currency_code || '-' }} / {{ formatNumber(session.currency) }}
                   </div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="12" md="6" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Status</div>
                   <CBadge
@@ -52,8 +55,8 @@
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="12" md="6" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Start Date</div>
                   <div class="font-weight-bold">
@@ -62,8 +65,8 @@
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="12" md="6" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Finish Date</div>
                   <div class="font-weight-bold">
@@ -72,8 +75,8 @@
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="12" md="6" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Created By</div>
                   <div class="font-weight-bold">
@@ -82,8 +85,8 @@
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="12" md="6" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Price Code Unit</div>
                   <div class="font-weight-bold">
@@ -95,55 +98,58 @@
           </CRow>
 
           <!-- Ringkasan Agregat -->
-          <CRow>
-            <CCol sm="6" md="4" xl="3">
-              <CCard class="text-center">
+          <h6 class="mb-3 text-muted text-uppercase font-weight-bold">
+            Ringkasan Agregat
+          </h6>
+          <CRow class="mb-4">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Total Items</div>
-                  <div class="font-weight-bold">{{ session.total_items }}</div>
+                  <div class="font-weight-bold">{{ formatNumber(session.total_items) }}</div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Total Qty</div>
-                  <div class="font-weight-bold">{{ session.total_quantity }}</div>
+                  <div class="font-weight-bold">{{ formatNumber(session.total_quantity) }}</div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Total Customers</div>
                   <div class="font-weight-bold">
-                    {{ session.total_customers }}
+                    {{ formatNumber(session.total_customers) }}
                   </div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Total Cost (IDR)</div>
                   <div class="font-weight-bold">
-                    {{ formatNumber(session.total_cost_price) }}
+                    {{ formatCurrency(session.total_cost_price) }}
                   </div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Total Selling (IDR)</div>
                   <div class="font-weight-bold">
-                    {{ formatNumber(session.total_selling_price) }}
+                    {{ formatCurrency(session.total_selling_price) }}
                   </div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Total Paid (IDR)</div>
                   <div class="font-weight-bold text-success">
@@ -152,8 +158,8 @@
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Total Pending (IDR)</div>
                   <div class="font-weight-bold text-warning">
@@ -162,8 +168,8 @@
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="3">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" xl="3" class="mb-3">
+              <CCard class="h-100 text-center">
                 <CCardBody>
                   <div class="text-muted small">Total Remaining (IDR)</div>
                   <div class="font-weight-bold text-danger">
@@ -175,33 +181,36 @@
           </CRow>
 
           <!-- Ringkasan Payment per Status -->
-          <CRow>
-            <CCol sm="6" md="4" xl="4">
-              <CCard class="text-center">
+          <h6 class="mb-3 text-muted text-uppercase font-weight-bold">
+            Ringkasan Payment Customer
+          </h6>
+          <CRow class="mb-4">
+            <CCol sm="6" md="4" class="mb-3">
+              <CCard class="h-100 text-center border-left-danger">
                 <CCardBody>
                   <div class="text-muted small">Customers UNPAID</div>
                   <div class="font-weight-bold text-danger">
-                    {{ session.customers_unpaid }}
+                    {{ formatNumber(session.customers_unpaid) }}
                   </div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="4">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" class="mb-3">
+              <CCard class="h-100 text-center border-left-warning">
                 <CCardBody>
                   <div class="text-muted small">Customers PARTIAL</div>
                   <div class="font-weight-bold text-warning">
-                    {{ session.customers_partial }}
+                    {{ formatNumber(session.customers_partial) }}
                   </div>
                 </CCardBody>
               </CCard>
             </CCol>
-            <CCol sm="6" md="4" xl="4">
-              <CCard class="text-center">
+            <CCol sm="6" md="4" class="mb-3">
+              <CCard class="h-100 text-center border-left-success">
                 <CCardBody>
                   <div class="text-muted small">Customers PAID</div>
                   <div class="font-weight-bold text-success">
-                    {{ session.customers_paid }}
+                    {{ formatNumber(session.customers_paid) }}
                   </div>
                 </CCardBody>
               </CCard>
@@ -209,29 +218,34 @@
           </CRow>
 
           <!-- Breakdown Status Item -->
-          <CCard>
+          <CCard class="mb-4">
             <CCardHeader>
-              <h6>Item Status Breakdown</h6>
+              <h6 class="mb-0">Item Status Breakdown</h6>
             </CCardHeader>
             <CCardBody>
               <CDataTable
+                v-if="session.status_breakdown && session.status_breakdown.length"
                 hover
                 striped
                 border
-                :items="session.status_breakdown"
+                :items="reformatStatusBreakdown"
                 :fields="statusFields"
                 style="font-size: 12px"
               />
+              <div v-else class="text-center text-muted py-4">
+                Tidak ada data status item.
+              </div>
             </CCardBody>
           </CCard>
 
           <!-- Daftar Customer & Pembayaran -->
           <CCard>
             <CCardHeader>
-              <h6>Customer Payment Summary</h6>
+              <h6 class="mb-0">Customer Payment Summary</h6>
             </CCardHeader>
             <CCardBody>
               <CDataTable
+                v-if="reformatCustomers.length"
                 hover
                 striped
                 border
@@ -239,8 +253,18 @@
                 :fields="customerFields"
                 style="font-size: 12px"
               />
+              <div v-else class="text-center text-muted py-4">
+                Tidak ada data customer.
+              </div>
             </CCardBody>
           </CCard>
+        </CCardBody>
+        <CCardBody v-else-if="loading" class="text-center py-5">
+          <CSpinner color="primary" />
+          <div class="text-muted mt-2">Memuat data session...</div>
+        </CCardBody>
+        <CCardBody v-else class="text-center py-5 text-muted">
+          Session tidak ditemukan atau gagal dimuat.
         </CCardBody>
         <CCardFooter>
           <div class="float-left">
@@ -279,6 +303,7 @@ export default {
   data() {
     return {
       session: null,
+      loading: false,
       btn_export_stock: {
         size: 'sm',
         class: 'float-right',
@@ -304,6 +329,19 @@ export default {
         { key: 'remaining_amount', label: 'Remaining' },
         { key: 'payment_status', label: 'Status' },
       ],
+      statusColor: {
+        200: 'secondary',
+        201: 'info',
+        202: 'warning',
+        203: 'success',
+        204: 'primary',
+        205: 'dark',
+      },
+      paymentBadge: {
+        UNPAID: 'danger',
+        PARTIAL: 'warning',
+        PAID: 'success',
+      },
     };
   },
   mounted() {
@@ -312,11 +350,13 @@ export default {
   methods: {
     async loadData() {
       const id = this.$route.params.id;
-      $axios.get(`/v1/jastip/report/session/${id}`).then((res) => {
-        res = res.data;
-        if (res.error) {
+      this.loading = true;
+      try {
+        const res = await $axios.get(`/v1/jastip/report/session/${id}`);
+        const data = res.data;
+        if (data.error) {
           this.$toast.open({
-            message: res.message || 'Failed to load session report',
+            message: data.message || 'Failed to load session report',
             type: 'error',
             dissmissible: true,
             position: 'top-right',
@@ -324,8 +364,18 @@ export default {
           });
           return;
         }
-        this.session = (res.data || [])[0] || null;
-      });
+        this.session = (data.data || [])[0] || null;
+      } catch (error) {
+        this.$toast.open({
+          message: error.response?.data?.message || error.message || 'Failed to load session report',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+      } finally {
+        this.loading = false;
+      }
     },
     handleExport(type) {
       const id = this.$route.params.id;
@@ -353,19 +403,32 @@ export default {
         minimumFractionDigits: 0,
       }).format(Number(val || 0));
     },
+    formatNumber,
   },
   computed: {
+    reformatStatusBreakdown() {
+      if (!this.session || !this.session.status_breakdown) return [];
+      return this.session.status_breakdown.map((s) => ({
+        ...s,
+        total: formatNumber(s.total) || '0',
+        total_quantity: formatNumber(s.total_quantity) || '0',
+        _rowVariant: this.statusColor[s.status] || '',
+      }));
+    },
     reformatCustomers() {
       if (!this.session || !this.session.customers) return [];
       return this.session.customers.map((c) => ({
         ...c,
         customer_name: c.customer_name || '-',
         customer_phone: c.customer_phone || '-',
-        grand_total: formatNumber(c.grand_total) || '-',
+        total_items: formatNumber(c.total_items) || '0',
+        total_quantity: formatNumber(c.total_quantity) || '0',
+        grand_total: formatNumber(c.grand_total) || '0',
         total_paid: this.formatCurrency(c.total_paid, c.local_currency),
         total_pending: this.formatCurrency(c.total_pending, c.local_currency),
         remaining_amount: this.formatCurrency(c.remaining_amount, c.local_currency),
         payment_status: c.payment_status || '-',
+        _rowVariant: this.paymentBadge[c.payment_status] || '',
       }));
     },
   },
