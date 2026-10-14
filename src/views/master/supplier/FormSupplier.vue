@@ -244,13 +244,18 @@ export default {
         let data = res.data[0];
         this.formData = data;
         let tlp = '';
-        if (data.tlp) {
-          tlp = data.tlp.split('-');
+        // API mengembalikan kolom `phone`/`phone_alt` (bukan `tlp`/`tlp_alt`).
+        // Dulu hanya membaca `data.tlp` sehingga form edit selalu kosong
+        // nomornya dan validasi gagal. Terima keduanya untuk kompatibilitas.
+        const phoneVal = data.phone || data.tlp;
+        const phoneAltVal = data.phone_alt || data.tlp_alt;
+        if (phoneVal) {
+          tlp = String(phoneVal).split('-');
           this.formData.tlp_code = tlp[0];
           this.formData.tlp = tlp[1];
         }
-        if (data.tlp_alt) {
-          tlp = data.tlp_alt.split('-');
+        if (phoneAltVal) {
+          tlp = String(phoneAltVal).split('-');
           this.formData.tlp_alt_code = tlp[0];
           this.formData.tlp_alt = tlp[1];
         }
