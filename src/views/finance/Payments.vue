@@ -63,6 +63,15 @@
             />
           </div>
 
+          <!-- Riwayat search -->
+          <div v-else class="mt-3">
+            <CInput
+              size="sm"
+              placeholder="Cari nama / no HP / referensi..."
+              v-model="historySearch"
+            />
+          </div>
+
           <!-- Pending / Paid -->
           <CDataTable
             v-if="tab !== 'history'"
@@ -119,7 +128,7 @@
           <!-- Riwayat -->
           <CDataTable
             v-else
-            :items="history"
+            :items="filteredHistory"
             :fields="historyFields"
             hover
             striped
@@ -461,6 +470,7 @@ export default {
       bills: [],
       history: [],
       search: '',
+      historySearch: '',
 
       detailModal: false,
       detailBill: null,
@@ -505,6 +515,20 @@ export default {
           String(b.customer_name || '')
             .toLowerCase()
             .includes(q) || String(b.customer_phone || '').includes(q),
+      );
+    },
+    filteredHistory() {
+      const q = this.historySearch.trim().toLowerCase();
+      if (!q) return this.history;
+      return this.history.filter(
+        (h) =>
+          String(h.customer_name || '')
+            .toLowerCase()
+            .includes(q) ||
+          String(h.customer_phone || '').includes(q) ||
+          String(h.reference_number || '')
+            .toLowerCase()
+            .includes(q),
       );
     },
     billFields() {
