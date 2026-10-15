@@ -20,13 +20,10 @@ export const authLogin = async (param = Object) => {
 };
 
 export const authLogout = async (param = Object) => {
-  if (!param) {
-    return false;
-  }
   let url = `/v1/authentication/logout`;
   return new Promise((resolve) => {
     $axios
-      .post(url, param)
+      .post(url, param || {})
       .then((result) => {
         let res = result.data;
         return resolve(res);
