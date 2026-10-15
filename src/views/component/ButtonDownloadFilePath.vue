@@ -1,5 +1,5 @@
 <template>
-  <a :href="href ? href : null">
+  <div>
     <CButton
       v-if="is_visible"
       :class="property.class"
@@ -17,7 +17,7 @@
       {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
     </CButton>
     {{ !is_visible ? 'File is not set' : '' }}
-  </a>
+  </div>
 </template>
 
 <script>

@@ -1,5 +1,8 @@
 <template>
-  <a :href="href ? href : null">
+  <component
+    :is="href ? 'router-link' : 'div'"
+    v-bind="href ? { to: href } : {}"
+  >
     <CButton
       :class="property.class"
       v-c-tooltip="property.tooltip ? property.tooltip : ''"
@@ -16,7 +19,7 @@
       />
       {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
     </CButton>
-  </a>
+  </component>
 </template>
 
 <script>
@@ -30,7 +33,7 @@ export default {
       deep: true,
       handler(n) {
         if (this.useHref) {
-          this.href = `#${this.$route.path}/${this.permission}`;
+          this.href = `${this.$route.path}/${this.permission}`;
           if (n) this.href += `/${n}`;
         }
       },
@@ -38,7 +41,7 @@ export default {
   },
   mounted() {
     if (this.useHref) {
-      this.href = `#${this.$route.path}/${this.permission}`;
+      this.href = `${this.$route.path}/${this.permission}`;
       if (this.id) this.href += `/${this.id}`;
     }
     this.is_visible = this.button[`can_${this.permission}`];

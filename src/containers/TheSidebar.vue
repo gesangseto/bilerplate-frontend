@@ -29,10 +29,11 @@
       <ul class="mainmenu" v-for="(item, index) in navMenu" :key="index">
         <li>
           <!-- MENU WITHOUT CHILD -->
-          <a
+
+          <router-link
             v-if="item.link"
             @click="handleClickParentMenu(item, index)"
-            :href="`${item.link}`"
+            :to="item.link"
             :class="{ 'active-parent': item.link == `/${part_path[1]}` }"
           >
             <CIcon
@@ -40,7 +41,7 @@
               :class="{ 'icon-style': item.link == `/${part_path[1]}` }"
             />
             &nbsp;&nbsp;&nbsp;{{ item.name }}
-          </a>
+          </router-link>
           <!-- MENU WITHOUT CHILD -->
 
           <!-- MENU WITH CHILD -->
@@ -65,8 +66,8 @@
             :style="{ maxHeight: item.expand ? '260px' : '0px' }"
           >
             <li>
-              <a
-                :href="`${child_item.link}`"
+              <router-link
+                :to="child_item.link"
                 :class="{
                   'active-child':
                     child_item.link == `/${part_path[1]}/${part_path[2]}`,
@@ -75,7 +76,7 @@
                 <span> </span>
                 <CIcon :name="child_item.icon" />
                 &nbsp;&nbsp;&nbsp;{{ child_item.name }}
-              </a>
+              </router-link>
             </li>
           </ul>
           <!-- MENU WITH CHILD -->

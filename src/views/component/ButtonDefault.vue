@@ -15,7 +15,10 @@
           <!-- Slot untuk prepend -->
           <slot name="prepend"></slot>
 
-          <a :href="href ? href : null">
+          <component
+            :is="href ? 'router-link' : 'div'"
+            v-bind="href ? { to: href } : {}"
+          >
             <CButton
               :class="property.class"
               v-c-tooltip="property.tooltip"
@@ -31,7 +34,7 @@
               />
               {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
             </CButton>
-          </a>
+          </component>
 
           <!-- Slot untuk append -->
           <slot name="append"></slot>
@@ -100,7 +103,7 @@ export default {
       deep: true,
       handler(n) {
         if (this.useHref) {
-          this.href = `#${this.$route.path}/${this.type}`;
+          this.href = `${this.$route.path}/${this.type}`;
           if (n) this.href += `/${n}`;
         }
       },
@@ -112,7 +115,7 @@ export default {
   },
   mounted() {
     if (this.useHref) {
-      this.href = `#${this.$route.path}/${this.type}`;
+      this.href = `${this.$route.path}/${this.type}`;
       if (this.id) this.href += `/${this.id}`;
     }
     if (this.type == 'create') {
