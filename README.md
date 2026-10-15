@@ -1,8 +1,8 @@
-# Gastrack Website (Admin Panel)
+# Jastip Center Website (Admin Panel)
 
-Admin panel berbasis **Vue.js 2 + CoreUI** untuk aplikasi **Gastrack — Jasa Titip Belanja (Jastip)**.
-Awalnya template "Gastrack PharmaTrust Track & Trace for Pharma Manufacturer", dikembangkan dengan modul Jastip
-yang terhubung ke backend Gastrack (Express + PostgreSQL).
+Admin panel berbasis **Vue.js 2 + CoreUI** untuk aplikasi **Jastip Center — Jasa Titip Belanja (Jastip)**.
+Awalnya template "Jastip Center PharmaTrust Track & Trace for Pharma Manufacturer", dikembangkan dengan modul Jastip
+yang terhubung ke backend Jastip Center (Express + PostgreSQL).
 
 - **Repo**: `gesangseto/bilerplate-frontend` (branch `jastip`)
 - **Versi**: 4.2.0
@@ -12,17 +12,17 @@ yang terhubung ke backend Gastrack (Express + PostgreSQL).
 
 ## Tech Stack
 
-| Kategori | Teknologi |
-|---|---|
-| Framework | Vue.js 2.6, Vue Router 3 (mode hash), Vuex 3 |
-| UI | CoreUI 3 (`@coreui/vue`), Bootstrap 4, Font Awesome |
-| HTTP | Axios (interceptor token + loading bar NProgress) |
-| Validasi | Vuelidate + vuelidate-error-extractor |
-| Chart | Chart.js 2 + vue-chartjs |
-| Tabel | Tabulator, TableTransaction (komponen custom) |
-| Barcode | bwip-js |
-| Export/Print | vue-excel-xlsx, vue-print-nb, jspdf, vue-html-to-paper |
-| Lainnya | vue-cute-timeline, vue2-datepicker, vue-select, vue-js-modal, sass |
+| Kategori     | Teknologi                                                          |
+| ------------ | ------------------------------------------------------------------ |
+| Framework    | Vue.js 2.6, Vue Router 3 (mode hash), Vuex 3                       |
+| UI           | CoreUI 3 (`@coreui/vue`), Bootstrap 4, Font Awesome                |
+| HTTP         | Axios (interceptor token + loading bar NProgress)                  |
+| Validasi     | Vuelidate + vuelidate-error-extractor                              |
+| Chart        | Chart.js 2 + vue-chartjs                                           |
+| Tabel        | Tabulator, TableTransaction (komponen custom)                      |
+| Barcode      | bwip-js                                                            |
+| Export/Print | vue-excel-xlsx, vue-print-nb, jspdf, vue-html-to-paper             |
+| Lainnya      | vue-cute-timeline, vue2-datepicker, vue-select, vue-js-modal, sass |
 
 ---
 
@@ -66,21 +66,21 @@ Website/
 Menu sidebar (`src/containers/_nav.js`) → **Jastip** dengan 7 submenu.
 Semua route di bawah prefix `/jastip/*` (`src/router/index.js`).
 
-| Halaman | Route | File | Fungsi | Endpoint API |
-|---|---|---|---|---|
-| Dashboard | `/jastip/dashboard` | `dashboard/Dashboard.vue` | Stat card + tabel status item/batch/picking/invoice | `GET /v1/jastip/dashboard` |
-| Item Registry | `/jastip/item-registry` | `item-registry/ListItemRegistry.vue` | List item (filter, sort, pagination) | `GET /v1/jastip/item-registry` |
-| | `/jastip/item-registry/create` `/jastip/item-registry/update/:id` | `item-registry/FormItemRegistry.vue` | Form CRUD item + upload foto | `PUT/POST /v1/jastip/item-registry`, `GET /v1/master/customer`, `GET /v1/master/product`, `GET /v1/master/warehouse` |
-| Outbound Manifest | `/jastip/outbound-manifest` | `outbound-manifest/ListOutboundManifest.vue` | List batch | `GET /v1/jastip/outbound-manifest` |
-| | `/jastip/outbound-manifest/create` `/jastip/outbound-manifest/update/:id` | `outbound-manifest/FormOutboundManifest.vue` | Form batch (pilih item draft) | `PUT/POST /v1/jastip/outbound-manifest`, `GET /v1/master/supplier`, `GET /v1/jastip/item-registry` |
-| Inbound | `/jastip/inbound` | `inbound/ListInbound.vue` | List inbound | `GET /v1/jastip/inbound` |
-| | `/jastip/inbound/create` | `inbound/FormInbound.vue` | Terima batch (Shipping → Done) | `POST /v1/jastip/inbound`, `GET /v1/jastip/outbound-manifest` |
-| Picking | `/jastip/picking` | `picking/ListPicking.vue` | List picking | `GET /v1/jastip/picking` |
-| | `/jastip/picking/create` | `picking/FormPicking.vue` | Form picking (pilih item stock) | `PUT /v1/jastip/picking`, `GET /v1/master/customer`, `GET /v1/jastip/item-stock` |
-| Item Stock | `/jastip/item-stock` | `item-stock/ListItemStock.vue` | List item stock | `GET /v1/jastip/item-stock` |
-| | `/jastip/item-stock/update/:id` | `item-stock/FormItemStock.vue` | Detail item stock | `GET /v1/jastip/item-stock?id=` |
-| Item Disposal | `/jastip/item-disposal` | `disposal/ListItemDisposal.vue` | List disposal | `GET /v1/jastip/disposal` |
-| | `/jastip/item-disposal/create` | `disposal/FormItemDisposal.vue` | Form disposal (pilih item) | `PUT /v1/jastip/disposal`, `GET /v1/jastip/item-registry` |
+| Halaman           | Route                                                                     | File                                         | Fungsi                                              | Endpoint API                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Dashboard         | `/jastip/dashboard`                                                       | `dashboard/Dashboard.vue`                    | Stat card + tabel status item/batch/picking/invoice | `GET /v1/jastip/dashboard`                                                                                           |
+| Item Registry     | `/jastip/item-registry`                                                   | `item-registry/ListItemRegistry.vue`         | List item (filter, sort, pagination)                | `GET /v1/jastip/item-registry`                                                                                       |
+|                   | `/jastip/item-registry/create` `/jastip/item-registry/update/:id`         | `item-registry/FormItemRegistry.vue`         | Form CRUD item + upload foto                        | `PUT/POST /v1/jastip/item-registry`, `GET /v1/master/customer`, `GET /v1/master/product`, `GET /v1/master/warehouse` |
+| Outbound Manifest | `/jastip/outbound-manifest`                                               | `outbound-manifest/ListOutboundManifest.vue` | List batch                                          | `GET /v1/jastip/outbound-manifest`                                                                                   |
+|                   | `/jastip/outbound-manifest/create` `/jastip/outbound-manifest/update/:id` | `outbound-manifest/FormOutboundManifest.vue` | Form batch (pilih item draft)                       | `PUT/POST /v1/jastip/outbound-manifest`, `GET /v1/master/supplier`, `GET /v1/jastip/item-registry`                   |
+| Inbound           | `/jastip/inbound`                                                         | `inbound/ListInbound.vue`                    | List inbound                                        | `GET /v1/jastip/inbound`                                                                                             |
+|                   | `/jastip/inbound/create`                                                  | `inbound/FormInbound.vue`                    | Terima batch (Shipping → Done)                      | `POST /v1/jastip/inbound`, `GET /v1/jastip/outbound-manifest`                                                        |
+| Picking           | `/jastip/picking`                                                         | `picking/ListPicking.vue`                    | List picking                                        | `GET /v1/jastip/picking`                                                                                             |
+|                   | `/jastip/picking/create`                                                  | `picking/FormPicking.vue`                    | Form picking (pilih item stock)                     | `PUT /v1/jastip/picking`, `GET /v1/master/customer`, `GET /v1/jastip/item-stock`                                     |
+| Item Stock        | `/jastip/item-stock`                                                      | `item-stock/ListItemStock.vue`               | List item stock                                     | `GET /v1/jastip/item-stock`                                                                                          |
+|                   | `/jastip/item-stock/update/:id`                                           | `item-stock/FormItemStock.vue`               | Detail item stock                                   | `GET /v1/jastip/item-stock?id=`                                                                                      |
+| Item Disposal     | `/jastip/item-disposal`                                                   | `disposal/ListItemDisposal.vue`              | List disposal                                       | `GET /v1/jastip/disposal`                                                                                            |
+|                   | `/jastip/item-disposal/create`                                            | `disposal/FormItemDisposal.vue`              | Form disposal (pilih item)                          | `PUT /v1/jastip/disposal`, `GET /v1/jastip/item-registry`                                                            |
 
 **Field utama Item Registry**: `customer_id`, `product_id`, `warehouse_id`, `quantity`, `cost_price`,
 `selling_price`, `cost_code`, `selling_code`, `photo` (upload).
@@ -165,7 +165,7 @@ npm cache clean --force
 
 ## Status Integrasi
 
-- Modul Jastip sudah memanggil backend Gastrack secara langsung (axios ke `/api/v1/jastip/*` dan `/api/v1/master/*`).
+- Modul Jastip sudah memanggil backend Jastip Center secara langsung (axios ke `/api/v1/jastip/*` dan `/api/v1/master/*`).
 - Dashboard, Item Registry, Outbound Manifest, Inbound, Picking, Item Stock, dan Disposal sudah memiliki
   halaman List + Form yang terhubung ke endpoint backend.
 - Beberapa alur form masih perlu disinkronkan lebih lanjut dengan payload/status backend

@@ -1,4 +1,4 @@
-# Jastip / Gastrack - robots exclusion protocol
+# Jastip / Jastip Center - robots exclusion protocol
 # https://developers.google.com/search/docs/crawling-indexing/robots/robots_txt
 
 User-agent: *

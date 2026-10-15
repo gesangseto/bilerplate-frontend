@@ -40,7 +40,7 @@
       size="lg"
     >
       <template #header>
-        <h5><strong>About Gastrack&reg; </strong></h5>
+        <h5><strong>About Jastip Center &reg; </strong></h5>
       </template>
       <CCardBody>
         <div class="container-area">
@@ -49,7 +49,7 @@
       </CCardBody>
       <template #footer>
         <div style="display: block; margin-left: auto; margin-right: auto">
-          <img v-bind:src="gastrack_image" style="width: auto; height: 40px" />
+          <img v-bind:src="jastip_image" style="width: auto; height: 40px" />
         </div>
         <div style="display: block; margin-left: auto; margin-right: auto">
           <span class="mr-1">Copyright</span>
@@ -98,7 +98,7 @@
 }
 </style>
 <script>
-import { logoGastrack } from '../constants';
+import { logoJastip } from '../constants';
 import { getVersion } from '../resource/Version';
 import { getConfig } from '../utils';
 import { APP_CONFIG } from '@/config';
@@ -112,7 +112,7 @@ export default {
         mobile: '4.2.0',
         bpom: '3.0.1',
       },
-      gastrack_image: logoGastrack,
+      jastip_image: logoJastip,
       appModal: false,
       data: {
         about: null,
@@ -128,7 +128,7 @@ export default {
     this.loadVersion();
     this.data = getConfig();
     this.data.about = `
-    This copy of <strong>Gastrack® </strong> is licensed to: <br/>
+    This copy of <strong>Jastip® </strong> is licensed to: <br/>
     <br/>
     
     <strong>Warning</strong>
