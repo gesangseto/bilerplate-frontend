@@ -53,7 +53,7 @@
                   <TextareaDefault
                     :col="[3, 7]"
                     title="Entity Address"
-                    v-model="data.entity_address"
+                    v-model="data.identity_address"
                   />
                 </CCardBody>
               </CCard>
@@ -751,7 +751,7 @@ export default {
       return val ? val.length >= 4 : false;
     },
     formValidation() {
-      let required = ['identity_name', 'entity_address'];
+      let required = ['identity_name', 'identity_address'];
       // Check Pattern
       if (this.data.password_pattern) {
         let patt = this.data.password_pattern;

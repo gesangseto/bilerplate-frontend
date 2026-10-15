@@ -36,68 +36,13 @@
       <CHeaderNav class="mr-4" style="position: absolute; right: 0">
         <CHeaderNavItem class="d-md-down-none mx-2">
           <CHeaderNavLink>
-            <CButton @click="notifModal = true">
-              <CIcon name="cil-bell" />
-              <CBadge color="danger">{{ notifUnreadCount }}</CBadge>
-            </CButton>
+            <!-- INI Untuk download APK Android kalo udah stable  -->
           </CHeaderNavLink>
         </CHeaderNavItem>
 
         <TheHeaderDropdownAccnt />
       </CHeaderNav>
     </CSubheader>
-    <CModal :show.sync="notifModal" title="Notification">
-      <template #header>
-        <h5 class="modal-title">Notification</h5>
-        <div>
-          <CButton
-            :disabled="!checkedNotif"
-            class="m-1"
-            type="submit"
-            size="sm"
-            color="danger"
-            @click="deleteNotif()"
-          >
-            Delete
-          </CButton>
-          <CButton
-            :disabled="!checkedNotif"
-            class="m-1"
-            type="submit"
-            size="sm"
-            color="primary"
-            @click="readNotif()"
-          >
-            Read
-          </CButton>
-        </div>
-      </template>
-      <div class="scroll-auto" v-if="notifCount > 0">
-        <CRow v-for="item in notif" :key="item.id">
-          <CCol sm="12" md="12" class="mb-2">
-            <CInputCheckbox class="mr-2" :checked.sync="item.checked" />
-            <a
-              :href="item.trx_ref_name ? generateLinkNotif(item) : null"
-              class="notification ml-4"
-              @click="readNotif(item, true)"
-              :style="!item.flag_read ? 'font-weight: bold' : null"
-            >
-              {{ item.content }}
-            </a>
-            <hr class="mt-2 mb-0" />
-          </CCol>
-        </CRow>
-      </div>
-      <template #footer>
-        <button
-          type="button"
-          class="btn btn-m btn-danger text-white"
-          @click="notifModal = false"
-        >
-          Close
-        </button>
-      </template>
-    </CModal>
     <CModal
       title="Warning Session Timeout"
       color="danger"
@@ -145,11 +90,6 @@
 </style>
 <script>
 import TheHeaderDropdownAccnt from './TheHeaderDropdownAccnt';
-import {
-  getMstNotification,
-  updateMstNotification,
-  deleteMstNotification,
-} from '../resource/MstNotification';
 import {
   setLoginTimeout,
   getLoginTimeout,
@@ -204,7 +144,6 @@ export default {
         this.path_url = route.matched || null;
         this.timeoutModal = false;
         this.current_route = route;
-        this.getNotif();
         this.checkPermission(route);
         this.getLimitationConfig();
       },
@@ -284,7 +223,6 @@ export default {
     handleClickClose() {
       this.timeout = 9999;
       this.timeoutModal = false;
-      this.getNotif();
     },
     checkPermission(route) {
       let can_access = false;
@@ -323,64 +261,6 @@ export default {
         this.$router.push({ path: url });
         return;
       }
-    },
-    async readNotif(item, alert = false) {
-      if (!alert) {
-        let message = `You are about to read the selected notification. All read notifications cannot be restored.\nAre you sure you want to continue?`;
-        if (!confirm(message)) {
-          return;
-        }
-      }
-
-      let checkedIds = null;
-      if (item) {
-        checkedIds = item.id;
-      } else {
-        checkedIds = this.notif.filter((it) => it.checked).map((it) => it.id);
-      }
-      let _res = await updateMstNotification({ id: checkedIds });
-      this.$toast.open({
-        message: _res.error
-          ? _res.message
-          : 'Data has been saved successfully ',
-        type: _res.error ? 'error' : 'success',
-        dissmissible: true,
-        position: 'top-right',
-        duration: 5000,
-      });
-      this.getNotif();
-    },
-    async deleteNotif() {
-      let message = `You are about to delete the selected notification. All deleted notifications cannot be restored.\nAre you sure you want to continue?`;
-      if (!confirm(message)) {
-        return;
-      }
-      let checkedIds = this.notif.filter((it) => it.checked).map((it) => it.id);
-      let _res = await deleteMstNotification({ id: checkedIds });
-      this.$toast.open({
-        message: _res.error
-          ? _res.message
-          : 'Data has been deleted successfully ',
-        type: _res.error ? 'error' : 'success',
-        dissmissible: true,
-        position: 'top-right',
-        duration: 5000,
-      });
-      this.getNotif();
-    },
-    async getNotif() {
-      let _res = await getMstNotification();
-      if (_res) {
-        if (_res.status_code && _res.status_code == '401') {
-          this.sessionExpired();
-          return;
-        }
-
-        this.notif = _res.data;
-        this.notifLength = this.notif.length || 0;
-        this.timeout = this.getDifferentSecond();
-      }
-      return;
     },
     generateLinkNotif(item) {
       if (!item.trx_ref_name) return null;
@@ -421,21 +301,6 @@ export default {
       return;
     },
   },
-  computed: {
-    notifUnreadCount() {
-      return Array.isArray(this.notif)
-        ? this.notif.filter((it) => !it.flag_read).length
-        : 0;
-    },
-    notifCount() {
-      return Array.isArray(this.notif) ? this.notif.length : 0;
-    },
-    checkedNotif() {
-      if (Array.isArray(this.notif)) {
-        return this.notif.find((it) => it.checked);
-      }
-      return null;
-    },
-  },
+  computed: {},
 };
 </script>
