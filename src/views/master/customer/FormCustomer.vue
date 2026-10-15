@@ -82,7 +82,6 @@
                 <InputDefault
                   :disabled="action == 'Read' ? true : false"
                   :col="[3, 9]"
-                  required
                   validasi="email"
                   title="Email"
                   placeholder="email.address@email.com"
@@ -215,8 +214,6 @@ export default {
       } else if (this.checkPrimaryPhone() === false) {
         return false;
       } else if (this.checkAltPhone() === false) {
-        return false;
-      } else if (!this.formData.email || !isEmail(this.formData.email)) {
         return false;
       } else if (this.formData.error_metadata) {
         return false;
