@@ -185,9 +185,12 @@ export default {
   mounted() {
     // Meta SEO publik saja — perilaku halaman tidak diubah.
     applyPublicSeo({
-      title: 'Lacak Paket — Lacak Kiriman dengan Resi atau Nomor HP | Jastip',
+      title:
+        'Lacak Paket — Cek Resi & Status Kiriman | Fiorella Zeanne',
       description:
         'Lacak paket jasa titip belanja: masukkan nomor resi kurir atau nomor HP customer untuk melihat status barang dari manifest, masuk gudang, sampai tiba di penerima.',
+      keywords:
+        'lacak paket, cek resi, tracking jastip, lacak pesanan, status pengiriman',
       path: '/tracking',
     });
   },

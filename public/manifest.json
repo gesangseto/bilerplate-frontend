@@ -1,7 +1,7 @@
 {
   "name": "Jastip Center",
   "short_name": "Jastip Center",
-  "description": "Panel admin jasa titip belanja: item registry, shipping, inbound, picking.",
+  "description": "Jastip Thailand & all brand: panel admin jasa titip belanja — item registry, shipping, inbound, picking, dan lacak paket.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

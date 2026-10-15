@@ -25,8 +25,13 @@
 
       <!-- <CBreadcrumbRouter class="border-0 mb-0" /> -->
       <CHeaderNav>
-        <a href="#/home"> Home /&nbsp;</a>
-        <a :href="`#${$activeMenu.link}`"> {{ $activeMenu.breadcrumbs }}</a>
+        <router-link to="/home"> Home /&nbsp;</router-link>
+        <router-link
+          v-if="$activeMenu && $activeMenu.link"
+          :to="$activeMenu.link"
+        >
+          {{ $activeMenu.breadcrumbs }}</router-link
+        >
       </CHeaderNav>
 
       <!-- <div v-for="item of path_url" :key="item.path">

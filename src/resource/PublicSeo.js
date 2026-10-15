@@ -12,9 +12,16 @@ import { getIdentity } from './Identity';
 
 const DESCRIPTIONS = {
   landing:
-    'Jastip adalah layanan jasa titip belanja yang mencatat barang, tagihan, dan pengiriman dalam satu sistem. Lacak posisi paket kapan saja lewat nomor resi atau nomor HP.',
+    'Jastip Thailand & all brand dari Fiorella Zeanne (@kharisma_ranii). Titip skincare, fashion, snack, sampai barang branded dari Bangkok & seluruh dunia. Harga transparan, lacak paket real-time, order via Instagram.',
   tracking:
     'Lacak paket jasa titip belanja: masukkan nomor resi kurir atau nomor HP customer untuk melihat status barang dari manifest sampai tiba di penerima.',
+};
+
+const KEYWORDS = {
+  landing:
+    'jastip thailand, jastip bangkok, jastip all brand, open po thailand, personal shopper, jasa titip, jastip terpercaya, titip beli bangkok',
+  tracking:
+    'lacak paket, cek resi, tracking jastip, lacak pesanan, status pengiriman',
 };
 
 const upsertMeta = (keyAttr, key, content) => {
@@ -73,6 +80,7 @@ const applyJsonLd = (imageUrl) => {
  * @param {Object} opts
  * @param {string} opts.title        judul halaman (pakai brand bila ada)
  * @param {string} [opts.description]
+ * @param {string} [opts.keywords]   meta keywords (default: keyword landing)
  * @param {string} [opts.path]       path halaman, mis. '/landing'
  * @param {string} [opts.image]      URL absolut utk og:image (opsional)
  */
@@ -80,6 +88,7 @@ export const applyPublicSeo = (opts = {}) => {
   const {
     title,
     description = DESCRIPTIONS.landing,
+    keywords = KEYWORDS.landing,
     path = '/',
     image = '/jastip-icon-512.png',
   } = opts;
@@ -94,15 +103,20 @@ export const applyPublicSeo = (opts = {}) => {
   }
 
   upsertMeta('name', 'description', description);
+  upsertMeta('name', 'keywords', keywords);
   upsertMeta('name', 'robots', 'index, follow, max-snippet:-1, max-image-preview:large');
 
   upsertLink('canonical', url);
 
+  upsertMeta('property', 'og:type', 'website');
+  upsertMeta('property', 'og:site_name', 'Fiorella Zeanne');
+  upsertMeta('property', 'og:locale', 'id_ID');
   upsertMeta('property', 'og:url', url);
   upsertMeta('property', 'og:title', title);
   upsertMeta('property', 'og:description', description);
   upsertMeta('property', 'og:image', imageUrl);
 
+  upsertMeta('name', 'twitter:card', 'summary_large_image');
   upsertMeta('name', 'twitter:title', title);
   upsertMeta('name', 'twitter:description', description);
   upsertMeta('name', 'twitter:image', imageUrl);

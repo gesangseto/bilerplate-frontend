@@ -1,4 +1,4 @@
-# Jastip / Jastip Center - robots exclusion protocol
+# Jastip Fiorella Zeanne (Jastip Thailand & All Brand) - robots exclusion protocol
 # https://developers.google.com/search/docs/crawling-indexing/robots/robots_txt
 
 User-agent: *

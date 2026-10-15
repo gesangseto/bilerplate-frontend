@@ -32,7 +32,7 @@
           <a
             v-if="item.link"
             @click="handleClickParentMenu(item, index)"
-            :href="`#${item.link}`"
+            :href="`${item.link}`"
             :class="{ 'active-parent': item.link == `/${part_path[1]}` }"
           >
             <CIcon
@@ -66,7 +66,7 @@
           >
             <li>
               <a
-                :href="`#${child_item.link}`"
+                :href="`${child_item.link}`"
                 :class="{
                   'active-child':
                     child_item.link == `/${part_path[1]}/${part_path[2]}`,
