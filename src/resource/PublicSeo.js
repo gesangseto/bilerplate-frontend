@@ -81,7 +81,7 @@ export const applyPublicSeo = (opts = {}) => {
     title,
     description = DESCRIPTIONS.landing,
     path = '/',
-    image = '/gastrack-icon-512.png',
+    image = '/jastip-icon-512.png',
   } = opts;
 
   const url = absoluteUrl(path);
