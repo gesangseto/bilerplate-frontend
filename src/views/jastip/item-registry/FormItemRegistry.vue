@@ -10,7 +10,7 @@
             <CCol sm="12">
               <!-- Item Name -->
               <InputDefault
-                :disabled="action === 'Read'"
+                :disabled="active.isRead"
                 title="Item Name"
                 placeholder="Nama barang"
                 v-model="formData.item_name"
@@ -18,7 +18,7 @@
 
               <!-- Quantity -->
               <InputDefault
-                :disabled="action === 'Read'"
+                :disabled="active.isRead"
                 title="Quantity"
                 placeholder="1"
                 required
@@ -42,7 +42,7 @@
                       }}</span>
                     </div>
                     <input
-                      :disabled="action === 'Read'"
+                      :disabled="active.isRead"
                       type="text"
                       class="form-control"
                       :class="{
@@ -57,7 +57,7 @@
                     />
                     <div class="input-group-append" v-if="selectedCustomer">
                       <button
-                        :disabled="action === 'Read'"
+                        :disabled="active.isRead"
                         class="btn btn-outline-secondary"
                         type="button"
                         @click="clearCustomer"
@@ -173,7 +173,7 @@
                       <span class="input-group-text">{{ costSymbol }}</span>
                     </div>
                     <input
-                      :disabled="action === 'Read'"
+                      :disabled="active.isRead"
                       type="text"
                       class="form-control text-uppercase"
                       :class="{
@@ -184,7 +184,7 @@
                     />
                     <div class="input-group-append">
                       <select
-                        :disabled="action === 'Read'"
+                        :disabled="active.isRead"
                         class="custom-select"
                         v-model="formData.cost_unit"
                         style="max-width: 140px"
@@ -213,7 +213,7 @@
                       <span class="input-group-text">{{ sellingSymbol }}</span>
                     </div>
                     <input
-                      :disabled="action === 'Read'"
+                      :disabled="active.isRead"
                       type="text"
                       class="form-control text-uppercase"
                       :class="{
@@ -224,7 +224,7 @@
                     />
                     <div class="input-group-append">
                       <select
-                        :disabled="action === 'Read'"
+                        :disabled="active.isRead"
                         class="custom-select"
                         v-model="formData.selling_unit"
                         style="max-width: 140px"
@@ -247,7 +247,7 @@
                 <CCol sm="3"> Foto Barang </CCol>
                 <CCol sm="9">
                   <input
-                    :disabled="action === 'Read'"
+                    :disabled="active.isRead"
                     type="file"
                     class="form-control"
                     accept="image/*"
@@ -265,7 +265,7 @@
               </CRow>
 
               <!-- Direct Payment (Optional - Create Only) -->
-              <div v-if="action === 'ADD'" class="card mt-4 border-info">
+              <div v-if="active.isCreate" class="card mt-4 border-info">
                 <div class="card-header bg-info text-white py-2">
                   <h6 class="mb-0 font-weight-bold">
                     Pembayaran Langsung (Opsional)
@@ -335,7 +335,7 @@
         <CCardFooter>
           <div class="float-left">
             <CButton
-              v-if="action !== 'Read'"
+              v-if="active.isEditable"
               @click="save()"
               color="primary"
               size="sm"
@@ -347,7 +347,7 @@
           </div>
           <div class="float-right">
             <ExportButtons
-              v-if="action === 'Read'"
+              v-if="active.isRead"
               @export="handleClickExport"
             />
           </div>
@@ -359,18 +359,22 @@
 
 <script>
 import $axios from '../../../api';
-import {
-  capitalizeFirstLetter,
-  exportDataV3,
-  handleBack,
-} from '../../../utils';
+import { exportDataV3, handleBack } from '../../../utils';
+import { resolveRouteAction } from '../../../utils/routeAction';
 
 export default {
   name: 'FormItemRegistry',
   data() {
     return {
       initialLoad: true,
-      action: 'ADD',
+      // `active` = mode form hasil normalisasi route param (create/read/
+      // update/approve). Guard WAJIB pakai `active.isCreate` / `active.isRead` /
+      // `active.isEditable` — JANGAN bandingkan `action` dengan string mentah:
+      // `action` hanya label judul, tidak pernah cocok dengan guard lama
+      // ('ADD'/'EDIT'/'VIEW') sehingga form create tampil seperti read-only.
+      // Penjelasan lengkap: utils/routeAction.js
+      active: resolveRouteAction(),
+      action: 'Create',
       phonePrefix: '+62',
       costSymbol: 'IDR',
       sellingSymbol: 'Rp',
@@ -406,12 +410,15 @@ export default {
   },
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
-    this.action = capitalizeFirstLetter(this.$route.params.type);
-    this.route_action =
-      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+    this.active = resolveRouteAction(this.$route.params);
+    this.action = this.active.action;
+    this.route_action = this.active.routeAction;
 
     this.loadActiveSessionAndConfig();
-    if (this.action === 'EDIT') {
+    // Muat data existing HANYA pada mode update/approve yang punya id.
+    // Sebelumnya cabang ini mengecek `action === 'EDIT'`, padahal action
+    // berisi 'Update' — sehingga form update tidak pernah memuat data.
+    if (this.active.hasId && !this.active.isCreate) {
       this.loadData();
     }
   },
@@ -675,7 +682,7 @@ export default {
       }
 
       // Pembayaran langsung (opsional create baru)
-      if (this.action === 'ADD' && Number(this.paymentAmount) > 0) {
+      if (this.active.isCreate && Number(this.paymentAmount) > 0) {
         formData.append('payment_amount', this.paymentAmount);
         formData.append('payment_method', this.paymentMethod);
         if (this.paymentRef.trim())
@@ -685,8 +692,8 @@ export default {
       }
 
       let url = '/v1/jastip/item-registry';
-      let method = this.action === 'ADD' ? 'put' : 'post';
-      if (this.action === 'EDIT') {
+      let method = this.active.isCreate ? 'put' : 'post';
+      if (this.active.isUpdate) {
         formData.append('id', this.$route.params.id);
       }
 

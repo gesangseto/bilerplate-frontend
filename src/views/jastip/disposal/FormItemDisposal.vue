@@ -164,14 +164,18 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import $axios from '../../../api';
 import { getUserId } from '../../../utils/storage';
+import { resolveRouteAction } from '../../../utils/routeAction';
 
 export default {
   name: 'FormItemDisposal',
   data() {
     return {
+      // Lihat utils/routeAction.js — normalisasi mode dari route param.
+      // `action` lama hanya 'create' dan tidak pernah berubah, sehingga
+      // route `read/:id` ikutperlakukan sebagai create.
+      active: resolveRouteAction(),
       action: 'create',
       header: null,
       loading: false,
@@ -229,8 +233,10 @@ export default {
   },
   computed: {
     isCreate() {
-      const t = String(this.action || '').toLowerCase();
-      return t === 'create' || t === 'add' || t === '';
+      return this.active.isCreate;
+    },
+    isRead() {
+      return this.active.isRead;
     },
     filteredPickItems() {
       const rows = this.pickItems.map((r) => ({
@@ -254,11 +260,12 @@ export default {
     },
   },
   mounted() {
-    this.action = this.$route.params.type || 'create';
+    this.active = resolveRouteAction(this.$route.params);
+    this.action = this.active.type;
     this.fields = this.isCreate ? this.createFields : this.viewFields;
     if (this.isCreate) {
       this.loadDraftItems();
-    } else if (this.$route.params.id) {
+    } else if (this.active.hasId) {
       this.loadDisposal();
     } else {
       this.loadDraftItems();

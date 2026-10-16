@@ -4,7 +4,7 @@
       <CCard>
         <CCardHeader class="d-flex justify-content-between align-items-center">
           <h5 class="mb-0">{{ $activeMenu.name }} [{{ action }}]</h5>
-          <ButtonInfo :formData="picking" v-if="action !== 'Create'" />
+          <ButtonInfo :formData="picking" v-if="!active.isCreate" />
         </CCardHeader>
         <CCardBody>
           <CRow>
@@ -224,6 +224,7 @@
 
 <script>
 import { exportDataV3, handleBack, formatNumber } from '../../../utils';
+import { resolveRouteAction } from '../../../utils/routeAction';
 import { getPicking } from '../../../resource/TrxPicking';
 
 const STATUS_PICKING = {
@@ -239,7 +240,10 @@ export default {
   data() {
     return {
       initial_load: true,
-      action: '',
+      // Lihat utils/routeAction.js — `action` lama bernilai 'VIEW'/'EDIT'
+      // tapi template membandingkannya dengan 'Create' → selalu true.
+      active: resolveRouteAction(),
+      action: 'Read',
       items: [],
       picking: {
         status: '',
@@ -272,7 +276,8 @@ export default {
     };
   },
   async mounted() {
-    this.action = this.$route.params.type == 'read' ? 'VIEW' : 'EDIT';
+    this.active = resolveRouteAction(this.$route.params);
+    this.action = this.active.action;
     let getData = await getPicking({ id: this.$route.params.id });
     if (getData && !getData?.error && getData.data && getData.data[0]) {
       let data = getData.data[0];

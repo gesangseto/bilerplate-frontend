@@ -7,7 +7,7 @@
         </CCardHeader>
         <CCardBody class="mb-5 mt-2">
           <!-- MODE ADD : Aksi GRN (pilih batch Shipping lalu konfirmasi inbound) -->
-          <template v-if="action === 'ADD'">
+          <template v-if="active.isCreate">
             <CForm novalidate>
               <CCol sm="12">
                 <SelectOption
@@ -109,7 +109,7 @@
         <CCardFooter>
           <div class="float-left">
             <CButton
-              v-if="action === 'ADD'"
+              v-if="active.isCreate"
               @click="save()"
               color="primary"
               size="sm"
@@ -121,7 +121,7 @@
           </div>
           <div class="float-right">
             <ExportButtons
-              v-if="action !== 'ADD'"
+              v-if="active.isRead"
               @export="handleClickExport"
             />
           </div>
@@ -138,15 +138,20 @@ import {
   handleBack,
   generateIdempotencyKey,
   formatNumber,
-  capitalizeFirstLetter,
 } from '../../../utils';
+import { resolveRouteAction } from '../../../utils/routeAction';
 
 export default {
   name: 'FormInbound',
   data() {
     return {
       initialLoad: true,
-      action: 'ADD',
+      // Lihat utils/routeAction.js — `action` hanya label judul, semua guard
+      // WAJIB pakai `active.*`. Guard lama `action === 'ADD'` tidak pernah
+      // true untuk route `create`, sehingga halaman create menampilkan form
+      // read-only dan route `update` tidak pernah memuat data.
+      active: resolveRouteAction(),
+      action: 'Create',
       formData: {
         batch_id: null,
         batch_no: null,
@@ -178,13 +183,13 @@ export default {
   },
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
-    this.action = capitalizeFirstLetter(this.$route.params.type);
-    this.route_action =
-      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+    this.active = resolveRouteAction(this.$route.params);
+    this.action = this.active.action;
+    this.route_action = this.active.routeAction;
 
-    if (this.action === 'ADD') {
+    if (this.active.isCreate) {
       this.loadListBatch();
-    } else {
+    } else if (this.active.hasId) {
       this.loadData();
     }
   },

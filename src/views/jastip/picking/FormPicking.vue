@@ -202,7 +202,7 @@
         <CCardFooter>
           <div class="float-left">
             <CButton
-              v-if="action !== 'Read'"
+              v-if="!active.isRead"
               @click="save()"
               color="primary"
               size="sm"
@@ -214,7 +214,7 @@
           </div>
           <div class="float-right">
             <ExportButtons
-              v-if="action !== 'ADD'"
+              v-if="!active.isCreate"
               @export="handleClickExport"
             />
           </div>
@@ -293,16 +293,18 @@ import {
   exportDataV3,
   handleBack,
   generateIdempotencyKey,
-  capitalizeFirstLetter,
   formatNumber,
 } from '../../../utils';
+import { resolveRouteAction } from '../../../utils/routeAction';
 
 export default {
   name: 'FormPicking',
   data() {
     return {
       initialLoad: true,
-      action: 'ADD',
+      // Lihat utils/routeAction.js — guard memakai `active.*`, bukan `action`.
+      active: resolveRouteAction(),
+      action: 'Create',
       pickingStatus: null,
       formData: {
         customer_id: null,
@@ -362,14 +364,14 @@ export default {
   },
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
-    this.action = capitalizeFirstLetter(this.$route.params.type);
-    this.route_action =
-      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+    this.active = resolveRouteAction(this.$route.params);
+    this.action = this.active.action;
+    this.route_action = this.active.routeAction;
 
     this.loadListCustomer();
     this.loadListCourier();
 
-    if (this.$route.params.id) {
+    if (this.active.hasId) {
       this.loadData();
     }
   },
@@ -550,7 +552,7 @@ export default {
         });
         return false;
       }
-      if (this.action === 'Approve' && this.pickingStatus === 0) {
+      if (this.active.isApprove && this.pickingStatus === 0) {
         if (!this.formData.courier_id) {
           this.$toast.open({
             message: 'Please select courier.',
@@ -614,14 +616,14 @@ export default {
       if (this.$route.params.id) {
         param.id = this.$route.params.id;
       }
-      if (this.action === 'Approve' && this.pickingStatus === 0) {
+      if (this.active.isApprove && this.pickingStatus === 0) {
         param.courier_number = this.formData.courier_number;
         param.courier_price = Number(this.formData.courier_price);
         param.courier_currency = this.formData.courier_currency;
       }
 
       let message =
-        this.action === 'Approve'
+        this.active.isApprove
           ? 'You are about to dispatch this picking to customer. This operation cannot be undone. Would you like to continue?'
           : 'You are about to finalize this transaction. This operation cannot be undone. Would you like to continue?';
 
@@ -629,11 +631,11 @@ export default {
         this.$isLoading(true);
         let res = null;
         try {
-          if (this.action === 'Approve') {
+          if (this.active.isApprove) {
             res = await dispatchPicking(param);
-          } else if (this.action === 'Create') {
+          } else if (this.active.isCreate) {
             res = await insertPicking(param);
-          } else if (this.action === 'Update') {
+          } else if (this.active.isUpdate) {
             res = await updatePicking(param);
           } else {
             throw new Error(`Unknown action: ${this.action}`);
@@ -677,15 +679,18 @@ export default {
     },
   },
   computed: {
+    // Judul: mode approve ditampilkan sebagai "Dispatch".
     actionLabel() {
-      if (this.action === 'Approve') return 'Dispatch';
-      return this.action;
+      return this.active.action;
     },
+    // Field boleh diubah pada create/update; pada approve hanya kolom
+    // courier (lihat showCourierFields) — jadi isEditable tetap false di
+    // approve supaya field utama tidak bisa diedit saat dispatch.
     isEditable() {
-      return this.action === 'Create' || this.action === 'Update';
+      return this.active.isCreate || this.active.isUpdate;
     },
     showCourierFields() {
-      return this.action === 'Approve' && this.pickingStatus === 0;
+      return this.active.isApprove && this.pickingStatus === 0;
     },
     statusLabel() {
       const labels = {

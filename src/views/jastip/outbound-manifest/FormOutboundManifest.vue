@@ -9,20 +9,20 @@
           <CForm novalidate>
             <CCol sm="12">
               <InputDefault
-                :disabled="action !== 'Create'"
+                :disabled="!active.isCreate"
                 title="Batch No"
                 placeholder="Auto generate if empty"
                 v-model="formData.batch_no"
               />
               <InputDefault
-                :disabled="action !== 'Create'"
+                :disabled="!active.isCreate"
                 title="Weight"
                 placeholder="0"
                 validasi="float"
                 v-model="formData.weight"
               />
               <SelectOption
-                :disabled="action !== 'Create'"
+                :disabled="!active.isCreate"
                 title="Supplier"
                 placeholder="--Select--"
                 :options="listSupplier"
@@ -32,7 +32,7 @@
             <CRow>
               <CCol col="12" xl="12">
                 <CButton
-                  v-if="action === 'ADD'"
+                  v-if="active.isCreate"
                   size="sm"
                   class="float-right m-1"
                   color="success"
@@ -58,7 +58,7 @@
                 <template #action="{ item, index }">
                   <td>
                     <Button
-                      v-if="action === 'ADD'"
+                      v-if="active.isCreate"
                       v-c-tooltip="'Delete'"
                       :type="'delete'"
                       @click="deleteRow(item, index)"
@@ -84,7 +84,7 @@
           </div>
           <div class="float-right">
             <ExportButtons
-              v-if="action !== 'Create'"
+              v-if="active.isEditable"
               @export="handleClickExport"
             />
           </div>
@@ -154,19 +154,19 @@
 
 <script>
 import $axios from '../../../api';
-import {
-  exportDataV3,
-  handleBack,
-  formatNumber,
-  capitalizeFirstLetter,
-} from '../../../utils';
+import { exportDataV3, handleBack, formatNumber } from '../../../utils';
+import { resolveRouteAction } from '../../../utils/routeAction';
 
 export default {
   name: 'FormOutboundManifest',
   data() {
     return {
       initialLoad: true,
-      action: 'ADD',
+      // Lihat utils/routeAction.js — semua guard pakai `active.*`, bukan
+      // `action` (yang hanya label judul dan tidak pernah cocok dengan
+      // guard lama 'ADD'/'EDIT').
+      active: resolveRouteAction(),
+      action: 'Create',
       formData: {
         batch_no: null,
         weight: null,
@@ -207,12 +207,12 @@ export default {
   },
   mounted() {
     // Mengecek ada parameter yg dikiri di URL atau tidak
-    this.action = capitalizeFirstLetter(this.$route.params.type);
-    this.route_action =
-      this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+    this.active = resolveRouteAction(this.$route.params);
+    this.action = this.active.action;
+    this.route_action = this.active.routeAction;
 
     this.loadListSupplier();
-    if (this.action === 'EDIT') {
+    if (this.active.hasId && !this.active.isCreate) {
       this.loadData();
     }
   },
@@ -309,8 +309,8 @@ export default {
         items: this.items.map((it) => ({ id: it.id })),
       };
       let url = '/v1/jastip/outbound-manifest';
-      let method = this.action === 'ADD' ? 'put' : 'post';
-      if (this.action === 'EDIT') {
+      let method = this.active.isCreate ? 'put' : 'post';
+      if (this.active.isUpdate) {
         param.id = this.$route.params.id;
       }
       this.$isLoading(true);
