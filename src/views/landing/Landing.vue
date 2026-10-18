@@ -55,6 +55,8 @@
           <li>Lacak real-time</li>
           <li>Admin responsif</li>
         </ul>
+        <!-- Sosial: hanya muncul kalau link di sys_configuration_mst terisi -->
+        <SocialIcons v-if="socialLinks.length" :links="socialLinks" class="lp-hero-social" />
       </div>
     </header>
 
@@ -246,18 +248,23 @@
           © {{ year }} — Jastip Thailand &amp; All Brand
         </span>
       </div>
+      <!-- Sosial di footer: baris ikon di bawah brand, hanya bila link terisi -->
+      <div v-if="socialLinks.length" class="lp-wrap lp-footer-social">
+        <SocialIcons :links="socialLinks" />
+      </div>
     </footer>
   </div>
 </template>
 
 <script>
 import NavPublic from './NavPublic.vue';
+import SocialIcons from './SocialIcons.vue';
 import { getIdentity } from '../../resource/Identity';
 import { applyPublicSeo, releasePublicSeo } from '../../resource/PublicSeo';
 
 export default {
   name: 'LandingPage',
-  components: { NavPublic },
+  components: { NavPublic, SocialIcons },
   data() {
     return {
       brandLogo: null,
@@ -265,6 +272,9 @@ export default {
       brandAddress: null,
       brandPhone: null,
       brandHandle: 'kharisma_ranii',
+      // Link sosial dari sys_configuration_mst (link_tiktok/instagram/other).
+      // Hanya yang terisi yang diisi di sini → ikon kosong tidak pernah tampil.
+      socialLinks: [],
       openFaq: 0,
       categories: [
         {
@@ -429,6 +439,21 @@ export default {
     toggleFaq(i) {
       this.openFaq = this.openFaq === i ? -1 : i;
     },
+    /**
+     * Susun daftar link sosial dari data identity.
+     * Kolom yang kosong (sudah disaring backend, tapi dijaga lagi di sini)
+     * tidak ikut dirender supaya tidak ada ikon tanpa tujuan.
+     * Label = URL tanpa skema (mis. instagram.com/toko).
+     */
+    buildSocialLinks(id) {
+      return [
+        { key: 'tiktok', label: 'TikTok', url: id.link_tiktok },
+        { key: 'instagram', label: 'Instagram', url: id.link_instagram },
+        { key: 'other', label: 'Lainnya', url: id.link_other },
+      ]
+        .map((s) => ({ ...s, url: String(s.url || '').trim() }))
+        .filter((s) => s.url);
+    },
     async loadIdentity() {
       const id = await getIdentity();
       if (id) {
@@ -436,6 +461,8 @@ export default {
         if (id.identity_name) this.brandName = id.identity_name;
         if (id.identity_address) this.brandAddress = id.identity_address;
         if (id.identity_phone) this.brandPhone = id.identity_phone;
+        // Link sosial (hanya yang terisi) → dipakai blok ikon di hero & footer.
+        this.socialLinks = this.buildSocialLinks(id);
       }
       // Judul ikut brand runtime; applyTabIdentity() tidak menimpa judul
       // ber-flag data-seo="dynamic".
@@ -881,6 +908,23 @@ export default {
 .lp-footer-link:hover {
   color: #fff;
   text-decoration: underline;
+}
+/* Sosial di hero: sejajar di tengah, sedikit di bawah trust badges */
+.lp-hero-social {
+  justify-content: center;
+  margin-top: 22px;
+}
+.lp-hero-social :deep(.social-icons__link) {
+  color: #e0e7ff;
+}
+/* Sosial di footer: baris ikon di bawah brand */
+.lp-footer-social {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+.lp-footer-social :deep(.social-icons__link) {
+  color: #cbd5e1;
 }
 .lp-dot-mini {
   display: inline-block;
