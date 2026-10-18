@@ -247,6 +247,22 @@
                   General System Settings
                 </CCardHeader>
                 <CCardBody>
+                  <p style="font-weight: bold">Link</p>
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Tiktok"
+                    v-model="data.link_tiktok"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Instagram"
+                    v-model="data.link_instagram"
+                  />
+                  <InputDefault
+                    :col="[3, 7]"
+                    title="Other"
+                    v-model="data.link_other"
+                  />
                   <p style="font-weight: bold">Pictures</p>
                   <!-- Identity Logo -->
                   <CCol sm="10" lg="10">
@@ -820,9 +836,7 @@ export default {
     },
     getFullNameBackup() {
       let timestamp = moment(new Date()).format('YYYYMMDD-hhmmss');
-      return `${this.data.backup_prefix || ''}${this.info.database}_L3v${
-        this.info.app_version
-      }_Full_${timestamp}.pgb`;
+      return `${this.data.backup_prefix || ''}${this.info.database}_${timestamp}.7z`;
     },
   },
 };

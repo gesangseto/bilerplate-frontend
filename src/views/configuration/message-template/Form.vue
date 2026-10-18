@@ -10,13 +10,22 @@
             <CForm novalidate>
               <CCol sm="12">
                 <InputDefault
-                  :disabled="action == 'Read'"
+                  :disabled=true
                   required
                   :col="[3, 9]"
                   title="Code"
                   placeholder="Enter template code (e.g. REQUEST_PAYMENT)"
                   v-model="formData.code"
                   :is-valid="initialLoad ? null : !formData.code ? false : true"
+                />
+              </CCol>
+              <CCol sm="12">
+                <InputDefault
+                  :disabled=true
+                  :col="[3, 9]"
+                  title="Trigger Event"
+                  placeholder="e.g. request_payment, item_shipping"
+                  v-model="formData.trigger_event"
                 />
               </CCol>
               <CCol sm="12">
@@ -44,30 +53,6 @@
                 <SelectDefault
                   :disabled="action == 'Read'"
                   :col="[3, 9]"
-                  title="Channel"
-                  placeholder="Select channel"
-                  v-model="formData.channel"
-                  :options="channelOptions"
-                  :is-valid="
-                    initialLoad ? null : !formData.channel ? false : true
-                  "
-                />
-              </CCol>
-
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read'"
-                  :col="[3, 9]"
-                  title="Trigger Event"
-                  placeholder="e.g. request_payment, item_shipping"
-                  v-model="formData.trigger_event"
-                />
-              </CCol>
-
-              <CCol sm="12">
-                <SelectDefault
-                  :disabled="action == 'Read'"
-                  :col="[3, 9]"
                   title="Content Type"
                   placeholder="Select content type"
                   v-model="formData.content_type"
@@ -76,32 +61,11 @@
               </CCol>
 
               <CCol sm="12">
-                <SelectDefault
-                  :disabled="action == 'Read'"
-                  :col="[3, 9]"
-                  title="Recipient Type"
-                  placeholder="Select recipient type"
-                  v-model="formData.recipient_type"
-                  :options="recipientTypeOptions"
-                />
-              </CCol>
-
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read'"
-                  :col="[3, 9]"
-                  title="Subject (Email)"
-                  placeholder="Email subject line"
-                  v-model="formData.subject"
-                />
-              </CCol>
-
-              <CCol sm="12">
                 <TextareaDefault
                   :disabled="action == 'Read'"
                   :col="[3, 9]"
                   title="Content Template"
-                  placeholder="Enter template with "
+                  placeholder="Enter template  "
                   v-model="formData.content_template"
                   :rows="6"
                   :is-valid="
@@ -113,8 +77,8 @@
                   "
                 />
                 <small class="text-muted d-block mt-1">
-                  Gunakan {{ variable }} untuk placeholder. Contoh:
-                  {{ customer_name }}, {{ order_number }}, {{ amount }}
+                  Gunakan {{ 'variable' }} untuk placeholder. Contoh:
+                  {{ 'customer_name' }}, {{ 'order_number' }}, {{ 'amount' }}. Variabel yang tersedia tergantung pada trigger event yang dipilih.
                 </small>
               </CCol>
 
@@ -167,20 +131,12 @@ export default {
       route_action: '',
       action: 'Edit',
       formData: {},
-      channelOptions: [
-        { value: 'wa', label: 'WhatsApp' },
-        { value: 'email', label: 'Email' },
-        { value: 'sms', label: 'SMS' },
-      ],
+      channelOptions: [], // removed from UI
       contentTypeOptions: [
         { value: 'text', label: 'Text' },
         { value: 'html', label: 'HTML' },
       ],
-      recipientTypeOptions: [
-        { value: 'customer', label: 'Customer' },
-        { value: 'all', label: 'All' },
-        { value: 'segment', label: 'Segment' },
-      ],
+      recipientTypeOptions: [], // removed from UI
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
@@ -206,8 +162,6 @@ export default {
       if (!this.formData.code) {
         return false;
       } else if (!this.formData.name) {
-        return false;
-      } else if (!this.formData.channel) {
         return false;
       } else if (!this.formData.content_template) {
         return false;
