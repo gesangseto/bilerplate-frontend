@@ -5,22 +5,12 @@
 <script>
 import Vue from 'vue';
 import loading from 'vuejs-loading-screen';
-// Impor ikon vue-awesome satu per satu. Sebelumnya 'vue-awesome/icons'
-// mengimpor SELURUH ikon (~5 MB) ke bundle awal, padahal hanya 14 yang dipakai.
+// Ikon vue-awesome untuk HALAMAN PUBLIK. Hanya 'eye'/'eye-slash' yang
+// dipakai di luar area admin (lihat ChangePassword.vue).
+// Ikon lain untuk area admin didaftarkan di TheContainer.vue (chunk lazy),
+// sehingga bundle awal halaman publik tetap ramping.
 import 'vue-awesome/icons/eye';
 import 'vue-awesome/icons/eye-slash';
-import 'vue-awesome/icons/search';
-import 'vue-awesome/icons/filter';
-import 'vue-awesome/icons/angle-right';
-import 'vue-awesome/icons/angle-down';
-import 'vue-awesome/icons/qrcode';
-import 'vue-awesome/icons/sync';
-import 'vue-awesome/icons/cogs';
-import 'vue-awesome/icons/broom';
-import 'vue-awesome/icons/trash-alt';
-import 'vue-awesome/icons/paper-plane';
-import 'vue-awesome/icons/download';
-import 'vue-awesome/icons/clipboard-check';
 import Icon from 'vue-awesome/components/Icon';
 import VueCustomTooltip from '@adamdehaven/vue-custom-tooltip';
 import VueTouchKeyboard from 'vue-touch-keyboard';

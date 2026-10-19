@@ -29,6 +29,10 @@
 </template>
 
 <script>
+// Daftarkan SELURUH ikon vue-awesome untuk area admin (sidebar, tombol edit/hapus,
+// dsb). TheContainer adalah komponen lazy (chunk terpisah), jadi ikon-ikon ini
+// tidak ikut ke bundle awal halaman publik seperti landing/login.
+import 'vue-awesome/icons';
 import TheSidebar from './TheSidebar';
 import TheHeader from './TheHeader';
 import TheFooter from './TheFooter';
