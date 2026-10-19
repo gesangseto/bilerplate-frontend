@@ -41,7 +41,8 @@
 }
 </style>
 <script>
-import bwipjs from 'bwip-js';
+// bwip-js dimuat dinamis di generateBarcode() (lihat di bawah) agar library
+// barcode (~4,9 MB) tidak masuk bundle awal halaman publik.
 import invalid_barcode from '../../assets/invalid_barcode.png';
 export default {
   name: 'ModalBarcodeGenerator',
@@ -95,13 +96,16 @@ export default {
     handleClose() {
       this.showModal = false;
     },
-    generateBarcode(barcode) {
+    async generateBarcode(barcode) {
       if (!barcode) {
         this.invalidBarcode();
         return;
       }
       let parse = barcode;
       this.barcode_hr = this.renderEpcHr(parse) ?? ' ';
+      const bwipjsMod = await import('bwip-js');
+      const bwipjs = bwipjsMod.default || bwipjsMod;
+      if (!document.getElementById('canvasBarcode')) return;
       bwipjs.toCanvas('canvasBarcode', {
         bcid: `gs1datamatrix`, // Barcode type
         text: parse, // Text to encode

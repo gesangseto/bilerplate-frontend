@@ -154,23 +154,23 @@
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="/jastip-icon-180.png"
+      href="/jastip-icon-180.png?v=4"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="32x32"
-      href="/favicon-32.png?v=2"
+      href="/favicon-32.png?v=4"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="192x192"
-      href="/jastip-icon-192.png"
+      href="/jastip-icon-192.png?v=4"
     />
     <link rel="manifest" href="/manifest.json" />
     <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="msapplication-TileImage" content="/jastip-icon-192.png" />
+    <meta name="msapplication-TileImage" content="/jastip-icon-192.png?v=4" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -217,6 +217,9 @@
 
     <!-- ... -->
     <link href="/NP/nprogress.css" rel="stylesheet" />
+    <!-- Sengaja TANPA defer: bundle app (chunk-vendors/app.js) tidak memakai
+         defer, dan script non-defer dieksekusi lebih dulu. Bila nprogress
+         di-defer, ia bisa dieksekusi SETELAH router memakai NProgress. -->
     <script src="/NP/nprogress.js"></script>
   </head>
 

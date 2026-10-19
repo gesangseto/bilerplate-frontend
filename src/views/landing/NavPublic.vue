@@ -2,7 +2,17 @@
   <nav class="pn" aria-label="Navigasi utama">
     <div class="pn-inner">
       <router-link class="pn-brand" to="/landing">
-        <span class="pn-logo-box">
+        <span
+          class="pn-logo-box"
+          :class="{ 'is-clickable': !!brandLogo }"
+          :role="brandLogo ? 'button' : null"
+          :tabindex="brandLogo ? 0 : null"
+          :title="brandLogo ? 'Klik untuk lihat logo lebih besar' : null"
+          :aria-label="brandLogo ? `Perbesar logo ${brandName}` : null"
+          @click.stop.prevent="brandLogo && (logoZoom = true)"
+          @keydown.enter.stop.prevent="brandLogo && (logoZoom = true)"
+          @keydown.space.stop.prevent="brandLogo && (logoZoom = true)"
+        >
           <img
             v-if="brandLogo"
             :src="brandLogo"
@@ -28,6 +38,32 @@
         <router-link class="pn-btn" to="/login">Login</router-link>
       </div>
     </div>
+
+    <!-- Lightbox logo (klik logo navbar untuk melihat versi besar) -->
+    <transition name="pn-fade">
+      <div
+        v-if="logoZoom && brandLogo"
+        class="pn-logo-modal"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="`Logo ${brandName}`"
+        @click.self="logoZoom = false"
+      >
+        <button
+          type="button"
+          class="pn-logo-modal__close"
+          aria-label="Tutup"
+          @click="logoZoom = false"
+        >
+          ×
+        </button>
+        <img
+          class="pn-logo-modal__img"
+          :src="brandLogo"
+          :alt="`Logo ${brandName}`"
+        />
+      </div>
+    </transition>
   </nav>
 </template>
 
@@ -38,18 +74,31 @@ export default {
   name: 'NavPublic',
   data() {
     return {
-      brandLogo: null,
+      // Logo brand statis (vector SVG) — konsisten dengan halaman landing.
+      brandLogo: '/brand-logo.svg',
       brandName: 'Fiorella Zeanne',
+      // Lightbox: tampilkan logo versi besar saat diklik.
+      logoZoom: false,
     };
   },
   created() {
     this.loadIdentity();
   },
+  mounted() {
+    window.addEventListener('keydown', this.onKeydown);
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.onKeydown);
+  },
   methods: {
+    onKeydown(e) {
+      if (e.key === 'Escape' && this.logoZoom) this.logoZoom = false;
+    },
     async loadIdentity() {
       const id = await getIdentity();
       if (id) {
-        if (id.identity_logo_path) this.brandLogo = id.identity_logo_path;
+        // Logo in-page memakai aset statis (brand-logo.svg); identity_logo_path
+        // hanya dipakai untuk ikon tab (favicon).
         if (id.identity_name) this.brandName = id.identity_name;
       }
     },
@@ -82,9 +131,20 @@ export default {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(8px);
   border-bottom: 1px solid #e2e8f0;
+}
+/* Latar + blur dipindah ke pseudo-element. backdrop-filter pada .pn akan
+   menjadikan fixed milik lightbox terikat ke kotak navbar (bukan viewport),
+   sehingga modal tidak menutupi layar. Sebagai pseudo (bukan ancestor modal)
+   tampilan navbar tetap sama. */
+.pn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 .pn-inner {
   max-width: 1080px;
@@ -127,6 +187,71 @@ export default {
   border-radius: 4px;
   background: linear-gradient(135deg, #4f46e5, #0ea5e9);
   display: inline-block;
+}
+.pn-logo-box.is-clickable {
+  cursor: zoom-in;
+  border-radius: 10px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.pn-logo-box.is-clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.22);
+}
+.pn-logo-box.is-clickable:focus-visible {
+  outline: 3px solid rgba(79, 70, 229, 0.7);
+  outline-offset: 2px;
+}
+
+/* Lightbox logo (klik logo navbar untuk melihat versi besar) */
+.pn-logo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.72);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+.pn-logo-modal__img {
+  width: auto;
+  height: auto;
+  max-width: min(80vw, 560px);
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+.pn-logo-modal__close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+.pn-logo-modal__close:hover {
+  background: #fff;
+}
+.pn-fade-enter-active,
+.pn-fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+.pn-fade-enter,
+.pn-fade-leave-to {
+  opacity: 0;
 }
 .pn-links {
   display: flex;

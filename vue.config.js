@@ -1,5 +1,6 @@
 const path = require('path');
 const zlib = require('zlib');
+const webpack = require('webpack');
 module.exports = {
   // Enable Compression Website
   pluginOptions: {
@@ -31,10 +32,30 @@ module.exports = {
     resolve: {
       symlinks: false,
     },
+    plugins: [
+      // Moment membawa semua berkas locale (~1,8 MB). Aplikasi tidak pernah
+      // memanggil moment.locale(...) (format tanggal memakai locale default
+      // Inggris), jadi berkas locale diabaikan untuk mengecilkan bundle awal.
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
+    ],
+  },
+  chainWebpack: (config) => {
+    // Jangan prefetch SEMUA chunk route saat muat pertama. Secara default
+    // @vue/preload-webpack-plugin menyuntik <link rel="prefetch"> untuk setiap
+    // chunk async (~137 chunk), sehingga halaman landing (yang cuma butuh 1
+    // chunk) ikut mengunduh ~20 MB JS yang tidak terpakai. Chunk kini dimuat
+    // saat rutenya benar-benar dibuka.
+    config.plugins.delete('prefetch');
   },
   transpileDependencies: ['@coreui/utils'],
     outputDir: path.resolve(__dirname, '../public'),
     devServer: {
+      // Kompresi respons dev server (gzip). Untuk klien jauh (mis. lewat
+      // tunnel) ini memangkas transfer drastis; di localhost efeknya kecil.
+      compress: true,
       watchOptions: {
         poll: 1000,
         aggregateTimeout: 300,

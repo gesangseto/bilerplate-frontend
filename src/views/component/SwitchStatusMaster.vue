@@ -19,20 +19,24 @@ export default {
   mounted() {},
   data() {
     return {
-      status_text: 'Active',
       status: true,
     };
   },
+  computed: {
+    status_text() {
+      return this.status ? 'Active' : 'Inactive';
+    },
+  },
   watch: {
     default_value: {
-      handler(n, o) {
-        this.status = n == 'Active' ? true : false;
+      immediate: true,
+      handler(n) {
+        this.status = String(n).toLowerCase() == 'active';
       },
       deep: true,
     },
     status: {
-      handler(n, o) {
-        this.status_text = this.status ? 'Active' : 'Inactive';
+      handler() {
         this.handleChange();
       },
       deep: true,

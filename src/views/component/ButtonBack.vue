@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-inline-block align-middle">
     <CButton
       type="reset"
       size="sm"

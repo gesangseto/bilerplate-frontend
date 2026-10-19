@@ -640,16 +640,13 @@ export default {
           delete this.formData.pwd;
         }
         // if (getUserId() == 0) this.formData.is_sys = 0;
-        let tlp = '';
-        if (data.tlp) {
-          tlp = data.tlp.split('-');
-          if (tlp.length == 2) {
-            this.formData.tlp_code = tlp[0];
-            this.formData.tlp = tlp[1];
-          } else {
-            this.formData.tlp_code = '+62';
-            this.formData.tlp = tlp[0];
-          }
+        // API mengembalikan kolom `phone` (format '+62...'), bukan `tlp`.
+        // Pisah kembali menjadi country code + nomor lokal untuk form.
+        const phoneVal = data.phone || data.tlp;
+        if (phoneVal) {
+          const parsed = this.splitPhone(phoneVal);
+          this.formData.tlp_code = parsed.code;
+          this.formData.tlp = parsed.local;
         }
         this.onDepartmentChange();
       }
@@ -730,6 +727,28 @@ export default {
     },
     checkPhone(val) {
       return isPhone(val);
+    },
+    // Pisah nomor tersimpan ('+62...' / '62-...') menjadi country code + lokal.
+    splitPhone(value) {
+      const raw = String(value).trim();
+      const digits = raw.replace(/\D/g, '');
+      const codes = (this.CountryCode || [])
+        .map((c) => ({
+          code: c.value,
+          digits: String(c.value).replace(/\D/g, ''),
+        }))
+        .filter((c) => c.digits)
+        .sort((a, b) => b.digits.length - a.digits.length);
+      for (const c of codes) {
+        if (digits.startsWith(c.digits)) {
+          return { code: c.code, local: digits.slice(c.digits.length) };
+        }
+      }
+      // Fallback: pakai '+62' bila tidak ada kode yang cocok.
+      if (digits.startsWith('62')) {
+        return { code: '+62', local: digits.slice(2) };
+      }
+      return { code: '+62', local: digits };
     },
     checkEmail(val) {
       return isEmail(val);

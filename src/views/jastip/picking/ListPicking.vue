@@ -4,9 +4,14 @@
       <CCard>
         <CCardHeader>
           <ButtonPermission
-            exportType="add"
             :permission="'create'"
             @click="handleAdd()"
+          />
+          <ButtonPermission
+            :permission="'approve'"
+            :buttonProperty="btnUploadWaybill"
+            :useHref="false"
+            @click="modalUploadWaybill()"
           />
           <h5>{{ $activeMenu.name }}</h5>
         </CCardHeader>
@@ -77,6 +82,13 @@
       v-on:handleSubmit="handleSend($event)"
     />
     <!-- END SEND MODAL -->
+
+    <!-- UPLOAD WAYBILL MODAL -->
+    <PickingUploadWaybillModal
+      :property="uploadProperty"
+      v-on:done="handleUploadDone()"
+    />
+    <!-- END UPLOAD WAYBILL MODAL -->
   </CRow>
 </template>
 
@@ -95,6 +107,7 @@ import {
 } from '../../../resource/TrxPicking';
 import PickingActionModal from './PickingActionModal';
 import PickingSendModal from './PickingSendModal';
+import PickingUploadWaybillModal from './PickingUploadWaybillModal';
 
 const STATUS_PICKING = {
   '-1': 'Canceled',
@@ -106,7 +119,7 @@ const STATUS_PICKING = {
 
 export default {
   name: 'ListPicking',
-  components: { PickingActionModal, PickingSendModal },
+  components: { PickingActionModal, PickingSendModal, PickingUploadWaybillModal },
   data() {
     return {
       totalData: 0,
@@ -125,6 +138,17 @@ export default {
         courier_number: '',
         courier_price: null,
         courier_currency: 'IDR',
+      },
+      uploadProperty: {
+        modal: false,
+      },
+      btnUploadWaybill: {
+        size: 'sm',
+        class: 'float-right',
+        color: 'primary',
+        icon: 'cloud-upload',
+        text: ' Upload Waybill',
+        tooltip: 'Upload Waybill',
       },
       btnSend: {
         size: 'sm',
@@ -193,6 +217,12 @@ export default {
     },
     handleAdd() {
       this.$router.push({ path: '/jastip/picking/create' });
+    },
+    modalUploadWaybill() {
+      this.uploadProperty = { modal: true };
+    },
+    handleUploadDone() {
+      this.loadData();
     },
     modalCancel(item) {
       this.cancelProperty = {

@@ -4,7 +4,6 @@
       <CCard>
         <CCardHeader>
           <ButtonPermission
-            exportType="add"
             :permission="'create'"
             @click="handleAdd()"
           />

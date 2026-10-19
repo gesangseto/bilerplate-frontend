@@ -2,6 +2,7 @@
   <component
     :is="href ? 'router-link' : 'div'"
     v-bind="href ? { to: href } : {}"
+    :class="isExportButton ? 'd-inline-block align-middle' : ''"
   >
     <CButton
       :class="property.class"
@@ -84,6 +85,14 @@ export default {
       this.property = this.btn_bpom_report;
     }
   },
+  computed: {
+    // Hanya tipe export yang benar-benar perlu wrapper inline-block.
+    // Nilai lain (mis. "add") tidak boleh mengubah layout header.
+    isExportButton() {
+      const type = (this.exportType || '').toLowerCase();
+      return ['excel', 'pdf', 'bpom-report'].includes(type);
+    },
+  },
   data() {
     return {
       href: null,
@@ -99,7 +108,7 @@ export default {
       },
       btn_export_excel: {
         size: 'sm',
-        class: 'float-right',
+        class: '',
         color: 'secondary',
         icon: 'file-alt',
         text: 'excel',
@@ -107,7 +116,7 @@ export default {
       },
       btn_export_pdf: {
         size: 'sm',
-        class: 'float-right',
+        class: '',
         color: 'secondary',
         icon: 'file-pdf',
         text: 'pdf',

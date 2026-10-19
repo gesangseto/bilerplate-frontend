@@ -46,7 +46,7 @@ export default {
         { key: 'username', label: 'Username' },
         { key: 'full_name', label: 'Full Name' },
         { key: 'email', label: 'Email' },
-        { key: 'tlp', label: 'Phone Number' },
+        { key: 'phone', label: 'Phone Number' },
         { key: 'department_name', label: 'Department' },
         { key: 'section_name', label: 'Section' },
         // { key: "mst_position_name", label: "Level" },

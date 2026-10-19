@@ -157,7 +157,7 @@ import { ModelSelect } from 'vue-search-select';
 import 'vue-search-select/dist/VueSearchSelect.css';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import { getStatusDesc } from '../../resource/StatusDesc';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 export default {
   name: 'TableDefault',
   props: {
@@ -273,7 +273,7 @@ export default {
       const currentQuery = { ...query };
       const targetQuery = { ...this.filter }; // Contoh
       // Cek apakah query sudah sama
-      const isSameRoute = _.isEqual(
+      const isSameRoute = isEqual(
         this.normalizeObject(currentQuery),
         this.normalizeObject(targetQuery),
       );

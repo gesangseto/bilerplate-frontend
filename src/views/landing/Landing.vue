@@ -5,7 +5,17 @@
     <!-- HERO -->
     <header class="lp-hero">
       <div class="lp-hero-inner">
-        <div class="lp-hero-logo" :class="{ 'is-placeholder': !brandLogo }">
+        <div
+          class="lp-hero-logo"
+          :class="{ 'is-placeholder': !brandLogo, 'is-clickable': !!brandLogo }"
+          :role="brandLogo ? 'button' : null"
+          :tabindex="brandLogo ? 0 : null"
+          :title="brandLogo ? 'Klik untuk lihat logo lebih besar' : null"
+          :aria-label="brandLogo ? `Perbesar logo ${brandName}` : null"
+          @click="brandLogo && (logoZoom = true)"
+          @keydown.enter.prevent="brandLogo && (logoZoom = true)"
+          @keydown.space.prevent="brandLogo && (logoZoom = true)"
+        >
           <img
             v-if="brandLogo"
             :src="brandLogo"
@@ -19,6 +29,32 @@
             brandInitial
           }}</span>
         </div>
+
+        <!-- Lightbox logo: klik logo untuk melihat versi besar -->
+        <transition name="lp-fade">
+          <div
+            v-if="logoZoom && brandLogo"
+            class="lp-logo-modal"
+            role="dialog"
+            aria-modal="true"
+            :aria-label="`Logo ${brandName}`"
+            @click.self="logoZoom = false"
+          >
+            <button
+              type="button"
+              class="lp-logo-modal__close"
+              aria-label="Tutup"
+              @click="logoZoom = false"
+            >
+              ×
+            </button>
+            <img
+              class="lp-logo-modal__img"
+              :src="brandLogo"
+              :alt="`Logo ${brandName}`"
+            />
+          </div>
+        </transition>
         <span class="lp-pill">Jastip Thailand &amp; All Brand</span>
         <h1>
           Titip apa aja dari Bangkok &amp; seluruh dunia —
@@ -31,12 +67,13 @@
         </p>
         <div class="lp-cta">
           <a
+            v-if="waUrl"
             class="lp-btn lp-btn-primary"
-            :href="igUrl"
+            :href="waUrl"
             target="_blank"
             rel="noopener"
           >
-            Order via Instagram
+            Order via WhatsApp
           </a>
           <router-link class="lp-btn lp-btn-ghost" to="/tracking">
             Lacak Paket
@@ -198,12 +235,13 @@
           </p>
           <div class="lp-cta">
             <a
+              v-if="waUrl"
               class="lp-btn lp-btn-primary"
-              :href="igUrl"
+              :href="waUrl"
               target="_blank"
               rel="noopener"
             >
-              Order via Instagram
+              Order via WhatsApp
             </a>
             <router-link class="lp-btn lp-btn-ghost" to="/tracking">
               Lacak Paket
@@ -220,15 +258,7 @@
             <span class="lp-dot-mini" aria-hidden="true"></span> {{ brandName }}
           </span>
           <span class="lp-footer-contact">
-            <a
-              class="lp-footer-link"
-              :href="igUrl"
-              target="_blank"
-              rel="noopener"
-              >@{{ brandHandle }}</a
-            >
             <template v-if="brandAddress || brandPhone">
-              <span aria-hidden="true"> · </span>
               <span v-if="brandAddress">{{ brandAddress }}</span>
               <span v-if="brandAddress && brandPhone" aria-hidden="true">
                 ·
@@ -267,11 +297,15 @@ export default {
   components: { NavPublic, SocialIcons },
   data() {
     return {
-      brandLogo: null,
+      // Logo brand statis (vector SVG hasil rekreasi). Dipakai di hero & nav;
+      // bisa diklik untuk dibuka versi besarnya (lightbox). identity_logo_path
+      // tetap dipakai untuk ikon tab (favicon) lewat applyTabIdentity().
+      brandLogo: '/brand-logo.svg',
       brandName: 'Fiorella Zeanne',
       brandAddress: null,
       brandPhone: null,
-      brandHandle: 'kharisma_ranii',
+      // Lightbox: tampilkan logo versi besar saat diklik.
+      logoZoom: false,
       // Link sosial dari sys_configuration_mst (link_tiktok/instagram/other).
       // Hanya yang terisi yang diisi di sini → ikon kosong tidak pernah tampil.
       socialLinks: [],
@@ -331,7 +365,7 @@ export default {
       steps: [
         {
           title: 'Chat admin',
-          desc: 'DM Instagram @kharisma_ranii atau WhatsApp.',
+          desc: 'Hubungi admin via WhatsApp.',
         },
         {
           title: 'Kirim detail barang',
@@ -407,9 +441,11 @@ export default {
   },
   mounted() {
     applyPublicSeo({ title: this.seoTitle, path: '/landing' });
+    window.addEventListener('keydown', this.onKeydown);
   },
   beforeDestroy() {
     releasePublicSeo();
+    window.removeEventListener('keydown', this.onKeydown);
   },
   computed: {
     year() {
@@ -419,19 +455,23 @@ export default {
       const name = (this.brandName || 'F').trim();
       return name.charAt(0).toUpperCase();
     },
-    igUrl() {
-      return `https://instagram.com/${this.brandHandle}`;
-    },
     waUrl() {
       if (!this.brandPhone) return null;
-      const digits = String(this.brandPhone).replace(/\D/g, '');
-      return digits ? `https://wa.me/${digits}` : null;
+      let digits = String(this.brandPhone).replace(/\D/g, '');
+      if (!digits) return null;
+      // Normalisasi ke format internasional (62...) agar tautan wa.me valid.
+      if (digits.startsWith('0')) digits = `62${digits.slice(1)}`;
+      else if (digits.startsWith('8')) digits = `62${digits}`;
+      return `https://wa.me/${digits}`;
     },
     seoTitle() {
       return `${this.brandName} — Jastip Thailand & All Brand | Open PO Bangkok Terpercaya`;
     },
   },
   methods: {
+    onKeydown(e) {
+      if (e.key === 'Escape' && this.logoZoom) this.logoZoom = false;
+    },
     scrollTo(id) {
       const el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -457,7 +497,8 @@ export default {
     async loadIdentity() {
       const id = await getIdentity();
       if (id) {
-        if (id.identity_logo_path) this.brandLogo = id.identity_logo_path;
+        // Logo in-page memakai aset statis (brand-logo.svg) agar tajam & bisa
+        // diperbesar; identity_logo_path hanya untuk ikon tab (favicon).
         if (id.identity_name) this.brandName = id.identity_name;
         if (id.identity_address) this.brandAddress = id.identity_address;
         if (id.identity_phone) this.brandPhone = id.identity_phone;
@@ -536,6 +577,70 @@ export default {
   height: 100%;
   object-fit: contain;
   border-radius: 12px;
+}
+.lp-hero-logo.is-clickable {
+  cursor: zoom-in;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.lp-hero-logo.is-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.28);
+}
+.lp-hero-logo.is-clickable:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 3px;
+}
+
+/* Lightbox logo (klik logo hero untuk melihat versi besar) */
+.lp-logo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.72);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+.lp-logo-modal__img {
+  width: auto;
+  height: auto;
+  max-width: min(80vw, 560px);
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+.lp-logo-modal__close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+.lp-logo-modal__close:hover {
+  background: #fff;
+}
+.lp-fade-enter-active,
+.lp-fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+.lp-fade-enter,
+.lp-fade-leave-to {
+  opacity: 0;
 }
 .lp-hero-initial {
   font-size: 30px;

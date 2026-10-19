@@ -6,7 +6,6 @@ import router from './router';
 import CoreuiVue from '@coreui/vue';
 import VueToast from 'vue-toast-notification';
 import Vuelidate from 'vuelidate';
-import VuelidateErrorExtractor, { templates } from 'vuelidate-error-extractor';
 import { iconsSet as icons } from './assets/icons/icons.js';
 import store from './store';
 import { applyTabIdentity } from './resource/Identity';
@@ -14,40 +13,19 @@ import 'vue-toast-notification/dist/theme-default.css';
 // import JQuery from 'jquery'
 import './assets/css/jquery-ui.css';
 import vSelect from 'vue-select';
-import { MLInstaller } from 'vue-multilanguage';
-import VueExcelXlsx from 'vue-excel-xlsx';
-import Print from 'vue-print-nb';
-import VueHtmlToPaper from 'vue-html-to-paper';
-import '@fortawesome/fontawesome-free/css/all.css';
-const options = {
-  name: '',
-  specs: ['fullscreen=yes', 'titlebar=no', 'scrollbars=no'],
-  styles: [
-    'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
-    'https://unpkg.com/kidlat-css/css/kidlat.css',
-  ],
-};
+// Plugin yang tidak terpakai dihapus dari bootstrap agar tidak membebani bundle
+// awal halaman publik:
+//  - vue-excel-xlsx  (menarik xlsx ~3,6 MB) — tidak ada <vue-excel-xlsx>
+//  - vue-print-nb    ($print tidak dipakai)
+//  - vue-html-to-paper ($htmlToPaper tidak dipakai)
+//  - vue-multilanguage ($ml tidak dipakai)
+//  - vuelidate-error-extractor (komponen form-group-row tidak dipakai)
+//  - CSS @fortawesome (class fa-* tidak dipakai)
+// Tambahkan kembali hanya jika fiturnya benar-benar dipakai.
 Vue.config.performance = true;
-Vue.use(VueHtmlToPaper, options);
 Vue.use(CoreuiVue);
 Vue.use(VueToast);
 Vue.use(Vuelidate);
-Vue.use(VueExcelXlsx);
-Vue.use(Print);
-
-// Vue.use(JQuery)
-Vue.use(MLInstaller);
-Vue.use(VuelidateErrorExtractor, {
-  i18n: false,
-  messages: {
-    required: '{attribute} is required!',
-    email: '{attribute} is not a valid Email address.',
-    isEmailAvailable:
-      '{attribute} is not available. Must be at least 10 characters long.',
-  },
-});
-
-Vue.component('form-group-row', templates.singleErrorExtractor.foundation6);
 Vue.component('v-select', vSelect);
 Vue.prototype.$log = console.log.bind(console);
 Vue.prototype.$activeMenu = { name: '', link: null };

@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import bwipjs from 'bwip-js';
+// bwip-js dimuat dinamis di generateBarcode() agar tidak masuk bundle awal.
 import { parsingDataToBarcode, isValidEpcKey, isValidNie } from '../../utils';
 import invalid_barcode from '../../assets/invalid_barcode.png';
 import moment from 'moment';
@@ -337,7 +337,7 @@ export default {
       this.valid = this.initial_valid();
       this.$emit('handleReset', this.result);
     },
-    generateBarcode() {
+    async generateBarcode() {
       let obj_result = JSON.parse(JSON.stringify(this.result));
       this.barcode_property.data.barcode = parsingDataToBarcode({
         data_object: obj_result,
@@ -349,6 +349,9 @@ export default {
       }
       this.barcode_property.data.barcode_hr =
         this.renderEpcHr(this.barcode_property.data.barcode) ?? ' ';
+      const bwipjsMod = await import('bwip-js');
+      const bwipjs = bwipjsMod.default || bwipjsMod;
+      if (!document.getElementById('canvasBarcode')) return;
       bwipjs.toCanvas('canvasBarcode', {
         bcid: `gs1datamatrix`, // Barcode type
         text: this.barcode_property.data.barcode, // Text to encode

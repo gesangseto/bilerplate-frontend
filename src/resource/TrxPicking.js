@@ -127,3 +127,60 @@ export const cancelPicking = async (param = Object) => {
       });
   });
 };
+
+// Upload Waybill (generik multi-kurir) — preview parse + match (multipart).
+export const importWaybill = async (formData) => {
+  if (!formData) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axios
+      .post(url + '/waybill-import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((result) => {
+        return resolve(result.data);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
+// Simpan audit hasil upload waybill.
+export const saveWaybillImport = async (param = Object) => {
+  if (!param) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    $axios
+      .post(url + '/waybill-import/save', param)
+      .then((result) => {
+        return resolve(result.data);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
+// Cari picking kandidat (status Draft) untuk resolusi manual.
+export const getWaybillCandidates = async (param = Object) => {
+  var query_string = '';
+  if (param) {
+    query_string = new URLSearchParams(param).toString();
+  }
+  return new Promise((resolve) => {
+    $axios
+      .get(`${url}/waybill-candidates?${query_string}`)
+      .then((result) => {
+        return resolve(result.data);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};

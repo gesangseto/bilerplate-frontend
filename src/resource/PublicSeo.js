@@ -12,7 +12,7 @@ import { getIdentity } from './Identity';
 
 const DESCRIPTIONS = {
   landing:
-    'Jastip Thailand & all brand dari Fiorella Zeanne (@kharisma_ranii). Titip skincare, fashion, snack, sampai barang branded dari Bangkok & seluruh dunia. Harga transparan, lacak paket real-time, order via Instagram.',
+    'Jastip Thailand & all brand dari Fiorella Zeanne. Titip skincare, fashion, snack, sampai barang branded dari Bangkok & seluruh dunia. Harga transparan, lacak paket real-time, order via WhatsApp.',
   tracking:
     'Lacak paket jasa titip belanja: masukkan nomor resi kurir atau nomor HP customer untuk melihat status barang dari manifest sampai tiba di penerima.',
 };

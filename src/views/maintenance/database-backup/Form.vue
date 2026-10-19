@@ -95,14 +95,25 @@ export default {
   methods: {
     async backup() {
       let eksekusi = await DatabaseBackup(this.formData);
+      if (!eksekusi) {
+        this.$toast.open({
+          message: 'Gagal memulai backup. Silakan coba lagi.',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 10000,
+        });
+        return;
+      }
       this.$toast.open({
-        message: eksekusi.message.replace(/\n/g, '<br>'),
+        message: `${eksekusi.message || ''}`.replace(/\n/g, '<br>'),
         type: eksekusi.error ? 'error' : 'success',
         dissmissible: true,
         position: 'top-right',
         duration: 10000,
       });
       if (!eksekusi.error) {
+        // Proses berjalan di background; tutup modal supaya user bisa lanjut kerja.
         this.formData.modal = false;
       }
       return;

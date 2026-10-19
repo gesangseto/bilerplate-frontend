@@ -218,7 +218,7 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import { getStatusDesc } from '../../resource/StatusDesc';
 import moment from 'moment';
 import { dateFilter } from '../../constants';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 export default {
   name: 'TableTransaction',
   props: {
@@ -651,7 +651,7 @@ export default {
       const currentQuery = { ...query };
       const targetQuery = { ...this.filter }; // Contoh
       // Cek apakah query sudah sama
-      const isSameRoute = _.isEqual(
+      const isSameRoute = isEqual(
         this.normalizeObject(currentQuery),
         this.normalizeObject(targetQuery),
       );

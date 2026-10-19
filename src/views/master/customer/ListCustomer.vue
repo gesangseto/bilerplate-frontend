@@ -77,10 +77,6 @@ export default {
           label: 'Phone No',
         },
         {
-          key: 'phone_alt',
-          label: 'Alternative Phone No',
-        },
-        {
           key: 'address',
           label: 'Address',
         },
@@ -168,7 +164,6 @@ export default {
         return {
           ...item,
           phone: item.phone ?? '',
-          phone_alt: item.phone_alt ?? '',
           address: addr,
         };
       });

@@ -124,9 +124,13 @@ export default {
   computed: {
     reformatDatas() {
       return this.items.map((item) => {
+        // Baris lama hanya punya kolom `Timestamp`; pakai sebagai fallback
+        // agar Start/End Time tetap terisi.
+        const fallbackTime = item['Timestamp'] || '-';
         return {
           ...item,
-          ['End Time']: item['End Time'] || '-',
+          ['Start Time']: item['Start Time'] || fallbackTime,
+          ['End Time']: item['End Time'] || fallbackTime,
           ['Result Message']: item['Result Message'] || '-',
         };
       });

@@ -59,24 +59,32 @@
                   :col="[3, 9]"
                   required
                   title="Phone Number"
+                  validasi="numeric"
                   v-model="formData.phone"
-                  :max="18"
+                  :max="12"
                   :is-valid="checkPrimaryPhone()"
-                  :invalid_feedback="'Please provide valid phone number (7-15 digits)'"
-                  placeholder="Contoh: 08123456780 atau +628123456780"
-                />
-              </CCol>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="action == 'Read' ? true : false"
-                  :col="[3, 9]"
-                  title="Alternative Phone Number"
-                  v-model="formData.phone_alt"
-                  :max="18"
-                  :is-valid="checkAltPhone()"
-                  :invalid_feedback="'Please provide valid phone number (7-15 digits)'"
-                  placeholder="Contoh: 08123456780 atau +628123456780"
-                />
+                  :invalid_feedback="'Please provide valid phone number (7-12 digits)'"
+                  placeholder="Enter phone number (Example : 81211223344)"
+                >
+                  <template #prepend>
+                    <div style="width: 350px; margin-bottom: -50px">
+                      <SelectOption
+                        :disabled="action == 'Read' ? true : false"
+                        required
+                        :options="CountryCode"
+                        v-on:onchange="handlePhoneCodeChange($event)"
+                        :value="formData.phone_code"
+                        :is-valid="
+                          initial_load
+                            ? null
+                            : !formData.phone_code
+                            ? false
+                            : true
+                        "
+                      />
+                    </div>
+                  </template>
+                </InputDefault>
               </CCol>
               <CCol sm="12">
                 <InputDefault
@@ -136,7 +144,13 @@
 </template>
 
 <script>
-import { capitalizeFirstLetter, isEmail, handleBack } from '../../../utils';
+import {
+  capitalizeFirstLetter,
+  isPhone,
+  coutryCode,
+  isEmail,
+  handleBack,
+} from '../../../utils';
 import {
   getMstCustomer,
   insertMstCustomer,
@@ -148,6 +162,7 @@ export default {
   name: 'Forms',
   watch: {},
   mounted() {
+    this.reformatCountryCode();
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
@@ -162,8 +177,10 @@ export default {
       action: 'Edit',
       formData: {
         status: 'Active',
+        phone_code: null,
         phone: null,
       },
+      CountryCode: coutryCode(),
       statusOptions: [
         { value: 'Active', label: 'Active' },
         { value: 'Inactive', label: 'Inactive' },
@@ -175,10 +192,8 @@ export default {
     checkEmail(val) {
       return isEmail(val);
     },
-    checkPhoneValid(val) {
-      if (!val) return false;
-      const digits = String(val).replace(/\D/g, '');
-      return digits.length >= 7 && digits.length <= 15;
+    checkPhone(val) {
+      return isPhone(val);
     },
     normalizePhoneDigits(val) {
       let digits = String(val || '').replace(/\D/g, '');
@@ -188,21 +203,67 @@ export default {
       if (digits.startsWith('8')) return `62${digits}`;
       return digits;
     },
+    reformatCountryCode() {
+      let list = this.CountryCode;
+      this.CountryCode = [];
+      for (const it of list) {
+        if (it.value) {
+          this.CountryCode.push({
+            value: it.value,
+            label: `(${it.value}) ${it.label}`,
+          });
+        } else {
+          this.CountryCode.push({
+            value: it.value,
+            label: `${it.label}`,
+          });
+        }
+      }
+    },
+    // Pisah nomor tersimpan ('+62...' / '62-...') menjadi country code + lokal.
+    splitPhone(value) {
+      const raw = String(value).trim();
+      const digits = raw.replace(/\D/g, '');
+      const codes = (this.CountryCode || [])
+        .map((c) => ({
+          code: c.value,
+          digits: String(c.value).replace(/\D/g, ''),
+        }))
+        .filter((c) => c.digits)
+        .sort((a, b) => b.digits.length - a.digits.length);
+      for (const c of codes) {
+        if (digits.startsWith(c.digits)) {
+          return { code: c.code, local: digits.slice(c.digits.length) };
+        }
+      }
+      // Fallback: pakai '+62' bila tidak ada kode yang cocok.
+      if (digits.startsWith('62')) {
+        return { code: '+62', local: digits.slice(2) };
+      }
+      return { code: '+62', local: digits };
+    },
+    handlePhoneCodeChange($value) {
+      this.formData.phone_code = $value;
+      this.$forceUpdate();
+    },
     async loadData() {
       let res = await getMstCustomer({ id: this.$route.params.id });
       if (res) {
         let data = res.data[0];
         this.formData = data;
+        // API mengembalikan kolom `phone` (format '+62...').
+        // Pisah kembali menjadi country code + nomor lokal untuk form.
+        if (data.phone) {
+          const parsed = this.splitPhone(data.phone);
+          this.formData.phone_code = parsed.code;
+          this.formData.phone = parsed.local;
+        }
       }
     },
     checkPrimaryPhone() {
       if (this.initial_load) return null;
-      return this.checkPhoneValid(this.formData.phone);
-    },
-    checkAltPhone() {
-      if (this.initial_load) return null;
-      if (!this.formData.phone_alt) return null;
-      return this.checkPhoneValid(this.formData.phone_alt);
+      if (!this.formData.phone_code) return false;
+      return this.checkPhone(this.formData.phone);
     },
     valid() {
       if (!this.formData.name) {
@@ -212,8 +273,6 @@ export default {
       } else if (!this.formData.address) {
         return false;
       } else if (this.checkPrimaryPhone() === false) {
-        return false;
-      } else if (this.checkAltPhone() === false) {
         return false;
       } else if (this.formData.error_metadata) {
         return false;
@@ -231,23 +290,16 @@ export default {
           duration: 5000,
         });
         return;
-      } else if (
-        this.formData.phone &&
-        this.formData.phone_alt &&
-        this.normalizePhoneDigits(this.formData.phone) ===
-          this.normalizePhoneDigits(this.formData.phone_alt)
-      ) {
-        this.$toast.open({
-          message:
-            ' Primary Phone Number and Alternative Phone Number must be different.',
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-        return;
       }
       let dataPost = JSON.parse(JSON.stringify(this.formData));
+      // Gabungkan country code + nomor lokal menjadi satu nilai, lalu buang
+      // field bantu yang tidak dikenal backend. Awalan 0 pada nomor lokal
+      // dibuang agar tidak menghasilkan '+620...'.
+      if (dataPost.phone && dataPost.phone_code) {
+        const local = String(dataPost.phone).replace(/^0+/, '');
+        dataPost.phone = `${dataPost.phone_code}-${local}`;
+      }
+      delete dataPost.phone_code;
       var message = this.$route.params.id
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
