@@ -69,7 +69,13 @@
           disposal lain tidak dapat dipilih.
         </p>
 
-        <CTable striped responsive hover :items="form.items" :fields="fields">
+        <CDataTable
+          striped
+          responsive
+          hover
+          :items="form.items"
+          :fields="fields"
+        >
           <template #status="{ item }">
             <td>
               <CBadge :color="getBadge(item.status)">
@@ -84,7 +90,7 @@
               </CButton>
             </td>
           </template>
-        </CTable>
+        </CDataTable>
       </CCardBody>
       <CCardFooter v-if="isCreate">
         <CButton

@@ -35,7 +35,7 @@ import {
 } from '../../../resource/ConfPattern';
 
 export default {
-  name: 'Pattern',
+  name: 'ListPattern',
   mounted() {},
   data() {
     return {

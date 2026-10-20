@@ -54,32 +54,23 @@
             </CCol>
           </CRow>
           <CNav variant="tabs">
-            <CNavItem>
-              <CNavLink
-                href="#"
-                :active="tab === 'pending'"
-                @click.prevent="tab = 'pending'"
-              >
-                Pending ({{ pendingBills.length }})
-              </CNavLink>
+            <CNavItem
+              :active="tab === 'pending'"
+              @click.native.prevent="tab = 'pending'"
+            >
+              Pending ({{ pendingBills.length }})
             </CNavItem>
-            <CNavItem>
-              <CNavLink
-                href="#"
-                :active="tab === 'paid'"
-                @click.prevent="tab = 'paid'"
-              >
-                Paid ({{ paidBills.length }})
-              </CNavLink>
+            <CNavItem
+              :active="tab === 'paid'"
+              @click.native.prevent="tab = 'paid'"
+            >
+              Paid ({{ paidBills.length }})
             </CNavItem>
-            <CNavItem>
-              <CNavLink
-                href="#"
-                :active="tab === 'history'"
-                @click.prevent="tab = 'history'"
-              >
-                Riwayat ({{ history.length }})
-              </CNavLink>
+            <CNavItem
+              :active="tab === 'history'"
+              @click.native.prevent="tab = 'history'"
+            >
+              Riwayat ({{ history.length }})
             </CNavItem>
           </CNav>
 

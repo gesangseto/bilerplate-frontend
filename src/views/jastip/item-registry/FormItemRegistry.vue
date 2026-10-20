@@ -449,7 +449,9 @@ export default {
     },
     loadActiveSessionAndConfig() {
       $axios
-        .get('/v1/system/configuration')
+        .get('/v1/configuration/application', {
+          params: { without_logo: true },
+        })
         .then((res) => {
           let cfg = res.data?.data?.[0] || res.data?.data;
           if (cfg) {

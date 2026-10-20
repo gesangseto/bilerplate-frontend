@@ -677,7 +677,7 @@ function configRoutes() {
         },
         {
           path: 'inbound',
-          name: 'Inbound (Home)',
+          name: 'Transaction Inbound (Home)',
           meta: { login: true },
           component: ListInbound,
         },
@@ -1294,7 +1294,7 @@ function configRoutes() {
       children: [
         {
           path: 'item-registry/:type/:id',
-          name: 'Item Registry (Details)',
+          name: 'Item Registry (Details ID)',
           meta: { login: true },
           component: JastipFormItemRegistry,
         },
@@ -1312,7 +1312,7 @@ function configRoutes() {
         },
         {
           path: 'outbound-manifest/:type/:id',
-          name: 'Outbound Manifest (Details)',
+          name: 'Outbound Manifest (Details ID)',
           meta: { login: true },
           component: JastipFormOutboundManifest,
         },
@@ -1330,7 +1330,7 @@ function configRoutes() {
         },
         {
           path: 'inbound/:type/:id',
-          name: 'Inbound (Details)',
+          name: 'Inbound (Details ID)',
           meta: { login: true },
           component: JastipFormInbound,
         },
@@ -1349,7 +1349,7 @@ function configRoutes() {
 
         {
           path: 'picking/:type/:id',
-          name: 'Picking (Details)',
+          name: 'Picking (Details ID)',
           meta: { login: true },
           component: JastipFormPicking,
         },
@@ -1367,7 +1367,7 @@ function configRoutes() {
         },
         {
           path: 'item-disposal/:type/:id',
-          name: 'Item Disposal (Details)',
+          name: 'Item Disposal (Details ID)',
           meta: { login: true },
           component: JastipFormItemDisposal,
         },

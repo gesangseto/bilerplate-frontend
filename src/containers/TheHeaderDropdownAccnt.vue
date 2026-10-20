@@ -53,7 +53,7 @@ export default {
     this.email = this.profile ? this.profile.email : '';
     this.avatar_path =
       this.profile && this.profile.mst_avatar_id
-        ? `img/avatars/${this.profile.mst_avatar_id}.png`
+        ? `/img/avatars/${this.profile.mst_avatar_id}.png`
         : getLogo();
   },
   methods: {
