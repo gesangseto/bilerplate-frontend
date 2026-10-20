@@ -120,7 +120,6 @@ import {
   setProfile,
   getProfile,
   setMenu,
-  getLoginLogo,
   getLastUrl,
 } from '../../utils';
 import { getIdentity } from '../../resource/Identity';
@@ -136,7 +135,6 @@ export default {
       message: null,
       username: null,
       password: null,
-      loginLogo: null,
       showPassword: false,
       useKeyboard: false,
       layout: 'normal',
@@ -159,7 +157,6 @@ export default {
     this.loadIdentity();
   },
   mounted() {
-    this.loginLogo = getLoginLogo();
     this.loadConfig();
     this.message = null;
     if (!this.message && localStorage.getItem('message')) {
@@ -217,7 +214,6 @@ export default {
       let _res = await getSysConfig();
       if (_res) {
         setConfig(_res.data[0]);
-        this.loginLogo = getLoginLogo();
       }
     },
     togglePassword() {

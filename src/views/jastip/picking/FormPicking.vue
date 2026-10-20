@@ -39,58 +39,30 @@
                     <InputDefault
                       :disabled="!isEditable"
                       title="Receiver Name"
-                      placeholder="Nama penerima"
-                      required
+                      placeholder="Nama penerima (opsional — default dari customer)"
                       v-model="formData.receiver_name"
-                      :is-valid="
-                        initialLoad
-                          ? null
-                          : !formData.receiver_name
-                          ? false
-                          : true
-                      "
                     />
                     <InputDefault
                       :disabled="!isEditable"
                       title="Receiver Phone"
-                      placeholder="No. telpon penerima"
-                      required
+                      placeholder="No. telpon penerima (opsional)"
                       v-model="formData.receiver_phone"
-                      :is-valid="
-                        initialLoad
-                          ? null
-                          : !formData.receiver_phone
-                          ? false
-                          : true
-                      "
                     />
                     <TextareaDefault
                       :disabled="!isEditable"
                       title="Receiver Address"
-                      placeholder="Alamat penerima"
-                      required
+                      placeholder="Alamat penerima (opsional — default dari customer)"
                       v-model="formData.receiver_address"
-                      :is-valid="
-                        initialLoad
-                          ? null
-                          : !formData.receiver_address
-                          ? false
-                          : true
-                      "
                     />
                   </CCol>
                   <CCol sm="12" md="6">
                     <SelectOption
                       :disabled="!isEditable"
                       title="Courier"
-                      placeholder="--Select Active Courier--"
-                      required
+                      placeholder="--Select Active Courier-- (opsional, isi saat Dispatch)"
                       :options="listCourier"
                       :value="formData.courier_id"
                       v-on:onchange="formData.courier_id = $event"
-                      :is-valid="
-                        initialLoad ? null : !formData.courier_id ? false : true
-                      "
                     />
                     <InputDefault
                       :disabled="!isEditable"
@@ -512,36 +484,7 @@ export default {
         });
         return false;
       }
-      if (!this.formData.receiver_name) {
-        this.$toast.open({
-          message: 'Please input receiver name.',
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-        return false;
-      }
-      if (!this.formData.receiver_phone) {
-        this.$toast.open({
-          message: 'Please input receiver phone.',
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-        return false;
-      }
-      if (!this.formData.receiver_address) {
-        this.$toast.open({
-          message: 'Please input receiver address.',
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-        return false;
-      }
+      // receiver_* opsional saat create — BE fallback ke data customer
       if (this.items.length <= 0) {
         this.$toast.open({
           message: 'Please add at least 1 item to continue',

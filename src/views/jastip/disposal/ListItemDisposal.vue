@@ -39,7 +39,6 @@
         centered="centered"
         color="success"
         :show.sync="modalApprove"
-        size="md"
       >
         <div v-if="selectedDisposal" class="app-modal-info">
           <div class="app-modal-info__item">
@@ -85,7 +84,6 @@
         centered="centered"
         color="danger"
         :show.sync="modalDelete"
-        size="md"
       >
         <div v-if="selectedDisposal" class="app-modal-info">
           <div class="app-modal-info__item">

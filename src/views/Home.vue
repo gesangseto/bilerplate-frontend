@@ -20,13 +20,13 @@
 }
 </style>
 <script>
-import { getHomeLogo } from '../utils';
+import { getLogo } from '../utils';
 export default {
   name: 'Home',
   data() {
     return {
       image: {
-        home: getHomeLogo(),
+        home: getLogo(),
       },
     };
   },

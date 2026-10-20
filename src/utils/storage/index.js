@@ -155,14 +155,11 @@ export function getRole() {
 }
 
 export function setConfig(data = {}) {
-  if (data.login_logo) {
-    localStorage.setItem('loginLogo', data.login_logo);
-    delete data.login_logo;
-  }
-  if (data.home_logo) {
-    localStorage.setItem('homeLogo', data.home_logo);
-    delete data.home_logo;
-  }
+  // legacy alias: login_logo/home_logo di-force ke identity_logo_path
+  if (data.login_logo && !data.identity_logo_path) data.identity_logo_path = data.login_logo;
+  if (data.home_logo && !data.identity_logo_path) data.identity_logo_path = data.home_logo;
+  delete data.login_logo;
+  delete data.home_logo;
   if (data.identity_logo_path) {
     localStorage.setItem('identityLogo', data.identity_logo_path);
     delete data.identity_logo_path;
@@ -177,13 +174,13 @@ export function getLogo() {
 }
 
 export function getLoginLogo() {
-  let data = localStorage.getItem('loginLogo');
-  return data;
+  // deprecated: force ke identity_logo_path
+  return localStorage.getItem('identityLogo');
 }
 
 export function getHomeLogo() {
-  let data = localStorage.getItem('homeLogo');
-  return data;
+  // deprecated: force ke identity_logo_path
+  return localStorage.getItem('identityLogo');
 }
 
 export function getConfig() {

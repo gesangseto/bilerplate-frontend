@@ -292,54 +292,7 @@
                       </div>
                     </div>
                   </div>
-                  <!-- Home LOGO -->
-                  <CCol sm="10" lg="10">
-                    <CInputFile
-                      :placeholder="labelLogo.home"
-                      horizontal
-                      custom
-                      class="input-form-upload"
-                      @change="uploadLogo($event, 'home')"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">Home Page Picture</p>
-                      </template>
-                    </CInputFile>
-                  </CCol>
-                  <div class="form-group row mb-5">
-                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                      <label for="home-logo"> </label>
-                    </div>
-                    <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
-                      <div class="custom-file mb-3">
-                        <CImg width="100" v-bind:src="data.home_logo" />
-                      </div>
-                    </div>
-                  </div>
-                  <!-- LOGIN LOGO -->
-                  <CCol sm="10" lg="10">
-                    <CInputFile
-                      :placeholder="labelLogo.login"
-                      horizontal
-                      custom
-                      class="input-form-upload"
-                      @change="uploadLogo($event, 'login')"
-                    >
-                      <template #label>
-                        <p class="col-form-label col-sm-3">Login Logo</p>
-                      </template>
-                    </CInputFile>
-                  </CCol>
-                  <div class="form-group row mb-5">
-                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                      <label for="login-logo"> </label>
-                    </div>
-                    <div class="col-md-7 col-sm-7 col-lg-7 custom-file">
-                      <div class="custom-file mb-3">
-                        <CImg width="100" v-bind:src="data.login_logo" />
-                      </div>
-                    </div>
-                  </div>
+
 
                   <p style="font-weight: bold">Long Process Settings</p>
                   <SelectOption
@@ -535,8 +488,6 @@ export default {
       action: 'Edit',
       labelLogo: {
         identity: 'Choose file...',
-        login: 'Choose file...',
-        home: 'Choose file...',
       },
       epcStatusOptions: [],
       password_pattern: {
@@ -562,8 +513,6 @@ export default {
         IdentityName: '',
         IdentityNumber: '',
         identity_logo_path: '',
-        login_logo: '',
-        home_logo: '',
         TotalWh: 0,
         total_device: 0,
         imei: '',
@@ -758,8 +707,6 @@ export default {
     convertToBase64(file, type) {
       reader.onload = (e) => {
         if (type == 'identity') this.data.identity_logo_path = e.target.result;
-        else if (type == 'login') this.data.login_logo = e.target.result;
-        else if (type == 'home') this.data.home_logo = e.target.result;
       };
       reader.readAsDataURL(file);
     },

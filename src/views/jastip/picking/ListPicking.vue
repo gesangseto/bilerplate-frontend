@@ -146,7 +146,7 @@ export default {
         size: 'sm',
         class: 'float-right',
         color: 'primary',
-        icon: 'cloud-upload',
+        icon: 'cloud-upload-alt',
         text: ' Upload Waybill',
         tooltip: 'Upload Waybill',
       },
