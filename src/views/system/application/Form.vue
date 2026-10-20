@@ -812,6 +812,14 @@
                       </CButton>
                     </template>
                   </InputDefault>
+                  <SelectOption
+                    title="Compression Level"
+                    :options="listCompressionLevel"
+                    v-on:onchange="data.backup_compression = $event"
+                    :value="data.backup_compression"
+                    :col="[3, 7]"
+                    :description="compressionDescription()"
+                  />
                   <InputDefault
                     :col="[3, 7]"
                     title="Backup File Retention "
@@ -905,6 +913,7 @@ export default {
         total_device: 0,
         imei: '',
         // DbPwd: "",
+        backup_compression: null,
         backup_frequent: '',
         sftp_folder_1: '',
         sftp_folder_2: '',
@@ -929,6 +938,44 @@ export default {
         { value: 7, label: '7 Day' },
         { value: 14, label: '14 Day' },
         { value: 30, label: '30 Day' },
+      ],
+      listCompressionLevel: [
+        {
+          value: 0,
+          label: 'No Compression',
+          description:
+            'No compression will be applied to the backup files, resulting in larger file sizes but faster backup times.',
+        },
+        {
+          value: 1,
+          label: 'Fastest',
+          description:
+            'Applies fast compression, balancing speed and file size reduction.',
+        },
+        {
+          value: 3,
+          label: 'Fast',
+          description:
+            'Offers a good balance between compression speed and file size reduction.',
+        },
+        {
+          value: 5,
+          label: 'Normal',
+          description:
+            'Provides standard compression settings for most use cases.',
+        },
+        {
+          value: 7,
+          label: 'Maximum',
+          description:
+            'Applies maximum compression, resulting in smaller file sizes but longer backup times.',
+        },
+        {
+          value: 9,
+          label: 'Ultra',
+          description:
+            'Uses the most aggressive compression settings for the smallest file sizes at the cost of longer backup times.',
+        },
       ],
       listExpiryType: [
         {
@@ -1008,6 +1055,7 @@ export default {
         let pattern = data.password_pattern;
         this.data = {
           ...data,
+          backup_compression: data.backup_compression ?? null,
           users_password: null,
           return_ext_aggregation: data.return_ext_aggregation ? true : false,
           password_pattern: pattern
@@ -1028,6 +1076,14 @@ export default {
       } else {
         return 'Expiry date retains the original day value.';
       }
+    },
+    compressionDescription() {
+      let selected = this.listCompressionLevel.find(
+        (it) => it.value == this.data.backup_compression,
+      );
+      return selected
+        ? selected.description
+        : 'Select the desired compression level for the backup files. Higher compression levels result in smaller file sizes but may take longer to create.';
     },
     async loadEpcStatus() {
       let epcStatus = await getMstEpcStatus({ is_final_status: true });
