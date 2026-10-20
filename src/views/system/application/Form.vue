@@ -328,6 +328,7 @@
                     <CForm v-if="!whatsappStatus.error">
                       <CCol class="md-4">
                         <img
+                          v-if="whatsappStatus.qr_base64"
                           v-bind:src="whatsappStatus.qr_base64"
                           style="width: 150px; height: auto"
                         />
