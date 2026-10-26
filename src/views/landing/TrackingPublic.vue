@@ -108,7 +108,7 @@
 
             <!-- Grouping item: customer + status -->
             <div class="tp-section-title">
-              Ringkasan Item per Customer &amp; Status ({{ result.groups.length }})
+              Detail Item
             </div>
             <div v-if="!result.groups.length" class="tp-alert tp-alert-info">
               Belum ada item tercatat untuk kode ini.
