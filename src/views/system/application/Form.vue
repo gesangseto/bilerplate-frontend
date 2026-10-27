@@ -355,34 +355,36 @@
                         v-model="whatsappMessage.message"
                         :max="200"
                       />
-                      <CButton
-                        size="sm"
-                        color="success"
-                        @click="sendWhatsapp()"
-                      >
-                        Send Test Message
-                      </CButton>
+                      <div class="d-flex align-items-center" style="gap: 12px">
+                        <CButton
+                          size="sm"
+                          color="success"
+                          @click="sendWhatsapp()"
+                        >
+                          Send Test Message
+                        </CButton>
+                        <CButton
+                          v-if="whatsappStatus.connected"
+                          size="sm"
+                          color="danger"
+                          :disabled="whatsappDestroying"
+                          @click="deleteWhatsapp()"
+                        >
+                          {{
+                            whatsappDestroying
+                              ? 'Deleting session...'
+                              : 'Hapus Session WhatsApp'
+                          }}
+                        </CButton>
+                      </div>
                       <small
-                        :class="
-                          whatsappMessage.error ? 'text-danger' : 'text-muted'
-                        "
+                        v-if="whatsappMessage.response && whatsappMessage.error"
+                        class="text-danger"
                       >
                         {{ whatsappMessage.response }}
                       </small>
                     </CForm>
                   </div>
-                  <CButton
-                    size="sm"
-                    color="danger"
-                    :disabled="whatsappDestroying"
-                    @click="deleteWhatsapp()"
-                  >
-                    {{
-                      whatsappDestroying
-                        ? 'Deleting session...'
-                        : 'Hapus Session WhatsApp'
-                    }}
-                  </CButton>
                 </CCardBody>
               </CCard>
 
@@ -676,7 +678,32 @@ export default {
       let _res = await sendWhatsappMessage(this.whatsappMessage);
       if (_res) {
         this.whatsappMessage.error = _res.error;
-        this.whatsappMessage.response = _res.message;
+        this.whatsappMessage.response = _res.error ? _res.message : null;
+        if (!_res.error) {
+          this.$toast.open({
+            message: _res.message || 'Pesan berhasil dikirim',
+            type: 'success',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+        } else {
+          this.$toast.open({
+            message: _res.message || 'Pesan gagal dikirim',
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+        }
+      } else {
+        this.$toast.open({
+          message: 'Gagal mengirim pesan WhatsApp',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
       }
     },
     async onWhatsappToggle(enabled) {
