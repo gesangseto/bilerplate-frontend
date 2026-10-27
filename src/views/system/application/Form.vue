@@ -325,16 +325,21 @@
                   <div v-if="data.notification_whatsapp">
                     <small>{{ whatsappStatus.message }}</small>
                     <hr />
-                    <CForm v-if="!whatsappStatus.error">
+                    <CForm v-if="whatsappStatus.qr_base64">
                       <CCol class="md-4">
                         <img
-                          v-if="whatsappStatus.qr_base64"
                           v-bind:src="whatsappStatus.qr_base64"
                           style="width: 150px; height: auto"
                         />
                       </CCol>
                     </CForm>
-                    <CForm v-if="whatsappStatus.error">
+                    <small
+                      v-if="whatsappStatus.error && !whatsappStatus.qr_base64"
+                      class="text-danger"
+                    >
+                      {{ whatsappStatus.message }}
+                    </small>
+                    <CForm v-if="whatsappStatus.connected">
                       <InputDefault
                         :col="[3, 7]"
                         :title="'To'"
@@ -703,13 +708,24 @@ export default {
     async loadWhatsapp() {
       let _res = await getWhatsappQr();
       if (_res && _res.error) {
-        this.whatsappStatus.qr_base64 = null;
-        this.whatsappStatus.error = true;
-        this.whatsappStatus.message = _res.message;
+        this.whatsappStatus = {
+          ...this.whatsappStatus,
+          qr_base64: null,
+          connected: false,
+          error: true,
+          message: _res.message,
+        };
       } else if (_res && !_res.error) {
-        this.whatsappStatus.qr_base64 = _res.data[0].qr_base64;
-        this.whatsappStatus.error = false;
-        this.whatsappStatus.message = null;
+        const status = _res.data?.[0] || {};
+        this.whatsappStatus = {
+          ...this.whatsappStatus,
+          qr_base64: status.qr_base64 || null,
+          connected: !!status.connected,
+          error: false,
+          message: status.connected
+            ? 'WhatsApp terhubung.'
+            : _res.message || 'Menunggu QR WhatsApp...',
+        };
       }
     },
     formatDate(date) {
