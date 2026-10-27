@@ -20,3 +20,15 @@ export const getSysConfig = async (param = Object) => {
       });
   });
 };
+
+export const updateSysConfig = async (param = {}) => {
+  return new Promise((resolve) => {
+    $axios
+      .post(url, param)
+      .then((result) => resolve(result.data))
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        resolve(false);
+      });
+  });
+};

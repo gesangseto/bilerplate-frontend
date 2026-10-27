@@ -318,6 +318,8 @@
                           class="mr-1"
                           color="success"
                           :checked.sync="data.notification_whatsapp"
+                          :disabled="whatsappLoading"
+                          @update:checked="onWhatsappToggle"
                         />
                       </CCol>
                     </CRow>
@@ -477,7 +479,7 @@ import 'vue2-datepicker/index.css';
 import $axios from '../../../api';
 import moment from 'moment';
 import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
-import { getSysConfig } from '../../../resource/SysConfig';
+import { getSysConfig, updateSysConfig } from '../../../resource/SysConfig';
 import {
   getWhatsappQr,
   sendWhatsappMessage,
@@ -508,6 +510,7 @@ export default {
         symbol: false,
       },
       whatsappStatus: { error: false, message: null, qr_base64: null },
+      whatsappLoading: false,
       whatsappDestroying: false,
       whatsappMessage: {
         to: null,
@@ -674,6 +677,40 @@ export default {
       if (_res) {
         this.whatsappMessage.error = _res.error;
         this.whatsappMessage.response = _res.message;
+      }
+    },
+    async onWhatsappToggle(enabled) {
+      const previous = !enabled;
+      this.data.notification_whatsapp = enabled;
+      this.whatsappLoading = true;
+      try {
+        const result = await updateSysConfig({
+          users_name: this.data.users_name,
+          notification_whatsapp: enabled,
+        });
+        if (!result || result.error) {
+          this.data.notification_whatsapp = previous;
+          this.whatsappStatus = {
+            error: true,
+            connected: false,
+            qr_base64: null,
+            message: result?.message || 'Gagal menyimpan pengaturan WhatsApp.',
+          };
+          return;
+        }
+
+        if (enabled) {
+          await this.loadWhatsapp();
+        } else {
+          this.whatsappStatus = {
+            error: false,
+            connected: false,
+            qr_base64: null,
+            message: 'Notifikasi WhatsApp dinonaktifkan.',
+          };
+        }
+      } finally {
+        this.whatsappLoading = false;
       }
     },
     async deleteWhatsapp() {
