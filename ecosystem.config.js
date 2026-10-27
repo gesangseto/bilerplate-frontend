@@ -7,7 +7,7 @@ module.exports = {
       script: 'node_modules/@vue/cli-service/bin/vue-cli-service.js',
       args: 'serve --port 8080',
       cwd: '/home/gesang/project/jastip/Frontend',
-      interpreter: '/home/gesang/.nvm/versions/node/v22.23.3/bin/node',
+      interpreter: '/home/gesang/.nvm/versions/node/v22.23.4/bin/node',
       ignore_watch: ['node_modules', '.git', '*.log'],
     },
   ],
