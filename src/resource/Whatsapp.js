@@ -38,7 +38,7 @@ export const sendWhatsappMessage = async (param = Object) => {
 export const deleteWhatsappSession = async () => {
   return new Promise((resolve) => {
     $axios
-      .delete(`${url}/session`)
+      .delete(`${url}/session/destroy`)
       .then((result) => {
         let res = result.data;
         return resolve(res);

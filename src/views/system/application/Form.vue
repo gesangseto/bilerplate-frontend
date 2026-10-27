@@ -355,15 +355,6 @@
                       >
                         Send Test Message
                       </CButton>
-                      <CButton
-                        class="ml-1"
-                        size="sm"
-                        color="danger"
-                        @click="deleteWhatsapp()"
-                      >
-                        Delete Session
-                      </CButton>
-                      <br />
                       <small
                         :class="
                           whatsappMessage.error ? 'text-danger' : 'text-muted'
@@ -373,6 +364,18 @@
                       </small>
                     </CForm>
                   </div>
+                  <CButton
+                    size="sm"
+                    color="danger"
+                    :disabled="whatsappDestroying"
+                    @click="deleteWhatsapp()"
+                  >
+                    {{
+                      whatsappDestroying
+                        ? 'Deleting session...'
+                        : 'Hapus Session WhatsApp'
+                    }}
+                  </CButton>
                 </CCardBody>
               </CCard>
 
@@ -500,6 +503,7 @@ export default {
         symbol: false,
       },
       whatsappStatus: { error: false, message: null, qr_base64: null },
+      whatsappDestroying: false,
       whatsappMessage: {
         to: null,
         message: null,
@@ -668,15 +672,33 @@ export default {
       }
     },
     async deleteWhatsapp() {
+      if (
+        !window.confirm(
+          'Hapus session WhatsApp? Anda perlu scan QR lagi untuk menghubungkannya.',
+        )
+      ) {
+        return;
+      }
+      this.whatsappDestroying = true;
       let _res = await deleteWhatsappSession();
-      this.whatsappStatus = { error: false, message: null, qr_base64: null };
+      this.whatsappDestroying = false;
+      if (!_res || _res.error) {
+        return;
+      }
+      this.whatsappStatus = {
+        error: false,
+        message: 'Session WhatsApp berhasil dihapus.',
+        qr_base64: null,
+      };
       this.whatsappMessage = {
         to: null,
         message: null,
         response: null,
         error: false,
       };
-      this.loadWhatsapp();
+      if (this.data.notification_whatsapp) {
+        await this.loadWhatsapp();
+      }
     },
     async loadWhatsapp() {
       let _res = await getWhatsappQr();
