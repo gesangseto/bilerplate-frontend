@@ -107,7 +107,7 @@
             </template>
             <template #qty="{ item }">
               <td class="text-center">
-                {{ item.total_items }} item / {{ item.total_quantity }} pcs
+                {{ item.total_batches }} batch / {{ item.total_quantity }} pcs
               </td>
             </template>
             <template #payment_status="{ item }">
@@ -248,9 +248,9 @@
             >
           </div>
           <div class="app-modal-info__item">
-            <span class="app-modal-info__label">Item</span>
+            <span class="app-modal-info__label">Batch / Qty</span>
             <span class="app-modal-info__value"
-              >{{ detailData.total_items || 0 }} item /
+              >{{ detailData.total_batches || 0 }} batch /
               {{ detailData.total_quantity || 0 }} pcs</span
             >
           </div>
@@ -264,7 +264,7 @@
                 <th>Item</th>
                 <th>Barcode</th>
                 <th class="text-center">Qty</th>
-                <th class="text-right">Harga</th>
+                <th class="text-right">Harga Satuan</th>
                 <th class="text-center">Status</th>
               </tr>
             </thead>
@@ -601,7 +601,7 @@ export default {
         { key: 'tagihan', label: 'Tagihan', _style: 'text-align: right' },
         { key: 'dibayar', label: 'Dibayar', _style: 'text-align: right' },
         { key: 'sisa', label: 'Sisa', _style: 'text-align: right' },
-        { key: 'qty', label: 'Item', _style: 'text-align: center' },
+        { key: 'qty', label: 'Batch / Qty', _style: 'text-align: center' },
         { key: 'payment_status', label: 'Status' },
         { key: 'action', label: '', _style: 'width: 1%' },
       ];

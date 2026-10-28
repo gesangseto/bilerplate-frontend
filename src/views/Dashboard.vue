@@ -98,7 +98,7 @@
           <div class="mini-value">
             {{ sessionData ? sessionData.total_items || 0 : totalItems || 0 }}
           </div>
-          <div class="mini-label">Item</div>
+          <div class="mini-label">Item (pcs)</div>
         </div>
         <div class="mini-card" style="background-color: #e0f2fe">
           <AccountGroup :size="18" style="color: #0ea5e9" />
@@ -110,7 +110,7 @@
           <div class="mini-value">
             {{ sessionData ? sessionData.total_batch || 0 : totalBatch || 0 }}
           </div>
-          <div class="mini-label">Batch</div>
+          <div class="mini-label">Batch Kirim</div>
         </div>
       </div>
     </div>
@@ -151,7 +151,9 @@
       <div class="card-box">
         <div class="card-header-row">
           <span class="card-title">Status Item</span>
-          <span class="card-total">{{ totalItems }} item</span>
+          <span class="card-total"
+            >{{ totalItems }} pcs · {{ totalBatches }} batch</span
+          >
         </div>
         <div v-if="totalItems > 0" class="progress-track">
           <div
@@ -164,7 +166,7 @@
         <div class="legend-wrap">
           <div v-for="s in statusWithCount" :key="s.code" class="legend-item">
             <span class="legend-dot" :style="{ backgroundColor: s.color }"></span>
-            <span class="legend-text">{{ s.label }} · {{ s.count }}</span>
+            <span class="legend-text">{{ s.label }} · {{ s.count }} pcs</span>
           </div>
         </div>
       </div>
@@ -173,7 +175,7 @@
       <div class="card-box">
         <div class="card-header-row">
           <span class="card-title">Item Terjual</span>
-          <span class="card-total">{{ itemCount(205) }} item sold</span>
+          <span class="card-total">{{ itemCount(205) }} pcs sold</span>
         </div>
         <div class="sold-row">
           <div class="sold-box">
@@ -331,13 +333,24 @@ export default {
       return this.dashboard.item_by_status || [];
     },
     totalItems() {
+      // item_stock row = 1 batch input; jumlah item = SUM(quantity) (pcs).
+      return this.sumBy(this.itemByStatus, 'total_quantity');
+    },
+    totalBatches() {
       return this.sumBy(this.itemByStatus, 'total');
     },
     totalSelling() {
-      return this.sumBy(this.itemByStatus, 'total_selling');
+      // Item Destroyed (status 3) tidak ditagihkan — sama dengan modul payment.
+      return this.sumBy(
+        this.itemByStatus.filter((it) => Number(it.status) !== 3),
+        'total_selling'
+      );
     },
     totalCost() {
-      return this.sumBy(this.itemByStatus, 'total_cost');
+      return this.sumBy(
+        this.itemByStatus.filter((it) => Number(it.status) !== 3),
+        'total_cost'
+      );
     },
     totalProfit() {
       return this.totalSelling - this.totalCost;
@@ -449,7 +462,7 @@ export default {
       const row = this.itemByStatus.find(
         (it) => Number(it.status) === code
       );
-      return row ? Number(row.total || 0) : 0;
+      return row ? Number(row.total_quantity || 0) : 0;
     },
     statusLabelPicking(status) {
       // trx_picking.status: -1 Canceled, 0 Waiting, 1 Done, 2 In Courier, 3 Returned

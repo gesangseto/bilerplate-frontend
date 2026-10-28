@@ -18,8 +18,8 @@
 
               <!-- Quantity -->
               <InputDefault
-                :disabled="active.isRead || active.isUpdate"
-                title="Quantity"
+                :disabled="active.isRead"
+                title="Quantity (pcs)"
                 placeholder="1"
                 required
                 validasi="integer"
@@ -28,6 +28,10 @@
                   initialLoad ? null : !formData.quantity ? false : true
                 "
               />
+              <small class="form-text text-muted mb-3">
+                Satu baris mewakili {{ formData.quantity || 0 }} pcs. Harga di
+                bawah adalah harga per pcs, bukan total.
+              </small>
 
               <!-- Phone No. with Country Code Prefix & Autocomplete -->
               <CRow form class="form-group">
@@ -165,7 +169,7 @@
               <!-- Cost Price / Cost Code -->
               <CRow form class="form-group">
                 <CCol sm="3">
-                  Cost Price <span class="text-danger">*</span>
+                  Cost Price (per pcs) <span class="text-danger">*</span>
                 </CCol>
                 <CCol sm="9">
                   <div class="input-group">
@@ -205,7 +209,7 @@
               <!-- Selling Price / Selling Code -->
               <CRow form class="form-group">
                 <CCol sm="3">
-                  Selling Price <span class="text-danger">*</span>
+                  Selling Price (per pcs) <span class="text-danger">*</span>
                 </CCol>
                 <CCol sm="9">
                   <div class="input-group">
@@ -655,6 +659,13 @@ export default {
           duration: 5000,
         });
         return;
+      }
+      if (Number(this.formData.quantity) > 1) {
+        const ok = window.confirm(
+          `${this.formData.quantity} pcs akan disimpan dalam satu baris.\n\n` +
+            'Pastikan Cost Price dan Selling Price yang diisi adalah harga per pcs, bukan harga total.',
+        );
+        if (!ok) return;
       }
 
       // Pastikan customer tersimpan di DB jika belum ada
