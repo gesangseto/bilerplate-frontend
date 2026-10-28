@@ -18,7 +18,7 @@
 
               <!-- Quantity -->
               <InputDefault
-                :disabled="active.isRead"
+                :disabled="active.isRead || active.isUpdate"
                 title="Quantity"
                 placeholder="1"
                 required
