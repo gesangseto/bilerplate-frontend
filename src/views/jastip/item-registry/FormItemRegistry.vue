@@ -642,9 +642,10 @@ export default {
         });
         return;
       }
-      if (!this.formData.quantity || Number(this.formData.quantity) <= 0) {
+      const qty = Number(this.formData.quantity);
+      if (!Number.isInteger(qty) || qty < 1) {
         this.$toast.open({
-          message: 'Quantity wajib diisi lebih dari 0',
+          message: 'Quantity harus bilangan bulat minimal 1',
           type: 'error',
           position: 'top-right',
           duration: 5000,
@@ -660,7 +661,7 @@ export default {
         });
         return;
       }
-      if (Number(this.formData.quantity) > 1) {
+      if (qty > 1) {
         const ok = window.confirm(
           `${this.formData.quantity} pcs akan disimpan dalam satu baris.\n\n` +
             'Pastikan Cost Price dan Selling Price yang diisi adalah harga per pcs, bukan harga total.',

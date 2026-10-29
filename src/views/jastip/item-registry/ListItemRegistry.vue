@@ -18,6 +18,7 @@
                 :items="reformatItems"
                 :status_code="'item_stock'"
                 :action="['read', 'update', 'delete']"
+                :filterAction="filterAction"
                 :filterBy="['All', 'id', 'customer_name', 'status']"
                 :orderFilter="['All', 'id', 'customer_name', 'status']"
                 v-on:handleReload="loadData($event)"
@@ -46,6 +47,8 @@ const STATUS_ITEM = {
   203: 'GRN',
   204: 'Dispatch',
   205: 'Sold',
+  206: 'Disposed',
+  3: 'Destroyed',
 };
 
 export default {
@@ -75,6 +78,14 @@ export default {
     };
   },
   methods: {
+    filterAction(item) {
+      // Update & delete hanya untuk item draft (status 200); status lain
+      // dibatalkan lewat modul batch/disposal/picking terkait.
+      if (Number(item.status) === 200 && !item.batch_id && !item.trx_model) {
+        return ['read', 'update', 'delete'];
+      }
+      return ['read'];
+    },
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
       let param = `${new URLSearchParams(filter).toString()}`;

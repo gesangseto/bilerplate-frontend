@@ -57,6 +57,8 @@ const STATUS_ITEM = {
   203: 'GRN',
   204: 'Dispatch',
   205: 'Sold',
+  206: 'Disposed',
+  3: 'Destroyed',
 };
 
 export default {
@@ -84,14 +86,16 @@ export default {
       fields: [
         { key: 'customer_name', label: 'Customer' },
         { key: 'item_name', label: 'Product' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
         { key: 'local_currency', label: 'Local Curr.' },
         { key: 'local_cost', label: '(L) Cost' },
-        { key: 'local_price', label: '(L) Price' },
+        { key: 'local_price', label: '(L) Price/pcs' },
         { key: 'local_shipping', label: '(L) Shipping' },
         { key: 'local_profit', label: '(L) Profit' },
+        { key: 'line_total', label: '(L) Total' },
         { key: 'status_name', label: 'Status' },
         { key: 'payment_status', label: 'Payment' },
         { key: 'action', label: 'Action', sorter: false, filter: false },
@@ -181,6 +185,7 @@ export default {
           barcode: item.barcode || '-',
           customer_name: item.customer_name || '-',
           item_name: item.item_name || '-',
+          quantity: formatNumber(item.quantity) || '0',
           warehouse_name: item.warehouse_name || '-',
           foreign_cost: formatNumber(item.foreign_cost) || '-',
           foreign_price: formatNumber(item.foreign_price) || '-',
@@ -188,6 +193,7 @@ export default {
           local_price: formatNumber(item.local_price) || '-',
           local_shipping: formatNumber(item.local_shipping) || '-',
           local_profit: formatNumber(item.local_profit) || '-',
+          line_total: formatNumber(item.line_total) || '-',
           status_name: STATUS_ITEM[item.status] || item.status_name || '-',
           payment_status: payment,
         };

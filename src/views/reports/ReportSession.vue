@@ -66,8 +66,8 @@ export default {
         { key: 'start_session_date', label: 'Start Date' },
         { key: 'finish_session_date', label: 'Finish Date' },
         { key: 'status', label: 'Status' },
-        { key: 'total_items', label: 'Items' },
-        { key: 'total_quantity', label: 'Qty' },
+        { key: 'total_records', label: 'Records' },
+        { key: 'total_quantity', label: 'Qty (pcs)' },
         { key: 'total_customers', label: 'Customers' },
         { key: 'total_selling_price', label: 'Selling (IDR)' },
         {

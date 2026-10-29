@@ -152,7 +152,7 @@
         <div class="card-header-row">
           <span class="card-title">Status Item</span>
           <span class="card-total"
-            >{{ totalItems }} pcs · {{ totalBatches }} batch</span
+            >{{ totalItems }} pcs · {{ totalRecords }} record</span
           >
         </div>
         <div v-if="totalItems > 0" class="progress-track">
@@ -276,7 +276,7 @@ import $axios from '../api';
 
 // Mapping status item (sama dengan Android):
 // 200 Draft, 201 Manifest, 202 In Transit, 203 GRN, 204 Dispatch,
-// 205 Sold, 206 Disposed
+// 205 Sold, 206 Disposed, 3 Destroyed
 const ITEM_STATUS = [
   { code: 200, label: 'Draft', color: '#9CA3AF' },
   { code: 201, label: 'Manifest', color: '#3B82F6' },
@@ -285,6 +285,7 @@ const ITEM_STATUS = [
   { code: 204, label: 'Dispatch', color: '#F97316' },
   { code: 205, label: 'Sold', color: '#10B981' },
   { code: 206, label: 'Disposed', color: '#EF4444' },
+  { code: 3, label: 'Destroyed', color: '#DC2626' },
 ];
 
 export default {
@@ -336,7 +337,8 @@ export default {
       // item_stock row = 1 batch input; jumlah item = SUM(quantity) (pcs).
       return this.sumBy(this.itemByStatus, 'total_quantity');
     },
-    totalBatches() {
+    totalRecords() {
+      // Jumlah baris item_stock (satu baris = satu input admin berisi qty N pcs).
       return this.sumBy(this.itemByStatus, 'total');
     },
     totalSelling() {

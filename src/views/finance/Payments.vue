@@ -107,7 +107,7 @@
             </template>
             <template #qty="{ item }">
               <td class="text-center">
-                {{ item.total_batches }} batch / {{ item.total_quantity }} pcs
+                {{ item.total_records }} record / {{ item.total_quantity }} pcs
               </td>
             </template>
             <template #payment_status="{ item }">
@@ -248,9 +248,9 @@
             >
           </div>
           <div class="app-modal-info__item">
-            <span class="app-modal-info__label">Batch / Qty</span>
+            <span class="app-modal-info__label">Record / Qty</span>
             <span class="app-modal-info__value"
-              >{{ detailData.total_batches || 0 }} batch /
+              >{{ detailData.total_records || 0 }} record /
               {{ detailData.total_quantity || 0 }} pcs</span
             >
           </div>
@@ -265,6 +265,7 @@
                 <th>Barcode</th>
                 <th class="text-center">Qty</th>
                 <th class="text-right">Harga Satuan</th>
+                <th class="text-right">Subtotal</th>
                 <th class="text-center">Status</th>
               </tr>
             </thead>
@@ -276,6 +277,9 @@
                 <td>{{ it.barcode }}</td>
                 <td class="text-center">{{ it.quantity }}</td>
                 <td class="text-right">{{ num(it.local_price) }}</td>
+                <td class="text-right">
+                  {{ num(Number(it.quantity || 0) * Number(it.local_price || 0)) }}
+                </td>
                 <td class="text-center">
                   <CBadge :color="itemBadge(it.status)">{{
                     it.status_name || it.status
@@ -283,12 +287,12 @@
                 </td>
               </tr>
               <tr v-if="detailLoading">
-                <td colspan="5" class="text-center text-muted">
+                <td colspan="6" class="text-center text-muted">
                   Memuat item...
                 </td>
               </tr>
               <tr v-else-if="!detailItems.length">
-                <td colspan="5" class="text-center text-muted">
+                <td colspan="6" class="text-center text-muted">
                   Tidak ada item.
                 </td>
               </tr>
@@ -601,7 +605,7 @@ export default {
         { key: 'tagihan', label: 'Tagihan', _style: 'text-align: right' },
         { key: 'dibayar', label: 'Dibayar', _style: 'text-align: right' },
         { key: 'sisa', label: 'Sisa', _style: 'text-align: right' },
-        { key: 'qty', label: 'Batch / Qty', _style: 'text-align: center' },
+        { key: 'qty', label: 'Record / Qty', _style: 'text-align: center' },
         { key: 'payment_status', label: 'Status' },
         { key: 'action', label: '', _style: 'width: 1%' },
       ];

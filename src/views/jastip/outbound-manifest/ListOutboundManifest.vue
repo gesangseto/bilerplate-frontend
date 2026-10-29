@@ -54,9 +54,9 @@
               }}</span>
             </div>
             <div class="app-modal-info__item">
-              <span class="app-modal-info__label">Quantity</span>
+              <span class="app-modal-info__label">Quantity (pcs)</span>
               <span class="app-modal-info__value"
-                >{{ selectedBatch.quantity }} item</span
+                >{{ selectedBatch.quantity }} pcs</span
               >
             </div>
             <div class="app-modal-info__item">
@@ -174,7 +174,7 @@ export default {
         { key: 'batch_no', label: 'Batch No' },
         { key: 'warehouse_name', label: 'Warehouse' },
         { key: 'supplier_name', label: 'Supplier' },
-        { key: 'quantity', label: 'Qty' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'weight', label: 'Weight' },
         { key: 'shipment_number', label: 'Shipment No' },
         { key: 'shipment_price', label: 'Shipment Price' },

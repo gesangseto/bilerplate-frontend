@@ -59,7 +59,7 @@
                   disabled
                 />
                 <InputDefault
-                  title="Quantity"
+                  title="Quantity (pcs)"
                   :value="formData.quantity"
                   disabled
                 />
@@ -169,6 +169,7 @@ export default {
       fields: [
         { key: 'customer_name', label: 'Customer' },
         { key: 'product_name', label: 'Product' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
@@ -210,7 +211,7 @@ export default {
             value: it.id,
             label: `${it.batch_no} - ${it.warehouse_name || '-'} (${
               it.quantity || 0
-            } items)`,
+            } pcs)`,
           });
         }
       });
@@ -294,6 +295,7 @@ export default {
           ...item,
           customer_name: item.customer_name || '-',
           product_name: item.product_name || '-',
+          quantity: formatNumber(item.quantity) || '0',
           foreign_cost: formatNumber(item.foreign_cost) || '-',
           foreign_price: formatNumber(item.foreign_price) || '-',
           local_cost: formatNumber(item.local_cost) || '-',

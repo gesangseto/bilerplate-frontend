@@ -87,7 +87,7 @@
                 <span class="tp-value">{{ result.customer.phone }}</span>
               </div>
               <div class="tp-info">
-                <span class="tp-label">Total Item</span>
+                <span class="tp-label">Total Item (pcs)</span>
                 <span class="tp-value">{{ result.total_items }}</span>
               </div>
               <div class="tp-info">
@@ -97,7 +97,7 @@
             </div>
             <div v-else class="tp-info-grid">
               <div class="tp-info">
-                <span class="tp-label">Total Item</span>
+                <span class="tp-label">Total Item (pcs)</span>
                 <span class="tp-value">{{ result.total_items }}</span>
               </div>
               <div class="tp-info">
@@ -119,8 +119,8 @@
                   <tr>
                     <th>Customer</th>
                     <th class="tp-center">Status</th>
-                    <th class="tp-num">Item</th>
-                    <th class="tp-num">Qty</th>
+                    <th class="tp-num">Record</th>
+                    <th class="tp-num">Qty (pcs)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -131,7 +131,7 @@
                         {{ g.status_name }}
                       </span>
                     </td>
-                    <td class="tp-num">{{ g.item_count }}</td>
+                    <td class="tp-num">{{ g.record_count }}</td>
                     <td class="tp-num">{{ g.total_qty }}</td>
                   </tr>
                 </tbody>

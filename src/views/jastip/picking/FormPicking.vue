@@ -314,6 +314,7 @@ export default {
       },
       fields: [
         { key: 'product_name', label: 'Product' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
@@ -327,6 +328,7 @@ export default {
       grnFields: [
         { key: 'selected', label: 'Check', sorter: false },
         { key: 'product_name', label: 'Product' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'local_cost', label: 'Local Cost' },
         { key: 'local_price', label: 'Local Price' },
         { key: 'foreign_cost', label: 'Foreign Cost' },
@@ -673,6 +675,7 @@ export default {
           ...item,
           customer_name: item.customer_name || '-',
           product_name: item.product_name || '-',
+          quantity: formatNumber(item.quantity) || '0',
           foreign_cost: formatNumber(item.foreign_cost) || '-',
           foreign_price: formatNumber(item.foreign_price) || '-',
           local_cost: formatNumber(item.local_cost) || '-',
@@ -688,6 +691,7 @@ export default {
           barcode: item.barcode || '-',
           product_name: item.product_name || '-',
           warehouse_name: item.warehouse_name || '-',
+          quantity: formatNumber(item.quantity) || '0',
           foreign_cost: formatNumber(item.foreign_cost) || '-',
           foreign_price: formatNumber(item.foreign_price) || '-',
           local_cost: formatNumber(item.local_cost) || '-',

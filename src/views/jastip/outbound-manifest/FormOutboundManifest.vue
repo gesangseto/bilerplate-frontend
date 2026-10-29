@@ -180,6 +180,7 @@ export default {
       fields: [
         { key: 'customer_name', label: 'Customer' },
         { key: 'product_name', label: 'Product' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
@@ -196,6 +197,7 @@ export default {
         { key: 'selected', label: '' },
         { key: 'customer_name', label: 'Customer' },
         { key: 'product_name', label: 'Product' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'foreign_currency', label: 'Foreign Curr.' },
         { key: 'foreign_cost', label: '(F) Cost' },
         { key: 'foreign_price', label: '(F) Price' },
@@ -345,6 +347,7 @@ export default {
           ...item,
           customer_name: item.customer_name || '-',
           product_name: item.product_name || '-',
+          quantity: formatNumber(item.quantity) || '0',
           foreign_currency: item.foreign_currency || '-',
           local_currency: item.local_currency || '-',
           foreign_cost: formatNumber(item.foreign_cost) || '-',
@@ -366,6 +369,7 @@ export default {
     renderDraftItems() {
       return this.draftItems.map((item) => ({
         ...item,
+        quantity: formatNumber(item.quantity) || '0',
         foreign_cost: formatNumber(item.foreign_cost) || '-',
         foreign_price: formatNumber(item.foreign_price) || '-',
         local_cost: formatNumber(item.local_cost) || '-',

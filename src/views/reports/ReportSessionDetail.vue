@@ -105,15 +105,15 @@
             <CCol sm="6" md="4" xl="3" class="mb-3">
               <CCard class="h-100 text-center">
                 <CCardBody>
-                  <div class="text-muted small">Total Items</div>
-                  <div class="font-weight-bold">{{ formatNumber(session.total_items) }}</div>
+                  <div class="text-muted small">Total Records</div>
+                  <div class="font-weight-bold">{{ formatNumber(session.total_records) }}</div>
                 </CCardBody>
               </CCard>
             </CCol>
             <CCol sm="6" md="4" xl="3" class="mb-3">
               <CCard class="h-100 text-center">
                 <CCardBody>
-                  <div class="text-muted small">Total Qty</div>
+                  <div class="text-muted small">Total Qty (pcs)</div>
                   <div class="font-weight-bold">{{ formatNumber(session.total_quantity) }}</div>
                 </CCardBody>
               </CCard>
@@ -315,14 +315,14 @@ export default {
       statusFields: [
         { key: 'status', label: 'Status Code' },
         { key: 'status_name', label: 'Status' },
-        { key: 'total', label: 'Items' },
-        { key: 'total_quantity', label: 'Qty' },
+        { key: 'total_records', label: 'Records' },
+        { key: 'total_quantity', label: 'Qty (pcs)' },
       ],
       customerFields: [
         { key: 'customer_name', label: 'Customer' },
         { key: 'customer_phone', label: 'Phone' },
-        { key: 'total_items', label: 'Items' },
-        { key: 'total_quantity', label: 'Qty' },
+        { key: 'total_records', label: 'Records' },
+        { key: 'total_quantity', label: 'Qty (pcs)' },
         { key: 'grand_total', label: 'Grand Total' },
         { key: 'total_paid', label: 'Paid' },
         { key: 'total_pending', label: 'Pending' },
@@ -336,6 +336,8 @@ export default {
         203: 'success',
         204: 'primary',
         205: 'dark',
+        206: 'secondary',
+        3: 'danger',
       },
       paymentBadge: {
         UNPAID: 'danger',
@@ -410,7 +412,7 @@ export default {
       if (!this.session || !this.session.status_breakdown) return [];
       return this.session.status_breakdown.map((s) => ({
         ...s,
-        total: formatNumber(s.total) || '0',
+        total_records: formatNumber(s.total_records) || '0',
         total_quantity: formatNumber(s.total_quantity) || '0',
         _rowVariant: this.statusColor[s.status] || '',
       }));
@@ -421,7 +423,7 @@ export default {
         ...c,
         customer_name: c.customer_name || '-',
         customer_phone: c.customer_phone || '-',
-        total_items: formatNumber(c.total_items) || '0',
+        total_records: formatNumber(c.total_records) || '0',
         total_quantity: formatNumber(c.total_quantity) || '0',
         grand_total: formatNumber(c.grand_total) || '0',
         total_paid: this.formatCurrency(c.total_paid, c.local_currency),

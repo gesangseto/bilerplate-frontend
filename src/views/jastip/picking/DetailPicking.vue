@@ -267,7 +267,7 @@ export default {
         { key: 'product_name', label: 'Product' },
         { key: 'barcode', label: 'Barcode' },
         { key: 'batch_no', label: 'Batch No' },
-        { key: 'quantity', label: 'Qty' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'foreign_price', label: 'Foreign Price' },
         { key: 'local_price', label: 'Local Price' },
         { key: 'foreign_profit', label: 'Foreign Profit' },

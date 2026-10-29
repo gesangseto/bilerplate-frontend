@@ -51,7 +51,7 @@ export default {
         { key: 'batch_no', label: 'Batch No' },
         { key: 'warehouse_name', label: 'Warehouse' },
         { key: 'supplier_name', label: 'Supplier' },
-        { key: 'quantity', label: 'Qty' },
+        { key: 'quantity', label: 'Qty (pcs)' },
         { key: 'weight', label: 'Weight' },
         { key: 'shipment_number', label: 'Shipment No' },
         { key: 'status_name', label: 'Status' },
