@@ -888,25 +888,21 @@ export default {
         // untuk kompatibilitas kalau bentuk wire berubah.
         const wire = result.data?.data ?? result.data?.rows;
         const rows = Array.isArray(wire) ? wire : [];
-        const counts = { sent: 0, failed: 0, skipped: 0 };
+        // Blast TIDAK mengirim langsung: setiap invoice masuk ANTREAN background
+        // (status 'queued') atau dilewati ('skipped'). Karena itu ringkasan
+        // sukses harus bicara soal antrean pengiriman — bukan terkirim/gagal.
+        let queued = 0;
+        let skipped = 0;
         rows.forEach((row) => {
-          if (row && counts[row.status] !== undefined) counts[row.status] += 1;
+          if (!row) return;
+          if (row.status === 'queued') queued += 1;
+          else if (row.status === 'skipped') skipped += 1;
         });
-        // response.js (baris 22) memotong pesan di titik dua pertama, jadi hitungan
-        // dari backend sudah termasuk di `message` — pakai hitungan lokal dari rows
-        // (lebih reliable), dan pakai pesan backend hanya saat rows kosong.
-        let message = rows.length
-          ? 'Blast selesai'
-          : result.data?.message || 'Blast tagihan berhasil dikirim.';
-        message += ` (${counts.sent} terkirim, ${counts.failed} gagal, ${counts.skipped} dilewati)`;
-        const failed = rows
-          .filter((row) => row && row.status === 'failed' && row.customer_name)
-          .map((row) => row.customer_name);
-        if (failed.length) {
-          message += ` — gagal: ${failed.slice(0, 5).join(', ')}${
-            failed.length > 5 ? ', ...' : ''
-          }`;
-        }
+        // response.js memotong pesan backend di titik dua pertama, jadi hitung
+        // dari rows di sisi klien (lebih akurat).
+        const message = rows.length
+          ? `Blast dijadwalkan: ${queued} invoice masuk antrean, ${skipped} dilewati`
+          : result.data?.message || 'Blast dijadwalkan.';
         this.toast('success', message);
         this.blastModal = false;
         await this.loadAll();
