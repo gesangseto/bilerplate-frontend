@@ -327,7 +327,9 @@
                   <div v-if="data.notification_whatsapp">
                     <small>{{ whatsappStatus.message }}</small>
                     <hr />
-                    <CForm v-if="whatsappStatus.qr_base64">
+                    <CForm
+                      v-if="whatsappStatus.qr_base64 && !whatsappQrExpired"
+                    >
                       <CCol class="md-4">
                         <img
                           v-bind:src="whatsappStatus.qr_base64"
@@ -335,6 +337,22 @@
                         />
                       </CCol>
                     </CForm>
+                    <div
+                      v-if="whatsappQrExpired && !whatsappStatus.connected"
+                      class="mb-2"
+                    >
+                      <p class="text-warning mb-2">
+                        QR sudah kedaluwarsa. Silakan muat ulang QR untuk
+                        menampilkan kode baru.
+                      </p>
+                      <CButton
+                        size="sm"
+                        color="primary"
+                        @click="reloadWhatsappQr"
+                      >
+                        Muat Ulang QR
+                      </CButton>
+                    </div>
                     <small
                       v-if="whatsappStatus.error && !whatsappStatus.qr_base64"
                       class="text-danger"
@@ -484,6 +502,7 @@ import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
 import { getSysConfig, updateSysConfig } from '../../../resource/SysConfig';
 import {
   getWhatsappQr,
+  getWhatsappStatus,
   sendWhatsappMessage,
   deleteWhatsappSession,
 } from '../../../resource/Whatsapp';
@@ -514,6 +533,12 @@ export default {
       whatsappStatus: { error: false, message: null, qr_base64: null },
       whatsappLoading: false,
       whatsappDestroying: false,
+      // QR yang ditampilkan hanya valid 60 detik (qrTimeout backend). Setelah
+      // lewat masa berlaku, gambar TIDAK diperbarui otomatis — user diminta
+      // memuat ulang QR secara manual.
+      whatsappQrExpired: false,
+      whatsappQrIssuedAt: null,
+      whatsappPolling: null,
       whatsappMessage: {
         to: null,
         message: null,
@@ -616,6 +641,9 @@ export default {
     this.loadEpcStatus();
     this.loadCron();
     this.loadWhatsapp();
+  },
+  beforeDestroy() {
+    this.stopWhatsappPolling();
   },
   methods: {
     initial_password_pattern() {
@@ -729,6 +757,9 @@ export default {
         if (enabled) {
           await this.loadWhatsapp();
         } else {
+          this.stopWhatsappPolling();
+          this.whatsappQrExpired = false;
+          this.whatsappQrIssuedAt = null;
           this.whatsappStatus = {
             error: false,
             connected: false,
@@ -754,6 +785,9 @@ export default {
       if (!_res || _res.error) {
         return;
       }
+      this.stopWhatsappPolling();
+      this.whatsappQrExpired = false;
+      this.whatsappQrIssuedAt = null;
       this.whatsappStatus = {
         error: false,
         message: 'Session WhatsApp berhasil dihapus.',
@@ -772,6 +806,7 @@ export default {
     async loadWhatsapp() {
       let _res = await getWhatsappQr();
       if (_res && _res.error) {
+        this.stopWhatsappPolling();
         this.whatsappStatus = {
           ...this.whatsappStatus,
           qr_base64: null,
@@ -781,16 +816,78 @@ export default {
         };
       } else if (_res && !_res.error) {
         const status = _res.data?.[0] || {};
+        const qrBase64 = status.qr_base64 || null;
+        const expired = !!status.qr_expired;
+        this.whatsappQrExpired = expired;
+        if (qrBase64) {
+          // QR baru ditampilkan → mulai hitung masa berlakunya.
+          this.whatsappQrIssuedAt = Date.now();
+        }
         this.whatsappStatus = {
           ...this.whatsappStatus,
-          qr_base64: status.qr_base64 || null,
+          qr_base64: qrBase64,
           connected: !!status.connected,
           error: false,
           message: status.connected
             ? 'WhatsApp terhubung.'
             : _res.message || 'Menunggu QR WhatsApp...',
         };
+        if (status.connected) {
+          this.stopWhatsappPolling();
+        } else if (qrBase64 || expired) {
+          this.startWhatsappPolling();
+        }
       }
+    },
+    // QR Baileys hanya berlaku 60 detik (qrTimeout backend). Selama QR tampil
+    // kita hanya memantau status koneksi — gambar QR TIDAK diganti otomatis.
+    // Setelah lewat masa berlaku, tampilkan pesan agar user memuat ulang.
+    startWhatsappPolling() {
+      if (this.whatsappPolling) {
+        return;
+      }
+      this.whatsappPolling = setInterval(async () => {
+        if (
+          this.whatsappQrIssuedAt &&
+          Date.now() - this.whatsappQrIssuedAt > 55000
+        ) {
+          this.whatsappQrExpired = true;
+          this.stopWhatsappPolling();
+          return;
+        }
+        const _res = await getWhatsappStatus();
+        const status = (_res && !_res.error && _res.data?.[0]) || null;
+        if (status && status.connected) {
+          this.whatsappQrExpired = false;
+          this.whatsappStatus = {
+            ...this.whatsappStatus,
+            connected: true,
+            qr_base64: null,
+            error: false,
+            message: 'WhatsApp terhubung.',
+          };
+          this.stopWhatsappPolling();
+        } else if (status && status.qr_expired) {
+          this.whatsappQrExpired = true;
+          this.stopWhatsappPolling();
+        }
+      }, 5000);
+    },
+    stopWhatsappPolling() {
+      if (this.whatsappPolling) {
+        clearInterval(this.whatsappPolling);
+        this.whatsappPolling = null;
+      }
+    },
+    async reloadWhatsappQr() {
+      this.stopWhatsappPolling();
+      this.whatsappQrExpired = false;
+      this.whatsappStatus = {
+        ...this.whatsappStatus,
+        qr_base64: null,
+        message: 'Memuat QR baru...',
+      };
+      await this.loadWhatsapp();
     },
     formatDate(date) {
       return moment(date).format('yyyy/MM/DD');
