@@ -117,6 +117,34 @@
                 }}</CBadge>
               </td>
             </template>
+            <template #invoice_last="{ item }">
+              <td>
+                <div
+                  v-if="item.invoice_status === 'sent'"
+                  class="text-success small"
+                >
+                  <CIcon name="cil-check-circle" />
+                  {{ fmtDateTime(item.invoice_sent_at) }}
+                  <span
+                    v-if="item.invoice_send_count > 1"
+                    class="text-muted"
+                    >({{ item.invoice_send_count }}x)</span
+                  >
+                </div>
+                <div
+                  v-else-if="item.invoice_status === 'failed'"
+                  class="text-danger small"
+                  :title="invoiceErrorTitle(item)"
+                >
+                  <CIcon name="cil-x-circle" />
+                  Gagal · {{ fmtDateTime(item.invoice_attempt_at) }}
+                  <div v-if="item.invoice_sent_at" class="text-muted">
+                    Sukses terakhir: {{ fmtDateTime(item.invoice_sent_at) }}
+                  </div>
+                </div>
+                <span v-else class="text-muted small">Belum terkirim</span>
+              </td>
+            </template>
             <template #action="{ item }">
               <td class="text-nowrap">
                 <CButton
@@ -230,6 +258,26 @@
             >
           </div>
           <div class="app-modal-info__item">
+            <span class="app-modal-info__label">Invoice Terakhir</span>
+            <span class="app-modal-info__value">
+              <template v-if="detailData.invoice_status === 'sent'">
+                <span class="text-success"
+                  >Terkirim · {{ fmtDateTime(detailData.invoice_sent_at) }}</span
+                >
+              </template>
+              <template v-else-if="detailData.invoice_status === 'failed'">
+                <span class="text-danger"
+                  >Gagal · {{ fmtDateTime(detailData.invoice_attempt_at) }}</span
+                >
+                <div v-if="detailData.invoice_sent_at" class="text-muted small">
+                  Sukses terakhir:
+                  {{ fmtDateTime(detailData.invoice_sent_at) }}
+                </div>
+              </template>
+              <span v-else class="text-muted">Belum terkirim</span>
+            </span>
+          </div>
+          <div class="app-modal-info__item">
             <span class="app-modal-info__label">Total Tagihan</span>
             <span class="app-modal-info__value">{{
               money(detailData.grand_total)
@@ -255,6 +303,32 @@
             >
           </div>
         </div>
+
+        <template v-if="detailErrors.length">
+          <div class="app-modal-section-title">Riwayat Kegagalan Kirim Invoice</div>
+          <div style="max-height: 180px; overflow: auto">
+            <div
+              v-for="err in detailErrors"
+              :key="err.id"
+              class="border-top py-2 small"
+            >
+              <div class="d-flex flex-wrap align-items-center">
+                <CBadge color="danger">{{ err.stage }}</CBadge>
+                <span class="text-muted ml-2">{{
+                  fmtDateTime(err.created_date)
+                }}</span>
+                <span class="ml-2">percobaan {{ err.attempt }}</span>
+                <span v-if="err.error_code" class="ml-2"
+                  >kode {{ err.error_code }}</span
+                >
+                <span v-if="err.queue_id" class="ml-2 text-muted"
+                  >antrean #{{ err.queue_id }}</span
+                >
+              </div>
+              <div class="text-danger">{{ err.error_message }}</div>
+            </div>
+          </div>
+        </template>
 
         <div class="app-modal-section-title">Item Dipesan</div>
         <div style="max-height: 240px; overflow: auto">
@@ -544,6 +618,7 @@ export default {
       detailBill: null,
       detailSummary: null,
       detailItems: [],
+      detailErrors: [],
       detailLoading: false,
 
       payModal: false,
@@ -607,6 +682,7 @@ export default {
         { key: 'sisa', label: 'Sisa', _style: 'text-align: right' },
         { key: 'qty', label: 'Record / Qty', _style: 'text-align: center' },
         { key: 'payment_status', label: 'Status' },
+        { key: 'invoice_last', label: 'Invoice Terakhir' },
         { key: 'action', label: '', _style: 'width: 1%' },
       ];
     },
@@ -690,8 +766,35 @@ export default {
       };
       return map[method] || method || '-';
     },
+    // Tooltip kolom Invoice Terakhir: sertakan tahap + kode error.
+    invoiceErrorTitle(item) {
+      if (!item || !item.invoice_error) return 'Gagal mengirim invoice';
+      const prefix = item.invoice_error_stage
+        ? `[${item.invoice_error_stage}${
+            item.invoice_error_code ? `/${item.invoice_error_code}` : ''
+          }] `
+        : '';
+      return prefix + item.invoice_error;
+    },
     fmtDate(date) {
       return date ? String(date).slice(0, 10) : '-';
+    },
+    // Waktu kirim invoice ditampilkan dalam WIB (Asia/Jakarta).
+    fmtDateTime(date) {
+      if (!date) return '-';
+      try {
+        return new Intl.DateTimeFormat('id-ID', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'Asia/Jakarta',
+        }).format(new Date(date));
+      } catch (error) {
+        return String(date).slice(0, 16).replace('T', ' ');
+      }
     },
 
     async loadSessions() {
@@ -744,6 +847,7 @@ export default {
       this.detailBill = bill;
       this.detailSummary = null;
       this.detailItems = [];
+      this.detailErrors = [];
       this.detailModal = true;
       await this.loadDetail();
     },
@@ -752,7 +856,7 @@ export default {
       this.detailLoading = true;
       this.$isLoading(true);
       try {
-        const [summary, items] = await Promise.all([
+        const [summary, items, errors] = await Promise.all([
           $axios.get('/v1/jastip/payment', {
             params: {
               customer_id: this.detailBill.customer_id,
@@ -765,9 +869,17 @@ export default {
               session_id: this.sessionId,
             },
           }),
+          $axios.get('/v1/jastip/payment/invoice-errors', {
+            params: {
+              customer_id: this.detailBill.customer_id,
+              session_id: this.sessionId,
+              limit: 10,
+            },
+          }),
         ]);
         this.detailSummary = (summary.data?.data || [])[0] || this.detailBill;
         this.detailItems = items.data?.data || [];
+        this.detailErrors = errors.data?.data || [];
       } catch (error) {
         this.toast('error', error.response?.data?.message || error.message);
       } finally {
