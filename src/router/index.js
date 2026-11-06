@@ -247,7 +247,8 @@ const BpomCompareTool = () =>
 // ========================CONFIGURATION========================
 Vue.use(Router);
 let router = new Router({
-  mode: 'hash', // https://router.vuejs.org/api/#mode
+  mode: 'history',
+  base: process.env.BASE_URL,
   linkActiveClass: 'active',
   scrollBehavior: () => ({ y: 0 }),
   routes: configRoutes(),

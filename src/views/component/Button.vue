@@ -1,5 +1,8 @@
 <template>
-  <a :href="href ? href : null">
+  <component
+    :is="is_link ? 'router-link' : 'span'"
+    v-bind="is_link ? { to: href } : {}"
+  >
     <CButton
       :class="property.class"
       v-c-tooltip="property.tooltip"
@@ -15,19 +18,24 @@
       />
       {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
     </CButton>
-  </a>
+  </component>
 </template>
 
 <script>
 export default {
   name: 'Button',
   props: ['type', 'buttonProperty', 'useHref', 'id'],
+  computed: {
+    is_link() {
+      return !!(this.useHref && this.href);
+    },
+  },
   watch: {
     id: {
       deep: true,
       handler(n) {
         if (this.useHref) {
-          this.href = `#${this.$route.path}/${this.type}`;
+          this.href = `${this.$route.path}/${this.type}`;
           if (n) this.href += `/${n}`;
         }
       },
@@ -39,7 +47,7 @@ export default {
   },
   mounted() {
     if (this.useHref) {
-      this.href = `#${this.$route.path}/${this.type}`;
+      this.href = `${this.$route.path}/${this.type}`;
       if (this.id) this.href += `/${this.id}`;
     }
     if (this.type == 'create') {

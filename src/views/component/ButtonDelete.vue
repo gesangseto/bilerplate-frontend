@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a :href="href ? href : null">
+    <span>
       <CButton
         type="reset"
         size="sm"
@@ -10,7 +10,7 @@
       >
         <CIcon name="cil-check-circle" /> {{ judul }}
       </CButton>
-    </a>
+    </span>
     <CModal
       centered="centered"
       :show.sync="showModal"

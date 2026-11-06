@@ -1,5 +1,5 @@
 <template>
-  <a :href="href ? href : null">
+  <span>
     <CButton
       type="reset"
       size="sm"
@@ -10,7 +10,7 @@
       <CIcon name="cil-check-circle" />
       {{ judul }}
     </CButton>
-  </a>
+  </span>
 </template>
 
 <script>

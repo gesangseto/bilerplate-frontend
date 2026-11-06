@@ -63,6 +63,7 @@ export default {
         return;
       }
       let _res = await authLogout();
+      clearStorage();
       if (_res) {
         this.$toast.open({
           message: _res.error
@@ -74,7 +75,6 @@ export default {
           duration: 5000,
         });
         if (!_res.error) {
-          clearStorage();
           this.$router.go({ path: '/login' });
         }
       }

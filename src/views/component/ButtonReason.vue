@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a :href="href ? href : null">
+    <span>
       <CButton
         type="reset"
         size="sm"
@@ -17,7 +17,7 @@
         />
         {{ button.text }}
       </CButton>
-    </a>
+    </span>
     <CModal
       centered="centered"
       :show.sync="showModal"

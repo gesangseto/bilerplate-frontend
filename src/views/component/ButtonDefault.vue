@@ -15,7 +15,10 @@
           <!-- Slot untuk prepend -->
           <slot name="prepend"></slot>
 
-          <a :href="href ? href : null">
+          <component
+            :is="is_link ? 'router-link' : 'span'"
+            v-bind="is_link ? { to: href } : {}"
+          >
             <CButton
               :class="property.class"
               v-c-tooltip="property.tooltip"
@@ -31,7 +34,7 @@
               />
               {{ property.text ? `&nbsp;${property.text}&nbsp;` : null }}
             </CButton>
-          </a>
+          </component>
 
           <!-- Slot untuk append -->
           <slot name="append"></slot>
@@ -95,12 +98,17 @@ export default {
     disabled: { default: null }, // Properti isValid untuk menentukan validasi input
     col: { type: Array, default: () => [3, 9] }, // Properti isValid untuk menentukan validasi input
   },
+  computed: {
+    is_link() {
+      return !!(this.useHref && this.href);
+    },
+  },
   watch: {
     id: {
       deep: true,
       handler(n) {
         if (this.useHref) {
-          this.href = `#${this.$route.path}/${this.type}`;
+          this.href = `${this.$route.path}/${this.type}`;
           if (n) this.href += `/${n}`;
         }
       },
@@ -112,7 +120,7 @@ export default {
   },
   mounted() {
     if (this.useHref) {
-      this.href = `#${this.$route.path}/${this.type}`;
+      this.href = `${this.$route.path}/${this.type}`;
       if (this.id) this.href += `/${this.id}`;
     }
     if (this.type == 'create') {

@@ -14,8 +14,11 @@
 
       <!-- <CBreadcrumbRouter class="border-0 mb-0" /> -->
       <CHeaderNav>
-        <a href="#/home"> Home /&nbsp;</a>
-        <a :href="`#${$activeMenu.link}`"> {{ $activeMenu.breadcrumbs }}</a>
+        <router-link to="/home"> Home /&nbsp;</router-link>
+        <router-link v-if="$activeMenu.link" :to="$activeMenu.link">
+          {{ $activeMenu.breadcrumbs }}
+        </router-link>
+        <span v-else> {{ $activeMenu.breadcrumbs }}</span>
       </CHeaderNav>
 
       <!-- <div v-for="item of path_url" :key="item.path">
@@ -264,7 +267,7 @@ export default {
         .add(1, 'seconds')
         .format('DD/MM/YYYY HH:mm:ss:SSS');
       let time_diff = moment(time_out, 'DD/MM/YYYY HH:mm:ss').diff(
-        moment(time_now, 'DD/MM/YYYY HH:mm:ss')
+        moment(time_now, 'DD/MM/YYYY HH:mm:ss'),
       );
       let sisa = parseInt(time_diff / 1000);
       return sisa;
@@ -373,7 +376,7 @@ export default {
     },
     generateLinkNotif(item) {
       if (!item.trx_ref_name) return null;
-      let url = '#';
+      let url = '';
       if (item.trx_ref_name.toLowerCase() == 'bpom') {
         url += `/transaction/queue-bpom/read/${item.trx_ref_id || item.trx_id}`;
       } else if (item.trx_ref_name.toLowerCase() == 'return') {
