@@ -2,10 +2,25 @@ import $axiosMertrack from '../apiMertrack';
 
 let url = `/v4/helper/whatsapp`;
 
-export const getWhatsappQr = async () => {
+export const getWhatsappQr = async (refresh = false) => {
   return new Promise((resolve) => {
     $axiosMertrack
-      .get(`${url}/qr`)
+      .get(`${url}/qr${refresh ? '?refresh=1' : ''}`)
+      .then((result) => {
+        let res = result.data;
+        return resolve(res);
+      })
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
+export const getWhatsappStatus = async () => {
+  return new Promise((resolve) => {
+    $axiosMertrack
+      .get(`${url}/status`)
       .then((result) => {
         let res = result.data;
         return resolve(res);

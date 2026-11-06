@@ -12,13 +12,12 @@
 
           <CCardBody>
             <CForm>
-              <!-- Licensed Entity Information -->
+              <!-- Super User -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
                   Super User
                 </CCardHeader>
                 <CCardBody>
-                  <!-- COMPANY INFORMATION -->
                   <p style="font-weight: bold">Login Information</p>
                   <InputDefault
                     required
@@ -43,115 +42,143 @@
                   </InputDefault>
                 </CCardBody>
               </CCard>
-              <!-- Licensed Entity Information -->
-              <CCard>
-                <CCardHeader style="font-weight: bold; font-size: large">
-                  Licensed Entity Information
-                </CCardHeader>
-                <CCardBody>
-                  <!-- COMPANY INFORMATION -->
-                  <p style="font-weight: bold">Company Information</p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Entity Name"
-                    v-model="data.identity_name"
-                    required
-                    :is-valid="!data.identity_name ? false : true"
-                  />
-                  <TextareaDefault
-                    :col="[3, 7]"
-                    title="Entity Address"
-                    v-model="data.entity_address"
-                    required
-                    :is-valid="!data.entity_address ? false : true"
-                  />
-                  <!-- GS1 INFORMATION -->
-                  <p style="font-weight: bold">GS1 Information</p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="GS1 Company Prefix"
-                    v-model="data.identity_number"
-                    :validasi="'integer'"
-                    :max="12"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="GLN"
-                    v-model="data.gln"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
-                </CCardBody>
-              </CCard>
 
-              <!-- Licensed Features & Limits -->
+              <!-- Licensed Entity & Limits -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
-                  Licensed Features & Limits
+                  Licensed Entity & Limits
                 </CCardHeader>
                 <CCardBody>
-                  <!-- License Limits -->
+                  <p style="font-weight: bold">Company Information</p>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Entity Name"
+                        v-model="data.identity_name"
+                        required
+                        :is-valid="!data.identity_name ? false : true"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <TextareaDefault
+                        :col="[4, 8]"
+                        title="Entity Address"
+                        v-model="data.entity_address"
+                        required
+                        :is-valid="!data.entity_address ? false : true"
+                      />
+                    </CCol>
+                  </CRow>
+
+                  <p style="font-weight: bold">GS1 Information</p>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="GS1 Company Prefix"
+                        v-model="data.identity_number"
+                        :validasi="'integer'"
+                        :max="12"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="GLN"
+                        v-model="data.gln"
+                        :validasi="'integer'"
+                        :max="100"
+                      />
+                    </CCol>
+                  </CRow>
+
                   <p style="font-weight: bold">License Limits</p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum Warehouse"
-                    v-model="data.total_wh"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum Department"
-                    v-model="data.total_department"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum Section"
-                    v-model="data.total_section"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum Label Layout"
-                    v-model="data.total_conf_layout"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum Date Format"
-                    v-model="data.total_conf_date"
-                    :validasi="'integer'"
-                    :max="100"
-                  />
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Maximum Warehouse"
+                        v-model="data.total_wh"
+                        :validasi="'integer'"
+                        :max="100"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Maximum Department"
+                        v-model="data.total_department"
+                        :validasi="'integer'"
+                        :max="100"
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Maximum Section"
+                        v-model="data.total_section"
+                        :validasi="'integer'"
+                        :max="100"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Maximum Label Layout"
+                        v-model="data.total_conf_layout"
+                        :validasi="'integer'"
+                        :max="100"
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Maximum Date Format"
+                        v-model="data.total_conf_date"
+                        :validasi="'integer'"
+                        :max="100"
+                      />
+                    </CCol>
+                  </CRow>
+
                   <p style="font-weight: bold">
                     MERTRACK Warehouse Mobile (MWM) Devices
                   </p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Maximum MWM Devices"
-                    :validasi="'integer'"
-                    v-model="data.total_device"
-                    :max="100"
-                  />
-                  <div
-                    v-for="(item, index) in parseInt(data.total_device)"
-                    :key="item"
-                  >
-                    <InputDefault
-                      :col="[3, 7]"
-                      :title="'MWM Device ID #' + (index + 1)"
-                      :validasi="'alphanumeric'"
-                      v-model="data.list_device[index]"
-                      :max="100"
-                    />
-                  </div>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Maximum MWM Devices"
+                        :validasi="'integer'"
+                        v-model="data.total_device"
+                        :max="100"
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol
+                      v-for="(item, index) in parseInt(data.total_device)"
+                      :key="index"
+                      sm="12"
+                      md="6"
+                      lg="6"
+                    >
+                      <InputDefault
+                        :col="[4, 8]"
+                        :title="'MWM Device ID #' + (index + 1)"
+                        :validasi="'alphanumeric'"
+                        v-model="data.list_device[index]"
+                        :max="100"
+                      />
+                    </CCol>
+                  </CRow>
                 </CCardBody>
               </CCard>
-
               <!-- Authentication & Security Settings -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
@@ -427,76 +454,202 @@
                     :value="data.retry_interval"
                     :col="[3, 7]"
                   />
-                  <p style="font-weight: bold">Notification Settings</p>
-
-                  <strong>
-                    <CIcon name="cib-whatsapp" /> &nbsp; Whatsapp
-                  </strong>
-                  <br />
-                  <CCol sm="6">
-                    <CRow form class="form-group">
-                      <CCol tag="label" sm="6" class="col-form-label">
-                        Enabling Notification
-                      </CCol>
-                      <CCol sm="4">
-                        <CSwitch
-                          class="mr-1"
-                          color="success"
-                          :checked.sync="data.notification_whatsapp"
-                        />
-                      </CCol>
-                    </CRow>
-                  </CCol>
-                  <div v-if="data.notification_whatsapp">
-                    <small>{{ whatsappStatus.message }}</small>
-                    <hr />
-                    <CForm v-if="!whatsappStatus.error">
-                      <CCol class="md-4">
-                        <img
-                          v-bind:src="whatsappStatus.qr_base64"
-                          style="width: 150px; height: auto"
-                        />
-                      </CCol>
-                    </CForm>
-                    <CForm v-if="whatsappStatus.error">
-                      <InputDefault
-                        :col="[3, 7]"
-                        :title="'To'"
-                        :validasi="'integer'"
-                        v-model="whatsappMessage.to"
-                        :max="14"
-                      />
-                      <InputDefault
-                        :col="[3, 7]"
-                        :title="'Message'"
-                        v-model="whatsappMessage.message"
-                        :max="200"
-                      />
-                      <CButton
-                        size="sm"
-                        color="success"
-                        @click="sendWhatsapp()"
-                      >
-                        Send Test Message
-                      </CButton>
-                      <CButton
-                        class="ml-1"
-                        size="sm"
-                        color="danger"
-                        @click="deleteWhatsapp()"
-                      >
-                        Delete Session
-                      </CButton>
-                      <br />
-                      <small
-                        :class="
-                          whatsappMessage.error ? 'text-danger' : 'text-muted'
-                        "
-                      >
-                        {{ whatsappMessage.response }}
-                      </small>
-                    </CForm>
-                  </div>
+                </CCardBody>
+              </CCard>
+              <!-- Notification Settings -->
+              <CCard>
+                <CCardHeader style="font-weight: bold; font-size: large">
+                  Notification Settings
+                </CCardHeader>
+                <CCardBody>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <p style="font-weight: bold">
+                        <CIcon name="cib-whatsapp" /> &nbsp; Whatsapp
+                      </p>
+                      <CRow form class="form-group">
+                        <CCol tag="label" sm="6" class="col-form-label">
+                          Enabling Notification
+                        </CCol>
+                        <CCol sm="6">
+                          <CSwitch
+                            class="mr-1"
+                            color="success"
+                            :checked.sync="data.notification_whatsapp"
+                            :disabled="whatsappLoading"
+                            @update:checked="onWhatsappToggle"
+                          />
+                        </CCol>
+                      </CRow>
+                      <div v-if="data.notification_whatsapp">
+                        <template v-if="!whatsappPanelOpen">
+                          <small class="text-muted">
+                            The QR panel is closed. Open it only when you need to
+                            connect or re-scan WhatsApp.
+                          </small>
+                          <div class="mt-2">
+                            <CButton
+                              size="sm"
+                              color="primary"
+                              :disabled="whatsappLoading"
+                              @click="openWhatsappPanel"
+                            >
+                              Connect / Show QR
+                            </CButton>
+                          </div>
+                        </template>
+                        <template v-else>
+                          <div class="d-flex flex-wrap align-items-center mb-2">
+                            <CButton
+                              size="sm"
+                              color="secondary"
+                              @click="closeWhatsappPanel"
+                            >
+                              Hide QR
+                            </CButton>
+                          </div>
+                          <small>{{ whatsappStatus.message }}</small>
+                          <hr />
+                        <CForm
+                          v-if="whatsappStatus.qr_base64 && !whatsappQrExpired"
+                        >
+                          <CCol md="4">
+                            <img
+                              v-bind:src="whatsappStatus.qr_base64"
+                              style="width: 220px; height: auto"
+                            />
+                          </CCol>
+                        </CForm>
+                        <div
+                          v-if="whatsappQrExpired && !whatsappStatus.connected"
+                          class="mb-2"
+                        >
+                          <p class="text-warning mb-2">
+                            QR code has expired. Please reload the QR to display
+                            a new code.
+                          </p>
+                          <CButton
+                            size="sm"
+                            color="primary"
+                            @click="reloadWhatsappQr"
+                          >
+                            Reload QR
+                          </CButton>
+                        </div>
+                        <div
+                          v-else-if="
+                            !whatsappStatus.qr_base64 &&
+                            !whatsappStatus.connected &&
+                            !whatsappStatus.error
+                          "
+                          class="mb-2"
+                        >
+                          <CButton
+                            size="sm"
+                            color="primary"
+                            @click="reloadWhatsappQr"
+                          >
+                            Show QR
+                          </CButton>
+                        </div>
+                        <div
+                          v-if="!whatsappStatus.connected"
+                          class="mt-2 mb-2"
+                        >
+                          <CButton
+                            size="sm"
+                            color="danger"
+                            :disabled="whatsappDestroying"
+                            @click="deleteWhatsapp()"
+                          >
+                            {{
+                              whatsappDestroying
+                                ? 'Deleting session...'
+                                : 'Reset Session'
+                            }}
+                          </CButton>
+                        </div>
+                        <small
+                          v-if="
+                            whatsappStatus.error && !whatsappStatus.qr_base64
+                          "
+                          class="text-danger"
+                        >
+                          {{ whatsappStatus.message }}
+                        </small>
+                        <CForm v-if="whatsappStatus.connected">
+                          <InputDefault
+                            :col="[4, 8]"
+                            :title="'To'"
+                            :validasi="'integer'"
+                            v-model="whatsappMessage.to"
+                            :max="14"
+                          />
+                          <InputDefault
+                            :col="[4, 8]"
+                            :title="'Message'"
+                            v-model="whatsappMessage.message"
+                            :max="200"
+                          />
+                          <div
+                            class="d-flex flex-wrap align-items-center"
+                            style="gap: 12px"
+                          >
+                            <CButton
+                              size="sm"
+                              color="success"
+                              @click="sendWhatsapp()"
+                            >
+                              Send Test Message
+                            </CButton>
+                            <CButton
+                              size="sm"
+                              color="danger"
+                              :disabled="whatsappDestroying"
+                              @click="deleteWhatsapp()"
+                            >
+                              {{
+                                whatsappDestroying
+                                  ? 'Deleting session...'
+                                  : 'Delete Session'
+                              }}
+                            </CButton>
+                          </div>
+                          <small
+                            v-if="
+                              whatsappMessage.response && whatsappMessage.error
+                            "
+                            class="text-danger"
+                          >
+                            {{ whatsappMessage.response }}
+                          </small>
+                        </CForm>
+                        </template>
+                      </div>
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <p style="font-weight: bold">Other Channels</p>
+                      <template v-for="channel in comingSoonNotifications">
+                        <div :key="channel.name" class="mb-3">
+                          <p style="font-weight: bold" class="mb-2">
+                            <CIcon :name="channel.icon" /> &nbsp;
+                            {{ channel.name }}
+                            <CBadge color="secondary" class="ml-2">
+                              Available soon
+                            </CBadge>
+                          </p>
+                          <CRow form class="form-group">
+                            <CCol tag="label" sm="6" class="col-form-label">
+                              Enabling Notification
+                            </CCol>
+                            <CCol sm="6">
+                              <CSwitch class="mr-1" color="success" disabled />
+                            </CCol>
+                          </CRow>
+                        </div>
+                      </template>
+                    </CCol>
+                  </CRow>
                 </CCardBody>
               </CCard>
               <!-- Production Module Settings -->
@@ -506,33 +659,45 @@
                 </CCardHeader>
                 <CCardBody>
                   <p style="font-weight: bold">Process Order</p>
-                  <SelectOption
-                    title="Expiry Date Calculation Rule"
-                    :options="listExpiryType"
-                    v-on:onchange="data.expiry_type = $event"
-                    :value="data.expiry_type"
-                    :col="[3, 7]"
-                    :description="expiryDescription()"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Minimum Generated SN"
-                    v-model="data.min_count_generated_serial"
-                    :validasi="'integer'"
-                    :max="10000"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Additional SNs for Ref. Sample"
-                    v-model="data.additional_serial_for_sample"
-                    :validasi="'integer'"
-                    :max="10000"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="SN Pattern"
-                    v-model="data.serial_pattern"
-                  />
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <SelectOption
+                        title="Expiry Date Calculation Rule"
+                        :options="listExpiryType"
+                        v-on:onchange="data.expiry_type = $event"
+                        :value="data.expiry_type"
+                        :col="[4, 8]"
+                        :description="expiryDescription()"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="SN Pattern"
+                        v-model="data.serial_pattern"
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Minimum Generated SN"
+                        v-model="data.min_count_generated_serial"
+                        :validasi="'integer'"
+                        :max="10000"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Additional SNs for Ref. Sample"
+                        v-model="data.additional_serial_for_sample"
+                        :validasi="'integer'"
+                        :max="10000"
+                      />
+                    </CCol>
+                  </CRow>
                 </CCardBody>
               </CCard>
 
@@ -591,7 +756,7 @@
                           <CSwitch
                             class="mr-1"
                             color="success"
-                            :checked.sync="data.transfer_record_to_putbound"
+                            :checked.sync="data.transfer_record_to_outbound"
                           />
                         </CCol>
                       </CRow>
@@ -605,7 +770,7 @@
                           <CSwitch
                             class="mr-1"
                             color="success"
-                            :checked.sync="data.transfer_record_to_inbound"
+                            :checked.sync="data.return_record_to_inbound"
                           />
                         </CCol>
                       </CRow>
@@ -617,7 +782,7 @@
                           <CSwitch
                             class="mr-1"
                             color="success"
-                            :checked.sync="data.transfer_record_to_outbound"
+                            :checked.sync="data.return_record_to_outbound"
                           />
                         </CCol>
                       </CRow>
@@ -632,7 +797,6 @@
                     :max="10000"
                     description="Products must have at least the specified number of days before expiry to be eligible for picking."
                   />
-                  <CCol sm="12"> </CCol>
                   <CRow form class="form-group">
                     <CCol tag="label" sm="3" class="col-form-label">
                       Allow Aggregated Packaging L2 on Return External
@@ -662,7 +826,7 @@
                   </CRow>
                 </CCardBody>
               </CCard>
-              <!-- Warehouse Module Settings -->
+              <!-- BPOM TTAC Settings -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
                   BPOM TTAC Settings
@@ -671,33 +835,40 @@
                   <p style="font-weight: bold">
                     BPOM TTAC Registration Information
                   </p>
-
-                  <InputDefault
-                    required
-                    :isValid="!data.id_location ? false : true"
-                    :col="[3, 7]"
-                    title="ID Sarana"
-                    v-model="data.id_location"
-                    :validasi="'integer'"
-                    :max="100"
-                    description="'ID Sarana' as registered in the BPOM TTAC system, used for reporting Track & Trace data."
-                  />
-                  <InputDefault
-                    required
-                    :col="[3, 7]"
-                    title="Latitude"
-                    v-model="data.latitude"
-                    :validasi="'float'"
-                    :isValid="!data.latitude ? false : true"
-                  />
-                  <InputDefault
-                    required
-                    :col="[3, 7]"
-                    title="Longitude"
-                    v-model="data.longitude"
-                    :validasi="'float'"
-                    :isValid="!data.longitude ? false : true"
-                  />
+                  <CRow>
+                    <CCol sm="12" md="4" lg="4">
+                      <InputDefault
+                        required
+                        :isValid="!data.id_location ? false : true"
+                        :col="[4, 8]"
+                        title="ID Sarana"
+                        v-model="data.id_location"
+                        :validasi="'integer'"
+                        :max="100"
+                        description="'ID Sarana' as registered in the BPOM TTAC system, used for reporting Track & Trace data."
+                      />
+                    </CCol>
+                    <CCol sm="12" md="4" lg="4">
+                      <InputDefault
+                        required
+                        :col="[4, 8]"
+                        title="Latitude"
+                        v-model="data.latitude"
+                        :validasi="'float'"
+                        :isValid="!data.latitude ? false : true"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="4" lg="4">
+                      <InputDefault
+                        required
+                        :col="[4, 8]"
+                        title="Longitude"
+                        v-model="data.longitude"
+                        :validasi="'float'"
+                        :isValid="!data.longitude ? false : true"
+                      />
+                    </CCol>
+                  </CRow>
                   <p style="font-weight: bold">BPOM TTAC Reporting Settings</p>
 
                   <CRow form class="form-group">
@@ -763,75 +934,97 @@
                   </CRow>
                 </CCardBody>
               </CCard>
-              <!-- Data Center -->
+              <!-- Database Management Settings -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
                   Database Management Settings
                 </CCardHeader>
                 <CCardBody>
                   <p style="font-weight: bold">Archive</p>
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Pre Inbound"
-                    v-model="data.folder_preinbound"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Picking List"
-                    v-model="data.folder_pickinglist"
-                  />
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Pre Inbound"
+                        v-model="data.folder_preinbound"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Picking List"
+                        v-model="data.folder_pickinglist"
+                      />
+                    </CCol>
+                  </CRow>
                   <p style="font-weight: bold; margin-bottom: 15px">Backup</p>
-                  <SelectOption
-                    title="Scheduler"
-                    :options="listCron"
-                    v-on:onchange="data.backup_interval = $event"
-                    :value="data.backup_interval"
-                    :col="[3, 7]"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Backup Path"
-                    v-model="data.backup_path"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Backup File Name Prefix"
-                    v-model="data.backup_prefix"
-                    :description="`File name preview: '${getFullNameBackup()}`"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    :type="showPassword == false ? 'password' : 'text'"
-                    title="7z Password"
-                    v-model="data.backup_password"
-                  >
-                    <template #append>
-                      <CButton @click="showPassword = !showPassword">
-                        <v-icon v-if="!showPassword" name="eye-slash" />
-                        <v-icon v-if="showPassword" name="eye" />
-                      </CButton>
-                    </template>
-                  </InputDefault>
-                  <SelectOption
-                    title="Compression Level"
-                    :options="listCompressionLevel"
-                    v-on:onchange="data.backup_compression = $event"
-                    :value="data.backup_compression"
-                    :col="[3, 7]"
-                    :description="compressionDescription()"
-                  />
-                  <InputDefault
-                    :col="[3, 7]"
-                    title="Backup File Retention "
-                    v-model="data.backup_retention"
-                    :validasi="'integer'"
-                    :max="4"
-                    :description="`How many days to keep database backup files. Files older than this are deleted automatically (oldest first).\nLeave blank to disable auto-delete`"
-                  />
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <SelectOption
+                        title="Scheduler"
+                        :options="listCron"
+                        v-on:onchange="data.backup_interval = $event"
+                        :value="data.backup_interval"
+                        :col="[4, 8]"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Backup Path"
+                        v-model="data.backup_path"
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Backup File Name Prefix"
+                        v-model="data.backup_prefix"
+                        :description="`File name preview: '${getFullNameBackup()}`"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        :type="showPassword == false ? 'password' : 'text'"
+                        title="7z Password"
+                        v-model="data.backup_password"
+                      >
+                        <template #append>
+                          <CButton @click="showPassword = !showPassword">
+                            <v-icon v-if="!showPassword" name="eye-slash" />
+                            <v-icon v-if="showPassword" name="eye" />
+                          </CButton>
+                        </template>
+                      </InputDefault>
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <SelectOption
+                        title="Compression Level"
+                        :options="listCompressionLevel"
+                        v-on:onchange="data.backup_compression = $event"
+                        :value="data.backup_compression"
+                        :col="[4, 8]"
+                        :description="compressionDescription()"
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Backup File Retention"
+                        v-model="data.backup_retention"
+                        :validasi="'integer'"
+                        :max="4"
+                        :description="`How many days to keep database backup files. Files older than this are deleted automatically (oldest first).\nLeave blank to disable auto-delete`"
+                      />
+                    </CCol>
+                  </CRow>
                 </CCardBody>
               </CCard>
-
-              <CCol sm="10"> </CCol>
             </CForm>
           </CCardBody>
           <CCardFooter class="d-flex justify-content-start gap-2">
@@ -863,6 +1056,7 @@ import {
 } from '../../../resource/SysConfig';
 import {
   getWhatsappQr,
+  getWhatsappStatus,
   sendWhatsappMessage,
   deleteWhatsappSession,
 } from '../../../resource/Whatsapp';
@@ -884,6 +1078,11 @@ export default {
         home: 'Choose file...',
       },
       epcStatusOptions: [],
+      comingSoonNotifications: [
+        { name: 'Email', icon: 'cil-envelope-closed' },
+        { name: 'Telegram', icon: 'cib-telegram' },
+        { name: 'Slack', icon: 'cib-slack' },
+      ],
       password_pattern: {
         min: null,
         max: null,
@@ -893,6 +1092,20 @@ export default {
         symbol: false,
       },
       whatsappStatus: { error: false, message: null, qr_base64: null },
+      whatsappLoading: false,
+      whatsappDestroying: false,
+      // Endpoint WhatsApp (termasuk /status) hanya dipanggil saat panel QR
+      // dibuka user, agar tidak membebani backend di setiap page load.
+      whatsappPanelOpen: false,
+      // QR hanya valid 60 detik. Masa berlaku dihitung dari qr_issued_at
+      // backend (bukan dari waktu fetch) supaya gambar yang sudah berumur
+      // tidak ikut ditampilkan dan ditolak WhatsApp.
+      whatsappQrExpired: false,
+      whatsappQrIssuedAt: null,
+      whatsappQrTtl: 60000,
+      whatsappQrRequesting: false,
+      whatsappLastQrRefreshAt: 0,
+      whatsappPolling: null,
       whatsappMessage: {
         to: null,
         message: null,
@@ -1035,7 +1248,9 @@ export default {
     this.loadConfig();
     this.loadEpcStatus();
     this.loadCron();
-    this.loadWhatsapp();
+  },
+  beforeDestroy() {
+    this.stopWhatsappPolling();
   },
   methods: {
     initial_password_pattern() {
@@ -1107,31 +1322,307 @@ export default {
       let _res = await sendWhatsappMessage(this.whatsappMessage);
       if (_res) {
         this.whatsappMessage.error = _res.error;
-        this.whatsappMessage.response = _res.message;
+        this.whatsappMessage.response = _res.error ? _res.message : null;
+        if (!_res.error) {
+          this.$toast.open({
+            message: _res.message || 'Message sent successfully',
+            type: 'success',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+        } else {
+          this.$toast.open({
+            message: _res.message || 'Failed to send message',
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+        }
+      } else {
+        this.$toast.open({
+          message: 'Failed to send WhatsApp message',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+      }
+    },
+    async onWhatsappToggle(enabled) {
+      const previous = !enabled;
+      this.data.notification_whatsapp = enabled;
+      this.whatsappLoading = true;
+      try {
+        // Endpoint sys-configuration memvalidasi field wajib dan mengelola
+        // scheduler backup setiap kali dipanggil, jadi kirim field tersebut
+        // agar update parsial ini tidak menghapus jadwal backup.
+        const result = await updateSysConfig({
+          users_name: this.data.users_name,
+          identity_name: this.data.identity_name,
+          identity_number: this.data.identity_number,
+          identity_logo_path: this.data.identity_logo_path,
+          backup_interval: this.data.backup_interval,
+          notification_whatsapp: enabled,
+        });
+        if (!result || result.error) {
+          this.data.notification_whatsapp = previous;
+          this.whatsappStatus = {
+            error: true,
+            connected: false,
+            qr_base64: null,
+            message: result?.message || 'Failed to save WhatsApp setting.',
+          };
+          return;
+        }
+
+        if (enabled) {
+          // Jangan memuat QR/status otomatis; user harus membuka panel QR.
+          this.stopWhatsappPolling();
+          this.whatsappPanelOpen = false;
+          this.whatsappQrExpired = false;
+          this.whatsappQrIssuedAt = null;
+          this.whatsappStatus = {
+            error: false,
+            connected: false,
+            qr_base64: null,
+            message:
+              'WhatsApp notification is enabled. Open the QR panel to connect.',
+          };
+        } else {
+          this.stopWhatsappPolling();
+          this.whatsappPanelOpen = false;
+          this.whatsappQrExpired = false;
+          this.whatsappQrIssuedAt = null;
+          this.whatsappStatus = {
+            error: false,
+            connected: false,
+            qr_base64: null,
+            message: 'WhatsApp notification is disabled.',
+          };
+        }
+      } finally {
+        this.whatsappLoading = false;
       }
     },
     async deleteWhatsapp() {
+      if (
+        !window.confirm(
+          'Delete WhatsApp session? You will need to scan the QR again to reconnect.',
+        )
+      ) {
+        return;
+      }
+      this.whatsappDestroying = true;
       let _res = await deleteWhatsappSession();
-      this.whatsappStatus = { error: false, message: null, qr_base64: null };
+      this.whatsappDestroying = false;
+      if (!_res || _res.error) {
+        this.$toast.open({
+          message: _res?.message || 'Failed to delete WhatsApp session',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      }
+      this.stopWhatsappPolling();
+      this.whatsappQrExpired = false;
+      this.whatsappQrIssuedAt = null;
+      this.whatsappStatus = {
+        error: false,
+        connected: false,
+        message: 'WhatsApp session deleted successfully.',
+        qr_base64: null,
+      };
       this.whatsappMessage = {
         to: null,
         message: null,
         response: null,
         error: false,
       };
-      this.loadWhatsapp();
     },
-    async loadWhatsapp() {
-      let _res = await getWhatsappQr();
-      if (_res && _res.error) {
-        this.whatsappStatus.qr_base64 = null;
-        this.whatsappStatus.error = true;
-        this.whatsappStatus.message = _res.message;
-      } else if (_res && !_res.error) {
-        this.whatsappStatus.qr_base64 = _res.data[0].qr_base64;
-        this.whatsappStatus.error = false;
-        this.whatsappStatus.message = null;
+    async openWhatsappPanel() {
+      this.whatsappPanelOpen = true;
+      this.whatsappQrExpired = false;
+      this.whatsappStatus = {
+        ...this.whatsappStatus,
+        error: false,
+        message: 'Loading WhatsApp status...',
+      };
+      // Selalu minta socket pairing baru saat panel dibuka: QR yang tersisa
+      // dari sesi sebelumnya (mis. setelah API restart) sudah tidak berlaku.
+      await this.loadWhatsapp(true);
+    },
+    closeWhatsappPanel() {
+      this.stopWhatsappPolling();
+      this.whatsappPanelOpen = false;
+      this.whatsappQrExpired = false;
+      this.whatsappQrIssuedAt = null;
+      this.whatsappStatus = {
+        ...this.whatsappStatus,
+        error: false,
+        qr_base64: null,
+        connected: false,
+        message: null,
+      };
+    },
+    async loadWhatsapp(refresh = false) {
+      if (this.whatsappQrRequesting) {
+        return;
       }
+      this.whatsappQrRequesting = true;
+      try {
+        let _res = await getWhatsappQr(refresh);
+        if (_res && _res.error) {
+          this.stopWhatsappPolling();
+          // Endpoint /qr pada core mengembalikan error saat sesi sudah terhubung
+          // atau QR kedaluwarsa, jadi status dipakai untuk membedakan keduanya.
+          const statusRes = await getWhatsappStatus();
+          const status =
+            (statusRes && !statusRes.error && statusRes.data?.[0]) || null;
+          if (status && status.connected) {
+            this.whatsappQrExpired = false;
+            this.whatsappQrIssuedAt = null;
+            this.whatsappStatus = {
+              ...this.whatsappStatus,
+              qr_base64: null,
+              connected: true,
+              error: false,
+              message: 'WhatsApp terhubung.',
+            };
+            return;
+          }
+          const expired = !!(status && status.qr_expired);
+          this.whatsappQrExpired = expired;
+          this.whatsappStatus = {
+            ...this.whatsappStatus,
+            qr_base64: null,
+            connected: false,
+            error: !expired,
+            message: _res.message,
+          };
+          // Session bisa tetap hidup walau QR tidak tersedia (mis. pairing
+          // baru diterima). Terus pantau sampai connected/expired.
+          if (!expired && this.whatsappPanelOpen) {
+            this.startWhatsappPolling();
+          }
+        } else if (_res && !_res.error) {
+          const row = _res.data?.[0] || {};
+          const qrBase64 = row.qr_base64 || null;
+          const issuedAt = Number(row.qr_issued_at) || null;
+          if (row.qr_ttl) {
+            this.whatsappQrTtl = Number(row.qr_ttl) || 60000;
+          }
+          this.whatsappQrExpired = false;
+          if (qrBase64) {
+            // Masa berlaku dihitung dari waktu QR diterbitkan backend, bukan
+            // dari waktu gambar diterima frontend.
+            this.whatsappQrIssuedAt = issuedAt || Date.now();
+          }
+          this.whatsappStatus = {
+            ...this.whatsappStatus,
+            qr_base64: qrBase64,
+            connected: !!row.connected,
+            error: !qrBase64,
+            message: qrBase64
+              ? 'Scan the QR code with WhatsApp to connect.'
+              : _res.message || 'Waiting for WhatsApp QR...',
+          };
+          if (row.connected) {
+            this.stopWhatsappPolling();
+          } else if (qrBase64) {
+            this.startWhatsappPolling();
+          }
+        }
+      } finally {
+        this.whatsappQrRequesting = false;
+      }
+    },
+    // QR Baileys dirotasi backend setiap qr_ttl. Polling ini memantau koneksi
+    // sekaligus mengambil gambar QR terbaru saat backend merotasi kode, supaya
+    // user tidak memindai QR yang sudah mati ("Couldn't link devices").
+    startWhatsappPolling() {
+      if (this.whatsappPolling) {
+        return;
+      }
+      this.whatsappPolling = setInterval(async () => {
+        if (!this.whatsappPanelOpen) {
+          this.stopWhatsappPolling();
+          return;
+        }
+        const _res = await getWhatsappStatus();
+        const status = (_res && !_res.error && _res.data?.[0]) || null;
+        if (!status) {
+          return;
+        }
+        if (status.connected) {
+          this.whatsappQrExpired = false;
+          this.whatsappQrIssuedAt = null;
+          this.whatsappStatus = {
+            ...this.whatsappStatus,
+            connected: true,
+            qr_base64: null,
+            error: false,
+            message: 'WhatsApp terhubung.',
+          };
+          this.stopWhatsappPolling();
+          return;
+        }
+        if (status.qr_expired) {
+          this.whatsappQrExpired = true;
+          this.whatsappQrIssuedAt = null;
+          this.stopWhatsappPolling();
+          return;
+        }
+        if (status.qr_ttl) {
+          this.whatsappQrTtl = Number(status.qr_ttl) || 60000;
+        }
+        const issuedAt = Number(status.qr_issued_at) || null;
+        const needsNewQr = issuedAt
+          ? issuedAt !== this.whatsappQrIssuedAt
+          : !!this.whatsappQrIssuedAt;
+        if (
+          needsNewQr &&
+          Date.now() - this.whatsappLastQrRefreshAt > 10000
+        ) {
+          this.whatsappLastQrRefreshAt = Date.now();
+          await this.loadWhatsapp();
+          if (this.whatsappQrExpired) {
+            return;
+          }
+        }
+        if (
+          this.whatsappQrIssuedAt &&
+          Date.now() - this.whatsappQrIssuedAt > this.whatsappQrTtl - 5000
+        ) {
+          this.whatsappQrExpired = true;
+          this.stopWhatsappPolling();
+        }
+      }, 5000);
+    },
+    stopWhatsappPolling() {
+      if (this.whatsappPolling) {
+        clearInterval(this.whatsappPolling);
+        this.whatsappPolling = null;
+      }
+    },
+    async reloadWhatsappQr() {
+      if (!this.whatsappPanelOpen) {
+        return;
+      }
+      this.stopWhatsappPolling();
+      this.whatsappQrExpired = false;
+      this.whatsappQrIssuedAt = null;
+      this.whatsappStatus = {
+        ...this.whatsappStatus,
+        qr_base64: null,
+        message: 'Loading new QR...',
+      };
+      // refresh=true membuang socket pairing lama supaya ref QR benar-benar
+      // baru; ref lama yang sudah dipakai/kedaluwarsa ditolak WhatsApp.
+      await this.loadWhatsapp(true);
     },
     formatDate(date) {
       return moment(date).format('yyyy/MM/DD');
@@ -1248,7 +1739,6 @@ export default {
           this.loadConfig();
           this.loadEpcStatus();
           this.loadCron();
-          this.loadWhatsapp();
         }
 
         return;
