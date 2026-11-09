@@ -66,6 +66,22 @@
           +
         </CButton>
         <CButton size="sm" color="secondary" @click="fitPreview()">Fit</CButton>
+        <CButton
+          size="sm"
+          color="secondary"
+          title="Rotate label -90 degrees"
+          @click="rotatePreview(-90)"
+        >
+          &minus;90&deg;
+        </CButton>
+        <CButton
+          size="sm"
+          color="secondary"
+          title="Rotate label +90 degrees"
+          @click="rotatePreview(90)"
+        >
+          +90&deg;
+        </CButton>
         <CButton size="sm" color="danger" @click="closePreview()">Close</CButton>
       </div>
       <div
@@ -87,7 +103,7 @@
           :style="previewImageStyle"
           draggable="false"
           alt="Label preview"
-          @load="fitPreview()"
+          @load="onPreviewImageLoad()"
         />
       </div>
     </div>
@@ -137,6 +153,9 @@ export default {
       previewScale: 1,
       previewX: 0,
       previewY: 0,
+      previewRotation: 0,
+      previewNaturalWidth: 0,
+      previewNaturalHeight: 0,
       previewPanning: false,
       previewDrag: null,
       previewRequestId: 0,
@@ -149,9 +168,25 @@ export default {
         label: d.name,
       }));
     },
-    previewImageStyle() {
+    // Ukuran bounding box setelah rotasi 90/270: lebar dan tinggi bertukar
+    previewRotatedSize() {
+      const swap = Math.abs(this.previewRotation) % 180 === 90;
       return {
-        transform: `translate(${this.previewX}px, ${this.previewY}px) scale(${this.previewScale})`,
+        width: swap ? this.previewNaturalHeight : this.previewNaturalWidth,
+        height: swap ? this.previewNaturalWidth : this.previewNaturalHeight,
+      };
+    },
+    previewImageStyle() {
+      const size = this.previewRotatedSize;
+      const scale = this.previewScale;
+      // transform-origin di tengah gambar, sedangkan previewX/Y adalah pojok
+      // kiri-atas bounding box, jadi translate dikoreksi setengah selisihnya.
+      const translateX =
+        this.previewX + (size.width * scale - this.previewNaturalWidth) / 2;
+      const translateY =
+        this.previewY + (size.height * scale - this.previewNaturalHeight) / 2;
+      return {
+        transform: `translate(${translateX}px, ${translateY}px) scale(${scale}) rotate(${this.previewRotation}deg)`,
       };
     },
   },
@@ -198,6 +233,9 @@ export default {
       this.previewScale = 1;
       this.previewX = 0;
       this.previewY = 0;
+      this.previewRotation = 0;
+      this.previewNaturalWidth = 0;
+      this.previewNaturalHeight = 0;
       this.previewCount = 1;
       this.previewOpen = true;
       this.previewLoading = true;
@@ -252,6 +290,9 @@ export default {
       this.previewScale = 1;
       this.previewX = 0;
       this.previewY = 0;
+      this.previewRotation = 0;
+      this.previewNaturalWidth = 0;
+      this.previewNaturalHeight = 0;
     },
 
     setPreviewUrl(url) {
@@ -293,19 +334,40 @@ export default {
       this.previewScale = scale;
     },
 
+    onPreviewImageLoad() {
+      const image = this.$refs.previewImage;
+      if (image) {
+        this.previewNaturalWidth = image.naturalWidth;
+        this.previewNaturalHeight = image.naturalHeight;
+      }
+      this.fitPreview();
+    },
+
+    // Putar label 90 derajat dengan pusat tampilan tetap di tempatnya
+    rotatePreview(delta) {
+      if (!this.previewUrl) return;
+      const before = this.previewRotatedSize;
+      const centerX = this.previewX + (before.width * this.previewScale) / 2;
+      const centerY = this.previewY + (before.height * this.previewScale) / 2;
+      this.previewRotation = (((this.previewRotation + delta) % 360) + 360) % 360;
+      const after = this.previewRotatedSize;
+      this.previewX = centerX - (after.width * this.previewScale) / 2;
+      this.previewY = centerY - (after.height * this.previewScale) / 2;
+    },
+
     fitPreview() {
       const viewport = this.$refs.previewViewport;
       const image = this.$refs.previewImage;
-      if (!viewport || !image || !image.naturalWidth) return;
+      const size = this.previewRotatedSize;
+      if (!viewport || !image || !size.width || !size.height) return;
       const fit = Math.min(
-        viewport.clientWidth / image.naturalWidth,
-        viewport.clientHeight / image.naturalHeight,
+        viewport.clientWidth / size.width,
+        viewport.clientHeight / size.height,
       );
       this.previewScale = Math.min(1, Math.max(0.1, fit));
-      this.previewX =
-        (viewport.clientWidth - image.naturalWidth * this.previewScale) / 2;
+      this.previewX = (viewport.clientWidth - size.width * this.previewScale) / 2;
       this.previewY =
-        (viewport.clientHeight - image.naturalHeight * this.previewScale) / 2;
+        (viewport.clientHeight - size.height * this.previewScale) / 2;
     },
 
     startPreviewPan(event) {
@@ -613,7 +675,7 @@ export default {
   top: 0;
   left: 0;
   background: #fff;
-  transform-origin: 0 0;
+  transform-origin: 50% 50%;
   box-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
 }
 .zpl-preview-loading {
