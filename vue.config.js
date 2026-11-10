@@ -26,6 +26,7 @@ module.exports = {
   // End Of Enable Compression Website
   publicPath: "/",
   lintOnSave: false,
+  productionSourceMap: false,
   runtimeCompiler: true,
   configureWebpack: {
     resolve: {
@@ -35,6 +36,7 @@ module.exports = {
   transpileDependencies: ["@coreui/utils"],
   outputDir: path.resolve(__dirname, "../public"),
   chainWebpack: (config) => {
+    config.plugins.delete("prefetch");
     config.plugin("copy").tap((args) => {
       args[0].push({
         from: path.resolve(__dirname, "LICENSE.txt"),

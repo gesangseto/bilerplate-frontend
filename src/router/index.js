@@ -191,6 +191,18 @@ const ListSystemScriptInj = () =>
   import('@/views/system/script_injection/List');
 const FormSystemScriptInj = () =>
   import('@/views/system/script_injection/Form');
+const ListSysNotificationChannel = () =>
+  import('@/views/system/notification_channel/List');
+const FormSysNotificationChannel = () =>
+  import('@/views/system/notification_channel/Form');
+const ListSysNotificationTemplate = () =>
+  import('@/views/system/notification_template/List');
+const FormSysNotificationTemplate = () =>
+  import('@/views/system/notification_template/Form');
+const ListSysNotificationTrigger = () =>
+  import('@/views/system/notification_trigger/List');
+const FormSysNotificationTrigger = () =>
+  import('@/views/system/notification_trigger/Form');
 // ========================SYSTEM PROCESS========================
 const ListProcessSchedule = () =>
   import('@/views/system-process/process-schedule/List');
@@ -1160,6 +1172,77 @@ function configRoutes() {
           path: 'script-injection',
           name: 'Script Injection (Home)',
           component: ListSystemScriptInj,
+          meta: { login: true },
+        },
+      ],
+    },
+    // NOTIFICATION
+    {
+      path: 'notification',
+      redirect: '/dashboard',
+      name: 'Notification',
+      meta: { login: true },
+      component: {
+        render(c) {
+          return c('router-view');
+        },
+      },
+      children: [
+        // NOTIFICATION CHANNEL
+        {
+          path: 'channel/:type/:id',
+          name: 'Notification Channel (Details)',
+          component: FormSysNotificationChannel,
+          meta: { login: true },
+        },
+        {
+          path: 'channel/:type',
+          name: 'Notification Channel (Create)',
+          component: FormSysNotificationChannel,
+          meta: { login: true },
+        },
+        {
+          path: 'channel',
+          name: 'Notification Channel (Home)',
+          component: ListSysNotificationChannel,
+          meta: { login: true },
+        },
+        // NOTIFICATION TEMPLATE
+        {
+          path: 'template/:type/:id',
+          name: 'Notification Template (Details)',
+          component: FormSysNotificationTemplate,
+          meta: { login: true },
+        },
+        {
+          path: 'template/:type',
+          name: 'Notification Template (Create)',
+          component: FormSysNotificationTemplate,
+          meta: { login: true },
+        },
+        {
+          path: 'template',
+          name: 'Notification Template (Home)',
+          component: ListSysNotificationTemplate,
+          meta: { login: true },
+        },
+        // NOTIFICATION TRIGGER
+        {
+          path: 'trigger/:type/:id',
+          name: 'Notification Trigger (Details)',
+          component: FormSysNotificationTrigger,
+          meta: { login: true },
+        },
+        {
+          path: 'trigger/:type',
+          name: 'Notification Trigger (Create)',
+          component: FormSysNotificationTrigger,
+          meta: { login: true },
+        },
+        {
+          path: 'trigger',
+          name: 'Notification Trigger (Home)',
+          component: ListSysNotificationTrigger,
           meta: { login: true },
         },
       ],
