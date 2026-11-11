@@ -44,32 +44,86 @@
                   v-model="formData.description"
                 />
               </CCol>
-              <CCol sm="12">
-                <TextareaDefault
-                  :disabled="action == 'Read'"
-                  :col="[3, 9]"
-                  title="API Key"
-                  placeholder="Kredensial API (untuk channel berbasis API)"
-                  v-model="formData.api_key"
-                />
+              <!-- Panduan pengisian per channel — dikirim Backend (read only) -->
+              <CCol sm="12" v-if="formData.documentation">
+                <CRow form class="form-group">
+                  <CCol tag="label" sm="3" class="col-form-label font-weight-bold">
+                    Petunjuk Pengisian
+                  </CCol>
+                  <CCol sm="9">
+                    <div class="border rounded bg-light p-3 text-muted" style="white-space: pre-line; line-height: 1.6">
+                      {{ formData.documentation }}
+                    </div>
+                  </CCol>
+                </CRow>
               </CCol>
-              <CCol sm="12" v-if="formData.code && formData.code !== 'default'">
-                <InputDefault
-                  :disabled="action == 'Read'"
-                  :col="[3, 9]"
-                  title="Sender (Nomor Device)"
-                  placeholder="Nomor device terdaftar di provider, mis 62812xxxx"
-                  v-model="formData.sender"
-                  :is-valid="initialLoad ? null : !formData.sender ? false : true"
-                />
-                <small
-                  class="text-muted d-block mt-n2 mb-2"
-                  style="margin-left: 25%"
-                >
-                  Nomor device WhatsApp yang terdaftar/terhubung di provider
-                  channel ini (mis. device pada sendwapi.com).
-                </small>
-              </CCol>
+              <!-- Kirimi: kredensial disimpan sebagai JSON di kolom api_key -->
+              <template v-if="formData.code === 'kirimi'">
+                <CCol sm="12">
+                  <CRow form class="form-group mb-0">
+                    <CCol sm="3" class="col-form-label font-weight-bold">Kredensial Kirimi</CCol>
+                  </CRow>
+                </CCol>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="action == 'Read'"
+                    required
+                    :col="[3, 9]"
+                    title="User Code"
+                    placeholder="User code dari dashboard Kirimi"
+                    v-model="kirimi.user_code"
+                  />
+                </CCol>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="action == 'Read'"
+                    required
+                    :col="[3, 9]"
+                    title="Secret Key"
+                    placeholder="Secret key API Kirimi"
+                    v-model="kirimi.secret"
+                  />
+                </CCol>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="action == 'Read'"
+                    required
+                    :col="[3, 9]"
+                    title="Device ID"
+                    placeholder="ID device WhatsApp di dashboard Kirimi"
+                    v-model="kirimi.device_id"
+                  />
+                </CCol>
+                <CCol sm="12">
+                  <InputDefault
+                    :disabled="action == 'Read'"
+                    :col="[3, 9]"
+                    title="Public Base URL"
+                    placeholder="https://domain-aplikasi — opsional"
+                    v-model="kirimi.public_base_url"
+                  />
+                </CCol>
+              </template>
+              <template v-else>
+                <CCol sm="12">
+                  <TextareaDefault
+                    :disabled="action == 'Read'"
+                    :col="[3, 9]"
+                    title="API Key"
+                    placeholder="Kredensial API channel (mis. swk_live_… untuk SendWia)"
+                    v-model="formData.api_key"
+                  />
+                </CCol>
+                <CCol sm="12" v-if="formData.code && formData.code !== 'default'">
+                  <InputDefault
+                    :disabled="action == 'Read'"
+                    :col="[3, 9]"
+                    title="Sender (Account ID)"
+                    placeholder="ID akun pengirim acc_xxx — opsional"
+                    v-model="formData.sender"
+                  />
+                </CCol>
+              </template>
               <CCol md="12">
                 <CRow form class="form-group">
                   <CCol sm="3"> Status </CCol>
@@ -81,6 +135,77 @@
                   />
                 </CRow>
               </CCol>
+
+              <!-- Test channel — berlaku untuk SEMUA channel (default / API) -->
+              <template v-if="formData.code">
+                <hr />
+                <p style="font-weight: bold">Test Channel</p>
+                <CCol sm="12">
+                  <CRow form class="form-group mb-2">
+                    <CCol tag="label" sm="3" class="col-form-label">
+                      Koneksi
+                    </CCol>
+                    <CCol sm="9">
+                      <CButton
+                        size="sm"
+                        color="info"
+                        :disabled="testLoading"
+                        @click="testConnection()"
+                      >
+                        {{
+                          testLoading ? 'Checking...' : 'Test Koneksi'
+                        }}
+                      </CButton>
+                      <small
+                        v-if="connectionResult.message"
+                        class="d-block mt-2"
+                        :class="
+                          connectionResult.error ? 'text-danger' : 'text-success'
+                        "
+                      >
+                        {{ connectionResult.message }}
+                      </small>
+                    </CCol>
+                  </CRow>
+                </CCol>
+                <InputDefault
+                  :col="[3, 7]"
+                  :title="'To'"
+                  :validasi="'integer'"
+                  v-model="testMessage.to"
+                  :max="14"
+                />
+                <InputDefault
+                  :col="[3, 7]"
+                  :title="'Message'"
+                  v-model="testMessage.message"
+                  :max="200"
+                />
+                <CCol sm="12">
+                  <CRow form class="form-group mb-0">
+                    <CCol sm="3"></CCol>
+                    <CCol sm="9">
+                      <CButton
+                        size="sm"
+                        color="success"
+                        :disabled="testSending"
+                        @click="sendTestMessage()"
+                      >
+                        {{
+                          testSending ? 'Sending...' : 'Send Test Message'
+                        }}
+                      </CButton>
+                      <small
+                        v-if="testResult.message"
+                        class="d-block mt-2"
+                        :class="testResult.error ? 'text-danger' : 'text-success'"
+                      >
+                        {{ testResult.message }}
+                      </small>
+                    </CCol>
+                  </CRow>
+                </CCol>
+              </template>
 
               <!-- Koneksi WhatsApp (Baileys) — hanya untuk channel code='default' -->
               <template v-if="formData.code === 'default'">
@@ -138,47 +263,18 @@
                     {{ whatsappStatus.message }}
                   </small>
                   <CForm v-if="whatsappStatus.connected">
-                    <InputDefault
-                      :col="[3, 7]"
-                      :title="'To'"
-                      :validasi="'integer'"
-                      v-model="whatsappMessage.to"
-                      :max="14"
-                    />
-                    <InputDefault
-                      :col="[3, 7]"
-                      :title="'Message'"
-                      v-model="whatsappMessage.message"
-                      :max="200"
-                    />
-                    <div class="d-flex align-items-center" style="gap: 12px">
-                      <CButton
-                        size="sm"
-                        color="success"
-                        @click="sendWhatsapp()"
-                      >
-                        Send Test Message
-                      </CButton>
-                      <CButton
-                        v-if="whatsappStatus.connected"
-                        size="sm"
-                        color="danger"
-                        :disabled="whatsappDestroying"
-                        @click="deleteWhatsapp()"
-                      >
-                        {{
-                          whatsappDestroying
-                            ? 'Deleting session...'
-                            : 'Hapus Session WhatsApp'
-                        }}
-                      </CButton>
-                    </div>
-                    <small
-                      v-if="whatsappMessage.response && whatsappMessage.error"
-                      class="text-danger"
+                    <CButton
+                      size="sm"
+                      color="danger"
+                      :disabled="whatsappDestroying"
+                      @click="deleteWhatsapp()"
                     >
-                      {{ whatsappMessage.response }}
-                    </small>
+                      {{
+                        whatsappDestroying
+                          ? 'Deleting session...'
+                          : 'Hapus Session WhatsApp'
+                      }}
+                    </CButton>
                   </CForm>
                 </div>
               </template>
@@ -209,6 +305,8 @@ import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import {
   getNotificationChannel,
   updateNotificationChannel,
+  testNotificationChannelConnection,
+  sendTestNotificationChannel,
 } from '../../../resource/NotificationChannel';
 import {
   getSysConfig,
@@ -217,7 +315,6 @@ import {
 import {
   getWhatsappQr,
   getWhatsappStatus,
-  sendWhatsappMessage,
   deleteWhatsappSession,
 } from '../../../resource/Whatsapp';
 
@@ -229,6 +326,12 @@ export default {
       route_action: '',
       action: 'Edit',
       formData: {},
+      kirimi: {
+        user_code: '',
+        secret: '',
+        device_id: '',
+        public_base_url: '',
+      },
       data: {
         users_name: null,
         notification_whatsapp: false,
@@ -239,12 +342,15 @@ export default {
       whatsappQrExpired: false,
       whatsappQrIssuedAt: null,
       whatsappPolling: null,
-      whatsappMessage: {
+      // Test channel (berlaku semua channel — default & API)
+      testLoading: false,
+      testSending: false,
+      testMessage: {
         to: null,
         message: null,
-        response: null,
-        error: false,
       },
+      testResult: { message: null, error: false },
+      connectionResult: { message: null, error: false },
     };
   },
   mounted() {
@@ -263,20 +369,62 @@ export default {
       let _res = await getNotificationChannel({ id: this.$route.params.id });
       if (_res) {
         this.formData = _res.data[0];
+        if (this.formData.code === 'kirimi') {
+          this.parseKirimiCredentials();
+        }
         if (this.formData.code === 'default') {
           await this.loadConfig();
         }
       }
     },
+    // api_key channel Kirimi = JSON { user_code, secret, device_id, public_base_url }
+    parseKirimiCredentials() {
+      try {
+        const parsed = JSON.parse(this.formData.api_key || '{}');
+        this.kirimi = {
+          user_code: parsed.user_code || '',
+          secret: parsed.secret || '',
+          device_id: parsed.device_id || '',
+          public_base_url: parsed.public_base_url || '',
+        };
+      } catch (_) {
+        this.kirimi = {
+          user_code: '',
+          secret: '',
+          device_id: '',
+          public_base_url: '',
+        };
+      }
+    },
+    applyKirimiCredentials() {
+      if (this.formData.code !== 'kirimi') return;
+      const payload = {
+        user_code: (this.kirimi.user_code || '').trim(),
+        secret: (this.kirimi.secret || '').trim(),
+        device_id: (this.kirimi.device_id || '').trim(),
+      };
+      const publicBaseUrl = (this.kirimi.public_base_url || '').trim();
+      if (publicBaseUrl) payload.public_base_url = publicBaseUrl;
+      this.formData.api_key = JSON.stringify(payload);
+    },
     validation() {
       if (!this.formData.name) {
         return false;
       }
-      // Channel API (non-default) wajib punya api_key + sender (nomor device)
+      // Kirimi butuh tiga kredensial sekaligus (disimpan sebagai JSON).
+      if (this.formData.code === 'kirimi') {
+        return !!(
+          (this.kirimi.user_code || '').trim() &&
+          (this.kirimi.secret || '').trim() &&
+          (this.kirimi.device_id || '').trim()
+        );
+      }
+      // Channel API lain wajib punya api_key; sender (account id,
+      // mis. acc_xxx) opsional — API key bisa sudah terikat satu device.
       if (
         this.formData.code &&
         this.formData.code !== 'default' &&
-        (!this.formData.sender || !this.formData.api_key)
+        !this.formData.api_key
       ) {
         return false;
       }
@@ -284,6 +432,7 @@ export default {
     },
     async save() {
       this.initialLoad = false;
+      this.applyKirimiCredentials();
       if (!this.validation()) {
         this.$toast.open({
           message: 'Please input all the required data.',
@@ -297,6 +446,7 @@ export default {
       if (confirm('You are about to save changes to this data. This operation cannot be undone. Would you like to continue?')) {
         let dataPost = { ...this.formData };
         delete dataPost.code; // code adalah kunci integrasi — tidak boleh diubah
+        delete dataPost.documentation; // panduan pengisian milik Backend (seeder)
         this.$isLoading(true);
         let res = await updateNotificationChannel(dataPost);
         this.$isLoading(false);
@@ -368,38 +518,66 @@ export default {
         this.whatsappLoading = false;
       }
     },
-    // ===== Koneksi WhatsApp (Baileys) =====
-    async sendWhatsapp() {
-      let _res = await sendWhatsappMessage(this.whatsappMessage);
-      if (_res) {
-        this.whatsappMessage.error = _res.error;
-        this.whatsappMessage.response = _res.error ? _res.message : null;
-        if (!_res.error) {
-          this.$toast.open({
-            message: _res.message || 'Pesan berhasil dikirim',
-            type: 'success',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-        } else {
-          this.$toast.open({
-            message: _res.message || 'Pesan gagal dikirim',
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-        }
-      } else {
+    // ===== Test channel — dipakai semua channel (default & API) =====
+    async testConnection() {
+      if (!this.formData.code) return;
+      this.testLoading = true;
+      this.connectionResult = { message: null, error: false };
+      let _res = await testNotificationChannelConnection(this.formData.code);
+      this.testLoading = false;
+      if (!_res) {
+        this.connectionResult = {
+          message: 'Gagal menghubungi server.',
+          error: true,
+        };
+        return;
+      }
+      this.connectionResult = {
+        message:
+          _res.message ||
+          (_res.error ? 'Channel belum siap digunakan.' : 'Channel siap digunakan.'),
+        error: !!_res.error,
+      };
+    },
+    async sendTestMessage() {
+      if (!this.formData.code) return;
+      const to = String(this.testMessage.to || '').trim();
+      if (!to) {
         this.$toast.open({
-          message: 'Gagal mengirim pesan WhatsApp',
+          message: 'Nomor tujuan wajib diisi.',
           type: 'error',
-          dissmissible: true,
+          dismissible: true,
           position: 'top-right',
           duration: 5000,
         });
+        return;
       }
+      this.testSending = true;
+      this.testResult = { message: null, error: false };
+      let _res = await sendTestNotificationChannel({
+        code: this.formData.code,
+        to,
+        message: String(this.testMessage.message || '').trim() || undefined,
+      });
+      this.testSending = false;
+      if (!_res) {
+        this.testResult = {
+          message: 'Gagal mengirim pesan uji. Periksa koneksi server.',
+          error: true,
+        };
+        return;
+      }
+      this.testResult = {
+        message: _res.message || (_res.error ? 'Pesan uji gagal dikirim.' : 'Pesan uji terkirim.'),
+        error: !!_res.error,
+      };
+      this.$toast.open({
+        message: this.testResult.message,
+        type: this.testResult.error ? 'error' : 'success',
+        dismissible: true,
+        position: 'top-right',
+        duration: 5000,
+      });
     },
     async deleteWhatsapp() {
       if (
@@ -422,12 +600,6 @@ export default {
         error: false,
         message: 'Session WhatsApp berhasil dihapus.',
         qr_base64: null,
-      };
-      this.whatsappMessage = {
-        to: null,
-        message: null,
-        response: null,
-        error: false,
       };
       if (this.data.notification_whatsapp) {
         await this.loadWhatsapp();
