@@ -89,6 +89,15 @@
       >
         <template #action="{ item, index }" v-if="action.length > 0">
           <td>
+            <CButton
+              v-if="getActions(item).includes('retry')"
+              size="sm"
+              color="success"
+              class="mr-1"
+              @click="rowRetry(item)"
+            >
+              Retry
+            </CButton>
             <ButtonPermission
               v-if="getActions(item).includes('delete')"
               :buttonProperty="actionProperty.delete || null"
@@ -178,7 +187,7 @@ export default {
   components: { ModelSelect },
   watch: {
     items: {
-      handler(datas) {
+      handler() {
         this.filter.totalPages =
           Math.ceil(this.totalData / this.filter.limit) || 0;
       },
@@ -246,6 +255,9 @@ export default {
     async rowCopy(item) {
       this.$emit('handleCopy', item);
     },
+    async rowRetry(item) {
+      this.$emit('handleRetry', item);
+    },
     async rowDelete(item) {
       this.$emit('handleDelete', item);
     },
@@ -280,7 +292,7 @@ export default {
 
       /*
          Karen error dibawah maka gunakan handleReload untuk load query.param?:
-         NavigationDuplicated {_name: 'NavigationDuplicated', name: 'NavigationDuplicated', message: 'Navigating to current location
+         NavigationDuplicated {_name: 'NavigationDuplicated', name: 'NavigationDuplicated', message: 'Navigating to current location
         */
 
       if (!isSameRoute) {

@@ -217,6 +217,8 @@ const ListNotificationChannel = () =>
   import('@/views/notification/channel/List');
 const FormNotificationChannel = () =>
   import('@/views/notification/channel/Form');
+const ListNotificationReport = () =>
+  import('@/views/notification/report/List');
 // Metadata
 const ListMetadata = () =>
   import('@/views/configuration/metadata/ListMetadata');
@@ -1289,6 +1291,13 @@ function configRoutes() {
           name: 'Notification Channel',
           meta: { login: true },
           component: ListNotificationChannel,
+        },
+        // NOTIFICATION REPORT — penerima yang ditahan (belum pernah chat)
+        {
+          path: 'report',
+          name: 'Notification Report',
+          meta: { login: true },
+          component: ListNotificationReport,
         },
         // MESSAGE TEMPLATE
         {

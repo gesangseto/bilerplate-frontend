@@ -104,7 +104,8 @@
                   />
                 </CCol>
               </template>
-              <template v-else>
+              <template v-else-if="formData.code !== 'default'">
+                <!-- Channel API — default (Baileys) tidak memakai API Key -->
                 <CCol sm="12">
                   <TextareaDefault
                     :disabled="action == 'Read'"
@@ -211,23 +212,7 @@
               <template v-if="formData.code === 'default'">
                 <hr />
                 <p style="font-weight: bold">Koneksi WhatsApp (Baileys)</p>
-                <CCol sm="6">
-                  <CRow form class="form-group">
-                    <CCol tag="label" sm="6" class="col-form-label">
-                      Enabling Notification
-                    </CCol>
-                    <CCol sm="4">
-                      <CSwitch
-                        class="mr-1"
-                        color="success"
-                        :checked.sync="data.notification_whatsapp"
-                        :disabled="whatsappLoading"
-                        @update:checked="onWhatsappToggle"
-                      />
-                    </CCol>
-                  </CRow>
-                </CCol>
-                <div v-if="data.notification_whatsapp">
+                <div v-if="formData.status === 'Active'">
                   <small>{{ whatsappStatus.message }}</small>
                   <hr />
                   <CForm
@@ -277,6 +262,10 @@
                     </CButton>
                   </CForm>
                 </div>
+                <small v-else class="text-muted">
+                  Channel Inactive — aktifkan Status lalu simpan untuk
+                  menghubungkan WhatsApp.
+                </small>
               </template>
             </CForm>
           </CCardBody>
@@ -309,10 +298,6 @@ import {
   sendTestNotificationChannel,
 } from '../../../resource/NotificationChannel';
 import {
-  getSysConfig,
-  updateSysConfig,
-} from '../../../resource/SysConfig';
-import {
   getWhatsappQr,
   getWhatsappStatus,
   deleteWhatsappSession,
@@ -332,12 +317,7 @@ export default {
         device_id: '',
         public_base_url: '',
       },
-      data: {
-        users_name: null,
-        notification_whatsapp: false,
-      },
       whatsappStatus: { error: false, message: null, qr_base64: null },
-      whatsappLoading: false,
       whatsappDestroying: false,
       whatsappQrExpired: false,
       whatsappQrIssuedAt: null,
@@ -372,8 +352,8 @@ export default {
         if (this.formData.code === 'kirimi') {
           this.parseKirimiCredentials();
         }
-        if (this.formData.code === 'default') {
-          await this.loadConfig();
+        if (this.formData.code === 'default' && this.formData.status === 'Active') {
+          await this.loadWhatsapp();
         }
       }
     },
@@ -466,58 +446,6 @@ export default {
     cancel() {
       handleBack(this.$router, this.$route);
     },
-    // ===== Toggle enable WhatsApp (sys_config.notification_whatsapp) =====
-    async loadConfig() {
-      let _res = await getSysConfig();
-      if (_res) {
-        let config = _res.data[0];
-        this.data = {
-          users_name: config.users_name,
-          notification_whatsapp: !!config.notification_whatsapp,
-        };
-        if (this.data.notification_whatsapp) {
-          await this.loadWhatsapp();
-        }
-      }
-      return;
-    },
-    async onWhatsappToggle(enabled) {
-      const previous = !enabled;
-      this.data.notification_whatsapp = enabled;
-      this.whatsappLoading = true;
-      try {
-        const result = await updateSysConfig({
-          users_name: this.data.users_name,
-          notification_whatsapp: enabled,
-        });
-        if (!result || result.error) {
-          this.data.notification_whatsapp = previous;
-          this.whatsappStatus = {
-            error: true,
-            connected: false,
-            qr_base64: null,
-            message: result?.message || 'Gagal menyimpan pengaturan WhatsApp.',
-          };
-          return;
-        }
-
-        if (enabled) {
-          await this.loadWhatsapp();
-        } else {
-          this.stopWhatsappPolling();
-          this.whatsappQrExpired = false;
-          this.whatsappQrIssuedAt = null;
-          this.whatsappStatus = {
-            error: false,
-            connected: false,
-            qr_base64: null,
-            message: 'Notifikasi WhatsApp dinonaktifkan.',
-          };
-        }
-      } finally {
-        this.whatsappLoading = false;
-      }
-    },
     // ===== Test channel — dipakai semua channel (default & API) =====
     async testConnection() {
       if (!this.formData.code) return;
@@ -601,7 +529,7 @@ export default {
         message: 'Session WhatsApp berhasil dihapus.',
         qr_base64: null,
       };
-      if (this.data.notification_whatsapp) {
+      if (this.formData.status === 'Active') {
         await this.loadWhatsapp();
       }
     },
