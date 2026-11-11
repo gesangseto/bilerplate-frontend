@@ -302,107 +302,6 @@
                     :value="data.retry_interval"
                     :col="[3, 7]"
                   />
-                  <p style="font-weight: bold">Notification Settings</p>
-
-                  <strong>
-                    <CIcon name="cib-whatsapp" /> &nbsp; Whatsapp
-                  </strong>
-                  <br />
-                  <CCol sm="6">
-                    <CRow form class="form-group">
-                      <CCol tag="label" sm="6" class="col-form-label">
-                        Enabling Notification
-                      </CCol>
-                      <CCol sm="4">
-                        <CSwitch
-                          class="mr-1"
-                          color="success"
-                          :checked.sync="data.notification_whatsapp"
-                          :disabled="whatsappLoading"
-                          @update:checked="onWhatsappToggle"
-                        />
-                      </CCol>
-                    </CRow>
-                  </CCol>
-                  <div v-if="data.notification_whatsapp">
-                    <small>{{ whatsappStatus.message }}</small>
-                    <hr />
-                    <CForm
-                      v-if="whatsappStatus.qr_base64 && !whatsappQrExpired"
-                    >
-                      <CCol class="md-4">
-                        <img
-                          v-bind:src="whatsappStatus.qr_base64"
-                          style="width: 150px; height: auto"
-                        />
-                      </CCol>
-                    </CForm>
-                    <div
-                      v-if="whatsappQrExpired && !whatsappStatus.connected"
-                      class="mb-2"
-                    >
-                      <p class="text-warning mb-2">
-                        QR sudah kedaluwarsa. Silakan muat ulang QR untuk
-                        menampilkan kode baru.
-                      </p>
-                      <CButton
-                        size="sm"
-                        color="primary"
-                        @click="reloadWhatsappQr"
-                      >
-                        Muat Ulang QR
-                      </CButton>
-                    </div>
-                    <small
-                      v-if="whatsappStatus.error && !whatsappStatus.qr_base64"
-                      class="text-danger"
-                    >
-                      {{ whatsappStatus.message }}
-                    </small>
-                    <CForm v-if="whatsappStatus.connected">
-                      <InputDefault
-                        :col="[3, 7]"
-                        :title="'To'"
-                        :validasi="'integer'"
-                        v-model="whatsappMessage.to"
-                        :max="14"
-                      />
-                      <InputDefault
-                        :col="[3, 7]"
-                        :title="'Message'"
-                        v-model="whatsappMessage.message"
-                        :max="200"
-                      />
-                      <div class="d-flex align-items-center" style="gap: 12px">
-                        <CButton
-                          size="sm"
-                          color="success"
-                          @click="sendWhatsapp()"
-                        >
-                          Send Test Message
-                        </CButton>
-                        <CButton
-                          v-if="whatsappStatus.connected"
-                          size="sm"
-                          color="danger"
-                          :disabled="whatsappDestroying"
-                          @click="deleteWhatsapp()"
-                        >
-                          {{
-                            whatsappDestroying
-                              ? 'Deleting session...'
-                              : 'Hapus Session WhatsApp'
-                          }}
-                        </CButton>
-                      </div>
-                      <small
-                        v-if="whatsappMessage.response && whatsappMessage.error"
-                        class="text-danger"
-                      >
-                        {{ whatsappMessage.response }}
-                      </small>
-                    </CForm>
-                  </div>
                 </CCardBody>
               </CCard>
 
@@ -500,12 +399,6 @@ import $axios from '../../../api';
 import moment from 'moment';
 import { getMstEpcStatus } from '../../../resource/MstEpcStatus';
 import { getSysConfig, updateSysConfig } from '../../../resource/SysConfig';
-import {
-  getWhatsappQr,
-  getWhatsappStatus,
-  sendWhatsappMessage,
-  deleteWhatsappSession,
-} from '../../../resource/Whatsapp';
 import { handleBack, setConfig } from '../../../utils';
 import { getConfCron } from '../../../resource/ConfCron';
 import { CCard, CCol } from '@coreui/vue';
@@ -529,21 +422,6 @@ export default {
         alphabet_upper: false,
         numeric: false,
         symbol: false,
-      },
-      whatsappStatus: { error: false, message: null, qr_base64: null },
-      whatsappLoading: false,
-      whatsappDestroying: false,
-      // QR yang ditampilkan hanya valid 60 detik (qrTimeout backend). Setelah
-      // lewat masa berlaku, gambar TIDAK diperbarui otomatis — user diminta
-      // memuat ulang QR secara manual.
-      whatsappQrExpired: false,
-      whatsappQrIssuedAt: null,
-      whatsappPolling: null,
-      whatsappMessage: {
-        to: null,
-        message: null,
-        response: null,
-        error: false,
       },
 
       data: {
@@ -640,10 +518,6 @@ export default {
     this.loadConfig();
     this.loadEpcStatus();
     this.loadCron();
-    this.loadWhatsapp();
-  },
-  beforeDestroy() {
-    this.stopWhatsappPolling();
   },
   methods: {
     initial_password_pattern() {
@@ -701,193 +575,6 @@ export default {
         });
       }
       return;
-    },
-    async sendWhatsapp() {
-      let _res = await sendWhatsappMessage(this.whatsappMessage);
-      if (_res) {
-        this.whatsappMessage.error = _res.error;
-        this.whatsappMessage.response = _res.error ? _res.message : null;
-        if (!_res.error) {
-          this.$toast.open({
-            message: _res.message || 'Pesan berhasil dikirim',
-            type: 'success',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-        } else {
-          this.$toast.open({
-            message: _res.message || 'Pesan gagal dikirim',
-            type: 'error',
-            dissmissible: true,
-            position: 'top-right',
-            duration: 5000,
-          });
-        }
-      } else {
-        this.$toast.open({
-          message: 'Gagal mengirim pesan WhatsApp',
-          type: 'error',
-          dissmissible: true,
-          position: 'top-right',
-          duration: 5000,
-        });
-      }
-    },
-    async onWhatsappToggle(enabled) {
-      const previous = !enabled;
-      this.data.notification_whatsapp = enabled;
-      this.whatsappLoading = true;
-      try {
-        const result = await updateSysConfig({
-          users_name: this.data.users_name,
-          notification_whatsapp: enabled,
-        });
-        if (!result || result.error) {
-          this.data.notification_whatsapp = previous;
-          this.whatsappStatus = {
-            error: true,
-            connected: false,
-            qr_base64: null,
-            message: result?.message || 'Gagal menyimpan pengaturan WhatsApp.',
-          };
-          return;
-        }
-
-        if (enabled) {
-          await this.loadWhatsapp();
-        } else {
-          this.stopWhatsappPolling();
-          this.whatsappQrExpired = false;
-          this.whatsappQrIssuedAt = null;
-          this.whatsappStatus = {
-            error: false,
-            connected: false,
-            qr_base64: null,
-            message: 'Notifikasi WhatsApp dinonaktifkan.',
-          };
-        }
-      } finally {
-        this.whatsappLoading = false;
-      }
-    },
-    async deleteWhatsapp() {
-      if (
-        !window.confirm(
-          'Hapus session WhatsApp? Anda perlu scan QR lagi untuk menghubungkannya.',
-        )
-      ) {
-        return;
-      }
-      this.whatsappDestroying = true;
-      let _res = await deleteWhatsappSession();
-      this.whatsappDestroying = false;
-      if (!_res || _res.error) {
-        return;
-      }
-      this.stopWhatsappPolling();
-      this.whatsappQrExpired = false;
-      this.whatsappQrIssuedAt = null;
-      this.whatsappStatus = {
-        error: false,
-        message: 'Session WhatsApp berhasil dihapus.',
-        qr_base64: null,
-      };
-      this.whatsappMessage = {
-        to: null,
-        message: null,
-        response: null,
-        error: false,
-      };
-      if (this.data.notification_whatsapp) {
-        await this.loadWhatsapp();
-      }
-    },
-    async loadWhatsapp() {
-      let _res = await getWhatsappQr();
-      if (_res && _res.error) {
-        this.stopWhatsappPolling();
-        this.whatsappStatus = {
-          ...this.whatsappStatus,
-          qr_base64: null,
-          connected: false,
-          error: true,
-          message: _res.message,
-        };
-      } else if (_res && !_res.error) {
-        const status = _res.data?.[0] || {};
-        const qrBase64 = status.qr_base64 || null;
-        const expired = !!status.qr_expired;
-        this.whatsappQrExpired = expired;
-        if (qrBase64) {
-          // QR baru ditampilkan → mulai hitung masa berlakunya.
-          this.whatsappQrIssuedAt = Date.now();
-        }
-        this.whatsappStatus = {
-          ...this.whatsappStatus,
-          qr_base64: qrBase64,
-          connected: !!status.connected,
-          error: false,
-          message: status.connected
-            ? 'WhatsApp terhubung.'
-            : _res.message || 'Menunggu QR WhatsApp...',
-        };
-        if (status.connected) {
-          this.stopWhatsappPolling();
-        } else if (qrBase64 || expired) {
-          this.startWhatsappPolling();
-        }
-      }
-    },
-    // QR Baileys hanya berlaku 60 detik (qrTimeout backend). Selama QR tampil
-    // kita hanya memantau status koneksi — gambar QR TIDAK diganti otomatis.
-    // Setelah lewat masa berlaku, tampilkan pesan agar user memuat ulang.
-    startWhatsappPolling() {
-      if (this.whatsappPolling) {
-        return;
-      }
-      this.whatsappPolling = setInterval(async () => {
-        if (
-          this.whatsappQrIssuedAt &&
-          Date.now() - this.whatsappQrIssuedAt > 55000
-        ) {
-          this.whatsappQrExpired = true;
-          this.stopWhatsappPolling();
-          return;
-        }
-        const _res = await getWhatsappStatus();
-        const status = (_res && !_res.error && _res.data?.[0]) || null;
-        if (status && status.connected) {
-          this.whatsappQrExpired = false;
-          this.whatsappStatus = {
-            ...this.whatsappStatus,
-            connected: true,
-            qr_base64: null,
-            error: false,
-            message: 'WhatsApp terhubung.',
-          };
-          this.stopWhatsappPolling();
-        } else if (status && status.qr_expired) {
-          this.whatsappQrExpired = true;
-          this.stopWhatsappPolling();
-        }
-      }, 5000);
-    },
-    stopWhatsappPolling() {
-      if (this.whatsappPolling) {
-        clearInterval(this.whatsappPolling);
-        this.whatsappPolling = null;
-      }
-    },
-    async reloadWhatsappQr() {
-      this.stopWhatsappPolling();
-      this.whatsappQrExpired = false;
-      this.whatsappStatus = {
-        ...this.whatsappStatus,
-        qr_base64: null,
-        message: 'Memuat QR baru...',
-      };
-      await this.loadWhatsapp();
     },
     formatDate(date) {
       return moment(date).format('yyyy/MM/DD');

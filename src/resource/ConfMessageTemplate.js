@@ -1,6 +1,6 @@
 import $axios from '../api';
 
-let url = `/v1/configuration/message-template`;
+let url = `/v1/notification/message-template`;
 
 export const getMessageTemplate = async (param = Object) => {
   var query_string = '';

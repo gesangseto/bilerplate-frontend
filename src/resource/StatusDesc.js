@@ -144,6 +144,16 @@ const STATUS_DESC = {
     { status_code: '0', status_desc: 'Failed' },
     { status_code: '1', status_desc: 'Success' },
   ],
+
+  // ===== Notification =====
+  notification_channel: [
+    { status_code: 'Active', status_desc: 'Active' },
+    { status_code: 'Inactive', status_desc: 'Inactive' },
+  ],
+  notification_template: [
+    { status_code: 'Active', status_desc: 'Active' },
+    { status_code: 'Inactive', status_desc: 'Inactive' },
+  ],
 };
 
 export const getStatusDesc = async (param = {}) => {

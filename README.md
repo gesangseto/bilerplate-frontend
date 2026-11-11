@@ -4,7 +4,7 @@ Admin panel berbasis **Vue.js 2 + CoreUI** untuk aplikasi **Jastip Center — Ja
 Awalnya template "Jastip Center PharmaTrust Track & Trace for Pharma Manufacturer", dikembangkan dengan modul Jastip
 yang terhubung ke backend Jastip Center (Express + PostgreSQL).
 
-- **Repo**: `gesangseto/bilerplate-frontend` (branch `jastip`)
+- **Repo**: `gesangseto/boilerplate-frontend` (branch `jastip`)
 - **Versi**: 4.2.0
 - **Lisensi**: MIT
 
@@ -29,34 +29,34 @@ yang terhubung ke backend Jastip Center (Express + PostgreSQL).
 ## Struktur Direktori
 
 ```
-Website/
-├── public/                  # Output build (vue.config.js: outputDir = ../public)
-├── scripts/
-│   └── set-git-hash.js      # Auto-bump BUILD_VERSION (git hash) ke src/config.js
-├── src/
-│   ├── api.js               # Axios instance (baseURL, header token, interceptor 401)
-│   ├── apiNonLoading.js     # Axios tanpa loading bar
-│   ├── config.js            # Auto-generated: APP_CONFIG.BUILD_VERSION
-│   ├── main.js              # Registrasi plugin global
-│   ├── store.js             # Vuex store
-│   ├── router/index.js      # Semua route (prefix /jastip/* untuk modul Jastip)
-│   ├── containers/
-│   │   ├── TheContainer.vue # Layout utama (sidebar + header)
-│   │   └── _nav.js          # Definisi menu sidebar
-│   ├── views/
-│   │   ├── jastip/          # ★ Modul Jastip (7 folder, 13 file)
-│   │   ├── master/          # Supplier, Customer, Warehouse, Product, dll
-│   │   ├── settings/        # User, Role, Workflow, Department, dll
-│   │   ├── transactions/    # Modul pharma lama (picking, inbound, outbound, dll)
-│   │   ├── reports/         # Laporan & audit trail
-│   │   ├── configuration/   # Station, Pattern, Currency, Metadata, dll
-│   │   └── component/       # Komponen global (TableTransaction, ButtonPermission)
-│   ├── resource/            # Helper API per modul (MstCustomer, SysAuth, dll)
-│   ├── utils/               # storage, helper, validator
-│   └── assets/              # Ikon, CSS
-├── .env                     # Konfigurasi environment
-├── vue.config.js            # Konfigurasi build + kompresi brotli/gzip
-└── .gitlab-ci.yml           # Mirror GitLab → GitHub
+Frontend/                 # Root folder repo ini (admin panel)
+  public/                 # Output build (vue.config.js: outputDir = ../public)
+  scripts/
+    └── set-git-hash.js   # Auto-bump BUILD_VERSION (git hash) ke src/config.js
+  src/
+    ├── api.js               # Axios instance (baseURL, header token, interceptor 401)
+    ├── apiNonLoading.js     # Axios tanpa loading bar
+    ├── config.js            # Auto-generated: APP_CONFIG.BUILD_VERSION
+    ├── main.js              # Registrasi plugin global
+    ├── store.js             # Vuex store
+    ├── router/index.js      # Semua route (prefix /jastip/* untuk modul Jastip)
+    ├── containers/
+    │   ├── TheContainer.vue # Layout utama (sidebar + header)
+    │   └── _nav.js          # Definisi menu sidebar
+    ├── views/
+    │   ├── jastip/          # ★ Modul Jastip (7 folder, 13 file)
+    │   ├── master/          # Supplier, Customer, Warehouse, Product, dll
+    │   ├── settings/        # User, Role, Workflow, Department, dll
+    │   ├── transactions/    # Modul pharma lama (picking, inbound, outbound, dll)
+    │   ├── reports/         # Laporan & audit trail
+    │   ├── configuration/   # Station, Pattern, Currency, Metadata, dll
+    │   └── component/       # Komponen global (TableTransaction, ButtonPermission)
+    ├── resource/            # Helper API per modul (MstCustomer, SysAuth, dll)
+    ├── utils/               # storage, helper, validator
+    └── assets/              # Ikon, CSS
+  .env                     # Konfigurasi environment
+  vue.config.js            # Konfigurasi build + kompresi brotli/gzip
+  .gitlab-ci.yml           # Mirror GitLab → GitHub
 ```
 
 ---
@@ -102,10 +102,10 @@ Semua route di bawah prefix `/jastip/*` (`src/router/index.js`).
 
 ## Konfigurasi API & Environment
 
-File `.env`:
+File `.env` (dev):
 
 ```
-VUE_APP_URL_API="http://127.0.0.1:8001"
+VUE_APP_URL_API="http://100.76.39.97:8081"
 VUE_APP_DEFAULT_DATE_FILTER="last_6_month"
 VUE_APP_EPC_TYPE="sgtin,sscc,nie"
 ```

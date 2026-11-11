@@ -15,7 +15,7 @@
             :totalData="totalData"
             :fields="fields"
             :items="reformatDatas"
-            :status_code="'mst_message_template'"
+            :status_code="'notification_template'"
             :action="['read', 'update', 'delete']"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
@@ -97,17 +97,17 @@ export default {
     },
     rowUpdate(item) {
       this.$router.push({
-        path: `/configuration/message-template/update/${item.id}`,
+        path: `/notification/message-template/update/${item.id}`,
       });
     },
     rowRead(item) {
       this.$router.push({
-        path: `/configuration/message-template/read/${item.id}`,
+        path: `/notification/message-template/read/${item.id}`,
       });
     },
     addNew() {
       this.$router.push({
-        path: `/configuration/message-template/create`,
+        path: `/notification/message-template/create`,
       });
     },
     async deleteRow(item) {

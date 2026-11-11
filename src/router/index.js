@@ -210,9 +210,13 @@ const ListCron = () => import('@/views/configuration/cron_schedule/List');
 const FormCron = () => import('@/views/configuration/cron_schedule/Form');
 // Message Template
 const ListMessageTemplate = () =>
-  import('@/views/configuration/message-template/List');
+  import('@/views/notification/message-template/List');
 const FormMessageTemplate = () =>
-  import('@/views/configuration/message-template/Form');
+  import('@/views/notification/message-template/Form');
+const ListNotificationChannel = () =>
+  import('@/views/notification/channel/List');
+const FormNotificationChannel = () =>
+  import('@/views/notification/channel/Form');
 // Metadata
 const ListMetadata = () =>
   import('@/views/configuration/metadata/ListMetadata');
@@ -1063,25 +1067,6 @@ function configRoutes() {
           meta: { login: true },
           component: ListCron,
         },
-        // MESSAGE TEMPLATE
-        {
-          path: 'message-template/:type/:id',
-          name: 'Message Template Details',
-          component: FormMessageTemplate,
-          meta: { login: true },
-        },
-        {
-          path: 'message-template/:type',
-          name: 'Message Template Add',
-          component: FormMessageTemplate,
-          meta: { login: true },
-        },
-        {
-          path: 'message-template',
-          name: 'Message Template',
-          meta: { login: true },
-          component: ListMessageTemplate,
-        },
         // CONF CONNECTOR
         {
           path: 'connector/:type/:id',
@@ -1274,6 +1259,57 @@ function configRoutes() {
       name: 'Payment',
       meta: { login: true },
       component: FinancePayments,
+    },
+    // ========================NOTIFICATION========================
+    {
+      path: 'notification',
+      redirect: '/notification/channel',
+      name: 'Notification',
+      meta: { login: true },
+      component: {
+        render(c) {
+          return c('router-view');
+        },
+      },
+      children: [
+        {
+          path: 'channel/:type/:id',
+          name: 'Notification Channel Details',
+          component: FormNotificationChannel,
+          meta: { login: true },
+        },
+        {
+          path: 'channel/:type',
+          name: 'Notification Channel Add',
+          component: FormNotificationChannel,
+          meta: { login: true },
+        },
+        {
+          path: 'channel',
+          name: 'Notification Channel',
+          meta: { login: true },
+          component: ListNotificationChannel,
+        },
+        // MESSAGE TEMPLATE
+        {
+          path: 'message-template/:type/:id',
+          name: 'Message Template Details',
+          component: FormMessageTemplate,
+          meta: { login: true },
+        },
+        {
+          path: 'message-template/:type',
+          name: 'Message Template Add',
+          component: FormMessageTemplate,
+          meta: { login: true },
+        },
+        {
+          path: 'message-template',
+          name: 'Message Template',
+          meta: { login: true },
+          component: ListMessageTemplate,
+        },
+      ],
     },
     {
       path: 'finance/:view',
