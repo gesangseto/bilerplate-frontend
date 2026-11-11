@@ -8,9 +8,10 @@
         <CCardBody>
           <CAlert color="info" class="mb-3">
             Daftar nomor yang <strong>ditahan</strong> oleh channel WhatsApp
-            default karena belum pernah mengirim pesan masuk. Mengirim pesan
-            pertama ke nomor seperti ini berisiko dilaporkan spam dan membuat
-            nomor WhatsApp ter-suspend. Setelah customer membalas, tekan
+            default karena belum punya riwayat percakapan sama sekali (tidak
+            ada chat masuk maupun keluar). Mengirim pesan pertama ke nomor
+            seperti ini berisiko dilaporkan spam dan membuat nomor WhatsApp
+            ter-suspend. Setelah ada percakapan, tekan
             <strong>Retry</strong> untuk mengirim ulang pesan yang tertahan.
           </CAlert>
           <TableDefault
