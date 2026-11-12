@@ -493,8 +493,37 @@ export default {
         error: false,
         message: 'Loading WhatsApp status...',
       };
-      // Selalu minta socket pairing baru saat panel dibuka: QR yang tersisa
-      // dari sesi sebelumnya (mis. setelah API restart) sudah tidak berlaku.
+      // Cek status dulu: jika sudah terhubung atau session ada (registered),
+      // jangan buat socket pairing baru (hancurkan sesi lama).
+      const statusRes = await getWhatsappStatus();
+      const status =
+        (statusRes && !statusRes.error && statusRes.data?.[0]) || null;
+      if (status && status.connected) {
+        this.whatsappQrExpired = false;
+        this.whatsappQrIssuedAt = null;
+        this.whatsappStatus = {
+          ...this.whatsappStatus,
+          qr_base64: null,
+          connected: true,
+          error: false,
+          message: 'WhatsApp terhubung.',
+        };
+        return;
+      }
+      // Session exists (pairing sudah pernah dilakukan, registered:true) tapi
+      // belum connected → jangan refresh QR, polling saja menunggu reconnect.
+      if (status && status.session_exists && status.paired) {
+        this.whatsappStatus = {
+          ...this.whatsappStatus,
+          qr_base64: null,
+          connected: false,
+          error: false,
+          message: 'Menunggu kembali keterangan WhatsApp...',
+        };
+        this.startWhatsappPolling();
+        return;
+      }
+      // Baru buat socket pairing jika belum ada session atau registered:false.
       await this.loadWhatsapp(true);
     },
     closeWhatsappPanel() {

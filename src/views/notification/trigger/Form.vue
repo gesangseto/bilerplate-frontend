@@ -51,9 +51,7 @@
                   :disabled="isRead || !formData.model"
                   :col="[3, 9]"
                   title="Status From"
-                  :description="
-                    'Optional. Empty = trigger berlaku untuk semua status asal.'
-                  "
+                  :description="'Optional. Empty = trigger berlaku untuk semua status asal.'"
                   placeholder="--All Status--"
                   :options="listStatus"
                   :value="formData.status_from"
@@ -163,11 +161,13 @@ export default {
   },
   methods: {
     async loadModel() {
-      let res = await getSysDatabaseContent();
+      let res = await getSysDatabaseContent({});
       if (res && !res.error) {
-        this.listModel = (res.data || []).map((item) => {
-          return { value: item.model, label: item.name || item.model };
-        });
+        this.listModel = (res.data || [])
+          .filter((it) => it.notif_support)
+          .map((item) => {
+            return { value: item.model, label: item.name || item.model };
+          });
       }
     },
     async loadTemplate() {
