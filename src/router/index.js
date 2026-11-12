@@ -219,6 +219,8 @@ const FormNotificationChannel = () =>
   import('@/views/notification/channel/Form');
 const ListNotificationReport = () =>
   import('@/views/notification/report/List');
+const ListNotificationQueue = () =>
+  import('@/views/notification/queue/List');
 // Metadata
 const ListMetadata = () =>
   import('@/views/configuration/metadata/ListMetadata');
@@ -1298,6 +1300,13 @@ function configRoutes() {
           name: 'Notification Report',
           meta: { login: true },
           component: ListNotificationReport,
+        },
+        // NOTIFICATION QUEUE — pemantauan antrean pesan WhatsApp
+        {
+          path: 'queue',
+          name: 'Notification Queue',
+          meta: { login: true },
+          component: ListNotificationQueue,
         },
         // MESSAGE TEMPLATE
         {
