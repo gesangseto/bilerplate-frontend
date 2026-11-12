@@ -1,8 +1,8 @@
 import $axiosMertrack from '../apiMertrack';
 
-let url = `/v4/system/notification-channel`;
+let url = `/v4/notification/channel`;
 
-export const getSysNotificationChannel = async (param = Object) => {
+export const getNotificationChannel = async (param = Object) => {
   var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
@@ -21,7 +21,7 @@ export const getSysNotificationChannel = async (param = Object) => {
   });
 };
 
-export const insertSysNotificationChannel = async (param = Object) => {
+export const insertNotificationChannel = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -39,7 +39,7 @@ export const insertSysNotificationChannel = async (param = Object) => {
   });
 };
 
-export const updateSysNotificationChannel = async (param = Object) => {
+export const updateNotificationChannel = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -57,7 +57,7 @@ export const updateSysNotificationChannel = async (param = Object) => {
   });
 };
 
-export const deleteSysNotificationChannel = async (param = Object) => {
+export const deleteNotificationChannel = async (param = Object) => {
   if (!param.id) return false;
   param = { data: { ...param } };
   return new Promise((resolve) => {

@@ -11,7 +11,7 @@
             :totalData="totalData"
             :fields="fields"
             :items="reformatDatas"
-            :status_code="'sys_notification_channel'"
+            :status_code="'notification_channel'"
             :action="['read', 'update', 'delete']"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
@@ -26,12 +26,12 @@
 
 <script>
 import {
-  deleteSysNotificationChannel,
-  getSysNotificationChannel,
-} from '../../../resource/SysNotificationChannel';
+  deleteNotificationChannel,
+  getNotificationChannel,
+} from '../../../resource/NotificationChannel';
 
 export default {
-  name: 'ListSysNotificationChannel',
+  name: 'ListNotificationChannel',
   watch: {
     $route: {
       deep: true,
@@ -84,7 +84,7 @@ export default {
   methods: {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
-      let res = await getSysNotificationChannel(filter);
+      let res = await getNotificationChannel(filter);
       if (res && !res.error) {
         this.totalData = res.grand_total || 0;
         this.items = res.data || [];
@@ -101,7 +101,7 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let param = { id: item.id, reason: item?.reason || '' };
-        let res = await deleteSysNotificationChannel(param);
+        let res = await deleteNotificationChannel(param);
         this.$isLoading(false);
         this.$toast.open({
           message:

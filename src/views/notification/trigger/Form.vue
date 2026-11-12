@@ -26,20 +26,9 @@
                   :col="[3, 9]"
                   required
                   title="Name"
-                  placeholder="Enter template name"
+                  placeholder="Enter trigger name"
                   v-model="formData.name"
                   :is-valid="initial_load ? null : formData.name ? true : false"
-                />
-              </CCol>
-              <CCol sm="12">
-                <InputDefault
-                  :disabled="isRead"
-                  :col="[3, 9]"
-                  required
-                  title="Code"
-                  placeholder="Enter template code"
-                  v-model="formData.code"
-                  :is-valid="initial_load ? null : formData.code ? true : false"
                 />
               </CCol>
               <CCol sm="12">
@@ -47,38 +36,58 @@
                   :disabled="isRead"
                   :col="[3, 9]"
                   required
-                  title="Channel"
-                  :options="listChannel"
-                  :value="formData.channel"
+                  title="Model"
+                  placeholder="--Select Model--"
+                  :options="listModel"
+                  :value="formData.model"
                   :is-valid="
-                    initial_load ? null : formData.channel ? true : false
+                    initial_load ? null : formData.model ? true : false
                   "
-                  v-on:onchange="formData.channel = $event"
+                  v-on:onchange="handleModelChange($event)"
                 />
               </CCol>
               <CCol sm="12">
-                <InputDefault
-                  :disabled="isRead"
+                <SelectOption
+                  :disabled="isRead || !formData.model"
                   :col="[3, 9]"
-                  title="Subject"
-                  placeholder="Enter subject"
-                  v-model="formData.subject"
+                  title="Status From"
+                  :description="
+                    'Optional. Empty = trigger berlaku untuk semua status asal.'
+                  "
+                  placeholder="--All Status--"
+                  :options="listStatus"
+                  :value="formData.status_from"
+                  v-on:onchange="formData.status_from = $event"
                 />
               </CCol>
               <CCol sm="12">
-                <TextareaDefault
-                  :disabled="isRead"
+                <SelectOption
+                  :disabled="isRead || !formData.model"
                   :col="[3, 9]"
-                  :rows="6"
                   required
-                  title="Content"
-                  :placeholder="
-                    'Enter content. Dynamic value example: {{name}}'
-                  "
-                  v-model="formData.content"
+                  title="Status To"
+                  placeholder="--Select Status--"
+                  :options="listStatus"
+                  :value="formData.status_to"
                   :is-valid="
-                    initial_load ? null : formData.content ? true : false
+                    initial_load ? null : formData.status_to ? true : false
                   "
+                  v-on:onchange="formData.status_to = $event"
+                />
+              </CCol>
+              <CCol sm="12">
+                <SelectOption
+                  :disabled="isRead"
+                  :col="[3, 9]"
+                  required
+                  title="Notification Template"
+                  placeholder="--Select Template--"
+                  :options="listTemplate"
+                  :value="formData.template_id"
+                  :is-valid="
+                    initial_load ? null : formData.template_id ? true : false
+                  "
+                  v-on:onchange="formData.template_id = $event"
                 />
               </CCol>
               <CCol sm="12">
@@ -115,25 +124,26 @@
 
 <script>
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
+import { getSysDatabaseContent } from '../../../resource/SysDatabaseContent';
+import { getStatusDesc } from '../../../resource/StatusDesc';
+import { getNotificationTemplate } from '../../../resource/NotificationTemplate';
 import {
-  getSysNotificationTemplate,
-  insertSysNotificationTemplate,
-  updateSysNotificationTemplate,
-} from '../../../resource/SysNotificationTemplate';
+  getNotificationTrigger,
+  insertNotificationTrigger,
+  updateNotificationTrigger,
+} from '../../../resource/NotificationTrigger';
 
 export default {
-  name: 'FormSysNotificationTemplate',
+  name: 'FormNotificationTrigger',
   data() {
     return {
       initial_load: true,
       route_action: '',
       action: 'Edit',
-      formData: { status: 'Active', channel: 'IN_APP' },
-      listChannel: [
-        { value: 'IN_APP', label: 'IN_APP' },
-        { value: 'WHATSAPP', label: 'WHATSAPP' },
-        { value: 'BOTH', label: 'BOTH' },
-      ],
+      formData: { status: 'Active', status_from: '', status_to: '' },
+      listModel: [],
+      listStatus: [],
+      listTemplate: [],
     };
   },
   computed: {
@@ -145,22 +155,62 @@ export default {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
+    this.loadModel();
+    this.loadTemplate();
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
   },
   methods: {
+    async loadModel() {
+      let res = await getSysDatabaseContent();
+      if (res && !res.error) {
+        this.listModel = (res.data || []).map((item) => {
+          return { value: item.model, label: item.name || item.model };
+        });
+      }
+    },
+    async loadTemplate() {
+      let res = await getNotificationTemplate({ status: 'Active' });
+      if (res && !res.error) {
+        this.listTemplate = (res.data || []).map((item) => {
+          return {
+            value: item.id,
+            label: `${item.name} (${item.channel})`,
+          };
+        });
+      }
+    },
+    async loadStatus(table_name) {
+      this.listStatus = [];
+      if (!table_name) return;
+      let res = await getStatusDesc({ table_name });
+      if (res && !res.error) {
+        this.listStatus = (res.data || []).map((item) => {
+          return { value: item.status_code, label: item.status_desc };
+        });
+      }
+    },
+    handleModelChange(model) {
+      this.formData.model = model;
+      this.formData.status_from = '';
+      this.formData.status_to = '';
+      this.loadStatus(model);
+    },
     async loadData() {
-      let res = await getSysNotificationTemplate({ id: this.$route.params.id });
+      let res = await getNotificationTrigger({ id: this.$route.params.id });
       if (res && !res.error && res.data && res.data.length > 0) {
         this.formData = res.data[0];
+        this.formData.status_from = this.formData.status_from || '';
+        this.formData.status_to = this.formData.status_to || '';
+        await this.loadStatus(this.formData.model);
       }
     },
     validation() {
       if (!this.formData.name) return false;
-      if (!this.formData.code) return false;
-      if (!this.formData.channel) return false;
-      if (!this.formData.content) return false;
+      if (!this.formData.model) return false;
+      if (!this.formData.status_to) return false;
+      if (!this.formData.template_id) return false;
       return true;
     },
     async save() {
@@ -179,13 +229,16 @@ export default {
         ? `You are about to save changes to this data. This operation cannot be undone. Would you like to continue?`
         : `You are about to add this new data. This operation cannot be undone. Would you like to continue?`;
       if (confirm(message)) {
-        let formData = this.formData;
+        let formData = {
+          ...this.formData,
+          status_from: this.formData.status_from || null,
+        };
         this.$isLoading(true);
         let res = {};
         if (formData.id) {
-          res = await updateSysNotificationTemplate(formData);
+          res = await updateNotificationTrigger(formData);
         } else {
-          res = await insertSysNotificationTemplate(formData);
+          res = await insertNotificationTrigger(formData);
         }
         this.$isLoading(false);
         this.$toast.open({

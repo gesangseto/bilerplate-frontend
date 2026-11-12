@@ -258,10 +258,10 @@
 <script>
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import {
-  getSysNotificationChannel,
-  insertSysNotificationChannel,
-  updateSysNotificationChannel,
-} from '../../../resource/SysNotificationChannel';
+  getNotificationChannel,
+  insertNotificationChannel,
+  updateNotificationChannel,
+} from '../../../resource/NotificationChannel';
 import {
   getWhatsappQr,
   getWhatsappStatus,
@@ -291,7 +291,7 @@ const CONFIG_FIELDS = {
 };
 
 export default {
-  name: 'FormSysNotificationChannel',
+  name: 'FormNotificationChannel',
   data() {
     return {
       initial_load: true,
@@ -358,7 +358,7 @@ export default {
   },
   methods: {
     async loadData() {
-      let res = await getSysNotificationChannel({ id: this.$route.params.id });
+      let res = await getNotificationChannel({ id: this.$route.params.id });
       if (res && !res.error && res.data && res.data.length > 0) {
         this.formData = res.data[0];
         this.formData.config = res.data[0].config || {};
@@ -414,9 +414,9 @@ export default {
         this.$isLoading(true);
         let res = {};
         if (formData.id) {
-          res = await updateSysNotificationChannel(formData);
+          res = await updateNotificationChannel(formData);
         } else {
-          res = await insertSysNotificationChannel(formData);
+          res = await insertNotificationChannel(formData);
         }
         this.$isLoading(false);
         this.$toast.open({

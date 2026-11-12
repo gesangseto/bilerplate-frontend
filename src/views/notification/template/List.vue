@@ -11,7 +11,7 @@
             :totalData="totalData"
             :fields="fields"
             :items="reformatDatas"
-            :status_code="'sys_notification_template'"
+            :status_code="'notification_template'"
             :action="['read', 'update', 'delete']"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
@@ -26,12 +26,12 @@
 
 <script>
 import {
-  deleteSysNotificationTemplate,
-  getSysNotificationTemplate,
-} from '../../../resource/SysNotificationTemplate';
+  deleteNotificationTemplate,
+  getNotificationTemplate,
+} from '../../../resource/NotificationTemplate';
 
 export default {
-  name: 'ListSysNotificationTemplate',
+  name: 'ListNotificationTemplate',
   watch: {
     $route: {
       deep: true,
@@ -88,7 +88,7 @@ export default {
   methods: {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
-      let res = await getSysNotificationTemplate(filter);
+      let res = await getNotificationTemplate(filter);
       if (res && !res.error) {
         this.totalData = res.grand_total || 0;
         this.items = res.data || [];
@@ -105,7 +105,7 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let param = { id: item.id, reason: item?.reason || '' };
-        let res = await deleteSysNotificationTemplate(param);
+        let res = await deleteNotificationTemplate(param);
         this.$isLoading(false);
         this.$toast.open({
           message:

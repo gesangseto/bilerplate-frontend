@@ -11,7 +11,7 @@
             :totalData="totalData"
             :fields="fields"
             :items="reformatDatas"
-            :status_code="'sys_notification_trigger'"
+            :status_code="'notification_trigger'"
             :action="['read', 'update', 'delete']"
             v-on:handleDelete="deleteRow($event)"
             v-on:handleUpdate="rowUpdate($event)"
@@ -26,12 +26,12 @@
 
 <script>
 import {
-  deleteSysNotificationTrigger,
-  getSysNotificationTrigger,
-} from '../../../resource/SysNotificationTrigger';
+  deleteNotificationTrigger,
+  getNotificationTrigger,
+} from '../../../resource/NotificationTrigger';
 
 export default {
-  name: 'ListSysNotificationTrigger',
+  name: 'ListNotificationTrigger',
   watch: {
     $route: {
       deep: true,
@@ -96,7 +96,7 @@ export default {
   methods: {
     async loadData(filter) {
       if (!filter) filter = this.$route.query;
-      let res = await getSysNotificationTrigger(filter);
+      let res = await getNotificationTrigger(filter);
       if (res && !res.error) {
         this.totalData = res.grand_total || 0;
         this.items = res.data || [];
@@ -113,7 +113,7 @@ export default {
       if (confirm(message)) {
         this.$isLoading(true);
         let param = { id: item.id, reason: item?.reason || '' };
-        let res = await deleteSysNotificationTrigger(param);
+        let res = await deleteNotificationTrigger(param);
         this.$isLoading(false);
         this.$toast.open({
           message:

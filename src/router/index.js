@@ -191,18 +191,19 @@ const ListSystemScriptInj = () =>
   import('@/views/system/script_injection/List');
 const FormSystemScriptInj = () =>
   import('@/views/system/script_injection/Form');
-const ListSysNotificationChannel = () =>
-  import('@/views/system/notification_channel/List');
-const FormSysNotificationChannel = () =>
-  import('@/views/system/notification_channel/Form');
-const ListSysNotificationTemplate = () =>
-  import('@/views/system/notification_template/List');
-const FormSysNotificationTemplate = () =>
-  import('@/views/system/notification_template/Form');
-const ListSysNotificationTrigger = () =>
-  import('@/views/system/notification_trigger/List');
-const FormSysNotificationTrigger = () =>
-  import('@/views/system/notification_trigger/Form');
+// ========================NOTIFICATION========================
+const ListNotificationChannel = () =>
+  import('@/views/notification/channel/List');
+const FormNotificationChannel = () =>
+  import('@/views/notification/channel/Form');
+const ListNotificationTemplate = () =>
+  import('@/views/notification/template/List');
+const FormNotificationTemplate = () =>
+  import('@/views/notification/template/Form');
+const ListNotificationTrigger = () =>
+  import('@/views/notification/trigger/List');
+const FormNotificationTrigger = () =>
+  import('@/views/notification/trigger/Form');
 // ========================SYSTEM PROCESS========================
 const ListProcessSchedule = () =>
   import('@/views/system-process/process-schedule/List');
@@ -1192,57 +1193,57 @@ function configRoutes() {
         {
           path: 'channel/:type/:id',
           name: 'Notification Channel (Details)',
-          component: FormSysNotificationChannel,
+          component: FormNotificationChannel,
           meta: { login: true },
         },
         {
           path: 'channel/:type',
           name: 'Notification Channel (Create)',
-          component: FormSysNotificationChannel,
+          component: FormNotificationChannel,
           meta: { login: true },
         },
         {
           path: 'channel',
           name: 'Notification Channel (Home)',
-          component: ListSysNotificationChannel,
+          component: ListNotificationChannel,
           meta: { login: true },
         },
         // NOTIFICATION TEMPLATE
         {
           path: 'template/:type/:id',
           name: 'Notification Template (Details)',
-          component: FormSysNotificationTemplate,
+          component: FormNotificationTemplate,
           meta: { login: true },
         },
         {
           path: 'template/:type',
           name: 'Notification Template (Create)',
-          component: FormSysNotificationTemplate,
+          component: FormNotificationTemplate,
           meta: { login: true },
         },
         {
           path: 'template',
           name: 'Notification Template (Home)',
-          component: ListSysNotificationTemplate,
+          component: ListNotificationTemplate,
           meta: { login: true },
         },
         // NOTIFICATION TRIGGER
         {
           path: 'trigger/:type/:id',
           name: 'Notification Trigger (Details)',
-          component: FormSysNotificationTrigger,
+          component: FormNotificationTrigger,
           meta: { login: true },
         },
         {
           path: 'trigger/:type',
           name: 'Notification Trigger (Create)',
-          component: FormSysNotificationTrigger,
+          component: FormNotificationTrigger,
           meta: { login: true },
         },
         {
           path: 'trigger',
           name: 'Notification Trigger (Home)',
-          component: ListSysNotificationTrigger,
+          component: ListNotificationTrigger,
           meta: { login: true },
         },
       ],
@@ -1407,6 +1408,13 @@ function configRoutes() {
           meta: { login: false },
         },
       ],
+    },
+    // URL yang tidak terdaftar
+    {
+      path: '*',
+      name: 'NotFound',
+      redirect: '/404',
+      meta: { login: false },
     },
   ];
 }

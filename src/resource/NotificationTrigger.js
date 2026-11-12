@@ -1,8 +1,8 @@
 import $axiosMertrack from '../apiMertrack';
 
-let url = `/v4/system/notification-trigger`;
+let url = `/v4/notification/trigger`;
 
-export const getSysNotificationTrigger = async (param = Object) => {
+export const getNotificationTrigger = async (param = Object) => {
   var query_string = '';
   if (param) {
     query_string = new URLSearchParams(param).toString();
@@ -21,7 +21,7 @@ export const getSysNotificationTrigger = async (param = Object) => {
   });
 };
 
-export const insertSysNotificationTrigger = async (param = Object) => {
+export const insertNotificationTrigger = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -39,7 +39,7 @@ export const insertSysNotificationTrigger = async (param = Object) => {
   });
 };
 
-export const updateSysNotificationTrigger = async (param = Object) => {
+export const updateNotificationTrigger = async (param = Object) => {
   if (!param) {
     return false;
   }
@@ -57,7 +57,7 @@ export const updateSysNotificationTrigger = async (param = Object) => {
   });
 };
 
-export const deleteSysNotificationTrigger = async (param = Object) => {
+export const deleteNotificationTrigger = async (param = Object) => {
   if (!param.id) return false;
   param = { data: { ...param } };
   return new Promise((resolve) => {
