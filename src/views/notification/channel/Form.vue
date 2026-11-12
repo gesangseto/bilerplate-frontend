@@ -212,6 +212,71 @@
               <template v-if="formData.code === 'default'">
                 <hr />
                 <p style="font-weight: bold">Koneksi WhatsApp (Baileys)</p>
+
+                <!-- Pemanasan nomor: kuota naik bertahap sejak nomor terhubung -->
+                <div v-if="warmupVisible" class="warmup-panel">
+                  <div class="warmup-head">
+                    <div class="warmup-icon" :class="{ done: channelStatus.warmup_complete }">
+                      <svg
+                        v-if="channelStatus.warmup_complete"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      <svg
+                        v-else
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polyline points="3 17 9 11 13 15 21 7" />
+                        <polyline points="15 7 21 7 21 13" />
+                      </svg>
+                    </div>
+                    <div class="warmup-heading">
+                      <div class="warmup-title">Pemanasan Nomor WhatsApp</div>
+                      <div class="warmup-sub">
+                        <template v-if="channelStatus.warmup_complete">
+                          Kuota maksimal {{ channelStatus.daily_limit || 0 }} pesan/hari sudah aktif
+                        </template>
+                        <template v-else>
+                          Kuota harian naik bertahap sejak nomor terhubung
+                        </template>
+                      </div>
+                    </div>
+                    <div class="warmup-chip" :class="{ done: channelStatus.warmup_complete }">
+                      <template v-if="channelStatus.warmup_complete">Selesai</template>
+                      <template v-else>Hari {{ channelStatus.warmup_day }}/{{ warmupTotal }}</template>
+                    </div>
+                  </div>
+                  <div class="warmup-track">
+                    <div
+                      class="warmup-fill"
+                      :class="{ done: channelStatus.warmup_complete }"
+                      :style="{ width: warmupPercent + '%' }"
+                    ></div>
+                  </div>
+                  <div class="warmup-meta">
+                    <span>
+                      Kuota hari ini
+                      <strong>{{ channelStatus.daily_used || 0 }}/{{ channelStatus.daily_limit || 0 }}</strong>
+                      pesan
+                    </span>
+                    <span v-if="!channelStatus.warmup_complete">
+                      Sisa <strong>{{ channelStatus.warmup_days_remaining || 0 }}</strong> hari
+                    </span>
+                    <span v-else class="warmup-done-text">Pemanasan selesai</span>
+                  </div>
+                </div>
+
                 <div v-if="formData.status === 'Active'">
                   <small>{{ whatsappStatus.message }}</small>
                   <hr />
@@ -293,6 +358,7 @@
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import {
   getNotificationChannel,
+  getNotificationChannelStatus,
   updateNotificationChannel,
   testNotificationChannelConnection,
   sendTestNotificationChannel,
@@ -318,6 +384,8 @@ export default {
         public_base_url: '',
       },
       whatsappStatus: { error: false, message: null, qr_base64: null },
+      // Status channel default: kuota anti-ban + pemanasan nomor.
+      channelStatus: null,
       whatsappDestroying: false,
       whatsappQrExpired: false,
       whatsappQrIssuedAt: null,
@@ -332,6 +400,31 @@ export default {
       testResult: { message: null, error: false },
       connectionResult: { message: null, error: false },
     };
+  },
+  computed: {
+    // Panel pemanasan hanya muncul kalau backend sudah mencatat nomor aktif.
+    warmupVisible() {
+      return !!(this.channelStatus && this.channelStatus.warmup_started_on);
+    },
+    // Hari berjalan + sisa hari = total hari pemanasan (mis. 3 + 16 = 19).
+    warmupTotal() {
+      if (!this.channelStatus) return 0;
+      return (
+        Number(this.channelStatus.warmup_day || 0) +
+        Number(this.channelStatus.warmup_days_remaining || 0)
+      );
+    },
+    warmupPercent() {
+      if (!this.channelStatus) return 0;
+      if (this.channelStatus.warmup_complete) return 100;
+      if (!this.warmupTotal) return 0;
+      return Math.min(
+        100,
+        Math.round(
+          (Number(this.channelStatus.warmup_day || 0) / this.warmupTotal) * 100,
+        ),
+      );
+    },
   },
   mounted() {
     this.action = capitalizeFirstLetter(this.$route.params.type);
@@ -353,9 +446,16 @@ export default {
           this.parseKirimiCredentials();
         }
         if (this.formData.code === 'default' && this.formData.status === 'Active') {
+          this.loadChannelStatus();
           await this.loadWhatsapp();
         }
       }
+    },
+    async loadChannelStatus() {
+      if (this.formData.code !== 'default') return;
+      const _res = await getNotificationChannelStatus('default');
+      if (!_res || _res.error) return;
+      this.channelStatus = (_res.data && _res.data[0]) || null;
     },
     // api_key channel Kirimi = JSON { user_code, secret, device_id, public_base_url }
     parseKirimiCredentials() {
@@ -466,6 +566,8 @@ export default {
           (_res.error ? 'Channel belum siap digunakan.' : 'Channel siap digunakan.'),
         error: !!_res.error,
       };
+      // Kuota/pemanasan bisa berubah setelah pengecekan (nomor baru terhubung).
+      if (this.formData.code === 'default') this.loadChannelStatus();
     },
     async sendTestMessage() {
       if (!this.formData.code) return;
@@ -499,6 +601,8 @@ export default {
         message: _res.message || (_res.error ? 'Pesan uji gagal dikirim.' : 'Pesan uji terkirim.'),
         error: !!_res.error,
       };
+      // Pesan yang benar-benar terkirim ikut memakai kuota hari ini.
+      if (this.formData.code === 'default') this.loadChannelStatus();
       this.$toast.open({
         message: this.testResult.message,
         type: this.testResult.error ? 'error' : 'success',
@@ -596,6 +700,8 @@ export default {
             error: false,
             message: 'WhatsApp terhubung.',
           };
+          // Nomor baru terhubung → pemanasan mulai; ambil state terbarunya.
+          this.loadChannelStatus();
           this.stopWhatsappPolling();
         } else if (status && status.qr_expired) {
           this.whatsappQrExpired = true;
@@ -622,3 +728,107 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.warmup-panel {
+  background: linear-gradient(135deg, #fbf9ff 0%, #f2ecfb 100%);
+  border: 1px solid #e9e1f8;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.warmup-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.warmup-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c5cd6 0%, #553b9c 100%);
+  box-shadow: 0 4px 10px rgba(85, 59, 156, 0.28);
+}
+.warmup-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.warmup-icon.done {
+  background: linear-gradient(135deg, #4ac98c 0%, #2f9e69 100%);
+  box-shadow: 0 4px 10px rgba(47, 158, 105, 0.26);
+}
+.warmup-heading {
+  flex: 1;
+  min-width: 0;
+}
+.warmup-title {
+  font-weight: 700;
+  color: #3d2d63;
+  font-size: 0.92rem;
+}
+.warmup-sub {
+  color: #8b83a3;
+  font-size: 0.76rem;
+  margin-top: 1px;
+}
+.warmup-chip {
+  flex: 0 0 auto;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #553b9c;
+  background: #ede7fb;
+  border-radius: 999px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+.warmup-chip.done {
+  color: #2f9e69;
+  background: #e3f7ec;
+}
+.warmup-track {
+  height: 10px;
+  border-radius: 999px;
+  background: #e8e2f5;
+  margin-top: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(61, 45, 99, 0.14);
+}
+.warmup-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8b6fd8 0%, #553b9c 100%);
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.warmup-fill.done {
+  background: linear-gradient(90deg, #6ee7a8 0%, #2f9e69 100%);
+}
+.warmup-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: #7d7594;
+  font-size: 0.76rem;
+}
+.warmup-meta strong {
+  color: #3d2d63;
+}
+.warmup-done-text {
+  color: #2f9e69;
+  font-weight: 600;
+}
+@media (max-width: 576px) {
+  .warmup-head {
+    align-items: flex-start;
+  }
+  .warmup-chip {
+    margin-top: 2px;
+  }
+}
+</style>

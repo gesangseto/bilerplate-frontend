@@ -37,6 +37,20 @@ export const updateNotificationChannel = async (param = Object) => {
   });
 };
 
+// Kesiapan channel + kuota anti-ban channel default (termasuk pemanasan
+// nomor: warmup_day, warmup_complete, warmup_days_remaining).
+export const getNotificationChannelStatus = async (code = null) => {
+  return new Promise((resolve) => {
+    $axios
+      .get(`${url}/status`, { params: code ? { code } : {} })
+      .then((result) => resolve(result.data))
+      .catch((e) => {
+        console.log('ERROR => ', e);
+        return resolve(false);
+      });
+  });
+};
+
 // Cek koneksi channel TANPA mengirim pesan (tombol "Test Koneksi")
 export const testNotificationChannelConnection = async (code) => {
   return new Promise((resolve) => {
