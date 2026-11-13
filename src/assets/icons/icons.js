@@ -99,6 +99,7 @@ import {
   cilClipboard,
   cilRoom,
   cilInfo,
+  cilMediaSkipForward,
 } from '@coreui/icons';
 import { logo } from './logo';
 
@@ -106,6 +107,7 @@ export const iconsSet = Object.assign(
   {},
   { logo },
   {
+    cilMediaSkipForward,
     cilSync,
     cilWindowRestore,
     cilWarning,
