@@ -89,7 +89,27 @@
                 :fields="fields"
                 class="text-left"
                 style="font-size: 12px"
-              />
+              >
+                <template #status="{ item }">
+                  <td>
+                    <ButtonPermission
+                      v-if="
+                        item.trx_ref_name === 'Picking' &&
+                        item.status_code === 'E013' &&
+                        String(item.status).toLowerCase() === 'fail'
+                      "
+                      :permission="'approve'"
+                      :id="item.id"
+                      :buttonProperty="{
+                        icon: 'step-forward',
+                        color: 'warning',
+                        tooltip: 'Skip',
+                      }"
+                      @click="openSkipModal(item)"
+                    />
+                  </td>
+                </template>
+              </CDataTable>
             </CCol>
           </CRow>
         </CCardBody>
@@ -134,6 +154,44 @@
         </CButton>
       </template>
     </CModal>
+    <CModal title="Skip BPOM Queue" color="warning" :show.sync="skipModal">
+      <CAlert color="danger">
+        <strong>Warning:</strong> Before you skip this item, make sure it has
+        already been sent to BPOM. Skipping cannot be undone, and the queue will
+        continue to the next step.
+      </CAlert>
+      <CTextarea
+        v-model="formSkip.remark"
+        :is-valid="formSkip.remark.trim().length > 0"
+        invalid-feedback="Remark is required"
+        placeholder="Enter Remark"
+        rows="5"
+      >
+        <template #label>
+          <p>
+            Remark
+            <span class="text-danger"><strong>*</strong></span>
+          </p>
+        </template>
+      </CTextarea>
+      <template #footer>
+        <CButton
+          color="warning"
+          :disabled="!formSkip.remark.trim() || skipSubmitting"
+          @click="submitSkip"
+        >
+          <CIcon name="cil-media-skip-forward" /> Skip
+        </CButton>
+        <CButton
+          color="danger"
+          type="button"
+          :disabled="skipSubmitting"
+          @click="skipModal = false"
+        >
+          <CIcon name="cil-x-circle" /> Cancel
+        </CButton>
+      </template>
+    </CModal>
   </CRow>
 </template>
 
@@ -160,6 +218,12 @@ export default {
       detail_item: {},
       datas: [],
       viewModal: false,
+      skipModal: false,
+      skipSubmitting: false,
+      formSkip: {
+        id: null,
+        remark: '',
+      },
       formForceUpdate: {
         trx_ref_id: null,
         remark: null,
@@ -390,6 +454,65 @@ export default {
     closeModal() {
       this.datas = [];
       this.viewModal = false;
+    },
+    openSkipModal(item) {
+      this.formSkip = {
+        id: item.id,
+        remark: '',
+      };
+      this.skipModal = true;
+    },
+    async submitSkip() {
+      const remark = this.formSkip.remark.trim();
+      if (!this.formSkip.id || !remark || this.skipSubmitting) return;
+      if (!confirm('Are you sure you want to skip this BPOM queue item?')) {
+        return;
+      }
+
+      this.skipSubmitting = true;
+      try {
+        const result = await $axiosMertrack.post(
+          '/v3/transaction/queue-bpom/skip',
+          {
+            id: this.formSkip.id,
+            remark,
+            modified_by: getUserId(),
+            modified_date: new Date().toISOString(),
+          },
+        );
+        const data = result.data;
+        if (data.error) {
+          this.$toast.open({
+            message: data.message,
+            type: 'error',
+            dissmissible: true,
+            position: 'top-right',
+            duration: 5000,
+          });
+          return;
+        }
+
+        this.$toast.open({
+          message: 'BPOM queue item has been skipped successfully.',
+          type: 'success',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        this.skipModal = false;
+        this.formSkip = { id: null, remark: '' };
+        this.loadData();
+      } catch (error) {
+        this.$toast.open({
+          message: error.response?.data?.message || error.message,
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+      } finally {
+        this.skipSubmitting = false;
+      }
     },
     submitForceUpdate() {
       $axiosMertrack
