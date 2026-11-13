@@ -29,6 +29,7 @@ import {
   deleteNotificationChannel,
   getNotificationChannel,
 } from '../../../resource/NotificationChannel';
+import { getWhatsappStatus } from '../../../resource/Whatsapp';
 
 export default {
   name: 'ListNotificationChannel',
@@ -48,6 +49,7 @@ export default {
     return {
       totalData: 0,
       items: [],
+      whatsappPairingStatus: 'Not checked',
       fields: [
         {
           key: 'id',
@@ -61,6 +63,10 @@ export default {
         {
           key: 'code',
           label: 'Code',
+        },
+        {
+          key: 'whatsapp_pairing',
+          label: 'Connection Status',
         },
         {
           key: 'description',
@@ -88,7 +94,25 @@ export default {
       if (res && !res.error) {
         this.totalData = res.grand_total || 0;
         this.items = res.data || [];
+        if (
+          this.items.some(
+            (item) => String(item.code || '').toUpperCase() === 'WHATSAPP',
+          )
+        ) {
+          this.whatsappPairingStatus = await this.loadWhatsappPairingStatus();
+        } else {
+          this.whatsappPairingStatus = 'Not checked';
+        }
       }
+    },
+    async loadWhatsappPairingStatus() {
+      const res = await getWhatsappStatus();
+      const status = res && !res.error && res.data && res.data[0];
+      if (!status) return 'Status unavailable';
+      if (status.connected) return 'Paired - Connected';
+      if (status.paired) return 'Paired - Disconnected';
+      if (status.session_exists) return 'Pairing in progress';
+      return 'Not paired';
     },
     rowUpdate(item) {
       this.$router.push({ path: `update/${item.id}` });
@@ -122,6 +146,10 @@ export default {
       return this.items.map((item) => {
         return {
           ...item,
+          whatsapp_pairing:
+            String(item.code || '').toUpperCase() === 'WHATSAPP'
+              ? this.whatsappPairingStatus
+              : 'Not applicable',
           description: item.description || '-',
         };
       });

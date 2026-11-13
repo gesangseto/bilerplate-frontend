@@ -101,6 +101,23 @@
               <p style="font-weight: bold">
                 <CIcon name="cib-whatsapp" /> &nbsp; WhatsApp Connection
               </p>
+              <div class="d-flex align-items-center mb-3" style="gap: 8px">
+                <strong>Pairing status:</strong>
+                <CBadge :color="whatsappPairingColor">
+                  {{ whatsappPairingLabel }}
+                </CBadge>
+                <CButton
+                  size="sm"
+                  color="light"
+                  :disabled="whatsappStatusLoading"
+                  @click="refreshWhatsappStatus"
+                >
+                  {{ whatsappStatusLoading ? 'Checking...' : 'Refresh status' }}
+                </CButton>
+              </div>
+              <small v-if="whatsappStatusError" class="text-danger d-block mb-2">
+                {{ whatsappStatusError }}
+              </small>
               <template v-if="formData.status === 'Active'">
                 <template v-if="!whatsappPanelOpen">
                   <small class="text-muted">
@@ -303,6 +320,9 @@ export default {
       // Endpoint WhatsApp (termasuk /status) hanya dipanggil saat panel QR
       // dibuka user, agar tidak membebani backend di setiap page load.
       whatsappStatus: { error: false, message: null, qr_base64: null },
+      whatsappSessionStatus: null,
+      whatsappStatusLoading: false,
+      whatsappStatusError: null,
       whatsappLoading: false,
       whatsappDestroying: false,
       whatsappPanelOpen: false,
@@ -339,6 +359,32 @@ export default {
     configFields() {
       return CONFIG_FIELDS[String(this.formData.code || '').toUpperCase()] || [];
     },
+    whatsappPairingLabel() {
+      if (this.whatsappStatusLoading && !this.whatsappSessionStatus) {
+        return 'Checking status...';
+      }
+      if (this.whatsappStatusError) return 'Status unavailable';
+      if (!this.whatsappSessionStatus) return 'Status not checked';
+      if (this.whatsappSessionStatus.connected) return 'Paired - Connected';
+      if (this.whatsappSessionStatus.paired) return 'Paired - Disconnected';
+      if (this.whatsappSessionStatus.session_exists) {
+        return 'Pairing in progress';
+      }
+      return 'Not paired';
+    },
+    whatsappPairingColor() {
+      if (this.whatsappStatusError) return 'secondary';
+      if (
+        this.whatsappSessionStatus &&
+        this.whatsappSessionStatus.connected
+      ) {
+        return 'success';
+      }
+      if (this.whatsappSessionStatus && this.whatsappSessionStatus.paired) {
+        return 'warning';
+      }
+      return 'secondary';
+    },
   },
   watch: {
     'formData.code'() {
@@ -364,7 +410,25 @@ export default {
         this.formData.config = res.data[0].config || {};
         this.configText = JSON.stringify(this.formData.config, null, 2);
         this.syncConfig();
+        if (this.isWhatsapp) {
+          await this.refreshWhatsappStatus();
+        }
       }
+    },
+    async refreshWhatsappStatus() {
+      this.whatsappStatusLoading = true;
+      this.whatsappStatusError = null;
+      const res = await getWhatsappStatus();
+      this.whatsappStatusLoading = false;
+      const status = res && !res.error && res.data && res.data[0];
+      if (!status) {
+        this.whatsappStatusError =
+          (res && res.message) || 'Unable to retrieve WhatsApp status.';
+        this.whatsappSessionStatus = null;
+        return null;
+      }
+      this.whatsappSessionStatus = status;
+      return status;
     },
     // Pastikan key konfigurasi channel selalu ada supaya v-model reaktif
     syncConfig() {
@@ -478,6 +542,12 @@ export default {
         message: 'WhatsApp session deleted successfully.',
         qr_base64: null,
       };
+      this.whatsappSessionStatus = {
+        connected: false,
+        paired: false,
+        session_exists: false,
+      };
+      this.whatsappStatusError = null;
       this.whatsappMessage = {
         to: null,
         message: null,
@@ -495,9 +565,7 @@ export default {
       };
       // Cek status dulu: jika sudah terhubung atau session ada (registered),
       // jangan buat socket pairing baru (hancurkan sesi lama).
-      const statusRes = await getWhatsappStatus();
-      const status =
-        (statusRes && !statusRes.error && statusRes.data?.[0]) || null;
+      const status = await this.refreshWhatsappStatus();
       if (status && status.connected) {
         this.whatsappQrExpired = false;
         this.whatsappQrIssuedAt = null;
@@ -553,6 +621,10 @@ export default {
           const statusRes = await getWhatsappStatus();
           const status =
             (statusRes && !statusRes.error && statusRes.data?.[0]) || null;
+          if (status) {
+            this.whatsappSessionStatus = status;
+            this.whatsappStatusError = null;
+          }
           if (status && status.connected) {
             this.whatsappQrExpired = false;
             this.whatsappQrIssuedAt = null;
@@ -628,6 +700,8 @@ export default {
         if (!status) {
           return;
         }
+        this.whatsappSessionStatus = status;
+        this.whatsappStatusError = null;
         if (status.connected) {
           this.whatsappQrExpired = false;
           this.whatsappQrIssuedAt = null;

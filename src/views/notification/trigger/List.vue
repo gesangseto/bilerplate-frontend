@@ -79,6 +79,14 @@ export default {
           label: 'Channel',
         },
         {
+          key: 'receiver_menu_label',
+          label: 'Receiver Menu',
+        },
+        {
+          key: 'receiver_access',
+          label: 'Receiver Access',
+        },
+        {
           key: 'status',
           label: 'Status',
           _classes: 'font-weight-bold',
@@ -138,6 +146,8 @@ export default {
           status_to_name: item.status_to_name || item.status_to || '-',
           template_name: item.template_name || '-',
           template_channel: item.template_channel || '-',
+          receiver_menu_label: item.receiver_menu_label || '-',
+          receiver_access: item.receiver_access || '-',
         };
       });
     },

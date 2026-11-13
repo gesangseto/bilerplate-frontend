@@ -88,6 +88,48 @@
                   v-on:onchange="formData.template_id = $event"
                 />
               </CCol>
+              <CCol sm="12" class="receiver-menu-field">
+                <SelectOption
+                  :disabled="isRead"
+                  :col="[3, 9]"
+                  required
+                  title="Receiver Menu"
+                  description="All active users with the selected menu access will receive this notification."
+                  placeholder="--Select Receiver Menu--"
+                  :options="receiverMenuOptions"
+                  :value="formData.receiver_menu_id"
+                  :is-valid="
+                    initial_load
+                      ? null
+                      : receiverMenuOptions.some(
+                          (option) =>
+                            String(option.value) ===
+                            String(formData.receiver_menu_id),
+                        )
+                  "
+                  v-on:onchange="handleReceiverMenuChange($event)"
+                />
+              </CCol>
+              <CCol sm="12">
+                <SelectOption
+                  :disabled="isRead || !formData.receiver_menu_id"
+                  :col="[3, 9]"
+                  required
+                  title="Receiver Access"
+                  description="Only users with this permission on the selected menu receive the notification. The event is determined by Model and Status From/To."
+                  placeholder="--Select Receiver Access--"
+                  :options="receiverAccessOptions"
+                  :value="formData.receiver_access"
+                  :is-valid="
+                    initial_load
+                      ? null
+                      : receiverAccessOptions.some(
+                          (access) => access.value === formData.receiver_access,
+                        )
+                  "
+                  v-on:onchange="formData.receiver_access = $event"
+                />
+              </CCol>
               <CCol sm="12">
                 <CRow form class="form-group">
                   <CCol sm="3"> Status </CCol>
@@ -120,11 +162,18 @@
   </div>
 </template>
 
+<style scoped>
+.receiver-menu-field >>> .vs__dropdown-menu {
+  z-index: 1040;
+}
+</style>
+
 <script>
 import { capitalizeFirstLetter, handleBack } from '../../../utils';
 import { getSysDatabaseContent } from '../../../resource/SysDatabaseContent';
 import { getStatusDesc } from '../../../resource/StatusDesc';
 import { getNotificationTemplate } from '../../../resource/NotificationTemplate';
+import { getMstMenu } from '../../../resource/MstMenu';
 import {
   getNotificationTrigger,
   insertNotificationTrigger,
@@ -138,15 +187,60 @@ export default {
       initial_load: true,
       route_action: '',
       action: 'Edit',
-      formData: { status: 'Active', status_from: '', status_to: '' },
+      formData: {
+        status: 'Active',
+        status_from: '',
+        status_to: '',
+        receiver_menu_id: '',
+        receiver_access: '',
+      },
       listModel: [],
       listStatus: [],
       listTemplate: [],
+      listReceiverMenus: [],
+      receiverAccesses: [
+        { value: 'create', label: 'Create' },
+        { value: 'read', label: 'Read' },
+        { value: 'update', label: 'Update' },
+        { value: 'delete', label: 'Delete' },
+        { value: 'approve', label: 'Approve' },
+      ],
     };
   },
   computed: {
     isRead() {
       return this.action === 'Read';
+    },
+    receiverMenuOptions() {
+      const menuTypes = {
+        0: 'Website',
+        1: 'Android',
+        2: 'Station',
+      };
+      return this.listReceiverMenus.map((menu) => {
+        return {
+          value: menu.id,
+          label: `${menuTypes[menu.type] || `Type ${menu.type}`} -> ${
+            menu.label || menu.link
+          }`,
+        };
+      });
+    },
+    receiverAccessOptions() {
+      const menu = this.listReceiverMenus.find(
+        (item) => String(item.id) === String(this.formData.receiver_menu_id),
+      );
+      if (!menu) return [];
+      const visibleFields = {
+        create: 'show_create',
+        read: 'show_read',
+        update: 'show_update',
+        delete: 'show_delete',
+        approve: 'show_approve',
+      };
+      return this.receiverAccesses.filter((access) =>
+        this.isEnabled(menu[visibleFields[access.value]]),
+      );
     },
   },
   mounted() {
@@ -155,6 +249,7 @@ export default {
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
     this.loadModel();
     this.loadTemplate();
+    this.loadReceiverMenus();
     if (this.$route.params.id !== undefined) {
       this.loadData();
     }
@@ -179,6 +274,60 @@ export default {
             label: `${item.name} (${item.channel})`,
           };
         });
+      }
+    },
+    async loadReceiverMenus() {
+      const [menuWeb, menuAndroid] = await Promise.all([
+        getMstMenu({ type: '0', search: '/transaction' }),
+        getMstMenu({ type: '1' }),
+      ]);
+      const failedResponse = [menuWeb, menuAndroid].find(
+        (res) => !res || res.error,
+      );
+      if (failedResponse) {
+        this.listReceiverMenus = [];
+        this.$toast.open({
+          message:
+            failedResponse?.message || 'Failed to load receiver menus.',
+          type: 'error',
+          dissmissible: true,
+          position: 'top-right',
+          duration: 5000,
+        });
+        return;
+      }
+
+      this.listReceiverMenus = [
+        ...(menuWeb.data || []),
+        ...(menuAndroid.data || []),
+      ].filter(
+        (menu) =>
+          menu.status === 'Active' &&
+          menu.link &&
+          [
+            'show_create',
+            'show_read',
+            'show_update',
+            'show_delete',
+            'show_approve',
+          ].some((field) => this.isEnabled(menu[field])),
+      );
+    },
+    isEnabled(value) {
+      return (
+        value === true ||
+        value === 1 ||
+        ['true', '1'].includes(String(value || '').toLowerCase())
+      );
+    },
+    handleReceiverMenuChange(menuId) {
+      this.formData.receiver_menu_id = menuId;
+      if (
+        !this.receiverAccessOptions.some(
+          (access) => access.value === this.formData.receiver_access,
+        )
+      ) {
+        this.formData.receiver_access = '';
       }
     },
     async loadStatus(table_name) {
@@ -211,6 +360,21 @@ export default {
       if (!this.formData.model) return false;
       if (!this.formData.status_to) return false;
       if (!this.formData.template_id) return false;
+      if (
+        !this.receiverMenuOptions.some(
+          (option) =>
+            String(option.value) === String(this.formData.receiver_menu_id),
+        )
+      ) {
+        return false;
+      }
+      if (
+        !this.receiverAccessOptions.some(
+          (access) => access.value === this.formData.receiver_access,
+        )
+      ) {
+        return false;
+      }
       return true;
     },
     async save() {
