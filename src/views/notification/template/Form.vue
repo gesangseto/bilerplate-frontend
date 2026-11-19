@@ -73,7 +73,10 @@
                   required
                   title="Content"
                   :placeholder="
-                    'Enter content. Dynamic value example: {{name}}'
+                    'Enter content. Dynamic value example: {{created_date}}'
+                  "
+                  :description="
+                    'Type payload fields directly, e.g. {{created_date}}, {{created_by_name}}, {{modified_by_name}}, {{id}}, {{quantity}}. Special shortcuts: {{link}} (Receiver Menu URL), {{permission}} (Receiver Access). Unavailable values remain unchanged.'
                   "
                   v-model="formData.content"
                   :is-valid="

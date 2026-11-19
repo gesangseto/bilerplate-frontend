@@ -180,6 +180,20 @@ import {
   updateNotificationTrigger,
 } from '../../../resource/NotificationTrigger';
 
+const DEFAULT_NOTIFICATION_MODELS = new Set([
+  'trx_transfer',
+  'production_batch_list',
+  'trx_picking',
+  'trx_aggregation',
+  'trx_re_aggregation',
+  'pre_inbound',
+  'trx_pack',
+  'trx_un_pack',
+  'trx_stock_opname',
+  'upload_file_xml',
+  'bpom_transaction',
+]);
+
 export default {
   name: 'FormNotificationTrigger',
   data() {
@@ -217,14 +231,30 @@ export default {
         1: 'Android',
         2: 'Station',
       };
-      return this.listReceiverMenus.map((menu) => {
+      const options = this.listReceiverMenus.map((menu) => {
         return {
-          value: menu.id,
+          value: String(menu.id),
           label: `${menuTypes[menu.type] || `Type ${menu.type}`} -> ${
             menu.label || menu.link
           }`,
         };
       });
+      const selectedMenuExists = options.some(
+        (option) =>
+          String(option.value) === String(this.formData.receiver_menu_id),
+      );
+      if (
+        this.action !== 'Create' &&
+        this.formData.receiver_menu_id &&
+        this.formData.receiver_menu_label &&
+        !selectedMenuExists
+      ) {
+        options.push({
+          value: String(this.formData.receiver_menu_id),
+          label: `Receiver Menu -> ${this.formData.receiver_menu_label}`,
+        });
+      }
+      return options;
     },
     receiverAccessOptions() {
       const menu = this.listReceiverMenus.find(
@@ -247,23 +277,55 @@ export default {
     this.action = capitalizeFirstLetter(this.$route.params.type);
     this.route_action =
       this.action == 'Create' ? 'ADD' : this.action == 'Read' ? 'VIEW' : 'EDIT';
-    this.loadModel();
     this.loadTemplate();
-    this.loadReceiverMenus();
     if (this.$route.params.id !== undefined) {
       this.loadData();
+    } else {
+      Promise.all([this.loadModel(), this.loadReceiverMenus()]);
     }
   },
   methods: {
     async loadModel() {
       let res = await getSysDatabaseContent({});
-      if (res && !res.error) {
-        this.listModel = (res.data || [])
-          .filter((it) => it.notif_support)
-          .map((item) => {
-            return { value: item.model, label: item.name || item.model };
-          });
+      if (!res || res.error) {
+        this.listModel = this.formData.model
+          ? [{ value: this.formData.model, label: this.formData.model }]
+          : [];
+        return;
       }
+
+      const models = res.data || [];
+      const supportedModels = models.filter((item) =>
+        item.notif_support === null || item.notif_support === undefined
+          ? DEFAULT_NOTIFICATION_MODELS.has(item.model)
+          : this.isEnabled(item.notif_support),
+      );
+      const selectedModel = models.find(
+        (item) => String(item.model) === String(this.formData.model),
+      );
+      if (
+        selectedModel &&
+        !supportedModels.some(
+          (item) => String(item.model) === String(selectedModel.model),
+        )
+      ) {
+        supportedModels.push(selectedModel);
+      }
+      if (
+        this.formData.model &&
+        !supportedModels.some(
+          (item) => String(item.model) === String(this.formData.model),
+        )
+      ) {
+        supportedModels.push({
+          model: this.formData.model,
+          name: this.formData.model,
+        });
+      }
+      this.listModel = supportedModels.map((item) => ({
+        value: item.model,
+        label: item.name || item.model,
+      }));
     },
     async loadTemplate() {
       let res = await getNotificationTemplate({ status: 'Active' });
@@ -277,13 +339,16 @@ export default {
       }
     },
     async loadReceiverMenus() {
-      const [menuWeb, menuAndroid] = await Promise.all([
+      const menuRequests = [
         getMstMenu({ type: '0', search: '/transaction' }),
         getMstMenu({ type: '1' }),
-      ]);
-      const failedResponse = [menuWeb, menuAndroid].find(
-        (res) => !res || res.error,
-      );
+      ];
+      if (this.formData.receiver_menu_id) {
+        menuRequests.push(getMstMenu({ id: this.formData.receiver_menu_id }));
+      }
+
+      const menuResponses = await Promise.all(menuRequests);
+      const failedResponse = menuResponses.find((res) => !res || res.error);
       if (failedResponse) {
         this.listReceiverMenus = [];
         this.$toast.open({
@@ -297,21 +362,28 @@ export default {
         return;
       }
 
-      this.listReceiverMenus = [
-        ...(menuWeb.data || []),
-        ...(menuAndroid.data || []),
-      ].filter(
-        (menu) =>
-          menu.status === 'Active' &&
-          menu.link &&
-          [
-            'show_create',
-            'show_read',
-            'show_update',
-            'show_delete',
-            'show_approve',
-          ].some((field) => this.isEnabled(menu[field])),
-      );
+      const menus = [
+        ...new Map(
+          menuResponses
+            .flatMap((res) => res.data || [])
+            .map((menu) => [String(menu.id), menu]),
+        ).values(),
+      ];
+      this.listReceiverMenus = menus.filter((menu) => {
+        const isSelected =
+          String(menu.id) === String(this.formData.receiver_menu_id);
+        const hasReceiverAccess = [
+          'show_create',
+          'show_read',
+          'show_update',
+          'show_delete',
+          'show_approve',
+        ].some((field) => this.isEnabled(menu[field]));
+        return (
+          isSelected ||
+          (menu.status === 'Active' && menu.link && hasReceiverAccess)
+        );
+      });
     },
     isEnabled(value) {
       return (
@@ -352,7 +424,13 @@ export default {
         this.formData = res.data[0];
         this.formData.status_from = this.formData.status_from || '';
         this.formData.status_to = this.formData.status_to || '';
-        await this.loadStatus(this.formData.model);
+        await Promise.all([
+          this.loadStatus(this.formData.model),
+          this.loadReceiverMenus(),
+          this.loadModel(),
+        ]);
+      } else {
+        await Promise.all([this.loadModel(), this.loadReceiverMenus()]);
       }
     },
     validation() {
