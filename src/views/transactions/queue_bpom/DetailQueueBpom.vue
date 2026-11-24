@@ -107,6 +107,11 @@
                       }"
                       @click="openSkipModal(item)"
                     />
+                    <span
+                      :class="item.status === 'Failed' ? 'text-danger' : ''"
+                    >
+                      <strong>{{ item.status }}</strong>
+                    </span>
                   </td>
                 </template>
               </CDataTable>
