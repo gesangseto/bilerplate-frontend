@@ -141,14 +141,21 @@
         </template>
       </CDataTable>
       <template>
-        <CPagination
-          v-if="filter.totalPages > 0"
-          :activePage.sync="filter.page"
-          :pages="parseInt(filter.totalPages)"
-          size="sm"
-          align="center"
-          @update:activePage="changePage"
-        />
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <CPagination
+              v-if="filter.totalPages > 0"
+              :activePage.sync="filter.page"
+              :pages="parseInt(filter.totalPages)"
+              size="sm"
+              align="center"
+              @update:activePage="changePage"
+            />
+          </div>
+          <div class="text-body-secondary small">
+            Showing {{ startItem }}-{{ endItem }} of {{ totalData }} items
+          </div>
+        </div>
       </template>
     </CCol>
     <CancelModal
@@ -168,6 +175,7 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import { getMstProductCategory } from '../../resource/MstProductCategory';
 import { getStatusDesc } from '../../resource/StatusDesc';
 import _ from 'lodash';
+
 export default {
   name: 'TableDefault',
   props: {
@@ -441,6 +449,15 @@ export default {
         tmp.text = it.label;
         this.listExtendFilter.push(tmp);
       }
+    },
+  },
+  computed: {
+    startItem() {
+      if (this.totalData === 0) return 0;
+      return (this.filter.page - 1) * this.filter.limit + 1;
+    },
+    endItem() {
+      return Math.min(this.filter.page * this.filter.limit, this.totalData);
     },
   },
 };

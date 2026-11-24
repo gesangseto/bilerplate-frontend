@@ -207,14 +207,22 @@
         </template>
       </CDataTable>
       <template>
-        <CPagination
-          v-if="filter.totalPages > 0"
-          :activePage.sync="filter.page"
-          :pages="parseInt(filter.totalPages)"
-          size="sm"
-          align="center"
-          @update:activePage="changePage"
-        />
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <CPagination
+              v-if="filter.totalPages > 0"
+              :activePage.sync="filter.page"
+              :pages="parseInt(filter.totalPages)"
+              size="sm"
+              align="center"
+              @update:activePage="changePage"
+            />
+          </div>
+
+          <div class="text-body-secondary small">
+            Showing {{ startItem }}-{{ endItem }} of {{ totalData }} items
+          </div>
+        </div>
       </template>
     </CCol>
     <CancelModal
@@ -1027,6 +1035,15 @@ export default {
   filters: {
     date(val) {
       return val ? moment(val).format('DD-MMM-YYYY') : '';
+    },
+  },
+  computed: {
+    startItem() {
+      if (this.totalData === 0) return 0;
+      return (this.filter.page - 1) * this.filter.limit + 1;
+    },
+    endItem() {
+      return Math.min(this.filter.page * this.filter.limit, this.totalData);
     },
   },
 };
