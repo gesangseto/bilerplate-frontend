@@ -301,58 +301,6 @@
         </CCard>
       </CCol>
     </CRow>
-    <!-- <CRow>
-      <CCol class="ContainerDashboard" sm="6" lg="6">
-        <CCard>
-          <CCardHeader>
-            <CRow>
-              <CCol md="6">
-                <h5 class="text-center" style="color: black">Stock L1</h5>
-              </CCol>
-              <CCol md="6">
-                <h5 class="text-center" style="color: black">Stock Batch</h5>
-              </CCol>
-            </CRow>
-          </CCardHeader>
-          <CCardBody>
-            <CRow>
-              <CCol md="6">
-                <PieChart
-                  :height="425"
-                  :chart-data="chartPieData1"
-                  :options="chartOption"
-                ></PieChart>
-              </CCol>
-              <CCol md="6">
-                <PieChart
-                  :height="425"
-                  :chart-data="chartPieData2"
-                  :options="chartOption"
-                ></PieChart>
-              </CCol>
-            </CRow>
-          </CCardBody>
-        </CCard>
-      </CCol>
-      <CCol class="ContainerDashboard" sm="6" lg="6">
-        <CCard>
-          <CCardHeader>
-            <h5 class="text-center" style="color: black">
-              Incoming - Outgoing Batch
-            </h5>
-          </CCardHeader>
-          <CCardBody>
-            <div>
-              <BarChart
-                :height="200"
-                :chart-data="chartLineData"
-                :options="chartOption"
-              ></BarChart>
-            </div>
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow> -->
     <CRow>
       <CCol class="ContainerDashboard" sm="6" md="6" lg="6">
         <CCard>
@@ -389,13 +337,47 @@
         </CCard>
       </CCol>
     </CRow>
+    <CRow>
+      <CCol class="ContainerDashboard" sm="12" md="4" lg="4">
+        <CCard>
+          <CCardHeader
+            class="HeaderDashboard"
+            style="background-color: #e45054ff"
+          >
+            <div class="title-dashboard">Queue BPOM</div>
+          </CCardHeader>
+          <CCardBody>
+            <table class="tb-table">
+              <tr class="icon-table">
+                <td><CloseNetworkOutline fillColor="#f56f42" :size="30" /></td>
+                <td><ProgressUpload fillColor="#000060" :size="30" /></td>
+                <td><UploadNetworkOutline fillColor="#000060" :size="30" /></td>
+              </tr>
+              <tr class="content-table">
+                <td>{{ bpomData.failed_trx || 0 }}</td>
+                <td>{{ bpomData.waiting_trx || 0 }}</td>
+                <td>{{ bpomData.success_trx || 0 }}</td>
+              </tr>
+              <tr class="title-table">
+                <th width="33%">
+                  Failed <br />{{ bpomData.last_failed_time }}
+                </th>
+                <th width="33%">Waiting <br />&nbsp;</th>
+                <th width="33%">
+                  Success <br />{{ bpomData.last_success_time }}
+                </th>
+              </tr>
+            </table>
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
   </div>
 </template>
 
 <script>
-import { CChartPie, CChartLine } from '@coreui/vue-chartjs';
+import { CChartLine } from '@coreui/vue-chartjs';
 import moment from 'moment';
-import PieChart from './charts/PieChart';
 import CChartLineSimple from './charts/CChartLineSimple.vue';
 import BarChart from './charts/BarChart';
 import CalendarAlert from 'vue-material-design-icons/CalendarAlert.vue';
@@ -407,22 +389,22 @@ import Warehouse from 'vue-material-design-icons/Warehouse.vue';
 import TrayFull from 'vue-material-design-icons/TrayFull.vue';
 import PackageVariantClosed from 'vue-material-design-icons/PackageVariantClosed.vue';
 import TagTextOutline from 'vue-material-design-icons/TagTextOutline.vue';
-import { getDashboard, getInOutDashboard } from '../resource/Helper';
-// import MainChartExample from "./charts/MainChartExample";
-// import WidgetsDropdown from "./widgets/WidgetsDropdown";
-// import WidgetsBrand from "./widgets/WidgetsBrand";
-// import CChartBarStockAll from "./charts/CChartBarStockAll";
-import $axiosMertrack from '../apiMertrack';
+import CloseNetworkOutline from 'vue-material-design-icons/CloseNetworkOutline.vue';
+import ProgressUpload from 'vue-material-design-icons/ProgressUpload.vue';
+import UploadNetworkOutline from 'vue-material-design-icons/UploadNetworkOutline.vue';
+import {
+  getInOutDashboard,
+  getStockInfo,
+  getBpomInfo,
+} from '../resource/Dashboard';
 import { getProfile } from '../utils';
 
 const interval_date = 11;
 export default {
   name: 'Dashboard',
   components: {
-    CChartPie,
     CChartLine,
     BarChart,
-    PieChart,
     CalendarAlert,
     DatabaseAlertOutline,
     DatabaseAlert,
@@ -432,6 +414,9 @@ export default {
     TrayFull,
     PackageVariantClosed,
     TagTextOutline,
+    CloseNetworkOutline,
+    ProgressUpload,
+    UploadNetworkOutline,
     CChartLineSimple,
   },
   data() {
@@ -439,6 +424,7 @@ export default {
       profile: getProfile(),
       in_out_month: { labels: [], datasets: [] },
       in_out_day: { labels: [], datasets: [] },
+      bpomData: {},
       dataDefault: {
         pie: [],
       },
@@ -480,102 +466,39 @@ export default {
     };
   },
   async mounted() {
-    let _res = await getDashboard({
-      date_from: this.conf_date.start,
-      date_to: this.conf_date.end,
-    });
-    if (_res) {
-      this.dataDefault = _res.data[0];
-      // this.generateAllMonth();
-      // this.getDataBarChart();
-      // this.getDataPieChart1();
-      // this.getDataPieChart2();
-    }
-    await this.getInOut('months');
-    await this.getInOut('days');
+    this.getInOut30Days();
+    this.getInOut12Months();
+    this.getStockInfoChart();
+    this.getBpomChart();
   },
   methods: {
-    async getInOut(type = 'months') {
-      let data = await getInOutDashboard({ interval: type });
+    async getStockInfoChart() {
+      let _res = await getStockInfo();
+      if (_res) {
+        this.dataDefault = _res.data[0];
+      }
+    },
+    async getBpomChart() {
+      let _bpom = await getBpomInfo();
+      if (_bpom && !_bpom.error) {
+        this.bpomData = _bpom.data[0] || {};
+      }
+    },
+    async getInOut30Days() {
+      let data = await getInOutDashboard({ type: 'daily' });
       if (data && !data.error) {
         data = data.data[0];
-        if (type == 'months') {
-          this.in_out_month.labels = data.labels;
-          this.in_out_month.datasets = data.datasets;
-        } else if (type == 'days') {
-          this.in_out_day.labels = data.labels;
-          this.in_out_day.datasets = data.datasets;
-        }
+        this.in_out_day.labels = data.labels;
+        this.in_out_day.datasets = data.datasets;
       }
     },
-    getDataPieChart1() {
-      let serial = this.dataDefault.pie[0];
-      let nonserial = this.dataDefault.pie[1];
-      let label = this.dataDefault.pie.map((it) => it.type);
-      this.chartPieData1 = {
-        labels: label,
-        datasets: [
-          {
-            yAxisID: 'yAxis',
-            xAxisID: 'xAxis',
-            label: 'My First Dataset',
-            data: [serial['stock_l1'], nonserial['stock_l1']],
-            backgroundColor: ['#0018AB', '#F7AF30'],
-            hoverOffset: 4,
-          },
-        ],
-      };
-    },
-    getDataPieChart2() {
-      let serial = this.dataDefault.pie[0];
-      let nonserial = this.dataDefault.pie[1];
-      let label = this.dataDefault.pie.map((it) => it.type);
-      this.chartPieData2 = {
-        labels: label,
-        datasets: [
-          {
-            yAxisID: 'yAxis',
-            xAxisID: 'xAxis',
-            label: 'My First Dataset',
-            data: [serial['stock_batch'], nonserial['stock_batch']],
-            backgroundColor: ['#0018AB', '#F7AF30'],
-            hoverOffset: 4,
-          },
-        ],
-      };
-    },
-    getDataBarChart() {
-      this.chartLineData = {
-        labels: this.conf_date.all,
-        datasets: [
-          {
-            label: 'Incoming Batch',
-            backgroundColor: '#0018AB',
-            data: this.dataDefault['bar_incoming'].map((it) => it.batch),
-            // borderColor: 'red'
-          },
-          {
-            label: 'Outgoing Batch',
-            backgroundColor: '#F7AF30',
-            data: this.dataDefault['bar_outgoing'].map((it) => it.batch),
-            // borderColor: 'green'
-          },
-        ],
-      };
-    },
-    getRandomInt() {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5;
-    },
-    generateAllMonth() {
-      this.conf_date.all = [];
-      for (var i = interval_date; i >= 0; i--) {
-        let m = moment()
-          .subtract(i, 'months')
-          .endOf('month')
-          .format('MMM YYYY');
-        this.conf_date.all.push(m);
+    async getInOut12Months() {
+      let data = await getInOutDashboard({ type: 'monthly' });
+      if (data && !data.error) {
+        data = data.data[0];
+        this.in_out_month.labels = data.labels;
+        this.in_out_month.datasets = data.datasets;
       }
-      return;
     },
   },
   computed: {

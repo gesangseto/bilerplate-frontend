@@ -24,3 +24,5 @@ All notable changes to the MERTRACK Web project are documented in this file.
   - Perbaikan koneksi WhatsApp dan penataan ulang tampilan (restyle) System Config.
 - **Lainnya**
   - Perbaikan URL tanpa `#` dan perbaikan bug logout saat cache masih tersimpan.
+  - Pagination Info untuk tabel (Data Grid)
+  - Chart Queue BPOM on Dashboard
