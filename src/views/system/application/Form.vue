@@ -505,6 +505,50 @@
                 </CCardBody>
               </CCard>
 
+              <!-- Serial Pool Settings -->
+              <CCard>
+                <CCardHeader style="font-weight: bold; font-size: large">
+                  Serial Pool
+                </CCardHeader>
+                <CCardBody>
+                  <p style="font-weight: bold">Serial Generation</p>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Minimum Available Serial"
+                        v-model="data.serial_min_generate"
+                        :validasi="'integer'"
+                        :max="10000"
+                        description="When the number of available serials reaches this minimum, the system will automatically generate new serials."
+                      />
+                    </CCol>
+                    <CCol sm="12" md="6" lg="6">
+                      <InputDefault
+                        :col="[4, 8]"
+                        title="Generate Count"
+                        v-model="data.serial_generate_count"
+                        :validasi="'integer'"
+                        :max="10000"
+                        description="Number of serials generated each time the serial pool is replenished."
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                    <CCol sm="12" md="6" lg="6">
+                      <SelectOption
+                        title="Generate Interval"
+                        :options="listCron"
+                        v-on:onchange="data.serial_generate_interval = $event"
+                        :value="data.serial_generate_interval"
+                        :col="[4, 8]"
+                        description="Interval used to wait before generating the serial pool, in cron format."
+                      />
+                    </CCol>
+                  </CRow>
+                </CCardBody>
+              </CCard>
+
               <!-- Warehouse Module Settings -->
               <CCard>
                 <CCardHeader style="font-weight: bold; font-size: large">
@@ -900,6 +944,9 @@ export default {
         // DbPwd: "",
         backup_compression: null,
         backup_frequent: '',
+        serial_min_generate: null,
+        serial_generate_count: null,
+        serial_generate_interval: null,
         sftp_folder_1: '',
         sftp_folder_2: '',
         sftp_folder_3: '',
